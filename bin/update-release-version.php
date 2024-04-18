@@ -118,7 +118,7 @@ function get_next_patch_version(array $versions): array
     $versionComponents[3] = 0;
 
     return [
-        'version' => get_version_string_from_components($versionComponents) . '-dev',
+        'version' => get_version_string_from_components($versionComponents) . 'dev',
         'stability' => 'devel',
         'versionComponents' => $versionComponents,
     ];
@@ -134,7 +134,7 @@ function get_next_minor_version(array $versions): array
     $versionComponents[3] = 0;
 
     return [
-        'version' => get_version_string_from_components($versionComponents) . '-dev',
+        'version' => get_version_string_from_components($versionComponents) . 'dev',
         'stability' => 'devel',
         'versionComponents' => $versionComponents,
     ];
