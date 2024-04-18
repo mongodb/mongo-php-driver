@@ -1,0 +1,50 @@
+name: "Build package files"
+
+on:
+  push:
+    # TODO: Remove this branch once we're done testing
+    branches:
+      - "release-tooling"
+    tags:
+      - "*"
+
+jobs:
+  build-pecl:
+    name: "Create release package"
+    runs-on: "ubuntu-latest"
+
+    steps:
+      - name: "Checkout"
+        uses: "actions/checkout@v4"
+        with:
+          fetch-depth: 2
+          submodules: true
+
+      - name: "Install PHP"
+        uses: "shivammathur/setup-php@v2"
+        with:
+          php-version: 8.3
+
+      - name: "Configure driver"
+        run: .github/workflows/configure.sh
+
+      - name: "Build driver"
+        run: "make all"
+
+      # TODO: create changelog from tag description
+
+      - name: "Build package.xml"
+        run: "make package.xml"
+
+      - name: "Build release archive"
+        run: "make package"
+
+      - name: "Install release archive to verify correctness"
+        run: pecl install mongodb-${{ github.ref_name }}.tgz
+
+      - name: "Upload archive"
+        uses: actions/upload-artifact@v4
+        with:
+          name: mongodb-${{ github.ref_name }}.tgz
+          path: mongodb-${{ github.ref_name }}.tgz
+          retention-days: 3
