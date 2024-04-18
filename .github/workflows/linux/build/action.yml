@@ -1,0 +1,21 @@
+name: "Linux Build"
+description: "Builds the driver"
+inputs:
+  version:
+    description: "PHP version to build for"
+    required: true
+runs:
+  using: composite
+  steps:
+    - name: "Install PHP"
+      uses: "shivammathur/setup-php@v2"
+      with:
+        php-version: "${{ inputs.version }}"
+
+    - name: "Configure driver"
+      run: .github/workflows/configure.sh
+      shell: bash
+
+    - name: "Build driver"
+      run: "make all"
+      shell: bash

@@ -63,17 +63,11 @@ jobs:
           version: ${{ matrix.mongodb-version }}
           topology: ${{ matrix.topology }}
 
-      - name: "Install PHP"
-        uses: "shivammathur/setup-php@v2"
+      - name: "Build Driver"
+        id: build-driver
+        uses: ./.github/workflows/linux/build
         with:
-          php-version: "${{ matrix.php-version }}"
-          tools: "phpize"
-
-      - name: "Configure driver"
-        run: .github/workflows/configure.sh
-
-      - name: "Build driver"
-        run: "make all"
+          version: ${{ matrix.php-version }}
 
       - name: "Run Tests"
         run: TEST_PHP_ARGS="-q -x --show-diff -g FAIL,XFAIL,BORK,WARN,LEAK,SKIP" make test

@@ -20,16 +20,10 @@ jobs:
           fetch-depth: 2
           submodules: true
 
-      - name: "Install PHP"
-        uses: "shivammathur/setup-php@v2"
+      - name: "Build Driver"
+        uses: ./.github/workflows/linux/build
         with:
-          php-version: 8.3
-
-      - name: "Configure driver"
-        run: .github/workflows/configure.sh
-
-      - name: "Build driver"
-        run: "make all"
+          version: "8.3"
 
       # TODO: create changelog from tag description
       - name: "Add dummy changelog"
@@ -42,6 +36,8 @@ jobs:
       - name: "Build release archive"
         run: "make package"
 
+      # PECL always uses the version for the package name.
+      # Read it from the version file and store in env to use when uploading artifacts
       - name: "Read current package version"
         run: echo "PACKAGE_VERSION=$(./bin/update-release-version.php version)" >> "$GITHUB_ENV"
 
