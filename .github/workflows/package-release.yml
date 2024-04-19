@@ -102,9 +102,9 @@ jobs:
 
       - name: "Create and upload release artifact"
         run: |
-          ARCHIVE=php_mongodb-${{ github.ref_name }}-${{ matrix.php }}-${{ matrix.ts }}-${{ matrix.arch }}.zip
-          zip $ARCHIVE php_mongodb.dll php_mongodb.pdb CREDITS CONTRIBUTING.md LICENSE README.md THIRD_PARTY_NOTICES
-          gh release upload ${{ github.ref_name }} $ARCHIVE
-          continue-on-error: true
+          set ARCHIVE=php_mongodb-${{ github.ref_name }}-${{ matrix.php }}-${{ matrix.ts }}-${{ matrix.arch }}.zip
+          zip %ARCHIVE% php_mongodb.dll php_mongodb.pdb CREDITS CONTRIBUTING.md LICENSE README.md THIRD_PARTY_NOTICES
+          gh release upload ${{ github.ref_name }} %ARCHIVE%
+        continue-on-error: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
