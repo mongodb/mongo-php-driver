@@ -1,0 +1,133 @@
+name: "Release New Version"
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "The version to be released. This is checked for consistency with the branch name and configuration"
+        required: true
+        type: "string"
+      jira-changelog-link:
+        description: "Link to changelog in JIRA"
+        required: true
+        type: "string"
+
+env:
+  # TODO: Use different token
+  GH_TOKEN: ${{ secrets.MERGE_UP_TOKEN }}
+  GIT_AUTHOR_NAME: "DBX PHP Release Bot"
+  GIT_AUTHOR_EMAIL: "dbx-php@mongodb.com"
+  default-release-message: |
+    The PHP team is happy to announce that version {0} of the [mongodb](https://pecl.php.net/package/mongodb) PHP extension is now available on PECL.
+
+    **Release Highlights**
+
+    <one or more paragraphs describing important changes in this release>
+
+    A complete list of resolved issues in this release may be found in [JIRA]({1}).
+
+    **Documentation**
+
+    Documentation is available on [PHP.net](https://php.net/set.mongodb).
+
+    **Installation**
+
+    You can either download and install the source manually, or you can install the extension with:
+
+      pecl install mongodb-{0}
+
+    or update with:
+
+      pecl upgrade mongodb-{0}
+
+    Windows binaries are attached to the GitHub release notes.
+
+jobs:
+  prepare-release:
+    name: "Prepare release"
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # fetch-depth 0 is required to fetch all branches, not just the branch being built
+          fetch-depth: 0
+          submodules: true
+          token: ${{ env.GH_TOKEN }}
+
+      - name: "Install PHP"
+        uses: "shivammathur/setup-php@v2"
+        with:
+          php-version: "${{ matrix.php-version }}"
+          tools: "phpize"
+
+      - name: "Update version information to stable release"
+        run: ./bin/update-release-version.php stable
+
+      - name: "Read current package version"
+        run: echo "PACKAGE_VERSION=$(./bin/update-release-version.php version)" >> "$GITHUB_ENV"
+
+      # Sanity check - the version from the input and the one determined by phongo_version.h need to be the same
+      - name: "Check version for consistency"
+        if: ${{ inputs.version != env.PACKAGE_VERSION }}
+        # We exit with an error to abort the workflow. This is only run if the versions don't match
+        run: |
+          echo '❌ Release failed: expected version ${{ inputs.version }}, got ${{ env.PACKAGE_VERSION }}' >> $GITHUB_STEP_SUMMARY
+          exit 1
+
+      #
+      # Preliminary checks done - commence the release process
+      #
+
+      - name: "Set git author information"
+        run: |
+          git config user.name "${GIT_AUTHOR_NAME}"
+          git config user.email "${GIT_AUTHOR_EMAIL}"
+
+      # Create the "Package x.y.z" commit that will be the base of our tag
+      - name: "Create release commit"
+        run: git commit -m "Package ${{ env.PACKAGE_VERSION }}" phongo_version.h
+
+      # Create a draft release with a changelog
+      # TODO: Consider using the API to generate changelog
+      - name: "Create draft release"
+        run: gh release create ${{ env.PACKAGE_VERSION }} --target ${{ github.ref_name }} --generate-notes --draft
+
+      - name: "Read changelog from draft release"
+        run: gh release view ${{ env.PACKAGE_VERSION }} --json body --template '{{ .body }}' >> changelog
+
+      # TODO: Sign tag
+      - name: "Create release tag"
+        run: git tag -a -F changelog ${{ env.PACKAGE_VERSION }}
+
+      - name: "Update version information to next patch development release"
+        run: |
+          ./bin/update-release-version.php patch
+          git commit -m "Back to -dev" phongo_version.h
+
+      # TODO: Manually merge using ours strategy. This avoids merge-up pull requests being created
+      # Process is:
+      # 1. switch to next branch (according to merge-up action)
+      # 2. merge release branch using --strategy=ours
+      # 3. push next branch
+      # 4. switch back to release branch, then push
+
+      - name: "Push changes from release branch"
+        run: git push
+
+      - name: "Prepare release message"
+        run: |
+          echo "${{ format(env.default-release-message, env.PACKAGE_VERSION, inputs.jira-changelog-link) }}" > release-message
+          cat changelog >> release-message
+
+      # Update release with correct release information
+      - name: "Update release information"
+        run: gh release edit ${{ env.PACKAGE_VERSION }} --title "${{ env.PACKAGE_VERSION }}" --notes-file release-message
+
+      # Pushing the release tag starts build processes that then produce artifacts for the release
+      - name: "Push release tag"
+        run: git push origin ${{ env.PACKAGE_VERSION }}
+
+      - name: "Set summary"
+        run: |
+          echo '🚀 Created release ${{ inputs.version }}' >> $GITHUB_STEP_SUMMARY
