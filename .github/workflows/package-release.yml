@@ -22,9 +22,8 @@ jobs:
         with:
           version: "8.3"
 
-      # TODO: create changelog from tag description
-      - name: "Add dummy changelog"
-        run: "echo 'Development Build' > changelog"
+      - name: "Write changelog file for packaging"
+        run: git tag -l ${{ github.ref_name }} --format='%(contents)' > changelog
 
       - name: "Build package.xml"
         run: "make package.xml"
