@@ -1,4 +1,5 @@
 name: "Release New Version"
+run-name: "Release ${{ inputs.version }}"
 
 on:
   workflow_dispatch:
@@ -52,6 +53,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: "Create release output"
+        run: echo '🎬 Release process for version ${{ inputs.version }} started by @${{ github.triggering_actor }}' >> $GITHUB_STEP_SUMMARY
+
       - uses: actions/checkout@v4
         with:
           # fetch-depth 0 is required to fetch all branches, not just the branch being built
@@ -76,7 +80,7 @@ jobs:
         if: ${{ inputs.version != env.PACKAGE_VERSION }}
         # We exit with an error to abort the workflow. This is only run if the versions don't match
         run: |
-          echo '❌ Release failed: expected version ${{ inputs.version }}, got ${{ env.PACKAGE_VERSION }}' >> $GITHUB_STEP_SUMMARY
+          echo '❌ Release failed due to version mismatch: expected ${{ inputs.version }}, got ${{ env.PACKAGE_VERSION }} from code' >> $GITHUB_STEP_SUMMARY
           exit 1
 
       #
@@ -94,7 +98,7 @@ jobs:
 
       # Create a draft release with a changelog
       # TODO: Consider using the API to generate changelog
-      - name: "Create draft release"
+      - name: "Create draft release with generated changelog"
         run: gh release create ${{ env.PACKAGE_VERSION }} --target ${{ github.ref_name }} --generate-notes --draft
 
       - name: "Read changelog from draft release"
@@ -126,7 +130,7 @@ jobs:
 
       # Update release with correct release information
       - name: "Update release information"
-        run: gh release edit ${{ env.PACKAGE_VERSION }} --title "${{ env.PACKAGE_VERSION }}" --notes-file release-message
+        run: echo "RELEASE_URL=$(gh release edit ${{ env.PACKAGE_VERSION }} --title "${{ env.PACKAGE_VERSION }}" --notes-file release-message)" >> "$GITHUB_ENV"
 
       # Pushing the release tag starts build processes that then produce artifacts for the release
       - name: "Push release tag"
@@ -134,4 +138,5 @@ jobs:
 
       - name: "Set summary"
         run: |
-          echo '🚀 Created release ${{ inputs.version }}' >> $GITHUB_STEP_SUMMARY
+          echo '🚀 Created tag and drafted release for version [${{ inputs.version }}](${{ env.RELEASE_URL }})' >> $GITHUB_STEP_SUMMARY
+          echo '✍️ You may now update the release notes and publish the release when ready' >> $GITHUB_STEP_SUMMARY
