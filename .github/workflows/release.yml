@@ -7,8 +7,8 @@ on:
         description: "The version to be released. This is checked for consistency with the branch name and configuration"
         required: true
         type: "string"
-      jira-changelog-link:
-        description: "Link to changelog in JIRA"
+      jira-version-number:
+        description: "Version number from JIRA"
         required: true
         type: "string"
 
@@ -22,9 +22,9 @@ env:
 
     **Release Highlights**
 
-    <one or more paragraphs describing important changes in this release>
+    TODO: one or more paragraphs describing important changes in this release
 
-    A complete list of resolved issues in this release may be found in [JIRA]({1}).
+    A complete list of resolved issues in this release may be found in [JIRA](https://jira.mongodb.org/secure/ReleaseNote.jspa?version={1}&projectId=12484).
 
     **Documentation**
 
@@ -34,11 +34,15 @@ env:
 
     You can either download and install the source manually, or you can install the extension with:
 
-      pecl install mongodb-{0}
+    ```
+    pecl install mongodb-{0}
+    ```
 
     or update with:
 
-      pecl upgrade mongodb-{0}
+    ```
+    pecl upgrade mongodb-{0}
+    ```
 
     Windows binaries are attached to the GitHub release notes.
 
@@ -117,7 +121,7 @@ jobs:
 
       - name: "Prepare release message"
         run: |
-          echo "${{ format(env.default-release-message, env.PACKAGE_VERSION, inputs.jira-changelog-link) }}" > release-message
+          echo "${{ format(env.default-release-message, env.PACKAGE_VERSION, inputs.jira-version-number) }}" > release-message
           cat changelog >> release-message
 
       # Update release with correct release information
