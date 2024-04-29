@@ -18,7 +18,6 @@ jobs:
           # Manually specify a ref. When actions/checkout is run for a tag without a ref, it looks up the underlying
           # commit and specifically fetches this to the refs/tags/<tag> ref, which denies us access to the tag message
           ref: ${{ github.ref }}
-          fetch-depth: 2
           submodules: true
 
       - name: "Build Driver"
@@ -76,7 +75,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 2
           submodules: true
 
       - name: "Build Driver"

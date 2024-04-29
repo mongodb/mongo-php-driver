@@ -58,8 +58,6 @@ jobs:
 
       - uses: actions/checkout@v4
         with:
-          # fetch-depth 0 is required to fetch all branches, not just the branch being built
-          fetch-depth: 0
           submodules: true
           token: ${{ env.GH_TOKEN }}
 

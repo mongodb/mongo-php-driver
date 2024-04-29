@@ -31,7 +31,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 2
           submodules: true
 
       - name: "Build Driver"
@@ -71,7 +70,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 2
           submodules: true
 
       - name: Prepare build environment
