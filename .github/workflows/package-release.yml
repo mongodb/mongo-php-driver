@@ -53,7 +53,6 @@ jobs:
 
       - name: "Upload release artifact"
         run: gh release upload ${{ github.ref_name }} mongodb-${{ env.PACKAGE_VERSION }}.tgz
-        # Until we've changed the process to always have a release draft, ignore errors during upload
         continue-on-error: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
