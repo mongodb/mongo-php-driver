@@ -298,7 +298,7 @@ generation script.
 
 ### Branch management
 
-When releasing a new minor version of the driver (i.e. `vX.Y.0`), create a new
+When releasing a new minor version of the driver (i.e. `X.Y.0`), create a new
 maintenance branch named `vX.Y` from the default branch. Then, update the 
 version information in the default branch to the next minor release:
 
@@ -338,23 +338,30 @@ Releases are done automatically through a GitHub Action. Visit the corresponding
 [Release New Version](https://github.com/mongodb/mongo-php-driver/actions/workflows/release.yml)
 workflow page to trigger a new build. Select the correct branch (e.g. `v1.18`)
 and trigger a new run using the "Run workflow" button. In the following prompt,
-enter the version number and the corresponding JIRA release number for the 
-release. This will create and push the necessary commits and tag, create a draft
-release, and trigger the packaging builds for the newly created tag. The release
-is created in a draft state and can be published once the release notes have 
-been updated.
+enter the version number and the corresponding JIRA version ID for the release.
+This version ID can be obtained from a link in the "Version" column on the
+[PHPC releases page](https://jira.mongodb.org/projects/PHPC?selectedItem=com.atlassian.jira.jira-projects-plugin%3Arelease-page&status=unreleased).
+
+The automation will then create and push the necessary commits and tag, create a
+draft release, and trigger the packaging builds for the newly created tag. The
+release is created in a draft state and can be published once the release notes
+have been updated.
+
+Alternatively, you may follow the [manual release process](#manual-release-process)
+before continuing with the next section.
 
 ### Upload package to PECL
 
 Once the packaging workflow has finished creating the PECL package, it will be
 published as a build artifact of the package workflow, as well as a release
-artifact in the draft release. This package may be published via the
-[Release Upload](https://pecl.php.net/release-upload.php) form. You will have
-one chance to confirm the package information after uploading.
+asset in the draft release. This package may be published via the
+[Release Upload](https://pecl.php.net/release-upload.php) form. You will have one chance to confirm the package
+information after uploading.
 
 > **Note:** If downloading the package from the build artifacts, be aware that
 > these are always provided as zip files. You'll have to unpack the tgz archive
-> prior to uploading it to PECL.
+> prior to uploading it to PECL. This is not the case when downloading the
+> release asset.
 
 ### Update compatibility tables in MongoDB docs
 
@@ -372,13 +379,19 @@ changes into the next versioned branch. Since version changes always create a
 conflict, follow the "Ignoring Changes" section in the pull request to resolve
 the conflicts and merge the pull request once the build completes.
 
+### Announce release
+
+Significant release announcements should also be posted in the
+[MongoDB Product & Driver Announcements: Driver Releases](https://www.mongodb.com/community/forums/tags/c/announcements/driver-releases/110/php) forum.
+
 ### Manual release process
 
-The following steps outline the manual release process for both new minor
-versions (e.g. releasing the `master` branch as X.Y.0) and patch versions (e.g.
-releasing the `vX.Y` branch as X.Y.Z). These are preserved for historical 
-reasons and cases that are currently not supported by the release automation 
-(e.g. beta releases).
+The following steps outline the manual release process. These are preserved
+for historical reasons and releases that are currently not supported by the
+release automation (e.g. beta releases). These steps are meant to be run instead
+of [triggering the release workflow](#trigger-the-release-workflow). The
+instructions assume that the steps preceding the release workflow have been
+completed successfully.
 
 The command examples below assume that the canonical "mongodb" repository has
 the remote name "mongodb". You may need to adjust these commands if you've given
@@ -432,7 +445,7 @@ After copying release notes, use `make package` to create the package file (e.g.
 $ pecl install -f mongodb-X.Y.Z.tgz
 ```
 
-### Update version info
+#### Update version info
 
 Commit the modified `phongo_version.h` file and push this change:
 
@@ -532,6 +545,3 @@ Thanks for our community contributors for X.Y.Z:
 
  * [$CONTRIBUTOR_NAME](https://github.com/$GITHUB_USERNAME)
 ```
-
-Significant release announcements should also be posted in the
-[MongoDB Product & Driver Announcements: Driver Releases](https://www.mongodb.com/community/forums/tags/c/announcements/driver-releases/110/php) forum.
