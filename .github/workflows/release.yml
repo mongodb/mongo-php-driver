@@ -67,7 +67,6 @@ jobs:
         uses: "shivammathur/setup-php@v2"
         with:
           php-version: "${{ matrix.php-version }}"
-          tools: "phpize"
 
       - name: "Update version information to stable release"
         run: ./bin/update-release-version.php stable

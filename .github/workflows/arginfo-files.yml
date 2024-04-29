@@ -32,7 +32,6 @@ jobs:
         uses: "shivammathur/setup-php@v2"
         with:
           php-version: "${{ matrix.php-version }}"
-          tools: "phpize"
 
       - name: "Run phpize"
         run: phpize
