@@ -12,10 +12,10 @@ Usage:
 {$argv[0]} <command>
 
 Commands:
-    stable:  Mark the current version as stable
-    patch:   Update to the next patch development version
-    minor:   Update to the next minor development version
-    version: Print the current version number
+    to-stable:          Mark the current version as stable
+    to-next-patch-dev:  Update to the next patch development version
+    to-next-minor-dev:  Update to the next minor development version
+    get-version:        Print the current version number
 
 EOT;
 
@@ -147,19 +147,19 @@ if ($argc !== 2) {
 $currentVersion = read_release_version(VERSION_FILENAME);
 
 switch ($argv[1] ?? null) {
-    case 'version':
+    case 'get-version':
         echo $currentVersion['version'];
         exit(0);
 
-    case 'stable':
+    case 'to-stable':
         $newVersion = get_stable_version($currentVersion);
         break;
 
-    case 'patch':
+    case 'to-next-patch-dev':
         $newVersion = get_next_patch_version($currentVersion);
         break;
 
-    case 'minor':
+    case 'to-next-minor-dev':
         $newVersion = get_next_minor_version($currentVersion);
         break;
 

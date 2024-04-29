@@ -303,7 +303,7 @@ maintenance branch named `vX.Y` from the default branch. Then, update the
 version information in the default branch to the next minor release:
 
 ```shell
-$ ./bin/update-release-version.php minor
+$ ./bin/update-release-version.php to-next-minor-dev
 ```
 
 Commit and push the resulting changes:
@@ -403,7 +403,7 @@ Update the version and stability constants in `phongo_version.h` for the stable
 release:
 
 ```shell
-$ ./bin/update-release-version.php stable
+$ ./bin/update-release-version.php to-stable
 ```
 
 The Makefile targets for creating the PECL package depend on these constants, so
@@ -465,7 +465,7 @@ After tagging, the version and stability constants in `phongo_version.h` should
 be updated back to development status:
 
 ```shell
-$ ./bin/update-release-version.php patch
+$ ./bin/update-release-version.php to-next-patch-dev
 ```
 
 Commit and push this change:

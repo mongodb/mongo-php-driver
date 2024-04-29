@@ -38,7 +38,7 @@ jobs:
       # PECL always uses the version for the package name.
       # Read it from the version file and store in env to use when uploading artifacts
       - name: "Read current package version"
-        run: echo "PACKAGE_VERSION=$(./bin/update-release-version.php version)" >> "$GITHUB_ENV"
+        run: echo "PACKAGE_VERSION=$(./bin/update-release-version.php get-version)" >> "$GITHUB_ENV"
 
       # Currently fails with: Cannot install, php_dir for channel "pecl.php.net" is not writeable by the current user
       # - name: "Install release archive to verify correctness"

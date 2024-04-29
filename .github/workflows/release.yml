@@ -67,10 +67,10 @@ jobs:
           php-version: "${{ matrix.php-version }}"
 
       - name: "Update version information to stable release"
-        run: ./bin/update-release-version.php stable
+        run: ./bin/update-release-version.php to-stable
 
       - name: "Read current package version"
-        run: echo "PACKAGE_VERSION=$(./bin/update-release-version.php version)" >> "$GITHUB_ENV"
+        run: echo "PACKAGE_VERSION=$(./bin/update-release-version.php get-version)" >> "$GITHUB_ENV"
 
       # Sanity check - the version from the input and the one determined by phongo_version.h need to be the same
       - name: "Check version for consistency"
@@ -107,7 +107,7 @@ jobs:
 
       - name: "Update version information to next patch development release"
         run: |
-          ./bin/update-release-version.php patch
+          ./bin/update-release-version.php to-next-patch-dev
           git commit -m "Back to -dev" phongo_version.h
 
       # TODO: Manually merge using ours strategy. This avoids merge-up pull requests being created
