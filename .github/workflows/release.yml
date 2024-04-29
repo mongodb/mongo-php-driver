@@ -9,7 +9,7 @@ on:
         required: true
         type: "string"
       jira-version-number:
-        description: "Version number from JIRA"
+        description: "JIRA version ID (e.g. 54321)"
         required: true
         type: "string"
 
