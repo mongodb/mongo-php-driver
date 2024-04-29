@@ -11,6 +11,8 @@ runs:
       uses: "shivammathur/setup-php@v2"
       with:
         php-version: "${{ inputs.version }}"
+        # Only install required extensions
+        extensions: "none,date,json,spl,standard,xml"
 
     - name: "Configure driver"
       run: .github/workflows/configure.sh
