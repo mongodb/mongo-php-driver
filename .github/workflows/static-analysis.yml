@@ -1,0 +1,30 @@
+name: "Static Analysis"
+
+on:
+  merge_group:
+  pull_request:
+    branches:
+      - "v*.*"
+      - "master"
+      - "feature/*"
+  push:
+    branches:
+      - "v*.*"
+      - "master"
+      - "feature/*"
+
+jobs:
+  semgrep:
+    name: "Semgrep"
+    runs-on: "ubuntu-latest"
+    container:
+      image: semgrep/semgrep
+
+    steps:
+      - name: "Checkout"
+        uses: "actions/checkout@v4"
+        with:
+          submodules: true
+
+      - name: "Scan"
+        run: semgrep scan --error
