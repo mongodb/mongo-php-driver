@@ -358,10 +358,10 @@ asset in the draft release. This package may be published via the
 [Release Upload](https://pecl.php.net/release-upload.php) form. You will have one chance to confirm the package
 information after uploading.
 
-> **Note:** If downloading the package from the build artifacts, be aware that
-> these are always provided as zip files. You'll have to unpack the tgz archive
-> prior to uploading it to PECL. This is not the case when downloading the
-> release asset.
+> [!NOTE]
+> If downloading the package from the build artifacts, be aware that these are
+> always provided as zip files. You'll have to unpack the tgz archive prior to
+> uploading it to PECL. This is not the case when downloading the release asset.
 
 ### Update compatibility tables in MongoDB docs
 
@@ -422,12 +422,13 @@ $ ./bin/update-release-version.php to-stable
 The Makefile targets for creating the PECL package depend on these constants, so
 you must rebuild the extension after updating `phongo_version.h`.
 
-> **Note:** If this is an alpha or beta release, the version string should
-> include the X.Y.Z version followed by the stability and an increment. For
-> instance, the first beta release in the 1.4.0 series would be "1.4.0beta1".
-> Alpha and beta releases use "alpha" and "beta" stability strings,
-> respectively. Release candidates (e.g. "1.4.0RC1") also use "beta" stability.
-> See [Documenting release stability and API stability](https://pear.php.net/manual/en/guide.developers.package2.stability.php)
+> [!NOTE]
+> If this is an alpha or beta release, the version string should include the
+> X.Y.Z version followed by the stability and an increment. For instance, the
+> first beta release in the 1.4.0 series would be "1.4.0beta1". Alpha and beta
+> releases use "alpha" and "beta" stability strings, respectively. Release
+> candidates (e.g. "1.4.0RC1") also use "beta" stability. See
+> [Documenting release stability and API stability](https://pear.php.net/manual/en/guide.developers.package2.stability.php)
 > for more information. For each change to the suffixes of
 > `PHP_MONGODB_VERSION`, increment the last digit of
 > `PHP_MONGODB_VERSION_DESC`.
@@ -488,9 +489,10 @@ $ git commit -m "Back to -dev" phongo_version.h
 $ git push mongodb
 ```
 
-> **Note:** If this is an alpha, beta, or RC release, the version string should
-> increment the stability sequence instead of the patch version. For example,
-> if the constants were originally "1.4.0-dev" and "devel" and then changed to
+> [!NOTE]
+> If this is an alpha, beta, or RC release, the version string should increment
+> the stability sequence instead of the patch version. For example, if the
+> constants were originally "1.4.0-dev" and "devel" and then changed to
 > "1.4.0beta1" and "beta" for the first beta release, this step would see them
 > ultimately changed to "1.4.0beta2-dev" and "devel".
 
@@ -526,9 +528,10 @@ or update with:
 Windows binaries are attached to the GitHub release notes.
 ```
 
-> **Note:** If this is an alpha or beta release, the installation examples
-> should refer to the exact version (e.g. "mongodb-1.8.0beta2"). This is necessary
-> because PECL prioritizes recent, stable releases over any stability preferences
+> [!NOTE]
+> If this is an alpha or beta release, the installation examples should refer to
+> the exact version (e.g. "mongodb-1.8.0beta2"). This is necessary because PECL
+> prioritizes recent, stable releases over any stability preferences
 > (e.g. "mongodb-beta").
 
 The URL for the list of resolved JIRA issues will need to be updated with each
