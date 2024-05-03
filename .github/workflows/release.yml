@@ -89,10 +89,6 @@ jobs:
           git config user.name "${GIT_AUTHOR_NAME}"
           git config user.email "${GIT_AUTHOR_EMAIL}"
 
-      # Create the "Package x.y.z" commit that will be the base of our tag
-      - name: "Create release commit"
-        run: git commit -m "Package ${{ env.PACKAGE_VERSION }}" phongo_version.h
-
       # Create a draft release with a changelog
       # TODO: Consider using the API to generate changelog
       - name: "Create draft release with generated changelog"
@@ -101,14 +97,49 @@ jobs:
       - name: "Read changelog from draft release"
         run: gh release view ${{ env.PACKAGE_VERSION }} --json body --template '{{ .body }}' >> changelog
 
-      # TODO: Sign tag
-      - name: "Create release tag"
-        run: git tag -a -F changelog ${{ env.PACKAGE_VERSION }}
-
-      - name: "Update version information to next patch development release"
+      - name: Create the envfile
         run: |
-          ./bin/update-release-version.php to-next-patch-dev
-          git commit -m "Back to -dev" phongo_version.h
+          pip install -U -q setuptools
+          cat << EOF > envfile
+          GRS_CONFIG_USER1_USERNAME=${{ secrets.GRS_CONFIG_USER1_USERNAME }}
+          GRS_CONFIG_USER1_PASSWORD=${{ secrets.GRS_CONFIG_USER1_PASSWORD }}
+          GPG_KEY_ID=${{ vars.GPG_KEY_ID }}
+          PACKAGE_VERSION=${{ env.PACKAGE_VERSION }}
+          EOF
+
+      - name: Log in to artifactory
+        uses: redhat-actions/podman-login@v1
+        with:
+          username: ${{ secrets.ARTIFACTORY_USER }}
+          password: ${{ secrets.ARTIFACTORY_PASSWORD }}
+          registry: artifactory.corp.mongodb.com
+
+      # This step creates the "Package x.y.z" commit that will be the base of
+      # our tag and creates the release tag. This is run inside the container in
+      # order to create signed git artifacts
+      - name: "Create package commit and release tag"
+        run: |
+          podman run \
+            --env-file=envfile \
+            --rm \
+            -v $(pwd):$(pwd) \
+            -w $(pwd) \
+            ${{ vars.ARTIFACTORY_IMAGE }} \
+            /bin/bash -c "$(pwd)/.github/workflows/commit-and-tag.sh"
+
+      - name: "Bump to next development release"
+        run: ./bin/update-release-version.php to-next-patch-dev
+
+      # Create a signed "back to -dev" commit, again inside the container
+      - name: "Create dev commit"
+        run: |
+          podman run \
+            --env-file=envfile \
+            --rm \
+            -v $(pwd):$(pwd) \
+            -w $(pwd) \
+            ${{ vars.ARTIFACTORY_IMAGE }} \
+            /bin/bash -c "$(pwd)/.github/workflows/dev-commit.sh"
 
       # TODO: Manually merge using ours strategy. This avoids merge-up pull requests being created
       # Process is:
