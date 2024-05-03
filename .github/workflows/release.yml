@@ -153,7 +153,9 @@ jobs:
 
       - name: "Prepare release message"
         run: |
-          echo "${{ format(env.default-release-message, env.PACKAGE_VERSION, inputs.jira-version-number) }}" > release-message
+          cat > release-message <<'EOL'
+          ${{ format(env.default-release-message, env.PACKAGE_VERSION, inputs.jira-version-number) }}
+          EOL
           cat changelog >> release-message
 
       # Update release with correct release information
