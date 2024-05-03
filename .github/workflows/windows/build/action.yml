@@ -1,0 +1,30 @@
+name: "Build DLL files for Windows"
+description: "Prepares the PHP build environment for the MongoDB driver"
+inputs:
+  version:
+    description: "PHP version to build for"
+    required: true
+  arch:
+    description: "The architecture to build for (x64 or x86)"
+    required: true
+  ts:
+    description: "Thread-safety (nts or ts)"
+    required: true
+outputs:
+  build-dir:
+    description: "The build directory to be used"
+    value: ${{ steps.prepare-build-env.outputs.build-dir }}
+runs:
+  using: composite
+  steps:
+    - name: Prepare build environment
+      id: prepare-build-env
+      uses: ./.github/workflows/windows/prepare-build
+      with:
+        version: ${{ inputs.version }}
+        arch: ${{ inputs.arch }}
+        ts: ${{ inputs.ts }}
+
+    - name: Build driver
+      shell: cmd
+      run: nmake /nologo

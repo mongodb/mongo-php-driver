@@ -7,8 +7,6 @@ on:
       - "master"
       - "feature/*"
   push:
-    tags:
-      - "*"
     branches:
       - "v*.*"
       - "master"
@@ -33,19 +31,15 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 2
           submodules: true
 
-      - name: Prepare build environment
-        id: prepare-build
-        uses: ./.github/workflows/windows/prepare-build
+      - name: "Build Driver"
+        id: build-driver
+        uses: ./.github/workflows/windows/build
         with:
           version: ${{ matrix.php }}
           arch: ${{ matrix.arch }}
           ts: ${{ matrix.ts }}
-
-      - name: Build driver
-        run: nmake /nologo
 
       - name: Cache build artifacts for subsequent builds
         id: cache-build-artifacts
@@ -53,33 +47,12 @@ jobs:
         with:
           key: ${{ github.sha }}-${{ matrix.php }}-${{ matrix.ts }}-${{ matrix.arch }}
           path: |
-            ${{ steps.prepare-build.outputs.build-dir }}\php_mongodb.dll
-            ${{ steps.prepare-build.outputs.build-dir }}\php_mongodb.pdb
-
-      - name: Copy DLL and PDB files to CWD
-        if: ${{ github.event_name == 'push' }}
-        run: |
-          cp .github/workflows/get-build-dir.bat .
-          for /F "usebackq tokens=*" %%i in (`get-build-dir.bat`) do set BUILD_DIR=%%i
-          echo BUILD_DIR=%BUILD_DIR%
-          cp %BUILD_DIR%\php_mongodb.dll .
-          cp %BUILD_DIR%\php_mongodb.pdb .
-
-      - name: Upload DLL and PDB files as build artifacts
-        if: ${{ github.event_name == 'push' }}
-        uses: actions/upload-artifact@v4
-        with:
-          name: php_mongodb-${{ github.sha }}-${{ matrix.php }}-${{ matrix.ts }}-${{ matrix.arch }}
-          path: |
-            php_mongodb.dll
-            php_mongodb.pdb
-          retention-days: 3
+            ${{ steps.build-driver.outputs.build-dir }}\php_mongodb.dll
+            ${{ steps.build-driver.outputs.build-dir }}\php_mongodb.pdb
 
   test:
     name: "Windows Tests"
     runs-on: windows-2022
-    # Run tests only when pushing to a branch. When pushing a tag, we're only interested in building the DLLs.
-    if: ${{ github.ref_type == 'branch' }}
     needs: build
     defaults:
       run:
@@ -97,7 +70,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 2
           submodules: true
 
       - name: Prepare build environment

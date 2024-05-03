@@ -1,0 +1,110 @@
+name: "Package Release"
+run-name: "Package Release ${{ github.ref_name }}"
+
+on:
+  push:
+    tags:
+      - "*"
+
+jobs:
+  build-pecl:
+    name: "Create PECL package"
+    runs-on: "ubuntu-latest"
+
+    steps:
+      - name: "Checkout"
+        uses: "actions/checkout@v4"
+        with:
+          # Manually specify a ref. When actions/checkout is run for a tag without a ref, it looks up the underlying
+          # commit and specifically fetches this to the refs/tags/<tag> ref, which denies us access to the tag message
+          ref: ${{ github.ref }}
+          submodules: true
+
+      - name: "Build Driver"
+        uses: ./.github/workflows/linux/build
+        with:
+          version: "8.3"
+
+      - name: "Write changelog file for packaging"
+        run: git tag -l ${{ github.ref_name }} --format='%(contents)' > changelog
+
+      # This will fill in the release notes from the previously generated changelog
+      - name: "Build package.xml"
+        run: "make package.xml RELEASE_NOTES_FILE=$(pwd)/changelog"
+
+      - name: "Build release archive"
+        run: "make package"
+
+      # PECL always uses the version for the package name.
+      # Read it from the version file and store in env to use when uploading artifacts
+      - name: "Read current package version"
+        run: echo "PACKAGE_VERSION=$(./bin/update-release-version.php get-version)" >> "$GITHUB_ENV"
+
+      - name: "Install release archive to verify correctness"
+        run: sudo pecl install mongodb-${{ env.PACKAGE_VERSION }}.tgz
+
+      - name: "Upload artifact"
+        uses: actions/upload-artifact@v4
+        with:
+          name: mongodb-${{ env.PACKAGE_VERSION }}.tgz
+          path: mongodb-${{ env.PACKAGE_VERSION }}.tgz
+          retention-days: 3
+
+      - name: "Upload release artifact"
+        run: gh release upload ${{ github.ref_name }} mongodb-${{ env.PACKAGE_VERSION }}.tgz
+        continue-on-error: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  build-windows:
+    name: "Create Windows package"
+    runs-on: windows-2022
+    defaults:
+      run:
+        shell: cmd
+
+    strategy:
+      fail-fast: false
+      matrix:
+        # Note: keep this in sync with the Windows matrix in windows-tests.yml
+        php: [ "7.4", "8.0", "8.1", "8.2", "8.3" ]
+        arch: [ x64, x86 ]
+        ts: [ ts, nts ]
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - name: "Build Driver"
+        id: build-driver
+        uses: ./.github/workflows/windows/build
+        with:
+          version: ${{ matrix.php }}
+          arch: ${{ matrix.arch }}
+          ts: ${{ matrix.ts }}
+
+      - name: "Copy DLL and PDB files to CWD"
+        run: |
+          cp %BUILD_DIR%\php_mongodb.dll .
+          cp %BUILD_DIR%\php_mongodb.pdb .
+        env:
+          BUILD_DIR: ${{ steps.build-driver.outputs.build-dir }}
+
+      - name: "Upload DLL and PDB files as build artifacts"
+        uses: actions/upload-artifact@v4
+        with:
+          name: php_mongodb-${{ github.ref_name }}-${{ matrix.php }}-${{ matrix.ts }}-${{ matrix.arch }}
+          path: |
+            php_mongodb.dll
+            php_mongodb.pdb
+          retention-days: 3
+
+      - name: "Create and upload release artifact"
+        run: |
+          set ARCHIVE=php_mongodb-${{ github.ref_name }}-${{ matrix.php }}-${{ matrix.ts }}-${{ matrix.arch }}.zip
+          zip %ARCHIVE% php_mongodb.dll php_mongodb.pdb CREDITS CONTRIBUTING.md LICENSE README.md THIRD_PARTY_NOTICES
+          gh release upload ${{ github.ref_name }} %ARCHIVE%
+        continue-on-error: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
