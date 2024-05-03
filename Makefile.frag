@@ -20,6 +20,8 @@ help:
 	@echo ""
 	@echo -e "\t$$ make package.xml"
 	@echo -e "\t       - Creates a package.xml file with empty release notes"
+	@echo -e "\t$$ make package.xml RELEASE_NOTES_FILE=changelog"
+	@echo -e "\t       - Creates a package.xml file with release notes read from the indicated file"
 	@echo -e "\t$$ make package"
 	@echo -e "\t       - Creates the pecl archive to use for provisioning"
 
@@ -59,7 +61,7 @@ package:
 	pecl package package.xml
 
 package.xml:
-	php bin/prep-release.php $(MONGODB_VERSION) $(MONGODB_STABILITY)
+	php bin/prep-release.php $(MONGODB_VERSION) $(MONGODB_STABILITY) $(RELEASE_NOTES_FILE)
 
 libmongoc-version-current:
 	cd src/libmongoc/ && python build/calc_release_version.py > ../LIBMONGOC_VERSION_CURRENT

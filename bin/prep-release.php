@@ -151,17 +151,18 @@ function usage() {
     global $argv;
 
     echo "Usage:\n\t";
-    echo $argv[0], " <version> <stability>\n";
+    echo $argv[0], " <version> <stability> [<release-notes-file>]\n";
 
     exit(1);
 }
 
-if ($argc != 3) {
+if ($argc != 3 && $argc != 4) {
     usage();
 }
 
 $VERSION = $argv[1];
 $STABILITY = $argv[2];
+$RELEASE_NOTES_FILE = $argv[3] ?? null;
 
 /* 0.x.y. are developmental releases and cannot be stable */
 if ((int)$VERSION < 1) {
@@ -190,6 +191,7 @@ $REPLACE = array(
     "%RELEASE_VERSION%" => $VERSION,
     "%RELEASE_STABILITY%" => $STABILITY,
     "%RELEASE_FILES%" => join("\n", $TREE),
+    "%RELEASE_NOTES%" => is_string($RELEASE_NOTES_FILE) && file_exists($RELEASE_NOTES_FILE) ? file_get_contents($RELEASE_NOTES_FILE) : '',
 );
 
 $contents = str_replace(array_keys($REPLACE), array_values($REPLACE), $contents);
