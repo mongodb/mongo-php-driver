@@ -99,7 +99,6 @@ jobs:
 
       - name: Create the envfile
         run: |
-          pip install -U -q setuptools
           cat << EOF > envfile
           GRS_CONFIG_USER1_USERNAME=${{ secrets.GRS_CONFIG_USER1_USERNAME }}
           GRS_CONFIG_USER1_PASSWORD=${{ secrets.GRS_CONFIG_USER1_PASSWORD }}
