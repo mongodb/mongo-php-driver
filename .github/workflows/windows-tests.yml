@@ -35,7 +35,7 @@ jobs:
 
       - name: "Build Driver"
         id: build-driver
-        uses: ./.github/workflows/windows/build
+        uses: ./.github/actions/windows/build
         with:
           version: ${{ matrix.php }}
           arch: ${{ matrix.arch }}
@@ -74,7 +74,7 @@ jobs:
 
       - name: Prepare build environment
         id: prepare-build
-        uses: ./.github/workflows/windows/prepare-build
+        uses: ./.github/actions/windows/prepare-build
         with:
           version: ${{ matrix.php }}
           arch: ${{ matrix.arch }}

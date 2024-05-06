@@ -19,7 +19,7 @@ runs:
   steps:
     - name: Prepare build environment
       id: prepare-build-env
-      uses: ./.github/workflows/windows/prepare-build
+      uses: ./.github/actions/windows/prepare-build
       with:
         version: ${{ inputs.version }}
         arch: ${{ inputs.arch }}

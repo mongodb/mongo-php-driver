@@ -64,7 +64,7 @@ jobs:
 
       - name: "Build Driver"
         id: build-driver
-        uses: ./.github/workflows/linux/build
+        uses: ./.github/actions/linux/build
         with:
           version: ${{ matrix.php-version }}
 

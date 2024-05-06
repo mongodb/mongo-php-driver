@@ -21,7 +21,7 @@ jobs:
           submodules: true
 
       - name: "Build Driver"
-        uses: ./.github/workflows/linux/build
+        uses: ./.github/actions/linux/build
         with:
           version: "8.3"
 
@@ -111,7 +111,7 @@ jobs:
 
       - name: "Build Driver"
         id: build-driver
-        uses: ./.github/workflows/windows/build
+        uses: ./.github/actions/windows/build
         with:
           version: ${{ matrix.php }}
           arch: ${{ matrix.arch }}
