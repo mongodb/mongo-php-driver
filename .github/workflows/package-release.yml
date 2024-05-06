@@ -68,7 +68,7 @@ jobs:
             --rm \
             -v $(pwd):$(pwd) \
             -w $(pwd) \
-            ${{ vars.ARTIFACTORY_IMAGE }} \
+            ${{ vars.ARTIFACTORY_IMAGE }}/garasign-git \
             /bin/bash -c "$(pwd)/.github/workflows/create-package-signature.sh ${{ env.PACKAGE_FILE }}"
 
       - name: "Install release archive to verify correctness"

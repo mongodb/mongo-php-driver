@@ -123,7 +123,7 @@ jobs:
             --rm \
             -v $(pwd):$(pwd) \
             -w $(pwd) \
-            ${{ vars.ARTIFACTORY_IMAGE }} \
+            ${{ vars.ARTIFACTORY_IMAGE }}/garasign-git \
             /bin/bash -c "$(pwd)/.github/workflows/commit-and-tag.sh"
 
       - name: "Bump to next development release"
@@ -137,7 +137,7 @@ jobs:
             --rm \
             -v $(pwd):$(pwd) \
             -w $(pwd) \
-            ${{ vars.ARTIFACTORY_IMAGE }} \
+            ${{ vars.ARTIFACTORY_IMAGE }}/garasign-git \
             /bin/bash -c "$(pwd)/.github/workflows/dev-commit.sh"
 
       # TODO: Manually merge using ours strategy. This avoids merge-up pull requests being created
