@@ -43,33 +43,14 @@ jobs:
           echo "PACKAGE_VERSION=${PACKAGE_VERSION}" >> "$GITHUB_ENV"
           echo "PACKAGE_FILE=mongodb-${PACKAGE_VERSION}.tgz" >> "$GITHUB_ENV"
 
-      - name: Create the envfile
-        run: |
-          cat << EOF > envfile
-          GRS_CONFIG_USER1_USERNAME=${{ secrets.GRS_CONFIG_USER1_USERNAME }}
-          GRS_CONFIG_USER1_PASSWORD=${{ secrets.GRS_CONFIG_USER1_PASSWORD }}
-          GPG_KEY_ID=${{ vars.GPG_KEY_ID }}
-          EOF
-
-      - name: Log in to artifactory
-        uses: redhat-actions/podman-login@v1
+      - name: "Create detached signature for PECL package"
+        uses: ./.github/actions/garasign/gpg-sign
         with:
-          username: ${{ secrets.ARTIFACTORY_USER }}
-          password: ${{ secrets.ARTIFACTORY_PASSWORD }}
-          registry: artifactory.corp.mongodb.com
-
-      # This step creates the "Package x.y.z" commit that will be the base of
-      # our tag and creates the release tag. This is run inside the container in
-      # order to create signed git artifacts
-      - name: "Create signature file for package"
-        run: |
-          podman run \
-            --env-file=envfile \
-            --rm \
-            -v $(pwd):$(pwd) \
-            -w $(pwd) \
-            ${{ vars.ARTIFACTORY_IMAGE }}/garasign-git \
-            /bin/bash -c "$(pwd)/.github/workflows/create-package-signature.sh ${{ env.PACKAGE_FILE }}"
+          filename: ${{ env.PACKAGE_FILE }}
+          garasign_username: ${{ secrets.GRS_CONFIG_USER1_USERNAME }}
+          garasign_password: ${{ secrets.GRS_CONFIG_USER1_PASSWORD }}
+          artifactory_username: ${{ secrets.ARTIFACTORY_USER }}
+          artifactory_password: ${{ secrets.ARTIFACTORY_PASSWORD }}
 
       - name: "Install release archive to verify correctness"
         run: sudo pecl install ${{ env.PACKAGE_FILE }}
@@ -162,33 +143,14 @@ jobs:
             php_mongodb.dll
             php_mongodb.pdb
 
-      - name: Create the envfile
-        run: |
-          cat << EOF > envfile
-          GRS_CONFIG_USER1_USERNAME=${{ secrets.GRS_CONFIG_USER1_USERNAME }}
-          GRS_CONFIG_USER1_PASSWORD=${{ secrets.GRS_CONFIG_USER1_PASSWORD }}
-          GPG_KEY_ID=${{ vars.GPG_KEY_ID }}
-          EOF
-
-      - name: Log in to artifactory
-        uses: redhat-actions/podman-login@v1
+      - name: "Create detached DLL signature"
+        uses: ./.github/actions/garasign/gpg-sign
         with:
-          username: ${{ secrets.ARTIFACTORY_USER }}
-          password: ${{ secrets.ARTIFACTORY_PASSWORD }}
-          registry: artifactory.corp.mongodb.com
-
-      # This step creates the "Package x.y.z" commit that will be the base of
-      # our tag and creates the release tag. This is run inside the container in
-      # order to create signed git artifacts
-      - name: "Create signature file for package"
-        run: |
-          podman run \
-            --env-file=envfile \
-            --rm \
-            -v $(pwd):$(pwd) \
-            -w $(pwd) \
-            ${{ vars.ARTIFACTORY_IMAGE }}/garasign-git \
-            /bin/bash -c "$(pwd)/.github/workflows/create-package-signature.sh php_mongodb.dll"
+          filename: php_mongodb.dll
+          garasign_username: ${{ secrets.GRS_CONFIG_USER1_USERNAME }}
+          garasign_password: ${{ secrets.GRS_CONFIG_USER1_PASSWORD }}
+          artifactory_username: ${{ secrets.ARTIFACTORY_USER }}
+          artifactory_password: ${{ secrets.ARTIFACTORY_PASSWORD }}
 
       - name: "Upload DLL and PDB files as build artifacts"
         uses: actions/upload-artifact@v4

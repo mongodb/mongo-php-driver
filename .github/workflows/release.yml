@@ -97,48 +97,34 @@ jobs:
       - name: "Read changelog from draft release"
         run: gh release view ${{ env.PACKAGE_VERSION }} --json body --template '{{ .body }}' >> changelog
 
-      - name: Create the envfile
-        run: |
-          cat << EOF > envfile
-          GRS_CONFIG_USER1_USERNAME=${{ secrets.GRS_CONFIG_USER1_USERNAME }}
-          GRS_CONFIG_USER1_PASSWORD=${{ secrets.GRS_CONFIG_USER1_PASSWORD }}
-          GPG_KEY_ID=${{ vars.GPG_KEY_ID }}
-          PACKAGE_VERSION=${{ env.PACKAGE_VERSION }}
-          EOF
-
-      - name: Log in to artifactory
-        uses: redhat-actions/podman-login@v1
-        with:
-          username: ${{ secrets.ARTIFACTORY_USER }}
-          password: ${{ secrets.ARTIFACTORY_PASSWORD }}
-          registry: artifactory.corp.mongodb.com
-
       # This step creates the "Package x.y.z" commit that will be the base of
       # our tag and creates the release tag. This is run inside the container in
       # order to create signed git artifacts
       - name: "Create package commit and release tag"
-        run: |
-          podman run \
-            --env-file=envfile \
-            --rm \
-            -v $(pwd):$(pwd) \
-            -w $(pwd) \
-            ${{ vars.ARTIFACTORY_IMAGE }}/garasign-git \
-            /bin/bash -c "$(pwd)/.github/workflows/commit-and-tag.sh"
+        uses: ./.github/actions/garasign/git-sign
+        with:
+          command: "$(pwd)/.github/workflows/commit-and-tag.sh ${{ env.PACKAGE_VERSION }} ${{ vars.GPG_KEY_ID }}"
+          garasign_username: ${{ secrets.GRS_CONFIG_USER1_USERNAME }}
+          garasign_password: ${{ secrets.GRS_CONFIG_USER1_PASSWORD }}
+          artifactory_username: ${{ secrets.ARTIFACTORY_USER }}
+          artifactory_password: ${{ secrets.ARTIFACTORY_PASSWORD }}
 
+      # This step needs to happen outside of the container, as PHP is not
+      # available within.
       - name: "Bump to next development release"
         run: ./bin/update-release-version.php to-next-patch-dev
 
       # Create a signed "back to -dev" commit, again inside the container
       - name: "Create dev commit"
-        run: |
-          podman run \
-            --env-file=envfile \
-            --rm \
-            -v $(pwd):$(pwd) \
-            -w $(pwd) \
-            ${{ vars.ARTIFACTORY_IMAGE }}/garasign-git \
-            /bin/bash -c "$(pwd)/.github/workflows/dev-commit.sh"
+        uses: ./.github/actions/garasign/git-sign
+        with:
+          # Setup can be skipped as it was already done before
+          skip_setup: true
+          command: "git commit -m 'Back to -dev' -s --gpg-sign=${{ vars.GPG_KEY_ID }} phongo_version.h"
+          garasign_username: ${{ secrets.GRS_CONFIG_USER1_USERNAME }}
+          garasign_password: ${{ secrets.GRS_CONFIG_USER1_PASSWORD }}
+          artifactory_username: ${{ secrets.ARTIFACTORY_USER }}
+          artifactory_password: ${{ secrets.ARTIFACTORY_PASSWORD }}
 
       # TODO: Manually merge using ours strategy. This avoids merge-up pull requests being created
       # Process is:

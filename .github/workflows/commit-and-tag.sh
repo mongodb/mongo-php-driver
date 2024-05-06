@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 set -e
 
+PACKAGE_VERSION=$1
+GPG_KEY_ID=$2
+
 gpgloader
 
 # Create signed "Package x.y.z" commit
