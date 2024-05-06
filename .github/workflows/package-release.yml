@@ -91,7 +91,7 @@ jobs:
 
   build-windows:
     name: "Create Windows package"
-    runs-on: windows-2022
+    runs-on: windows-latest
     defaults:
       run:
         shell: cmd
@@ -124,20 +124,87 @@ jobs:
         env:
           BUILD_DIR: ${{ steps.build-driver.outputs.build-dir }}
 
+      - name: "Cache build artifacts for subsequent builds"
+        uses: actions/cache/save@v4
+        with:
+          key: ${{ github.sha }}-${{ matrix.php }}-${{ matrix.ts }}-${{ matrix.arch }}
+          enableCrossOsArchive: true
+          path: |
+            php_mongodb.dll
+            php_mongodb.pdb
+
+  sign-and-publish-windows:
+    name: "Sign and Publish Windows package"
+    needs: [build-windows]
+    runs-on: "ubuntu-latest"
+
+    strategy:
+      fail-fast: false
+      matrix:
+        # Note: keep this in sync with the Windows matrix in windows-tests.yml
+        php: [ "7.4", "8.0", "8.1", "8.2", "8.3" ]
+        arch: [ x64, x86 ]
+        ts: [ ts, nts ]
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - name: Restore cached build artifacts
+        id: cache-build-artifacts
+        uses: actions/cache/restore@v4
+        with:
+          fail-on-cache-miss: true
+          key: ${{ github.sha }}-${{ matrix.php }}-${{ matrix.ts }}-${{ matrix.arch }}
+          enableCrossOsArchive: true
+          path: |
+            php_mongodb.dll
+            php_mongodb.pdb
+
+      - name: Create the envfile
+        run: |
+          cat << EOF > envfile
+          GRS_CONFIG_USER1_USERNAME=${{ secrets.GRS_CONFIG_USER1_USERNAME }}
+          GRS_CONFIG_USER1_PASSWORD=${{ secrets.GRS_CONFIG_USER1_PASSWORD }}
+          GPG_KEY_ID=${{ vars.GPG_KEY_ID }}
+          EOF
+
+      - name: Log in to artifactory
+        uses: redhat-actions/podman-login@v1
+        with:
+          username: ${{ secrets.ARTIFACTORY_USER }}
+          password: ${{ secrets.ARTIFACTORY_PASSWORD }}
+          registry: artifactory.corp.mongodb.com
+
+      # This step creates the "Package x.y.z" commit that will be the base of
+      # our tag and creates the release tag. This is run inside the container in
+      # order to create signed git artifacts
+      - name: "Create signature file for package"
+        run: |
+          podman run \
+            --env-file=envfile \
+            --rm \
+            -v $(pwd):$(pwd) \
+            -w $(pwd) \
+            ${{ vars.ARTIFACTORY_IMAGE }}/garasign-git \
+            /bin/bash -c "$(pwd)/.github/workflows/create-package-signature.sh php_mongodb.dll"
+
       - name: "Upload DLL and PDB files as build artifacts"
         uses: actions/upload-artifact@v4
         with:
-          name: php_mongodb-${{ github.ref_name }}-${{ matrix.php }}-${{ matrix.ts }}-${{ matrix.arch }}
+          name: php_mongodb-${{ github.sha }}-${{ matrix.php }}-${{ matrix.ts }}-${{ matrix.arch }}
           path: |
             php_mongodb.dll
+            php_mongodb.dll.sig
             php_mongodb.pdb
           retention-days: 3
 
       - name: "Create and upload release artifact"
         run: |
-          set ARCHIVE=php_mongodb-${{ github.ref_name }}-${{ matrix.php }}-${{ matrix.ts }}-${{ matrix.arch }}.zip
-          zip %ARCHIVE% php_mongodb.dll php_mongodb.pdb CREDITS CONTRIBUTING.md LICENSE README.md THIRD_PARTY_NOTICES
-          gh release upload ${{ github.ref_name }} %ARCHIVE%
+          ARCHIVE=php_mongodb-${{ github.ref_name }}-${{ matrix.php }}-${{ matrix.ts }}-${{ matrix.arch }}.zip
+          zip ${ARCHIVE} php_mongodb.dll php_mongodb.dll.sig php_mongodb.pdb CREDITS CONTRIBUTING.md LICENSE README.md THIRD_PARTY_NOTICES
+          gh release upload ${{ github.ref_name }} ${ARCHIVE}
         continue-on-error: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
