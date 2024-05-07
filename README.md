@@ -36,7 +36,53 @@ This extension is intended to be used alongside the
 [MongoDB PHP Library](https://github.com/mongodb/mongo-php-library), which is
 distributed as the
 [`mongodb/mongodb`](https://packagist.org/packages/mongodb/mongodb) package for
-for [Composer](https://getcomposer.org).
+[Composer](https://getcomposer.org).
+
+## Release Integrity
+
+Releases are created automatically and signed using the 
+[PHP team's GPG key](https://pgp.mongodb.com/php-driver.asc). This applies to
+the git tag as well as all release packages provided as part of a
+[GitHub release](https://github.com/mongodb/mongo-php-library/releases). To
+verify the provided packages, download the key and import it using `gpg`:
+
+```shell
+gpg --import php-driver.asc
+```
+
+### PECL package
+
+PECL packages are made available as release artifacts on GitHub, as well as on
+the [PECL homepage](https://pecl.php.net/mongodb). The GitHub release will also
+contain a detached signature file for the PECL package (named
+`mongodb-X.Y.Z.tgz.sig`).
+
+To verify the integrity of the downloaded package, run the following command:
+
+```shell
+gpg --verify mongodb-X.Y.Z.tgz.sig mongodb-X.Y.Z.tgz
+```
+
+> [!NOTE]
+> No verification is done when using `pecl` to install the package. To ensure
+> release integrity when using `pecl`, download the tarball manually from the
+> GitHub release, verify the signature, then install the package from the
+> downloaded tarball using `pecl install mongodb-X.Y.Z.tgz`.
+
+### Windows
+
+Windows binaries distributed through GitHub releases contain a detached
+signature for the `php_mongodb.dll` file named `php_mongodb.dll.sig`. To verify
+the integrity of the DLL, run the following command:
+
+```shell
+gpg --verify php_mongodb.dll.sig php_mongodb.dll.tgz
+```
+
+> [!NOTE]
+> Windows binaries distributed directly through PECL are not signed by MongoDB
+> and cannot be verified. If you need to verify the integrity of the downloaded
+> binary, always download them from the GitHub release.
 
 ## Reporting Issues
 
