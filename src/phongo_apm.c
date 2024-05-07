@@ -144,11 +144,11 @@ static void phongo_apm_command_started(const mongoc_apm_command_started_t* event
 	p_event = Z_COMMANDSTARTEDEVENT_OBJ_P(&z_event);
 
 	p_event->command_name         = estrdup(mongoc_apm_command_started_get_command_name(event));
+	p_event->database_name        = estrdup(mongoc_apm_command_started_get_database_name(event));
 	p_event->server_id            = mongoc_apm_command_started_get_server_id(event);
 	p_event->operation_id         = mongoc_apm_command_started_get_operation_id(event);
 	p_event->request_id           = mongoc_apm_command_started_get_request_id(event);
 	p_event->command              = bson_copy(mongoc_apm_command_started_get_command(event));
-	p_event->database_name        = estrdup(mongoc_apm_command_started_get_database_name(event));
 	p_event->server_connection_id = mongoc_apm_command_started_get_server_connection_id_int64(event);
 	p_event->has_service_id       = mongoc_apm_command_started_get_service_id(event) != NULL;
 
@@ -190,6 +190,7 @@ static void phongo_apm_command_succeeded(const mongoc_apm_command_succeeded_t* e
 	p_event = Z_COMMANDSUCCEEDEDEVENT_OBJ_P(&z_event);
 
 	p_event->command_name         = estrdup(mongoc_apm_command_succeeded_get_command_name(event));
+	p_event->database_name        = estrdup(mongoc_apm_command_succeeded_get_database_name(event));
 	p_event->server_id            = mongoc_apm_command_succeeded_get_server_id(event);
 	p_event->operation_id         = mongoc_apm_command_succeeded_get_operation_id(event);
 	p_event->request_id           = mongoc_apm_command_succeeded_get_request_id(event);
@@ -237,6 +238,7 @@ static void phongo_apm_command_failed(const mongoc_apm_command_failed_t* event)
 	p_event = Z_COMMANDFAILEDEVENT_OBJ_P(&z_event);
 
 	p_event->command_name         = estrdup(mongoc_apm_command_failed_get_command_name(event));
+	p_event->database_name        = estrdup(mongoc_apm_command_failed_get_database_name(event));
 	p_event->server_id            = mongoc_apm_command_failed_get_server_id(event);
 	p_event->operation_id         = mongoc_apm_command_failed_get_operation_id(event);
 	p_event->request_id           = mongoc_apm_command_failed_get_request_id(event);

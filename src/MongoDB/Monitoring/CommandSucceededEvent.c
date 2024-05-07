@@ -43,6 +43,18 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_CommandSucceededEvent, getCommandNam
 	RETVAL_STRING(intern->command_name);
 }
 
+/* Returns the database name for this event */
+static PHP_METHOD(MongoDB_Driver_Monitoring_CommandSucceededEvent, getDatabaseName)
+{
+	php_phongo_commandsucceededevent_t* intern;
+
+	intern = Z_COMMANDSUCCEEDEDEVENT_OBJ_P(getThis());
+
+	PHONGO_PARSE_PARAMETERS_NONE();
+
+	RETVAL_STRING(intern->database_name);
+}
+
 /* Returns the event's duration in microseconds */
 static PHP_METHOD(MongoDB_Driver_Monitoring_CommandSucceededEvent, getDurationMicros)
 {
@@ -175,6 +187,10 @@ static void php_phongo_commandsucceededevent_free_object(zend_object* object)
 
 	if (intern->command_name) {
 		efree(intern->command_name);
+	}
+
+	if (intern->database_name) {
+		efree(intern->database_name);
 	}
 }
 

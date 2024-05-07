@@ -8,50 +8,47 @@ MongoDB\Driver\Monitoring\CommandStartedEvent
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
 
-$m = create_test_manager();
-
 class MySubscriber implements MongoDB\Driver\Monitoring\CommandSubscriber
 {
-    public function commandStarted( \MongoDB\Driver\Monitoring\CommandStartedEvent $event ): void
+    public function commandStarted(MongoDB\Driver\Monitoring\CommandStartedEvent $event): void
     {
-        echo "started: ", $event->getCommandName(), "\n";
-        echo "- getCommand() returns an object: ", is_object( $event->getCommand() ) ? 'yes' : 'no', "\n";
-        echo "- getCommand() returns a stdClass object: ", $event->getCommand() instanceof stdClass ? 'yes' : 'no', "\n";
-        echo "- getDatabaseName() returns a string: ", is_string( $event->getDatabaseName() ) ? 'yes' : 'no', "\n";
-        echo "- getDatabaseName() returns '", $event->getDatabaseName(), "'\n";
-        echo "- getCommandName() returns a string: ", is_string( $event->getCommandName() ) ? 'yes' : 'no', "\n";
-        echo "- getCommandName() returns '", $event->getCommandName(), "'\n";
-        echo "- getServer() returns an object: ", is_object( $event->getServer() ) ? 'yes' : 'no', "\n";
-        echo "- getServer() returns a Server object: ", $event->getServer() instanceof MongoDB\Driver\Server ? 'yes' : 'no', "\n";
-        echo "- getOperationId() returns a string: ", is_string( $event->getOperationId() ) ? 'yes' : 'no', "\n";
-        echo "- getRequestId() returns a string: ", is_string( $event->getRequestId() ) ? 'yes' : 'no', "\n";
+        var_dump($event->getCommand());
+        var_dump($event->getCommandName());
+        var_dump($event->getDatabaseName());
+        var_dump($event->getOperationId());
+        var_dump($event->getRequestId());
+        var_dump($event->getServer());
+
+        /* Note: getServerConnectionId() and getServiceId() have more stringent
+         * requirements and are tested separately. */
     }
 
-    public function commandSucceeded( \MongoDB\Driver\Monitoring\CommandSucceededEvent $event ): void
+    public function commandSucceeded(MongoDB\Driver\Monitoring\CommandSucceededEvent $event): void
     {
     }
 
-    public function commandFailed( \MongoDB\Driver\Monitoring\CommandFailedEvent $event ): void
+    public function commandFailed(MongoDB\Driver\Monitoring\CommandFailedEvent $event): void
     {
     }
 }
 
-$query = new MongoDB\Driver\Query( [] );
-$subscriber = new MySubscriber;
+$manager = create_test_manager();
 
-MongoDB\Driver\Monitoring\addSubscriber( $subscriber );
+$subscriber = new MySubscriber();
+MongoDB\Driver\Monitoring\addSubscriber($subscriber);
 
-$cursor = $m->executeQuery( "demo.test", $query );
+$command = new MongoDB\Driver\Command(['ping' => 1]);
+$manager->executeCommand('admin', $command);
+
 ?>
---EXPECT--
-started: find
-- getCommand() returns an object: yes
-- getCommand() returns a stdClass object: yes
-- getDatabaseName() returns a string: yes
-- getDatabaseName() returns 'demo'
-- getCommandName() returns a string: yes
-- getCommandName() returns 'find'
-- getServer() returns an object: yes
-- getServer() returns a Server object: yes
-- getOperationId() returns a string: yes
-- getRequestId() returns a string: yes
+--EXPECTF--
+object(stdClass)#%d (%d) {
+  %A
+}
+string(4) "ping"
+string(5) "admin"
+string(%d) "%d"
+string(%d) "%d"
+object(MongoDB\Driver\Server)#%d (%d) {
+  %A
+}
