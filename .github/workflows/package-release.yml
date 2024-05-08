@@ -157,11 +157,16 @@ jobs:
       - name: "Upload DLL and PDB files as build artifacts"
         uses: actions/upload-artifact@v4
         with:
-          name: php_mongodb-${{ github.sha }}-${{ matrix.php }}-${{ matrix.ts }}-${{ matrix.arch }}
+          name: php_mongodb-${{ github.ref_name }}-${{ matrix.php }}-${{ matrix.ts }}-${{ matrix.arch }}
           path: |
             php_mongodb.dll
             php_mongodb.dll.sig
             php_mongodb.pdb
+            CREDITS
+            CONTRIBUTING.md
+            LICENSE
+            README.md
+            THIRD_PARTY_NOTICES
           retention-days: 3
 
       - name: "Create and upload release artifact"
