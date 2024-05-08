@@ -13,6 +13,8 @@ final class CommandFailedEvent
 
     final public function getCommandName(): string {}
 
+    final public function getDatabaseName(): string {}
+
     final public function getDurationMicros(): int {}
 
     final public function getError(): \Exception {}

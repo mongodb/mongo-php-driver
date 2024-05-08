@@ -13,6 +13,8 @@ final class CommandSucceededEvent
 
     final public function getCommandName(): string {}
 
+    final public function getDatabaseName(): string {}
+
     final public function getDurationMicros(): int {}
 
     final public function getOperationId(): string {}

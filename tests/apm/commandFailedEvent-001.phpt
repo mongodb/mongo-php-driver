@@ -8,14 +8,10 @@ MongoDB\Driver\Monitoring\CommandFailedEvent
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
 
-$m = create_test_manager();
-
 class MySubscriber implements MongoDB\Driver\Monitoring\CommandSubscriber
 {
-    public function commandStarted( \MongoDB\Driver\Monitoring\CommandStartedEvent $event ): void
+    public function commandStarted(MongoDB\Driver\Monitoring\CommandStartedEvent $event): void
     {
-        echo "started: ", $event->getCommandName(), "\n";
-
         /* bson_get_monotonic_time() may only have 10-16 millisecond precision
          * on Windows. Sleep to ensure that a non-zero value is reported for
          * CommandFailedEvent's duration. */
@@ -24,51 +20,51 @@ class MySubscriber implements MongoDB\Driver\Monitoring\CommandSubscriber
         }
     }
 
-    public function commandSucceeded( \MongoDB\Driver\Monitoring\CommandSucceededEvent $event ): void
+    public function commandSucceeded(MongoDB\Driver\Monitoring\CommandSucceededEvent $event): void
     {
     }
 
-    public function commandFailed( \MongoDB\Driver\Monitoring\CommandFailedEvent $event ): void
+    public function commandFailed(MongoDB\Driver\Monitoring\CommandFailedEvent $event): void
     {
-        echo "failed: ", $event->getCommandName(), "\n";
-        echo "- getError() returns an object: ", is_object( $event->getError() ) ? 'yes' : 'no', "\n";
-        echo "- getError() returns an MongoDB\Driver\Exception\Exception object: ", $event->getError() instanceof MongoDB\Driver\Exception\Exception ? 'yes' : 'no', "\n";
-        echo "- getDurationMicros() returns an integer: ", is_integer( $event->getDurationMicros() ) ? 'yes' : 'no', "\n";
-        echo "- getDurationMicros() returns > 0: ", $event->getDurationMicros() > 0 ? 'yes' : 'no', "\n";
-        echo "- getCommandName() returns a string: ", is_string( $event->getCommandName() ) ? 'yes' : 'no', "\n";
-        echo "- getCommandName() returns '", $event->getCommandName(), "'\n";
-        echo "- getServer() returns an object: ", is_object( $event->getServer() ) ? 'yes' : 'no', "\n";
-        echo "- getServer() returns a Server object: ", $event->getServer() instanceof MongoDB\Driver\Server ? 'yes' : 'no', "\n";
-        echo "- getOperationId() returns a string: ", is_string( $event->getOperationId() ) ? 'yes' : 'no', "\n";
-        echo "- getRequestId() returns a string: ", is_string( $event->getRequestId() ) ? 'yes' : 'no', "\n";
+        var_dump($event->getCommandName());
+        var_dump($event->getDatabaseName());
+        var_dump($event->getDurationMicros());
+        echo "getDurationMicros() returns > 0: ", $event->getDurationMicros() > 0 ? 'yes' : 'no', "\n";
+        var_dump($event->getError() instanceof MongoDB\Driver\Exception\Exception);
+        var_dump($event->getOperationId());
+        var_dump($event->getReply());
+        var_dump($event->getRequestId());
+        var_dump($event->getServer());
+
+        /* Note: getServerConnectionId() and getServiceId() have more stringent
+         * requirements and are tested separately. */
     }
 }
 
-$subscriber = new MySubscriber;
+$manager = create_test_manager();
 
-MongoDB\Driver\Monitoring\addSubscriber( $subscriber );
+$subscriber = new MySubscriber();
+MongoDB\Driver\Monitoring\addSubscriber($subscriber);
 
-$primary = get_primary_server(URI);
-$command = new \MongoDB\Driver\Command([
-    'aggregate' => COLLECTION_NAME,
-    'pipeline' => [['$unsupported' => 1]]
-]);
+$command = new MongoDB\Driver\Command(['unsupportedCommand' => 1]);
+
 try {
-    $primary->executeCommand(DATABASE_NAME, $command);
+    $manager->executeCommand('admin', $command);
 } catch (Exception $e) {
-    /* Swallow */
 }
+
 ?>
---EXPECT--
-started: aggregate
-failed: aggregate
-- getError() returns an object: yes
-- getError() returns an MongoDB\Driver\Exception\Exception object: yes
-- getDurationMicros() returns an integer: yes
-- getDurationMicros() returns > 0: yes
-- getCommandName() returns a string: yes
-- getCommandName() returns 'aggregate'
-- getServer() returns an object: yes
-- getServer() returns a Server object: yes
-- getOperationId() returns a string: yes
-- getRequestId() returns a string: yes
+--EXPECTF--
+string(18) "unsupportedCommand"
+string(5) "admin"
+int(%d)
+getDurationMicros() returns > 0: yes
+bool(true)
+string(%d) "%d"
+object(stdClass)#%d (%d) {
+  %A
+}
+string(%d) "%d"
+object(MongoDB\Driver\Server)#%d (%d) {
+  %A
+}
