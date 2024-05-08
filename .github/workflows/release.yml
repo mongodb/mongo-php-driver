@@ -103,7 +103,7 @@ jobs:
       - name: "Create package commit and release tag"
         uses: mongodb-labs/drivers-github-tools/garasign/git-sign@main
         with:
-          command: "$(pwd)/.github/workflows/commit-and-tag.sh ${{ env.PACKAGE_VERSION }} ${{ vars.GPG_KEY_ID }}"
+          command: "$(pwd)/.github/workflows/commit-and-tag.sh ${{ env.PACKAGE_VERSION }} ${{ vars.GPG_KEY_ID }} changelog"
           garasign_username: ${{ secrets.GRS_CONFIG_USER1_USERNAME }}
           garasign_password: ${{ secrets.GRS_CONFIG_USER1_PASSWORD }}
           artifactory_username: ${{ secrets.ARTIFACTORY_USER }}
