@@ -133,8 +133,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-        with:
-          submodules: true
 
       - name: Restore cached build artifacts
         id: cache-build-artifacts
