@@ -97,13 +97,18 @@ jobs:
       - name: "Read changelog from draft release"
         run: gh release view ${{ env.PACKAGE_VERSION }} --json body --template '{{ .body }}' >> changelog
 
+      - name: "Prepare tag message"
+        run: |
+          echo "Release ${PACKAGE_VERSION}" > tag-message
+          cat changelog >> tag-message
+
       # This step creates the "Package x.y.z" commit that will be the base of
       # our tag and creates the release tag. This is run inside the container in
       # order to create signed git artifacts
       - name: "Create package commit and release tag"
         uses: mongodb-labs/drivers-github-tools/garasign/git-sign@main
         with:
-          command: "$(pwd)/.github/workflows/commit-and-tag.sh ${{ env.PACKAGE_VERSION }} ${{ vars.GPG_KEY_ID }} changelog"
+          command: "$(pwd)/.github/workflows/commit-and-tag.sh ${{ env.PACKAGE_VERSION }} ${{ vars.GPG_KEY_ID }} tag-message"
           garasign_username: ${{ secrets.GRS_CONFIG_USER1_USERNAME }}
           garasign_password: ${{ secrets.GRS_CONFIG_USER1_PASSWORD }}
           artifactory_username: ${{ secrets.ARTIFACTORY_USER }}
