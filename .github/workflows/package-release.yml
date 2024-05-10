@@ -21,7 +21,7 @@ jobs:
           submodules: true
 
       - name: "Build Driver"
-        uses: ./.github/workflows/linux/build
+        uses: ./.github/actions/linux/build
         with:
           version: "8.3"
 
@@ -38,27 +38,43 @@ jobs:
       # PECL always uses the version for the package name.
       # Read it from the version file and store in env to use when uploading artifacts
       - name: "Read current package version"
-        run: echo "PACKAGE_VERSION=$(./bin/update-release-version.php get-version)" >> "$GITHUB_ENV"
+        run: |
+          PACKAGE_VERSION=$(./bin/update-release-version.php get-version)
+          echo "PACKAGE_VERSION=${PACKAGE_VERSION}" >> "$GITHUB_ENV"
+          echo "PACKAGE_FILE=mongodb-${PACKAGE_VERSION}.tgz" >> "$GITHUB_ENV"
+
+      - name: "Create detached signature for PECL package"
+        uses: mongodb-labs/drivers-github-tools/garasign/gpg-sign@main
+        with:
+          filenames: ${{ env.PACKAGE_FILE }}
+          garasign_username: ${{ secrets.GRS_CONFIG_USER1_USERNAME }}
+          garasign_password: ${{ secrets.GRS_CONFIG_USER1_PASSWORD }}
+          artifactory_username: ${{ secrets.ARTIFACTORY_USER }}
+          artifactory_password: ${{ secrets.ARTIFACTORY_PASSWORD }}
 
       - name: "Install release archive to verify correctness"
-        run: sudo pecl install mongodb-${{ env.PACKAGE_VERSION }}.tgz
+        run: sudo pecl install ${{ env.PACKAGE_FILE }}
 
-      - name: "Upload artifact"
+      - name: "Upload artifacts"
         uses: actions/upload-artifact@v4
         with:
-          name: mongodb-${{ env.PACKAGE_VERSION }}.tgz
-          path: mongodb-${{ env.PACKAGE_VERSION }}.tgz
+          name: ${{ env.PACKAGE_FILE }}
+          path: |
+            ${{ env.PACKAGE_FILE }}
+            ${{ env.PACKAGE_FILE }}.sig
           retention-days: 3
 
-      - name: "Upload release artifact"
-        run: gh release upload ${{ github.ref_name }} mongodb-${{ env.PACKAGE_VERSION }}.tgz
+      - name: "Upload release artifacts"
+        run: gh release upload ${{ github.ref_name }} ${{ env.PACKAGE_FILE }} ${{ env.PACKAGE_FILE }}.sig
         continue-on-error: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   build-windows:
     name: "Create Windows package"
-    runs-on: windows-2022
+    # windows-latest is required to use enableCrossOsArchive with Ubuntu in the
+    # next step. See https://github.com/actions/cache/blob/main/tips-and-workarounds.md#cross-os-cache
+    runs-on: windows-latest
     defaults:
       run:
         shell: cmd
@@ -78,7 +94,7 @@ jobs:
 
       - name: "Build Driver"
         id: build-driver
-        uses: ./.github/workflows/windows/build
+        uses: ./.github/actions/windows/build
         with:
           version: ${{ matrix.php }}
           arch: ${{ matrix.arch }}
@@ -91,20 +107,73 @@ jobs:
         env:
           BUILD_DIR: ${{ steps.build-driver.outputs.build-dir }}
 
+      - name: "Cache build artifacts for subsequent builds"
+        uses: actions/cache/save@v4
+        with:
+          key: ${{ github.sha }}-${{ matrix.php }}-${{ matrix.ts }}-${{ matrix.arch }}
+          enableCrossOsArchive: true
+          path: |
+            php_mongodb.dll
+            php_mongodb.pdb
+
+  sign-and-publish-windows:
+    name: "Sign and Publish Windows package"
+    needs: [build-windows]
+    # ubuntu-latest is required to use enableCrossOsArchive
+    # See https://github.com/actions/cache/blob/main/tips-and-workarounds.md#cross-os-cache
+    runs-on: "ubuntu-latest"
+
+    strategy:
+      fail-fast: false
+      matrix:
+        # Note: keep this in sync with the Windows matrix in windows-tests.yml
+        php: [ "7.4", "8.0", "8.1", "8.2", "8.3" ]
+        arch: [ x64, x86 ]
+        ts: [ ts, nts ]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Restore cached build artifacts
+        id: cache-build-artifacts
+        uses: actions/cache/restore@v4
+        with:
+          fail-on-cache-miss: true
+          key: ${{ github.sha }}-${{ matrix.php }}-${{ matrix.ts }}-${{ matrix.arch }}
+          enableCrossOsArchive: true
+          path: |
+            php_mongodb.dll
+            php_mongodb.pdb
+
+      - name: "Create detached DLL signature"
+        uses: mongodb-labs/drivers-github-tools/garasign/gpg-sign@main
+        with:
+          filenames: php_mongodb.dll
+          garasign_username: ${{ secrets.GRS_CONFIG_USER1_USERNAME }}
+          garasign_password: ${{ secrets.GRS_CONFIG_USER1_PASSWORD }}
+          artifactory_username: ${{ secrets.ARTIFACTORY_USER }}
+          artifactory_password: ${{ secrets.ARTIFACTORY_PASSWORD }}
+
       - name: "Upload DLL and PDB files as build artifacts"
         uses: actions/upload-artifact@v4
         with:
           name: php_mongodb-${{ github.ref_name }}-${{ matrix.php }}-${{ matrix.ts }}-${{ matrix.arch }}
           path: |
             php_mongodb.dll
+            php_mongodb.dll.sig
             php_mongodb.pdb
+            CREDITS
+            CONTRIBUTING.md
+            LICENSE
+            README.md
+            THIRD_PARTY_NOTICES
           retention-days: 3
 
       - name: "Create and upload release artifact"
         run: |
-          set ARCHIVE=php_mongodb-${{ github.ref_name }}-${{ matrix.php }}-${{ matrix.ts }}-${{ matrix.arch }}.zip
-          zip %ARCHIVE% php_mongodb.dll php_mongodb.pdb CREDITS CONTRIBUTING.md LICENSE README.md THIRD_PARTY_NOTICES
-          gh release upload ${{ github.ref_name }} %ARCHIVE%
+          ARCHIVE=php_mongodb-${{ github.ref_name }}-${{ matrix.php }}-${{ matrix.ts }}-${{ matrix.arch }}.zip
+          zip ${ARCHIVE} php_mongodb.dll php_mongodb.dll.sig php_mongodb.pdb CREDITS CONTRIBUTING.md LICENSE README.md THIRD_PARTY_NOTICES
+          gh release upload ${{ github.ref_name }} ${ARCHIVE}
         continue-on-error: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
