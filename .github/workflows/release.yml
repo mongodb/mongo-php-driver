@@ -99,7 +99,7 @@ jobs:
 
       - name: "Prepare tag message"
         run: |
-          echo "Release ${PACKAGE_VERSION}" > tag-message
+          echo -e "Release ${PACKAGE_VERSION}\n" > tag-message
           cat changelog >> tag-message
 
       # This step creates the "Package x.y.z" commit that will be the base of
