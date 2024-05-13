@@ -57,6 +57,7 @@ function get_files() {
         "src/libmongoc/src/libmongoc/src/mongoc/*.{c,def,defs,h,h.in}",
         "src/libmongoc/src/zlib-1.*/*.{c,h,h.in}",
         "src/libmongoc/src/utf8proc-2.*/*.{c,h}",
+        "src/libmongoc/src/uthash/uthash-2.*/*.h",
         "src/libmongoc/VERSION*",
 
         "src/libmongocrypt-compat/*.{c,h}",
