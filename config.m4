@@ -323,6 +323,9 @@ if test "$PHP_MONGODB" != "no"; then
     dnl Endian.m4 will modify this when using bundled libmongocrypt
     PHP_MONGODB_LIBMONGOCRYPT_CFLAGS=""
 
+    dnl Save CPPFLAGS, which PlatformFlags.m4 modifies for subsequent M4 scripts
+    old_CPPFLAGS="$CPPFLAGS"
+
     dnl Avoid using AC_CONFIG_MACRO_DIR, which might conflict with PHP
     m4_include(PHP_MONGODB_BASEDIR/scripts/autotools/m4/ax_check_compile_flag.m4)
     m4_include(PHP_MONGODB_BASEDIR/scripts/autotools/m4/ax_prototype.m4)
@@ -354,6 +357,9 @@ if test "$PHP_MONGODB" != "no"; then
     m4_include(PHP_MONGODB_BASEDIR/scripts/autotools/libmongocrypt/CheckSSL.m4)
     m4_include(PHP_MONGODB_BASEDIR/scripts/autotools/libmongocrypt/Endian.m4)
     m4_include(PHP_MONGODB_BASEDIR/scripts/autotools/libmongocrypt/Version.m4)
+
+    dnl Restore CPPFLAGS once all M4 scripts have executed
+    CPPFLAGS="$old_CPPFLAGS"
 
     PHP_MONGODB_BSON_VERSION_STRING="Bundled ($libbson_VERSION_FULL)"
     PHP_MONGODB_MONGOC_VERSION_STRING="Bundled ($libmongoc_VERSION_FULL)"
