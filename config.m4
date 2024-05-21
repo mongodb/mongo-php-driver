@@ -521,7 +521,6 @@ if test "$PHP_MONGODB" != "no"; then
   dnl This must come after PHP_NEW_EXTENSION, otherwise the srcdir won't be set
   PHP_ADD_MAKEFILE_FRAGMENT
 
-  dnl The libmongocrypt line intentionally uses the PHP_LIBBSON flag as that decides whether to build against bundled or system libraries.
   AC_CONFIG_COMMANDS_POST([
     if test "$enable_static" = "no"; then
       echo "
