@@ -16,6 +16,7 @@ dnl so call it once more to ensure C99 remains enabled
 m4_version_prereq([2.70],,[AC_PROG_CC_C99])
 
 # Check that an appropriate C compiler is available.
+# Note: BEGIN_IGNORE_DEPRECATIONS macro requires GCC 4.6+.
 c_compiler="unknown"
 AC_LANG_PUSH([C])
 AC_COMPILE_IFELSE([AC_LANG_PROGRAM([
@@ -26,25 +27,11 @@ AC_COMPILE_IFELSE([AC_LANG_PROGRAM([
 #define GCC_VERSION (__GNUC__ * 10000 \
                      + __GNUC_MINOR__ * 100 \
                      + __GNUC_PATCHLEVEL__)
-#if GCC_VERSION < 40100
+#if GCC_VERSION < 40600
 #error Not a supported GCC compiler
 #endif
 #endif
 ])], [c_compiler="gcc"], [])
-
-# If our BEGIN_IGNORE_DEPRECATIONS macro won't work, pass
-# -Wno-deprecated-declarations
-
-AC_COMPILE_IFELSE([AC_LANG_PROGRAM([
-#if !defined(__clang__) && defined(__GNUC__)
-#define GCC_VERSION (__GNUC__ * 10000 \
-                     + __GNUC_MINOR__ * 100 \
-                     + __GNUC_PATCHLEVEL__)
-#if GCC_VERSION < 40600
-#error Does not support deprecation warning pragmas
-#endif
-#endif
-])], [], [STD_CFLAGS="$STD_CFLAGS -Wno-deprecated-declarations"])
 
 AC_COMPILE_IFELSE([AC_LANG_PROGRAM([
 #if defined(__clang__)
@@ -65,7 +52,7 @@ AC_COMPILE_IFELSE([AC_LANG_PROGRAM([
 AC_LANG_POP([C])
 
 if test "$c_compiler" = "unknown"; then
-    AC_MSG_ERROR([Compiler GCC >= 4.1 or Clang >= 3.3 is required for C compilation])
+    AC_MSG_ERROR([Compiler GCC >= 4.6 or Clang >= 3.3 is required for C compilation])
 fi
 
 AC_C_CONST
