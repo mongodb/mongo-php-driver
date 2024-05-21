@@ -529,6 +529,7 @@ mongodb was configured with the following options:
 Build configuration:
   CC                                               : $CC
   CFLAGS                                           : $CFLAGS
+  CPPFLAGS                                         : $CPPFLAGS
   Extra flags                                      : $PHP_MONGODB_STD_CFLAGS
   Developer flags (slow)                           : $PHP_MONGODB_DEV_CFLAGS
   Code Coverage flags (extra slow                  : $PHP_MONGODB_COVERAGE_CFLAGS
