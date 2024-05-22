@@ -18,12 +18,4 @@ AS_IF([test "$os_darwin" = "yes"],[
     dnl https://opensource.apple.com/source/Libc/Libc-1439.40.11/gen/compat.5.auto.html
     CPPFLAGS="$CPPFLAGS -D_DARWIN_C_SOURCE"
     PHP_MONGODB_BUNDLED_CFLAGS="$PHP_MONGODB_BUNDLED_CFLAGS -D_DARWIN_C_SOURCE"
-
-    dnl Ignore OpenSSL deprecation warnings on OSX
-    AX_CHECK_COMPILE_FLAG([-Wno-deprecated-declarations], [STD_CFLAGS="$STD_CFLAGS -Wno-deprecated-declarations"])
-
-    dnl We know there are some cast-align issues on OSX
-    AX_CHECK_COMPILE_FLAG([-Wno-cast-align], [STD_CFLAGS="$STD_CFLAGS -Wno-cast-align"])
-    AX_CHECK_COMPILE_FLAG([-Wno-unneeded-internal-declaration], [STD_CFLAGS="$STD_CFLAGS -Wno-unneeded-internal-declaration"])
-    AX_CHECK_COMPILE_FLAG([-Wno-error=unused-command-line-argument], [STD_CFLAGS="$STD_CFLAGS -Wno-error=unused-command-line-argument"])
 ])

@@ -24,18 +24,27 @@ if test "$PHP_MONGODB" != "no"; then
   dnl Check PHP version is compatible with this extension
   AC_MSG_CHECKING([PHP version])
 
-  if test -z "$PHP_CONFIG"; then
-    AC_MSG_ERROR([php-config not found])
-  fi
+  if test -z "${PHP_VERSION_ID}"; then
+    if test -z "$PHP_CONFIG"; then
+      AC_MSG_ERROR([php-config not found])
+    fi
 
-  PHP_MONGODB_PHP_VERSION=`${PHP_CONFIG} --version`
-  PHP_MONGODB_PHP_VERSION_ID=`${PHP_CONFIG} --vernum`
+    PHP_MONGODB_PHP_VERSION=`${PHP_CONFIG} --version`
+    PHP_MONGODB_PHP_VERSION_ID=`${PHP_CONFIG} --vernum`
+  else
+    PHP_MONGODB_PHP_VERSION="${PHP_VERSION}"
+    PHP_MONGODB_PHP_VERSION_ID="${PHP_VERSION_ID}"
+  fi
 
   AC_MSG_RESULT($PHP_MONGODB_PHP_VERSION)
 
   if test "$PHP_MONGODB_PHP_VERSION_ID" -lt "70400"; then
     AC_MSG_ERROR([not supported. Need a PHP version >= 7.4.0 (found $PHP_MONGODB_PHP_VERSION)])
   fi
+
+  PHP_MONGODB_STD_CFLAGS=""
+  PHP_MONGODB_DEV_CFLAGS=""
+  PHP_MONGODB_COVERAGE_CFLAGS=""
 
   PHP_ARG_ENABLE([mongodb-developer-flags],
                  [whether to enable developer build flags],
@@ -46,54 +55,53 @@ if test "$PHP_MONGODB" != "no"; then
   PHP_MONGODB_VALIDATE_ARG([PHP_MONGODB_DEVELOPER_FLAGS], [yes no])
 
   if test "$PHP_MONGODB_DEVELOPER_FLAGS" = "yes"; then
+    PHP_MONGODB_STD_CFLAGS="-g -O0 -Wall"
+
     dnl Warn about functions which might be candidates for format attributes
-    AX_CHECK_COMPILE_FLAG(-Wmissing-format-attribute,       _MAINTAINER_CFLAGS="$_MAINTAINER_CFLAGS -Wmissing-format-attribute"     ,, -Werror)
+    AX_CHECK_COMPILE_FLAG(-Wmissing-format-attribute,       PHP_MONGODB_DEV_CFLAGS="$PHP_MONGODB_DEV_CFLAGS -Wmissing-format-attribute"     ,, -Werror)
     dnl Avoid duplicating values for an enum
-    AX_CHECK_COMPILE_FLAG(-Wduplicate-enum,                 _MAINTAINER_CFLAGS="$_MAINTAINER_CFLAGS -Wduplicate-enum"               ,, -Werror)
+    AX_CHECK_COMPILE_FLAG(-Wduplicate-enum,                 PHP_MONGODB_DEV_CFLAGS="$PHP_MONGODB_DEV_CFLAGS -Wduplicate-enum"               ,, -Werror)
     dnl Warns on mismatches between #ifndef and #define header guards
-    AX_CHECK_COMPILE_FLAG(-Wheader-guard,                   _MAINTAINER_CFLAGS="$_MAINTAINER_CFLAGS -Wheader-guard"                 ,, -Werror)
+    AX_CHECK_COMPILE_FLAG(-Wheader-guard,                   PHP_MONGODB_DEV_CFLAGS="$PHP_MONGODB_DEV_CFLAGS -Wheader-guard"                 ,, -Werror)
     dnl logical not of a non-boolean expression
-    AX_CHECK_COMPILE_FLAG(-Wlogical-not-parentheses,        _MAINTAINER_CFLAGS="$_MAINTAINER_CFLAGS -Wlogical-not-parentheses"      ,, -Werror)
+    AX_CHECK_COMPILE_FLAG(-Wlogical-not-parentheses,        PHP_MONGODB_DEV_CFLAGS="$PHP_MONGODB_DEV_CFLAGS -Wlogical-not-parentheses"      ,, -Werror)
     dnl Warn about suspicious uses of logical operators in expressions
-    AX_CHECK_COMPILE_FLAG(-Wlogical-op,                     _MAINTAINER_CFLAGS="$_MAINTAINER_CFLAGS -Wlogical-op"                   ,, -Werror)
+    AX_CHECK_COMPILE_FLAG(-Wlogical-op,                     PHP_MONGODB_DEV_CFLAGS="$PHP_MONGODB_DEV_CFLAGS -Wlogical-op"                   ,, -Werror)
     dnl memory error detector.
     dnl FIXME: -fsanitize=address,undefined for clang. The AX_CHECK_COMPILE_FLAG macro isn't happy about that string :(
-    AX_CHECK_COMPILE_FLAG(-fsanitize-address,               _MAINTAINER_CFLAGS="$_MAINTAINER_CFLAGS -fsanitize-address"             ,, -Werror)
+    AX_CHECK_COMPILE_FLAG(-fsanitize-address,               PHP_MONGODB_DEV_CFLAGS="$PHP_MONGODB_DEV_CFLAGS -fsanitize-address"             ,, -Werror)
     dnl Enable frame debugging
-    AX_CHECK_COMPILE_FLAG(-fno-omit-frame-pointer,          _MAINTAINER_CFLAGS="$_MAINTAINER_CFLAGS -fno-omit-frame-pointer"        ,, -Werror)
+    AX_CHECK_COMPILE_FLAG(-fno-omit-frame-pointer,          PHP_MONGODB_DEV_CFLAGS="$PHP_MONGODB_DEV_CFLAGS -fno-omit-frame-pointer"        ,, -Werror)
     dnl Make sure we don't optimize calls
-    AX_CHECK_COMPILE_FLAG(-fno-optimize-sibling-calls,      _MAINTAINER_CFLAGS="$_MAINTAINER_CFLAGS -fno-optimize-sibling-calls"    ,, -Werror)
-    AX_CHECK_COMPILE_FLAG(-Wlogical-op-parentheses,         _MAINTAINER_CFLAGS="$_MAINTAINER_CFLAGS -Wlogical-op-parentheses"       ,, -Werror)
-    AX_CHECK_COMPILE_FLAG(-Wpointer-bool-conversion,        _MAINTAINER_CFLAGS="$_MAINTAINER_CFLAGS -Wpointer-bool-conversion"      ,, -Werror)
-    AX_CHECK_COMPILE_FLAG(-Wbool-conversion,                _MAINTAINER_CFLAGS="$_MAINTAINER_CFLAGS -Wbool-conversion"              ,, -Werror)
-    AX_CHECK_COMPILE_FLAG(-Wloop-analysis,                  _MAINTAINER_CFLAGS="$_MAINTAINER_CFLAGS -Wloop-analysis"                ,, -Werror)
-    AX_CHECK_COMPILE_FLAG(-Wsizeof-array-argument,          _MAINTAINER_CFLAGS="$_MAINTAINER_CFLAGS -Wsizeof-array-argument"        ,, -Werror)
-    AX_CHECK_COMPILE_FLAG(-Wstring-conversion,              _MAINTAINER_CFLAGS="$_MAINTAINER_CFLAGS -Wstring-conversion"            ,, -Werror)
-    AX_CHECK_COMPILE_FLAG(-Wno-variadic-macros,             _MAINTAINER_CFLAGS="$_MAINTAINER_CFLAGS -Wno-variadic-macros"           ,, -Werror)
-    AX_CHECK_COMPILE_FLAG(-Wno-sign-compare,                _MAINTAINER_CFLAGS="$_MAINTAINER_CFLAGS -Wno-sign-compare"              ,, -Werror)
-    AX_CHECK_COMPILE_FLAG(-fstack-protector,                _MAINTAINER_CFLAGS="$_MAINTAINER_CFLAGS -fstack-protector"              ,, -Werror)
-    AX_CHECK_COMPILE_FLAG(-fno-exceptions,                  _MAINTAINER_CFLAGS="$_MAINTAINER_CFLAGS -fno-exceptions"                ,, -Werror)
-    AX_CHECK_COMPILE_FLAG(-Wformat-security,                _MAINTAINER_CFLAGS="$_MAINTAINER_CFLAGS -Wformat-security"              ,, -Werror)
-    AX_CHECK_COMPILE_FLAG(-Wformat-nonliteral,              _MAINTAINER_CFLAGS="$_MAINTAINER_CFLAGS -Wformat-nonliteral"            ,, -Werror)
-    AX_CHECK_COMPILE_FLAG(-Winit-self,                      _MAINTAINER_CFLAGS="$_MAINTAINER_CFLAGS -Winit-self"                    ,, -Werror)
-    AX_CHECK_COMPILE_FLAG(-Wwrite-strings,                  _MAINTAINER_CFLAGS="$_MAINTAINER_CFLAGS -Wwrite-strings"                ,, -Werror)
-    AX_CHECK_COMPILE_FLAG(-Wenum-compare,                   _MAINTAINER_CFLAGS="$_MAINTAINER_CFLAGS -Wenum-compare"                 ,, -Werror)
-    AX_CHECK_COMPILE_FLAG(-Wempty-body,                     _MAINTAINER_CFLAGS="$_MAINTAINER_CFLAGS -Wempty-body"                   ,, -Werror)
-    AX_CHECK_COMPILE_FLAG(-Wparentheses,                    _MAINTAINER_CFLAGS="$_MAINTAINER_CFLAGS -Wparentheses"                  ,, -Werror)
-    AX_CHECK_COMPILE_FLAG(-Wmaybe-uninitialized,            _MAINTAINER_CFLAGS="$_MAINTAINER_CFLAGS -Wmaybe-uninitialized"          ,, -Werror)
-    AX_CHECK_COMPILE_FLAG(-Wimplicit-fallthrough,           _MAINTAINER_CFLAGS="$_MAINTAINER_CFLAGS -Wimplicit-fallthrough"         ,, -Werror)
-    AX_CHECK_COMPILE_FLAG(-Werror,                          _MAINTAINER_CFLAGS="$_MAINTAINER_CFLAGS -Werror"                        ,, -Werror)
-    AX_CHECK_COMPILE_FLAG(-Wextra,                          _MAINTAINER_CFLAGS="$_MAINTAINER_CFLAGS -Wextra"                        ,, -Werror)
-    AX_CHECK_COMPILE_FLAG(-Wno-unused-parameter,            _MAINTAINER_CFLAGS="$_MAINTAINER_CFLAGS -Wno-unused-parameter"          ,, -Werror)
-    AX_CHECK_COMPILE_FLAG(-Wno-unused-but-set-variable,     _MAINTAINER_CFLAGS="$_MAINTAINER_CFLAGS -Wno-unused-but-set-variable"   ,, -Werror)
-    AX_CHECK_COMPILE_FLAG(-Wno-missing-field-initializers,  _MAINTAINER_CFLAGS="$_MAINTAINER_CFLAGS -Wno-missing-field-initializers",, -Werror)
+    AX_CHECK_COMPILE_FLAG(-fno-optimize-sibling-calls,      PHP_MONGODB_DEV_CFLAGS="$PHP_MONGODB_DEV_CFLAGS -fno-optimize-sibling-calls"    ,, -Werror)
+    AX_CHECK_COMPILE_FLAG(-Wlogical-op-parentheses,         PHP_MONGODB_DEV_CFLAGS="$PHP_MONGODB_DEV_CFLAGS -Wlogical-op-parentheses"       ,, -Werror)
+    AX_CHECK_COMPILE_FLAG(-Wpointer-bool-conversion,        PHP_MONGODB_DEV_CFLAGS="$PHP_MONGODB_DEV_CFLAGS -Wpointer-bool-conversion"      ,, -Werror)
+    AX_CHECK_COMPILE_FLAG(-Wbool-conversion,                PHP_MONGODB_DEV_CFLAGS="$PHP_MONGODB_DEV_CFLAGS -Wbool-conversion"              ,, -Werror)
+    AX_CHECK_COMPILE_FLAG(-Wloop-analysis,                  PHP_MONGODB_DEV_CFLAGS="$PHP_MONGODB_DEV_CFLAGS -Wloop-analysis"                ,, -Werror)
+    AX_CHECK_COMPILE_FLAG(-Wsizeof-array-argument,          PHP_MONGODB_DEV_CFLAGS="$PHP_MONGODB_DEV_CFLAGS -Wsizeof-array-argument"        ,, -Werror)
+    AX_CHECK_COMPILE_FLAG(-Wstring-conversion,              PHP_MONGODB_DEV_CFLAGS="$PHP_MONGODB_DEV_CFLAGS -Wstring-conversion"            ,, -Werror)
+    AX_CHECK_COMPILE_FLAG(-Wno-variadic-macros,             PHP_MONGODB_DEV_CFLAGS="$PHP_MONGODB_DEV_CFLAGS -Wno-variadic-macros"           ,, -Werror)
+    AX_CHECK_COMPILE_FLAG(-Wno-sign-compare,                PHP_MONGODB_DEV_CFLAGS="$PHP_MONGODB_DEV_CFLAGS -Wno-sign-compare"              ,, -Werror)
+    AX_CHECK_COMPILE_FLAG(-fstack-protector,                PHP_MONGODB_DEV_CFLAGS="$PHP_MONGODB_DEV_CFLAGS -fstack-protector"              ,, -Werror)
+    AX_CHECK_COMPILE_FLAG(-fno-exceptions,                  PHP_MONGODB_DEV_CFLAGS="$PHP_MONGODB_DEV_CFLAGS -fno-exceptions"                ,, -Werror)
+    AX_CHECK_COMPILE_FLAG(-Wformat-security,                PHP_MONGODB_DEV_CFLAGS="$PHP_MONGODB_DEV_CFLAGS -Wformat-security"              ,, -Werror)
+    AX_CHECK_COMPILE_FLAG(-Wformat-nonliteral,              PHP_MONGODB_DEV_CFLAGS="$PHP_MONGODB_DEV_CFLAGS -Wformat-nonliteral"            ,, -Werror)
+    AX_CHECK_COMPILE_FLAG(-Winit-self,                      PHP_MONGODB_DEV_CFLAGS="$PHP_MONGODB_DEV_CFLAGS -Winit-self"                    ,, -Werror)
+    AX_CHECK_COMPILE_FLAG(-Wwrite-strings,                  PHP_MONGODB_DEV_CFLAGS="$PHP_MONGODB_DEV_CFLAGS -Wwrite-strings"                ,, -Werror)
+    AX_CHECK_COMPILE_FLAG(-Wenum-compare,                   PHP_MONGODB_DEV_CFLAGS="$PHP_MONGODB_DEV_CFLAGS -Wenum-compare"                 ,, -Werror)
+    AX_CHECK_COMPILE_FLAG(-Wempty-body,                     PHP_MONGODB_DEV_CFLAGS="$PHP_MONGODB_DEV_CFLAGS -Wempty-body"                   ,, -Werror)
+    AX_CHECK_COMPILE_FLAG(-Wparentheses,                    PHP_MONGODB_DEV_CFLAGS="$PHP_MONGODB_DEV_CFLAGS -Wparentheses"                  ,, -Werror)
+    AX_CHECK_COMPILE_FLAG(-Wmaybe-uninitialized,            PHP_MONGODB_DEV_CFLAGS="$PHP_MONGODB_DEV_CFLAGS -Wmaybe-uninitialized"          ,, -Werror)
+    AX_CHECK_COMPILE_FLAG(-Wimplicit-fallthrough,           PHP_MONGODB_DEV_CFLAGS="$PHP_MONGODB_DEV_CFLAGS -Wimplicit-fallthrough"         ,, -Werror)
+    AX_CHECK_COMPILE_FLAG(-Werror,                          PHP_MONGODB_DEV_CFLAGS="$PHP_MONGODB_DEV_CFLAGS -Werror"                        ,, -Werror)
+    AX_CHECK_COMPILE_FLAG(-Wextra,                          PHP_MONGODB_DEV_CFLAGS="$PHP_MONGODB_DEV_CFLAGS -Wextra"                        ,, -Werror)
+    AX_CHECK_COMPILE_FLAG(-Wno-unused-parameter,            PHP_MONGODB_DEV_CFLAGS="$PHP_MONGODB_DEV_CFLAGS -Wno-unused-parameter"          ,, -Werror)
+    AX_CHECK_COMPILE_FLAG(-Wno-unused-but-set-variable,     PHP_MONGODB_DEV_CFLAGS="$PHP_MONGODB_DEV_CFLAGS -Wno-unused-but-set-variable"   ,, -Werror)
+    AX_CHECK_COMPILE_FLAG(-Wno-missing-field-initializers,  PHP_MONGODB_DEV_CFLAGS="$PHP_MONGODB_DEV_CFLAGS -Wno-missing-field-initializers",, -Werror)
 
     if test "$PHP_MONGODB_PHP_VERSION_ID" -ge "80108"; then
-      AX_CHECK_COMPILE_FLAG(-Wstrict-prototypes, _MAINTAINER_CFLAGS="$_MAINTAINER_CFLAGS -Wstrict-prototypes",, -Werror)
+      AX_CHECK_COMPILE_FLAG(-Wstrict-prototypes, PHP_MONGODB_DEV_CFLAGS="$PHP_MONGODB_DEV_CFLAGS -Wstrict-prototypes",, -Werror)
     fi
-
-    MAINTAINER_CFLAGS="$_MAINTAINER_CFLAGS"
-    STD_CFLAGS="-g -O0 -Wall"
   fi
 
 
@@ -110,13 +118,11 @@ if test "$PHP_MONGODB" != "no"; then
       AC_MSG_ERROR(code coverage is not supported for static builds)
     fi
 
-    COVERAGE_CFLAGS="--coverage -g"
-    COVERAGE_LDFLAGS="--coverage"
-
-    MONGODB_SHARED_LIBADD="$MONGODB_SHARED_LIBADD $COVERAGE_LDFLAGS"
+    PHP_MONGODB_COVERAGE_CFLAGS="--coverage -g"
+    MONGODB_SHARED_LIBADD="$MONGODB_SHARED_LIBADD --coverage"
   fi
 
-  PHP_MONGODB_CFLAGS="$STD_CFLAGS $MAINTAINER_CFLAGS $COVERAGE_CFLAGS"
+  PHP_MONGODB_CFLAGS="$PHP_MONGODB_STD_CFLAGS $PHP_MONGODB_DEV_CFLAGS $PHP_MONGODB_COVERAGE_CFLAGS"
 
   PHP_MONGODB_SOURCES="\
     php_phongo.c \
@@ -307,7 +313,7 @@ if test "$PHP_MONGODB" != "no"; then
   fi
 
   if test "$PHP_MONGODB_SYSTEM_LIBS" = "no"; then
-    PHP_MONGODB_BUNDLED_CFLAGS="$STD_CFLAGS -DBSON_COMPILATION -DMONGOC_COMPILATION"
+    PHP_MONGODB_BUNDLED_CFLAGS="$PHP_MONGODB_STD_CFLAGS -DBSON_COMPILATION -DMONGOC_COMPILATION"
 
     dnl CheckUtf8Proc.m4 will modify this when using bundled utf8proc
     PHP_MONGODB_UTF8PROC_CFLAGS=""
@@ -317,6 +323,9 @@ if test "$PHP_MONGODB" != "no"; then
 
     dnl Endian.m4 will modify this when using bundled libmongocrypt
     PHP_MONGODB_LIBMONGOCRYPT_CFLAGS=""
+
+    dnl Save CPPFLAGS, which PlatformFlags.m4 modifies for subsequent M4 scripts
+    old_CPPFLAGS="$CPPFLAGS"
 
     dnl Avoid using AC_CONFIG_MACRO_DIR, which might conflict with PHP
     m4_include(PHP_MONGODB_BASEDIR/scripts/autotools/m4/ax_check_compile_flag.m4)
@@ -349,6 +358,9 @@ if test "$PHP_MONGODB" != "no"; then
     m4_include(PHP_MONGODB_BASEDIR/scripts/autotools/libmongocrypt/CheckSSL.m4)
     m4_include(PHP_MONGODB_BASEDIR/scripts/autotools/libmongocrypt/Endian.m4)
     m4_include(PHP_MONGODB_BASEDIR/scripts/autotools/libmongocrypt/Version.m4)
+
+    dnl Restore CPPFLAGS once all M4 scripts have executed
+    CPPFLAGS="$old_CPPFLAGS"
 
     PHP_MONGODB_BSON_VERSION_STRING="Bundled ($libbson_VERSION_FULL)"
     PHP_MONGODB_MONGOC_VERSION_STRING="Bundled ($libmongoc_VERSION_FULL)"
@@ -510,7 +522,6 @@ if test "$PHP_MONGODB" != "no"; then
   dnl This must come after PHP_NEW_EXTENSION, otherwise the srcdir won't be set
   PHP_ADD_MAKEFILE_FRAGMENT
 
-  dnl The libmongocrypt line intentionally uses the PHP_LIBBSON flag as that decides whether to build against bundled or system libraries.
   AC_CONFIG_COMMANDS_POST([
     if test "$enable_static" = "no"; then
       echo "
@@ -519,9 +530,10 @@ mongodb was configured with the following options:
 Build configuration:
   CC                                               : $CC
   CFLAGS                                           : $CFLAGS
-  Extra CFLAGS                                     : $STD_CFLAGS $EXTRA_CFLAGS
-  Developers flags (slow)                          : $MAINTAINER_CFLAGS
-  Code Coverage flags (extra slow)                 : $COVERAGE_CFLAGS
+  CPPFLAGS                                         : $CPPFLAGS
+  Extra flags                                      : $PHP_MONGODB_STD_CFLAGS
+  Developer flags (slow)                           : $PHP_MONGODB_DEV_CFLAGS
+  Code Coverage flags (extra slow)                 : $PHP_MONGODB_COVERAGE_CFLAGS
   libmongoc                                        : $PHP_MONGODB_BSON_VERSION_STRING
   libbson                                          : $PHP_MONGODB_MONGOC_VERSION_STRING
   libmongocrypt                                    : $PHP_MONGODB_MONGOCRYPT_VERSION_STRING
