@@ -532,7 +532,7 @@ Build configuration:
   CPPFLAGS                                         : $CPPFLAGS
   Extra flags                                      : $PHP_MONGODB_STD_CFLAGS
   Developer flags (slow)                           : $PHP_MONGODB_DEV_CFLAGS
-  Code Coverage flags (extra slow                  : $PHP_MONGODB_COVERAGE_CFLAGS
+  Code Coverage flags (extra slow)                 : $PHP_MONGODB_COVERAGE_CFLAGS
   libmongoc                                        : $PHP_MONGODB_BSON_VERSION_STRING
   libbson                                          : $PHP_MONGODB_MONGOC_VERSION_STRING
   libmongocrypt                                    : $PHP_MONGODB_MONGOCRYPT_VERSION_STRING
