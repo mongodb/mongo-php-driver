@@ -72,3 +72,41 @@ jobs:
         run: TEST_PHP_ARGS="-q -x --show-diff -g FAIL,XFAIL,BORK,WARN,LEAK,SKIP" make test
         env:
           MONGODB_URI: ${{ steps.setup-mongodb.outputs.cluster-uri }}
+
+  pecl-test:
+    name: "Test PECL package"
+    runs-on: "ubuntu-latest"
+    env:
+      PHP_VERSION: "8.3"
+
+    steps:
+      - name: "Checkout"
+        uses: "actions/checkout@v4"
+        with:
+          submodules: true
+
+      - name: "Build Driver"
+        id: build-driver
+        uses: ./.github/actions/linux/build
+        with:
+          version: ${{ env.PHP_VERSION }}
+
+      - name: "Write changelog file for packaging"
+        run: echo "Testing" > changelog
+
+      - name: "Build package.xml"
+        run: "make package.xml RELEASE_NOTES_FILE=$(pwd)/changelog"
+
+      - name: "Build PECL package"
+        run: "make package"
+
+      # PECL always uses the version for the package name.
+      # Read it from the version file and store in env to use when uploading artifacts
+      - name: "Read current package version"
+        run: |
+          PACKAGE_VERSION=$(./bin/update-release-version.php get-version)
+          echo "PACKAGE_VERSION=${PACKAGE_VERSION}" >> "$GITHUB_ENV"
+          echo "PACKAGE_FILE=mongodb-${PACKAGE_VERSION}.tgz" >> "$GITHUB_ENV"
+
+      - name: "Install release archive to verify correctness"
+        run: sudo pecl install ${{ env.PACKAGE_FILE }}
