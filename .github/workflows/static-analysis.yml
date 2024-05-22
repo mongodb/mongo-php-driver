@@ -12,6 +12,8 @@ on:
       - "v*.*"
       - "master"
       - "feature/*"
+    tags:
+      - "*"
 
 jobs:
   semgrep:
@@ -27,4 +29,9 @@ jobs:
           submodules: true
 
       - name: "Scan"
-        run: semgrep scan --error
+        run: semgrep scan --sarif-output=semgrep.sarif
+
+      - name: "Upload SARIF report"
+        uses: "github/codeql-action/upload-sarif@v3"
+        with:
+          sarif_file: semgrep.sarif
