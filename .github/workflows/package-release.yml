@@ -44,7 +44,7 @@ jobs:
           echo "PACKAGE_FILE=mongodb-${PACKAGE_VERSION}.tgz" >> "$GITHUB_ENV"
 
       - name: "Create detached signature for PECL package"
-        uses: mongodb-labs/drivers-github-tools/garasign/gpg-sign@main
+        uses: mongodb-labs/drivers-github-tools/garasign/gpg-sign@v1
         with:
           filenames: ${{ env.PACKAGE_FILE }}
           garasign_username: ${{ secrets.GRS_CONFIG_USER1_USERNAME }}
@@ -146,7 +146,7 @@ jobs:
             php_mongodb.pdb
 
       - name: "Create detached DLL signature"
-        uses: mongodb-labs/drivers-github-tools/garasign/gpg-sign@main
+        uses: mongodb-labs/drivers-github-tools/garasign/gpg-sign@v1
         with:
           filenames: php_mongodb.dll
           garasign_username: ${{ secrets.GRS_CONFIG_USER1_USERNAME }}
