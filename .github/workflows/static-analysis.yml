@@ -1,0 +1,37 @@
+name: "Static Analysis"
+
+on:
+  merge_group:
+  pull_request:
+    branches:
+      - "v*.*"
+      - "master"
+      - "feature/*"
+  push:
+    branches:
+      - "v*.*"
+      - "master"
+      - "feature/*"
+    tags:
+      - "*"
+
+jobs:
+  semgrep:
+    name: "Semgrep"
+    runs-on: "ubuntu-latest"
+    container:
+      image: semgrep/semgrep
+
+    steps:
+      - name: "Checkout"
+        uses: "actions/checkout@v4"
+        with:
+          submodules: true
+
+      - name: "Scan"
+        run: semgrep scan --sarif-output=semgrep.sarif
+
+      - name: "Upload SARIF report"
+        uses: "github/codeql-action/upload-sarif@v3"
+        with:
+          sarif_file: semgrep.sarif

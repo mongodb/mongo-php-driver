@@ -1,0 +1,5 @@
+/.evergreen/
+/.github/
+/bin/
+/scripts/
+/tests/
