@@ -106,7 +106,7 @@ jobs:
       # our tag and creates the release tag. This is run inside the container in
       # order to create signed git artifacts
       - name: "Create package commit and release tag"
-        uses: mongodb-labs/drivers-github-tools/garasign/git-sign@v2
+        uses: mongodb-labs/drivers-github-tools/garasign/git-sign@v1
         with:
           command: "$(pwd)/.github/workflows/commit-and-tag.sh ${{ env.PACKAGE_VERSION }} ${{ vars.GPG_KEY_ID }} tag-message"
           garasign_username: ${{ secrets.GRS_CONFIG_USER1_USERNAME }}
@@ -121,7 +121,7 @@ jobs:
 
       # Create a signed "back to -dev" commit, again inside the container
       - name: "Create dev commit"
-        uses: mongodb-labs/drivers-github-tools/garasign/git-sign@v2
+        uses: mongodb-labs/drivers-github-tools/garasign/git-sign@v1
         with:
           # Setup can be skipped as it was already done before
           skip_setup: true
