@@ -8,10 +8,24 @@ on:
 
 jobs:
   build-pecl:
+    environment: release
     name: "Create PECL package"
     runs-on: "ubuntu-latest"
+    permissions:
+      id-token: write
 
     steps:
+      - name: "Create temporary app token"
+        uses: actions/create-github-app-token@v1
+        id: app-token
+        with:
+          app-id: ${{ vars.APP_ID }}
+          private-key: ${{ secrets.APP_PRIVATE_KEY }}
+
+      - name: "Store GitHub token in environment"
+        run: echo "GH_TOKEN=${{ steps.app-token.outputs.token }}" >> "$GITHUB_ENV"
+        shell: bash
+
       - name: "Checkout"
         uses: "actions/checkout@v4"
         with:
@@ -19,6 +33,13 @@ jobs:
           # commit and specifically fetches this to the refs/tags/<tag> ref, which denies us access to the tag message
           ref: ${{ github.ref }}
           submodules: true
+
+      - name: "Set up drivers-github-tools"
+        uses: mongodb-labs/drivers-github-tools/setup@v2
+        with:
+          aws_role_arn: ${{ secrets.AWS_ROLE_ARN }}
+          aws_region_name: ${{ vars.AWS_REGION_NAME }}
+          aws_secret_id: ${{ secrets.AWS_SECRET_ID }}
 
       - name: "Build Driver"
         uses: ./.github/actions/linux/build
@@ -44,13 +65,9 @@ jobs:
           echo "PACKAGE_FILE=mongodb-${PACKAGE_VERSION}.tgz" >> "$GITHUB_ENV"
 
       - name: "Create detached signature for PECL package"
-        uses: mongodb-labs/drivers-github-tools/garasign/gpg-sign@v1
+        uses: mongodb-labs/drivers-github-tools/gpg-sign@v2
         with:
           filenames: ${{ env.PACKAGE_FILE }}
-          garasign_username: ${{ secrets.GRS_CONFIG_USER1_USERNAME }}
-          garasign_password: ${{ secrets.GRS_CONFIG_USER1_PASSWORD }}
-          artifactory_username: ${{ secrets.ARTIFACTORY_USER }}
-          artifactory_password: ${{ secrets.ARTIFACTORY_PASSWORD }}
 
       - name: "Install release archive to verify correctness"
         run: sudo pecl install ${{ env.PACKAGE_FILE }}
@@ -67,8 +84,6 @@ jobs:
       - name: "Upload release artifacts"
         run: gh release upload ${{ github.ref_name }} ${{ env.PACKAGE_FILE }} ${{ env.PACKAGE_FILE }}.sig
         continue-on-error: true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   build-windows:
     name: "Create Windows package"
@@ -117,11 +132,14 @@ jobs:
             php_mongodb.pdb
 
   sign-and-publish-windows:
+    environment: release
     name: "Sign and Publish Windows package"
     needs: [build-windows]
     # ubuntu-latest is required to use enableCrossOsArchive
     # See https://github.com/actions/cache/blob/main/tips-and-workarounds.md#cross-os-cache
     runs-on: "ubuntu-latest"
+    permissions:
+      id-token: write
 
     strategy:
       fail-fast: false
@@ -132,7 +150,25 @@ jobs:
         ts: [ ts, nts ]
 
     steps:
+      - name: "Create temporary app token"
+        uses: actions/create-github-app-token@v1
+        id: app-token
+        with:
+          app-id: ${{ vars.APP_ID }}
+          private-key: ${{ secrets.APP_PRIVATE_KEY }}
+
+      - name: "Store GitHub token in environment"
+        run: echo "GH_TOKEN=${{ steps.app-token.outputs.token }}" >> "$GITHUB_ENV"
+        shell: bash
+
       - uses: actions/checkout@v4
+
+      - name: "Set up drivers-github-tools"
+        uses: mongodb-labs/drivers-github-tools/setup@v2
+        with:
+          aws_role_arn: ${{ secrets.AWS_ROLE_ARN }}
+          aws_region_name: ${{ vars.AWS_REGION_NAME }}
+          aws_secret_id: ${{ secrets.AWS_SECRET_ID }}
 
       - name: Restore cached build artifacts
         id: cache-build-artifacts
@@ -146,13 +182,9 @@ jobs:
             php_mongodb.pdb
 
       - name: "Create detached DLL signature"
-        uses: mongodb-labs/drivers-github-tools/garasign/gpg-sign@v1
+        uses: mongodb-labs/drivers-github-tools/gpg-sign@v2
         with:
           filenames: php_mongodb.dll
-          garasign_username: ${{ secrets.GRS_CONFIG_USER1_USERNAME }}
-          garasign_password: ${{ secrets.GRS_CONFIG_USER1_PASSWORD }}
-          artifactory_username: ${{ secrets.ARTIFACTORY_USER }}
-          artifactory_password: ${{ secrets.ARTIFACTORY_PASSWORD }}
 
       - name: "Upload DLL and PDB files as build artifacts"
         uses: actions/upload-artifact@v4
@@ -175,5 +207,3 @@ jobs:
           zip ${ARCHIVE} php_mongodb.dll php_mongodb.dll.sig php_mongodb.pdb CREDITS CONTRIBUTING.md LICENSE README.md THIRD_PARTY_NOTICES
           gh release upload ${{ github.ref_name }} ${ARCHIVE}
         continue-on-error: true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
