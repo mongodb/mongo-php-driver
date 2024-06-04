@@ -72,6 +72,11 @@ jobs:
       - name: "Install release archive to verify correctness"
         run: sudo pecl install ${{ env.PACKAGE_FILE }}
 
+      # Copy the signature file from the release asset directory to avoid directory issues in the ZIP file
+      # This can be removed once we're no longer uploading build artifacts
+      - name: "Copy signature file"
+        run: cp ${RELEASE_ASSETS}/${{ env.PACKAGE_FILE }}.sig .
+
       - name: "Upload artifacts"
         uses: actions/upload-artifact@v4
         with:
@@ -185,6 +190,10 @@ jobs:
         uses: mongodb-labs/drivers-github-tools/gpg-sign@v2
         with:
           filenames: php_mongodb.dll
+
+      # Copy the signature file from the release asset directory to avoid directory issues in the ZIP file
+      - name: "Copy signature file"
+        run: cp ${RELEASE_ASSETS}/php_mongodb.dll.sig .
 
       - name: "Upload DLL and PDB files as build artifacts"
         uses: actions/upload-artifact@v4
