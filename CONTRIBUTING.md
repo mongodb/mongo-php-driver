@@ -182,63 +182,72 @@ a 1.23.1 tag also existed at the time. The bump to libmongoc 1.23.1 was left to
 another PHPC ticket in the 1.15.0 milestone, which actually depended on the
 libmongoc changes therein.
 
-### Updating libmongoc and libbson
+### Update steps
 
-#### Update libmongoc submodule
+The following steps are the same for libmongoc and libmongocrypt. When updating
+libmongocrypt, follow the same steps but replace `libmongoc` with
+`libmongocrypt`, retaining the same capitalization. The following examples
+always refer to libmongoc.
 
-```
-$ cd src/libmongoc
-$ git fetch
-$ git checkout 1.20.0
-```
+#### Update submodule
 
-During development, it may be necessary to temporarily point the libmongoc
-submodule to a commit on the developer's fork of libmongoc. For instance, the
-developer may be working on a PHP driver feature that depends on an unmerged
-pull request to libmongoc. In this case, `git remote add` can be used to add
-the fork before fetching and checking out the target commit. Additionally, the
-submodule path in
-[`.gitmodules`](https://github.com/mongodb/mongo-php-driver/blob/master/.gitmodules)
-must also be updated to refer to the fork.
-
-#### Ensure libmongoc version information is correct
-
-The build process for Autotools and Windows rely on
-`src/LIBMONGOC_VERSION_CURRENT` to infer version information for libmongoc and
-libbson. This file can be regenerated using the following Makefile target:
-
-```
-$ make libmongoc-version-current
+```shell
+cd src/libmongoc
+git fetch
+git checkout 1.20.0
 ```
 
-Alternatively, the `build/calc_release_version.py` script in libmongoc can be
-executed directly.
+During development, it may be necessary to temporarily point the submodule to a
+commit on the developer's fork. For instance, the developer may be working on a
+PHP driver feature that depends on unmerged or unreleased changes. In this case,
+the submodule path can be updated using the `git submodules set-url` command can
+be used to change the URL, and `git submodules set-branch` can be used to point
+the submodule to a development branch:
 
-Note: If the libmongoc submodule points to a non-release, non-master branch, the
-script may fail to correctly detect the version. This issue is being tracked in
-[CDRIVER-3315](https://jira.mongodb.org/browse/CDRIVER-3315) and can be safely
-ignored since this should only happen during development (any PHP driver release
-should point to a tagged libmongoc release).
+```shell
+git submodules set-url src/libmongoc https://github.com<owner>/<repo>.git
+git submodules set-branch -b <branch> src/libmongoc
+```
+
+#### Ensure version information is correct
+
+Various build processes and tools rely on the version files to infer version
+information. This file can be regenerated using Makefile targets:
+
+```shell
+make libmongoc-version-current
+```
+
+Alternatively, the `build/calc_release_version.py` script in the submodule can
+be executed directly.
+
+Note: If the submodule points to a non-release, non-master branch, the script
+may fail to correctly detect the version. This issue is being tracked in
+[CDRIVER-3315](https://jira.mongodb.org/browse/CDRIVER-3315) and can be safely ignored since this should only happen
+during development (any PHP driver release should point to a tagged submodule
+version).
 
 #### Update sources in build configurations
 
 The Autotools and Windows build configurations (`config.m4` and `config.w32`,
 respectively) define several variables (e.g. `PHP_MONGODB_MONGOC_SOURCES`) that
-collectively enumerate all of the the sources within the libmongoc submodule to
-include in a bundled build.
+collectively enumerate all of the sources within the submodules to include in a
+bundled build.
 
 These variables should each have a shell command in a preceding comment, which
 should be run to regenerate that particular list of source files. Each command
 may be run manually or `scripts/update-submodule-sources.php` may be used to
-update all variables. In the event that either libmongoc or libbson introduce a
-new source directory, that will need to be manually added (follow prior art).
+update all variables. In the event that a new source directory is introduced,
+this directory will need to be manually added following prior art.
 
 #### Update package dependencies
 
 The Autotools configuration additionally includes some `pkg-config` commands for
-using libmongoc and libbson as system libraries (in lieu of a bundled build).
-When bumping the libmongoc version, be sure to update the version check _and_
-error message in the `pkg-config` blocks for both libmongoc and libbson.
+using libmongoc, libbson, and libmongocrypt as system libraries (in lieu of a 
+bundled build). When bumping the bundled version, be sure to update the version
+check _and_ error message in the `pkg-config` blocks for the submodule being
+updated. When updating libmongoc, be sure to update both version checks for
+libmongoc and libbson.
 
 For example, the following lines might be updated for libmongoc:
 
@@ -250,7 +259,7 @@ if $PKG_CONFIG libmongoc-1.0 --atleast-version 1.20.0; then
 AC_MSG_ERROR(system libmongoc must be upgraded to version >= 1.20.0)
 ```
 
-#### Update tested versions in Evergreen configuration
+#### Update tested versions in Evergreen configuration (libmongoc only)
 
 Evergreen tests against multiple versions of libmongoc. When updating to a newer
 libmongoc version, make sure to update the libmongoc build tasks in `.evergreen/config/templates/build/build-libmongoc.yml`
@@ -264,32 +273,30 @@ against two additional versions of libmongoc:
 
 #### Update sources in PECL package generation script
 
-If either libmongoc or libbson introduce a new source directory, that may also
+If a new version of a submodule introduces a new source directory, that may also
 require updating the glob patterns in the `bin/prep-release.php` script to
 ensure new source files will be included in any generated PECL package.
+
+#### Update SBOM file
+
+After updating dependencies, the SBOM file needs to be updated. There is a
+script to automate this process:
+
+```shell
+./scripts/update-sbom.sh
+```
+
+This script will generate a purl file with our dependencies, then run the
+internal silkbomb tool to update the SBOM. Note that you need to have docker
+installed and have access to artifactory in order to run this.
 
 #### Test and commit your changes
 
 Verify that the upgrade was successful by ensuring that the driver can compile
-using both the bundled sources and system libraries for libmongoc and libbson,
-and by ensuring that the test suite passes. Once done, commit the changes to all
-of the above files/paths. For example:
+using both the bundled sources and system libraries, and by ensuring that the
+test suite passes. Once done, commit the changes to all of the above
+files/paths. For example:
 
+```shell
+git commit -m "Bump libmongoc to 1.20.0" config.m4 config.w32 src/libmongoc src/LIBMONGOC_VERSION_CURRENT sbom.json
 ```
-$ git commit -m "Bump libmongoc to 1.20.0" config.m4 config.w32 src/libmongoc src/LIBMONGOC_VERSION_CURRENT
-```
-
-### Updating libmongocrypt
-
-To update libmongocrypt, the steps are similar to the above:
-
-```
-$ cd src/libmongocrypt
-$ git fetch
-$ git checkout 1.3.0
-$ make libmongocrypt-version-current
-```
-
-Package dependencies in  `config.m4` must also be updated (either manually or
-with `scripts/update-submodule-sources.php`), as do the sources in the PECL
-generation script.
