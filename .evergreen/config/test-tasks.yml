@@ -2,9 +2,7 @@ tasks:
   - name: "test-atlas-connectivity"
     tags: ["atlas", "nodb"]
     commands:
-      - func: "run tests"
-        vars:
-          TESTS: "tests/atlas.phpt"
+      - func: "run atlas connectivity tests"
 
   # Test different storage engines
   - name: "test-mongodb-4.0-standalone-inmemory"

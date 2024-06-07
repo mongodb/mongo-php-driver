@@ -210,7 +210,6 @@ functions:
       params:
         include_expansions_in_env:
           - API_VERSION
-          - ATLAS_CONNECTIVITY_URIS
           - CRYPT_SHARED_LIB_PATH
           - MONGODB_URI
           - APPEND_URI
@@ -221,6 +220,18 @@ functions:
         working_dir: "src"
         script: |
           ${PREPARE_SHELL}
+          bash ${PROJECT_DIRECTORY}/.evergreen/run-tests.sh
+
+  "run atlas connectivity tests":
+    - command: shell.exec
+      type: test
+      params:
+        working_dir: "src"
+        shell: bash
+        script: |
+          ${PREPARE_SHELL}
+          . ${DRIVERS_TOOLS}/.evergreen/secrets_handling/setup-secrets.sh drivers/atlas_connect
+          TESTS="tests/atlas.phpt" \
           bash ${PROJECT_DIRECTORY}/.evergreen/run-tests.sh
 
   "cleanup":
