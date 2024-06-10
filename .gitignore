@@ -67,3 +67,6 @@ mongodb-*tgz
 
 # Coverage files
 coverage*
+
+# temporary purls file
+/purls.txt
