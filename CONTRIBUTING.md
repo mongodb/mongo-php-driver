@@ -286,9 +286,9 @@ script to automate this process:
 ./scripts/update-sbom.sh
 ```
 
-This script will generate a purl file with our dependencies, then run the
-internal silkbomb tool to update the SBOM. Note that you need to have docker
-installed and have access to Artifactory in order to run this.
+This script will generate a temporary purl file with our dependencies, then run
+the internal silkbomb tool to update the SBOM. Note that you need to have docker
+installed in order to run this.
 
 #### Test and commit your changes
 
