@@ -182,7 +182,7 @@ a 1.23.1 tag also existed at the time. The bump to libmongoc 1.23.1 was left to
 another PHPC ticket in the 1.15.0 milestone, which actually depended on the
 libmongoc changes therein.
 
-### Update steps
+### Updating bundled libraries
 
 The following steps are the same for libmongoc and libmongocrypt. When updating
 libmongocrypt, follow the same steps but replace `libmongoc` with
@@ -205,7 +205,7 @@ be used to change the URL, and `git submodules set-branch` can be used to point
 the submodule to a development branch:
 
 ```shell
-git submodules set-url src/libmongoc https://github.com<owner>/<repo>.git
+git submodules set-url src/libmongoc https://github.com/<owner>/<repo>.git
 git submodules set-branch -b <branch> src/libmongoc
 ```
 
@@ -288,7 +288,7 @@ script to automate this process:
 
 This script will generate a purl file with our dependencies, then run the
 internal silkbomb tool to update the SBOM. Note that you need to have docker
-installed and have access to artifactory in order to run this.
+installed and have access to Artifactory in order to run this.
 
 #### Test and commit your changes
 
