@@ -8,6 +8,7 @@ tasks:
           working_dir: "src"
           binary: bash
           args:
+            - -c
             - ${DRIVERS_TOOLS}/.evergreen/secrets_handling/setup-secrets.sh drivers/atlas_connect
       - func: "run tests"
         vars:
