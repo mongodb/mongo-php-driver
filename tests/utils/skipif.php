@@ -494,10 +494,3 @@ function skip_if_no_crypt_shared()
         exit('skip crypt_shared is not available');
     }
 }
-
-function skip_if_no_atlas_connectivity_urls()
-{
-    if (getAtlasConnectivityUrls() === []) {
-        exit('skip No Atlas URIs found');
-    }
-}

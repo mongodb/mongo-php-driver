@@ -39,6 +39,11 @@ else
    echo "crypt_shared library will be loaded from path: $CRYPT_SHARED_LIB_PATH"
 fi
 
+# Conditionally source setup-secrets.sh created by drivers-evergreen-tools
+if [ -f "${PROJECT_DIRECTORY}/secrets-export.sh" ]; then
+    source ${PROJECT_DIRECTORY}/secrets-export.sh
+fi
+
 echo "Running tests with URI: $MONGODB_URI"
 
 # Run the tests, and store the results in a junit result file

@@ -847,26 +847,3 @@ function failGetMore(Manager $manager)
 
     throw new Exception("Trying to configure a getMore fail point for a server version ($version) that doesn't support it");
 }
-
-function getAtlasConnectivityUrls(): array
-{
-    $atlasUriString = getenv('ATLAS_CONNECTIVITY_URIS') ?: '';
-    if (!$atlasUriString) {
-        return [];
-    }
-
-    $rawUrls = explode("\n", $atlasUriString);
-
-    $urls = [];
-    foreach ($rawUrls as $url) {
-        $url = trim($url);
-
-        if ($url == '') {
-            continue;
-        }
-
-        $urls[] = $url;
-    }
-
-    return $urls;
-}
