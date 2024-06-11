@@ -2,6 +2,14 @@ tasks:
   - name: "test-atlas-connectivity"
     tags: ["atlas", "nodb"]
     commands:
+      # This creates secrets-export.sh, which is later sourced by run-tests.sh
+      - command: subprocess.exec
+        params:
+          working_dir: "src"
+          binary: bash
+          args:
+            - -c
+            - ${DRIVERS_TOOLS}/.evergreen/secrets_handling/setup-secrets.sh drivers/atlas_connect
       - func: "run tests"
         vars:
           TESTS: "tests/atlas.phpt"
