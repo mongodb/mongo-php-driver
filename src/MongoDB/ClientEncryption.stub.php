@@ -35,6 +35,13 @@ final class ClientEncryption
 
     /**
      * @var string
+     * @cvalue MONGOC_ENCRYPT_ALGORITHM_RANGE
+     */
+    public const ALGORITHM_RANGE = UNKNOWN;
+
+    /**
+     * @deprecated
+     * @var string
      * @cvalue MONGOC_ENCRYPT_ALGORITHM_RANGEPREVIEW
      */
     public const ALGORITHM_RANGE_PREVIEW = UNKNOWN;
@@ -46,6 +53,13 @@ final class ClientEncryption
     public const QUERY_TYPE_EQUALITY = UNKNOWN;
 
     /**
+     * @var string
+     * @cvalue MONGOC_ENCRYPT_QUERY_TYPE_RANGE
+     */
+    public const QUERY_TYPE_RANGE = UNKNOWN;
+
+    /**
+     * @deprecated
      * @var string
      * @cvalue MONGOC_ENCRYPT_QUERY_TYPE_RANGEPREVIEW
      */
