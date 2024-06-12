@@ -446,7 +446,7 @@ static void phongo_cursor_init(zval* return_value, zval* manager, mongoc_cursor_
 
 	intern            = Z_CURSOR_OBJ_P(return_value);
 	intern->cursor    = cursor;
-	intern->server_id = mongoc_cursor_get_hint(cursor);
+	intern->server_id = mongoc_cursor_get_server_id(cursor);
 	intern->advanced  = false;
 	intern->current   = 0;
 
@@ -485,7 +485,7 @@ bool phongo_cursor_init_for_query(zval* return_value, zval* manager, mongoc_curs
 	php_phongo_cursor_t* intern;
 
 	/* Advancing the cursor before phongo_cursor_init ensures that a server
-	 * stream is obtained before mongoc_cursor_get_hint() is called. */
+	 * stream is obtained before mongoc_cursor_get_server_id() is called. */
 	if (!phongo_cursor_advance_and_check_for_error(cursor)) {
 		/* Exception should already have been thrown */
 		return false;

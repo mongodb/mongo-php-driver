@@ -276,7 +276,7 @@ bool phongo_execute_bulk_write(zval* manager, const char* namespace, php_phongo_
 	mongoc_bulk_operation_set_database(bulk, bulk_write->database);
 	mongoc_bulk_operation_set_collection(bulk, bulk_write->collection);
 	mongoc_bulk_operation_set_client(bulk, client);
-	mongoc_bulk_operation_set_hint(bulk, server_id);
+	mongoc_bulk_operation_set_server_id(bulk, server_id);
 
 	if (zsession) {
 		ZVAL_ZVAL(&bulk_write->session, zsession, 1, 0);
@@ -290,7 +290,7 @@ bool phongo_execute_bulk_write(zval* manager, const char* namespace, php_phongo_
 	success              = mongoc_bulk_operation_execute(bulk, &reply, &error);
 	bulk_write->executed = true;
 
-	writeresult                = phongo_writeresult_init(return_value, &reply, manager, mongoc_bulk_operation_get_hint(bulk));
+	writeresult                = phongo_writeresult_init(return_value, &reply, manager, mongoc_bulk_operation_get_server_id(bulk));
 	writeresult->write_concern = mongoc_write_concern_copy(write_concern);
 
 	/* A BulkWriteException is always thrown if mongoc_bulk_operation_execute()

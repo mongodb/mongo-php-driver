@@ -11,7 +11,8 @@ tasks:
       - func: "compile driver"
         vars:
           PHP_VERSION: "%phpVersion%"
-          LIBMONGOC_VERSION: "1.27.2"
+          # TODO: Change to "1.28.0" once 1.28.0 is released
+          LIBMONGOC_VERSION: "master"
       - func: "upload build"
 
   - name: "build-php-%phpVersion%-libmongoc-next-stable"
@@ -20,7 +21,8 @@ tasks:
       - func: "compile driver"
         vars:
           PHP_VERSION: "%phpVersion%"
-          LIBMONGOC_VERSION: "r1.27"
+          # TODO: Change to "r1.28" once 1.28.0 is released
+          LIBMONGOC_VERSION: "master"
       - func: "upload build"
 
   - name: "build-php-%phpVersion%-libmongoc-latest"
