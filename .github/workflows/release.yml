@@ -93,24 +93,29 @@ jobs:
       # Preliminary checks done - commence the release process
       #
 
-      # This step creates the "Package x.y.z" commit that will be the base of
-      # our tag and creates the release tag. This is run inside the container in
-      # order to create signed git artifacts
-      - name: "Create package commit and release tag"
-        uses: mongodb-labs/drivers-github-tools/git-sign@v2
+      - name: "Create package commit"
+        uses: mongodb-labs/drivers-github-tools/bump-version@v2
         with:
-          command: "$(pwd)/.github/workflows/commit-and-tag.sh ${{ inputs.version }} ${{ env.GPG_KEY_ID }}"
+          version: ${{ inputs.version }}
+          # Use get-version as a dummy as a version_bump_script is required
+          # We run the bump script manually earlier so we can sanity-check the version number and print nice output
+          version_bump_script: "./bin/update-release-version.php get-version"
+          commit_template: 'Package ${VERSION}'
+          # Don't push changes as we're creating a second commit later
+          push_commit: false
 
-      # This step needs to happen outside of the container, as PHP is not
-      # available within.
-      - name: "Bump to next development release"
-        run: ./bin/update-release-version.php to-next-patch-dev
-
-      # Create a signed "back to -dev" commit, again inside the container
-      - name: "Create dev commit"
-        uses: mongodb-labs/drivers-github-tools/git-sign@v2
+      - name: "Create release tag"
+        uses: mongodb-labs/drivers-github-tools/tag-version@v2
         with:
-          command: "git commit -m 'Back to -dev' -s --gpg-sign=${{ env.GPG_KEY_ID }} phongo_version.h"
+          version: ${{ inputs.version }}
+          tag_message_template: 'Release ${VERSION}'
+
+      - name: "Bump to next development release and commit"
+        uses: mongodb-labs/drivers-github-tools/bump-version@v2
+        with:
+          version: ${{ inputs.version }}
+          version_bump_script: "./bin/update-release-version.php to-next-patch-dev"
+          commit_template: 'Back to -dev'
 
       # TODO: Manually merge using ours strategy. This avoids merge-up pull requests being created
       # Process is:
@@ -118,9 +123,6 @@ jobs:
       # 2. merge release branch using --strategy=ours
       # 3. push next branch
       # 4. switch back to release branch, then push
-
-      - name: "Push changes from release branch"
-        run: git push
 
       - name: "Prepare release message"
         run: |
@@ -130,9 +132,6 @@ jobs:
 
       - name: "Create draft release"
         run: echo "RELEASE_URL=$(gh release create ${{ inputs.version }} --target ${{ github.ref_name }} --title "${{ inputs.version }}" --notes-file release-message --draft)" >> "$GITHUB_ENV"
-
-      - name: "Push release tag"
-        run: git push origin ${{ inputs.version }}
 
       - name: "Set summary"
         run: |

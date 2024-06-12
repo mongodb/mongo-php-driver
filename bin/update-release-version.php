@@ -140,7 +140,8 @@ function get_next_minor_version(array $versions): array
     ];
 }
 
-if ($argc !== 2) {
+// Allow 2 arguments as the bump-version action always passes a version number, even when not needed
+if (! in_array($argc, [2, 3])) {
     usage();
 }
 
@@ -149,6 +150,7 @@ $currentVersion = read_release_version(VERSION_FILENAME);
 switch ($argv[1] ?? null) {
     case 'get-version':
         echo $currentVersion['version'];
+
         exit(0);
 
     case 'to-stable':
@@ -170,4 +172,3 @@ switch ($argv[1] ?? null) {
 write_release_version(VERSION_FILENAME, $newVersion);
 
 printf("Updated version number in version file from %s to %s\n", $currentVersion['version'], $newVersion['version']);
-
