@@ -1,9 +1,13 @@
 name: "Package Release"
-run-name: "Package Release ${{ github.ref_name }}"
+run-name: "Package Release ${{ inputs.version }}"
 
 on:
   workflow_call:
     inputs:
+      version:
+        description: "The version being built"
+        type: string
+        required: true
       ref:
         description: "The git reference to build"
         type: string
@@ -46,7 +50,7 @@ jobs:
             -H "Accept: application/vnd.github+json" \
             -H "X-GitHub-Api-Version: 2022-11-28" \
             /repos/${{ github.repository }}/releases/generate-notes \
-            -f "tag_name=${{ inputs.ref }}" --jq '.body' > changelog
+            -f "tag_name=${{ inputs.version }}" --jq '.body' > changelog
 
       # This will fill in the release notes from the previously generated changelog
       - name: "Build package.xml"
@@ -86,7 +90,7 @@ jobs:
           retention-days: 3
 
       - name: "Upload release artifacts"
-        run: gh release upload ${{ github.ref_name }} ${{ env.PACKAGE_FILE }} ${{ env.PACKAGE_FILE }}.sig
+        run: gh release upload ${{ inputs.version }} ${{ env.PACKAGE_FILE }} ${{ env.PACKAGE_FILE }}.sig
         continue-on-error: true
 
   build-windows:
@@ -192,7 +196,7 @@ jobs:
       - name: "Upload DLL and PDB files as build artifacts"
         uses: actions/upload-artifact@v4
         with:
-          name: php_mongodb-${{ github.ref_name }}-${{ matrix.php }}-${{ matrix.ts }}-${{ matrix.arch }}
+          name: php_mongodb-${{ inputs.version }}-${{ matrix.php }}-${{ matrix.ts }}-${{ matrix.arch }}
           path: |
             php_mongodb.dll
             php_mongodb.dll.sig
@@ -206,7 +210,7 @@ jobs:
 
       - name: "Create and upload release artifact"
         run: |
-          ARCHIVE=php_mongodb-${{ github.ref_name }}-${{ matrix.php }}-${{ matrix.ts }}-${{ matrix.arch }}.zip
+          ARCHIVE=php_mongodb-${{ inputs.version }}-${{ matrix.php }}-${{ matrix.ts }}-${{ matrix.arch }}.zip
           zip ${ARCHIVE} php_mongodb.dll php_mongodb.dll.sig php_mongodb.pdb CREDITS CONTRIBUTING.md LICENSE README.md THIRD_PARTY_NOTICES
-          gh release upload ${{ github.ref_name }} ${ARCHIVE}
+          gh release upload ${{ inputs.version }} ${ARCHIVE}
         continue-on-error: true

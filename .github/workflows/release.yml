@@ -154,6 +154,7 @@ jobs:
     name: "Create Release Packages"
     uses: ./.github/workflows/package-release.yml
     with:
+      version: ${{ inputs.version }}
       ref: refs/tags/${{ inputs.version }}
     secrets: inherit
     permissions:
