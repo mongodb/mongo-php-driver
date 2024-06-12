@@ -80,18 +80,8 @@ jobs:
       - name: "Copy signature file"
         run: cp ${RELEASE_ASSETS}/${{ env.PACKAGE_FILE }}.sig .
 
-      - name: "Upload artifacts"
-        uses: actions/upload-artifact@v4
-        with:
-          name: ${{ env.PACKAGE_FILE }}
-          path: |
-            ${{ env.PACKAGE_FILE }}
-            ${{ env.PACKAGE_FILE }}.sig
-          retention-days: 3
-
       - name: "Upload release artifacts"
         run: gh release upload ${{ inputs.version }} ${{ env.PACKAGE_FILE }} ${{ env.PACKAGE_FILE }}.sig
-        continue-on-error: true
 
   build-windows:
     name: "Create Windows package"
@@ -193,24 +183,8 @@ jobs:
       - name: "Copy signature file"
         run: cp ${RELEASE_ASSETS}/php_mongodb.dll.sig .
 
-      - name: "Upload DLL and PDB files as build artifacts"
-        uses: actions/upload-artifact@v4
-        with:
-          name: php_mongodb-${{ inputs.version }}-${{ matrix.php }}-${{ matrix.ts }}-${{ matrix.arch }}
-          path: |
-            php_mongodb.dll
-            php_mongodb.dll.sig
-            php_mongodb.pdb
-            CREDITS
-            CONTRIBUTING.md
-            LICENSE
-            README.md
-            THIRD_PARTY_NOTICES
-          retention-days: 3
-
       - name: "Create and upload release artifact"
         run: |
           ARCHIVE=php_mongodb-${{ inputs.version }}-${{ matrix.php }}-${{ matrix.ts }}-${{ matrix.arch }}.zip
           zip ${ARCHIVE} php_mongodb.dll php_mongodb.dll.sig php_mongodb.pdb CREDITS CONTRIBUTING.md LICENSE README.md THIRD_PARTY_NOTICES
           gh release upload ${{ inputs.version }} ${ARCHIVE}
-        continue-on-error: true
