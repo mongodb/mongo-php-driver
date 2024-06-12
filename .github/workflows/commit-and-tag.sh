@@ -3,7 +3,6 @@ set -e
 
 PACKAGE_VERSION=$1
 GPG_KEY_ID=$2
-TAG_MESSAGE_FILE=$3
 
 gpgloader
 
@@ -13,4 +12,4 @@ git commit -m "Package ${PACKAGE_VERSION}" -s --gpg-sign=${GPG_KEY_ID} phongo_ve
 
 # Create signed "Release x.y.z" tag
 echo "Create release tag"
-git tag -F ${TAG_MESSAGE_FILE} -s --local-user=${GPG_KEY_ID} ${PACKAGE_VERSION}
+git tag -m "Release ${PACKAGE_VERSION}" -s --local-user=${GPG_KEY_ID} ${PACKAGE_VERSION}

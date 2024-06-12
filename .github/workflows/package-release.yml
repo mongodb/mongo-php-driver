@@ -16,6 +16,7 @@ jobs:
     runs-on: "ubuntu-latest"
     permissions:
       id-token: write
+      contents: write
 
     steps:
       - name: "Generate token and checkout repository"
@@ -39,7 +40,13 @@ jobs:
           version: "8.3"
 
       - name: "Write changelog file for packaging"
-        run: git tag -l ${{ github.ref_name }} --format='%(contents)' > changelog
+        run: |
+          gh api \
+            --method POST \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            /repos/${{ github.repository }}/releases/generate-notes \
+            -f "tag_name=${{ inputs.ref }}" --jq '.body' > changelog
 
       # This will fill in the release notes from the previously generated changelog
       - name: "Build package.xml"

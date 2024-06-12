@@ -93,26 +93,13 @@ jobs:
       # Preliminary checks done - commence the release process
       #
 
-      # Create a draft release with a changelog
-      # TODO: Consider using the API to generate changelog
-      - name: "Create draft release with generated changelog"
-        run: gh release create ${{ env.PACKAGE_VERSION }} --target ${{ github.ref_name }} --generate-notes --draft
-
-      - name: "Read changelog from draft release"
-        run: gh release view ${{ env.PACKAGE_VERSION }} --json body --template '{{ .body }}' >> changelog
-
-      - name: "Prepare tag message"
-        run: |
-          echo -e "Release ${PACKAGE_VERSION}\n" > tag-message
-          cat changelog >> tag-message
-
       # This step creates the "Package x.y.z" commit that will be the base of
       # our tag and creates the release tag. This is run inside the container in
       # order to create signed git artifacts
       - name: "Create package commit and release tag"
         uses: mongodb-labs/drivers-github-tools/git-sign@v2
         with:
-          command: "$(pwd)/.github/workflows/commit-and-tag.sh ${{ env.PACKAGE_VERSION }} ${{ env.GPG_KEY_ID }} tag-message"
+          command: "$(pwd)/.github/workflows/commit-and-tag.sh ${{ inputs.version }} ${{ env.GPG_KEY_ID }}"
 
       # This step needs to happen outside of the container, as PHP is not
       # available within.
@@ -138,16 +125,14 @@ jobs:
       - name: "Prepare release message"
         run: |
           cat > release-message <<'EOL'
-          ${{ format(env.default-release-message, env.PACKAGE_VERSION, inputs.jira-version-number) }}
+          ${{ format(env.default-release-message, inputs.version, inputs.jira-version-number) }}
           EOL
-          cat changelog >> release-message
 
-      # Update release with correct release information
-      - name: "Update release information"
-        run: echo "RELEASE_URL=$(gh release edit ${{ env.PACKAGE_VERSION }} --title "${{ env.PACKAGE_VERSION }}" --notes-file release-message)" >> "$GITHUB_ENV"
+      - name: "Create draft release"
+        run: echo "RELEASE_URL=$(gh release create ${{ inputs.version }} --target ${{ github.ref_name }} --title "${{ inputs.version }}" --notes-file release-message --draft)" >> "$GITHUB_ENV"
 
       - name: "Push release tag"
-        run: git push origin ${{ env.PACKAGE_VERSION }}
+        run: git push origin ${{ inputs.version }}
 
       - name: "Set summary"
         run: |
@@ -173,6 +158,7 @@ jobs:
     secrets: inherit
     permissions:
       id-token: write
+      contents: write
 
   publish-ssdlc-assets:
     needs:
