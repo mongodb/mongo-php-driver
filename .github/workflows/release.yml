@@ -155,7 +155,6 @@ jobs:
       - name: "Update release information"
         run: echo "RELEASE_URL=$(gh release edit ${{ env.PACKAGE_VERSION }} --title "${{ env.PACKAGE_VERSION }}" --notes-file release-message)" >> "$GITHUB_ENV"
 
-      # Pushing the release tag starts build processes that then produce artifacts for the release
       - name: "Push release tag"
         run: git push origin ${{ env.PACKAGE_VERSION }}
 
@@ -163,3 +162,13 @@ jobs:
         run: |
           echo '🚀 Created tag and drafted release for version [${{ inputs.version }}](${{ env.RELEASE_URL }})' >> $GITHUB_STEP_SUMMARY
           echo '✍️ You may now update the release notes and publish the release when ready' >> $GITHUB_STEP_SUMMARY
+
+  package-release:
+    needs: prepare-release
+    name: "Create Release Packages"
+    uses: ./.github/workflows/package-release.yml
+    with:
+      ref: refs/tags/${{ inputs.version }}
+    secrets: inherit
+    permissions:
+      id-token: write

@@ -2,9 +2,12 @@ name: "Package Release"
 run-name: "Package Release ${{ github.ref_name }}"
 
 on:
-  push:
-    tags:
-      - "*"
+  workflow_call:
+    inputs:
+      ref:
+        description: "The git reference to build"
+        type: string
+        required: true
 
 jobs:
   build-pecl:
@@ -31,7 +34,7 @@ jobs:
         with:
           # Manually specify a ref. When actions/checkout is run for a tag without a ref, it looks up the underlying
           # commit and specifically fetches this to the refs/tags/<tag> ref, which denies us access to the tag message
-          ref: ${{ github.ref }}
+          ref: ${{ inputs.ref }}
           submodules: true
 
       - name: "Set up drivers-github-tools"
@@ -111,6 +114,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           submodules: true
+          ref: ${{ inputs.ref }}
 
       - name: "Build Driver"
         id: build-driver
@@ -167,6 +171,8 @@ jobs:
         shell: bash
 
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref }}
 
       - name: "Set up drivers-github-tools"
         uses: mongodb-labs/drivers-github-tools/setup@v2
