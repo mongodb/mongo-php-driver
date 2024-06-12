@@ -12,8 +12,12 @@ on:
       - "v*.*"
       - "master"
       - "feature/*"
-    tags:
-      - "*"
+  workflow_call:
+    inputs:
+      ref:
+        description: "The git ref to check"
+        type: string
+        required: true
 
 jobs:
   semgrep:
@@ -26,6 +30,7 @@ jobs:
       - name: "Checkout"
         uses: "actions/checkout@v4"
         with:
+          ref: ${{ github.event_name == 'workflow_dispatch' && inputs.ref || github.ref }}
           submodules: true
 
       - name: "Scan"
