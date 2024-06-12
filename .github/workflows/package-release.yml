@@ -18,22 +18,11 @@ jobs:
       id-token: write
 
     steps:
-      - name: "Create temporary app token"
-        uses: actions/create-github-app-token@v1
-        id: app-token
+      - name: "Generate token and checkout repository"
+        uses: mongodb-labs/drivers-github-tools/secure-checkout@v2
         with:
-          app-id: ${{ vars.APP_ID }}
-          private-key: ${{ secrets.APP_PRIVATE_KEY }}
-
-      - name: "Store GitHub token in environment"
-        run: echo "GH_TOKEN=${{ steps.app-token.outputs.token }}" >> "$GITHUB_ENV"
-        shell: bash
-
-      - name: "Checkout"
-        uses: "actions/checkout@v4"
-        with:
-          # Manually specify a ref. When actions/checkout is run for a tag without a ref, it looks up the underlying
-          # commit and specifically fetches this to the refs/tags/<tag> ref, which denies us access to the tag message
+          app_id: ${{ vars.APP_ID }}
+          private_key: ${{ secrets.APP_PRIVATE_KEY }}
           ref: ${{ inputs.ref }}
           submodules: true
 
@@ -159,19 +148,11 @@ jobs:
         ts: [ ts, nts ]
 
     steps:
-      - name: "Create temporary app token"
-        uses: actions/create-github-app-token@v1
-        id: app-token
+      - name: "Generate token and checkout repository"
+        uses: mongodb-labs/drivers-github-tools/secure-checkout@v2
         with:
-          app-id: ${{ vars.APP_ID }}
-          private-key: ${{ secrets.APP_PRIVATE_KEY }}
-
-      - name: "Store GitHub token in environment"
-        run: echo "GH_TOKEN=${{ steps.app-token.outputs.token }}" >> "$GITHUB_ENV"
-        shell: bash
-
-      - uses: actions/checkout@v4
-        with:
+          app_id: ${{ vars.APP_ID }}
+          private_key: ${{ secrets.APP_PRIVATE_KEY }}
           ref: ${{ inputs.ref }}
 
       - name: "Set up drivers-github-tools"
