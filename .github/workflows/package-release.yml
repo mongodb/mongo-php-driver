@@ -84,14 +84,16 @@ jobs:
         run: gh release upload ${{ inputs.version }} ${{ env.PACKAGE_FILE }} ${{ env.PACKAGE_FILE }}.sig
 
   build-windows:
-    name: "Create Windows package"
-    # windows-latest is required to use enableCrossOsArchive with Ubuntu in the
-    # next step. See https://github.com/actions/cache/blob/main/tips-and-workarounds.md#cross-os-cache
-    runs-on: windows-latest
-    defaults:
-      run:
-        shell: cmd
-
+    name: "Create Windows packages"
+    uses: ./.github/workflows/build-windows-package.yml
+    with:
+      version: ${{ inputs.version }}
+      ref: refs/tags/${{ inputs.version }}
+      php: ${{ matrix.php }}
+      arch: ${{ matrix.arch }}
+      ts: ${{ matrix.ts }}
+      upload_release_asset: true
+    secrets: inherit
     strategy:
       fail-fast: false
       matrix:
@@ -99,92 +101,3 @@ jobs:
         php: [ "7.4", "8.0", "8.1", "8.2", "8.3" ]
         arch: [ x64, x86 ]
         ts: [ ts, nts ]
-
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          submodules: true
-          ref: ${{ inputs.ref }}
-
-      - name: "Build Driver"
-        id: build-driver
-        uses: ./.github/actions/windows/build
-        with:
-          version: ${{ matrix.php }}
-          arch: ${{ matrix.arch }}
-          ts: ${{ matrix.ts }}
-
-      - name: "Copy DLL and PDB files to CWD"
-        run: |
-          cp %BUILD_DIR%\php_mongodb.dll .
-          cp %BUILD_DIR%\php_mongodb.pdb .
-        env:
-          BUILD_DIR: ${{ steps.build-driver.outputs.build-dir }}
-
-      - name: "Cache build artifacts for subsequent builds"
-        uses: actions/cache/save@v4
-        with:
-          key: ${{ github.sha }}-${{ matrix.php }}-${{ matrix.ts }}-${{ matrix.arch }}
-          enableCrossOsArchive: true
-          path: |
-            php_mongodb.dll
-            php_mongodb.pdb
-
-  sign-and-publish-windows:
-    environment: release
-    name: "Sign and Publish Windows package"
-    needs: [build-windows]
-    # ubuntu-latest is required to use enableCrossOsArchive
-    # See https://github.com/actions/cache/blob/main/tips-and-workarounds.md#cross-os-cache
-    runs-on: "ubuntu-latest"
-    permissions:
-      id-token: write
-
-    strategy:
-      fail-fast: false
-      matrix:
-        # Note: keep this in sync with the Windows matrix in windows-tests.yml
-        php: [ "7.4", "8.0", "8.1", "8.2", "8.3" ]
-        arch: [ x64, x86 ]
-        ts: [ ts, nts ]
-
-    steps:
-      - name: "Generate token and checkout repository"
-        uses: mongodb-labs/drivers-github-tools/secure-checkout@v2
-        with:
-          app_id: ${{ vars.APP_ID }}
-          private_key: ${{ secrets.APP_PRIVATE_KEY }}
-          ref: ${{ inputs.ref }}
-
-      - name: "Set up drivers-github-tools"
-        uses: mongodb-labs/drivers-github-tools/setup@v2
-        with:
-          aws_role_arn: ${{ secrets.AWS_ROLE_ARN }}
-          aws_region_name: ${{ vars.AWS_REGION_NAME }}
-          aws_secret_id: ${{ secrets.AWS_SECRET_ID }}
-
-      - name: Restore cached build artifacts
-        id: cache-build-artifacts
-        uses: actions/cache/restore@v4
-        with:
-          fail-on-cache-miss: true
-          key: ${{ github.sha }}-${{ matrix.php }}-${{ matrix.ts }}-${{ matrix.arch }}
-          enableCrossOsArchive: true
-          path: |
-            php_mongodb.dll
-            php_mongodb.pdb
-
-      - name: "Create detached DLL signature"
-        uses: mongodb-labs/drivers-github-tools/gpg-sign@v2
-        with:
-          filenames: php_mongodb.dll
-
-      # Copy the signature file from the release asset directory to avoid directory issues in the ZIP file
-      - name: "Copy signature file"
-        run: cp ${RELEASE_ASSETS}/php_mongodb.dll.sig .
-
-      - name: "Create and upload release artifact"
-        run: |
-          ARCHIVE=php_mongodb-${{ inputs.version }}-${{ matrix.php }}-${{ matrix.ts }}-${{ matrix.arch }}.zip
-          zip ${ARCHIVE} php_mongodb.dll php_mongodb.dll.sig php_mongodb.pdb CREDITS CONTRIBUTING.md LICENSE README.md THIRD_PARTY_NOTICES
-          gh release upload ${{ inputs.version }} ${ARCHIVE}
