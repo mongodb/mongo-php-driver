@@ -72,7 +72,7 @@ jobs:
   sign-and-package:
     environment: release
     name: "Sign and create package"
-    needs: [build]
+    needs: build
     # ubuntu-latest is required to use enableCrossOsArchive
     # See https://github.com/actions/cache/blob/main/tips-and-workarounds.md#cross-os-cache
     runs-on: "ubuntu-latest"
