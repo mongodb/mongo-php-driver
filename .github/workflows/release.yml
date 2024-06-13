@@ -188,6 +188,10 @@ jobs:
           aws_region_name: ${{ vars.AWS_REGION_NAME }}
           aws_secret_id: ${{ secrets.AWS_SECRET_ID }}
 
+      - name: "Remove unnecessary files"
+        run: rm -f ${RELEASE_ASSETS}/release_run_id.txt
+        shell: bash
+
       - name: Download all release artifacts
         run: gh release download ${{ inputs.version }} --dir ${{ env.RELEASE_ASSETS }}
 
