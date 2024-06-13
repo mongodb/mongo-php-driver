@@ -207,13 +207,9 @@ jobs:
         uses: mongodb-labs/drivers-github-tools/sbom@v2
         with:
           silk_asset_group: mongodb-php-driver-extension
-        # Silk currently errors out when downloading the SBOM. Don't let this fail the entire build
-        continue-on-error: true
 
       - name: "Upload SBOM as release artifact"
         run: gh release upload ${{ inputs.version }} ${{ env.S3_ASSETS }}/cyclonedx.sbom.json
-        # Silk currently errors out when downloading the SBOM. Don't let this fail the entire build
-        continue-on-error: true
 
       - name: "Generate SARIF report from code scanning alerts"
         uses: mongodb-labs/drivers-github-tools/code-scanning-export@v2
