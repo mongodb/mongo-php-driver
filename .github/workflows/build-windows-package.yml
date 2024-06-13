@@ -1,0 +1,122 @@
+name: "Build Windows Package"
+run-name: "Build Windows Package for ${{ inputs.ref }} (PHP ${{ inputs.php }} ${{ inputs.arch }} ${{ inputs.ts }})"
+
+on:
+  workflow_call:
+    inputs:
+      version:
+        description: "The version being built"
+        type: string
+        required: true
+      ref:
+        description: "The git reference to build"
+        type: string
+        required: true
+      php:
+        description: "The PHP version to build for"
+        type: string
+        required: true
+      arch:
+        description: "The architecture to build for (x64 or x86)"
+        type: string
+        required: true
+      ts:
+        description: "Thread safety (ts or nts)"
+        type: string
+        required: true
+      upload_release_asset:
+        description: "Whether to upload a release asset"
+        type: boolean
+        default: false
+
+jobs:
+  build:
+    name: "Build DLL"
+    # windows-latest is required to use enableCrossOsArchive with Ubuntu in the
+    # next step. See https://github.com/actions/cache/blob/main/tips-and-workarounds.md#cross-os-cache
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: cmd
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+          ref: ${{ inputs.ref }}
+
+      - name: "Build Driver"
+        id: build-driver
+        uses: ./.github/actions/windows/build
+        with:
+          version: ${{ inputs.php }}
+          arch: ${{ inputs.arch }}
+          ts: ${{ inputs.ts }}
+
+      - name: "Copy DLL and PDB files to CWD"
+        run: |
+          cp %BUILD_DIR%\php_mongodb.dll .
+          cp %BUILD_DIR%\php_mongodb.pdb .
+        env:
+          BUILD_DIR: ${{ steps.build-driver.outputs.build-dir }}
+
+      - name: "Cache build artifacts for subsequent builds"
+        uses: actions/cache/save@v4
+        with:
+          key: ${{ github.sha }}-${{ inputs.php }}-${{ inputs.ts }}-${{ inputs.arch }}
+          enableCrossOsArchive: true
+          path: |
+            php_mongodb.dll
+            php_mongodb.pdb
+
+  sign-and-package:
+    environment: release
+    name: "Sign and create package"
+    needs: build
+    # ubuntu-latest is required to use enableCrossOsArchive
+    # See https://github.com/actions/cache/blob/main/tips-and-workarounds.md#cross-os-cache
+    runs-on: "ubuntu-latest"
+    permissions:
+      id-token: write
+
+    steps:
+      - name: "Generate token and checkout repository"
+        uses: mongodb-labs/drivers-github-tools/secure-checkout@v2
+        with:
+          app_id: ${{ vars.APP_ID }}
+          private_key: ${{ secrets.APP_PRIVATE_KEY }}
+          ref: ${{ inputs.ref }}
+
+      - name: "Set up drivers-github-tools"
+        uses: mongodb-labs/drivers-github-tools/setup@v2
+        with:
+          aws_role_arn: ${{ secrets.AWS_ROLE_ARN }}
+          aws_region_name: ${{ vars.AWS_REGION_NAME }}
+          aws_secret_id: ${{ secrets.AWS_SECRET_ID }}
+
+      - name: Restore cached build artifacts
+        id: cache-build-artifacts
+        uses: actions/cache/restore@v4
+        with:
+          fail-on-cache-miss: true
+          key: ${{ github.sha }}-${{ inputs.php }}-${{ inputs.ts }}-${{ inputs.arch }}
+          enableCrossOsArchive: true
+          path: |
+            php_mongodb.dll
+            php_mongodb.pdb
+
+      - name: "Create detached DLL signature"
+        uses: mongodb-labs/drivers-github-tools/gpg-sign@v2
+        with:
+          filenames: php_mongodb.dll
+
+      # Copy the signature file from the release asset directory to avoid directory issues in the ZIP file
+      - name: "Copy signature file"
+        run: cp ${RELEASE_ASSETS}/php_mongodb.dll.sig .
+
+      - name: "Create and upload release asset"
+        if: ${{ inputs.upload_release_asset }}
+        run: |
+          ARCHIVE=php_mongodb-${{ inputs.version }}-${{ inputs.php }}-${{ inputs.ts }}-${{ inputs.arch }}.zip
+          zip ${ARCHIVE} php_mongodb.dll php_mongodb.dll.sig php_mongodb.pdb CREDITS CONTRIBUTING.md LICENSE README.md THIRD_PARTY_NOTICES
+          gh release upload ${{ inputs.version }} ${ARCHIVE}
