@@ -56,21 +56,12 @@ jobs:
       - name: "Create release output"
         run: echo '🎬 Release process for version ${{ inputs.version }} started by @${{ github.triggering_actor }}' >> $GITHUB_STEP_SUMMARY
 
-      - name: "Create temporary app token"
-        uses: actions/create-github-app-token@v1
-        id: app-token
+      - name: "Generate token and checkout repository"
+        uses: mongodb-labs/drivers-github-tools/secure-checkout@v2
         with:
-          app-id: ${{ vars.APP_ID }}
-          private-key: ${{ secrets.APP_PRIVATE_KEY }}
-
-      - name: "Store GitHub token in environment"
-        run: echo "GH_TOKEN=${{ steps.app-token.outputs.token }}" >> "$GITHUB_ENV"
-        shell: bash
-
-      - uses: actions/checkout@v4
-        with:
+          app_id: ${{ vars.APP_ID }}
+          private_key: ${{ secrets.APP_PRIVATE_KEY }}
           submodules: true
-          token: ${{ env.GH_TOKEN }}
 
       - name: "Set up drivers-github-tools"
         uses: mongodb-labs/drivers-github-tools/setup@v2
@@ -102,37 +93,29 @@ jobs:
       # Preliminary checks done - commence the release process
       #
 
-      # Create a draft release with a changelog
-      # TODO: Consider using the API to generate changelog
-      - name: "Create draft release with generated changelog"
-        run: gh release create ${{ env.PACKAGE_VERSION }} --target ${{ github.ref_name }} --generate-notes --draft
-
-      - name: "Read changelog from draft release"
-        run: gh release view ${{ env.PACKAGE_VERSION }} --json body --template '{{ .body }}' >> changelog
-
-      - name: "Prepare tag message"
-        run: |
-          echo -e "Release ${PACKAGE_VERSION}\n" > tag-message
-          cat changelog >> tag-message
-
-      # This step creates the "Package x.y.z" commit that will be the base of
-      # our tag and creates the release tag. This is run inside the container in
-      # order to create signed git artifacts
-      - name: "Create package commit and release tag"
-        uses: mongodb-labs/drivers-github-tools/git-sign@v2
+      - name: "Create package commit"
+        uses: mongodb-labs/drivers-github-tools/bump-version@v2
         with:
-          command: "$(pwd)/.github/workflows/commit-and-tag.sh ${{ env.PACKAGE_VERSION }} ${{ env.GPG_KEY_ID }} tag-message"
+          version: ${{ inputs.version }}
+          # Use get-version as a dummy as a version_bump_script is required
+          # We run the bump script manually earlier so we can sanity-check the version number and print nice output
+          version_bump_script: "./bin/update-release-version.php get-version"
+          commit_template: 'Package ${VERSION}'
+          # Don't push changes as we're creating a second commit later
+          push_commit: false
 
-      # This step needs to happen outside of the container, as PHP is not
-      # available within.
-      - name: "Bump to next development release"
-        run: ./bin/update-release-version.php to-next-patch-dev
-
-      # Create a signed "back to -dev" commit, again inside the container
-      - name: "Create dev commit"
-        uses: mongodb-labs/drivers-github-tools/git-sign@v2
+      - name: "Create release tag"
+        uses: mongodb-labs/drivers-github-tools/tag-version@v2
         with:
-          command: "git commit -m 'Back to -dev' -s --gpg-sign=${{ env.GPG_KEY_ID }} phongo_version.h"
+          version: ${{ inputs.version }}
+          tag_message_template: 'Release ${VERSION}'
+
+      - name: "Bump to next development release and commit"
+        uses: mongodb-labs/drivers-github-tools/bump-version@v2
+        with:
+          version: ${{ inputs.version }}
+          version_bump_script: "./bin/update-release-version.php to-next-patch-dev"
+          commit_template: 'Back to -dev'
 
       # TODO: Manually merge using ours strategy. This avoids merge-up pull requests being created
       # Process is:
@@ -141,25 +124,106 @@ jobs:
       # 3. push next branch
       # 4. switch back to release branch, then push
 
-      - name: "Push changes from release branch"
-        run: git push
-
       - name: "Prepare release message"
         run: |
           cat > release-message <<'EOL'
-          ${{ format(env.default-release-message, env.PACKAGE_VERSION, inputs.jira-version-number) }}
+          ${{ format(env.default-release-message, inputs.version, inputs.jira-version-number) }}
           EOL
-          cat changelog >> release-message
 
-      # Update release with correct release information
-      - name: "Update release information"
-        run: echo "RELEASE_URL=$(gh release edit ${{ env.PACKAGE_VERSION }} --title "${{ env.PACKAGE_VERSION }}" --notes-file release-message)" >> "$GITHUB_ENV"
-
-      # Pushing the release tag starts build processes that then produce artifacts for the release
-      - name: "Push release tag"
-        run: git push origin ${{ env.PACKAGE_VERSION }}
+      - name: "Create draft release"
+        run: echo "RELEASE_URL=$(gh release create ${{ inputs.version }} --target ${{ github.ref_name }} --title "${{ inputs.version }}" --notes-file release-message --draft)" >> "$GITHUB_ENV"
 
       - name: "Set summary"
         run: |
           echo '🚀 Created tag and drafted release for version [${{ inputs.version }}](${{ env.RELEASE_URL }})' >> $GITHUB_STEP_SUMMARY
           echo '✍️ You may now update the release notes and publish the release when ready' >> $GITHUB_STEP_SUMMARY
+
+  static-analysis:
+    needs: prepare-release
+    name: "Run Static Analysis"
+    uses: ./.github/workflows/static-analysis.yml
+    with:
+      ref: refs/tags/${{ inputs.version }}
+    permissions:
+      security-events: write
+      id-token: write
+
+  package-release:
+    needs: prepare-release
+    name: "Create Release Packages"
+    uses: ./.github/workflows/package-release.yml
+    with:
+      version: ${{ inputs.version }}
+      ref: refs/tags/${{ inputs.version }}
+    secrets: inherit
+    permissions:
+      id-token: write
+      contents: write
+
+  publish-ssdlc-assets:
+    needs:
+      - static-analysis
+      - package-release
+    environment: release
+    name: "Publish SSDLC Assets"
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: read
+      id-token: write
+      contents: write
+
+    steps:
+      - name: "Generate token and checkout repository"
+        uses: mongodb-labs/drivers-github-tools/secure-checkout@v2
+        with:
+          app_id: ${{ vars.APP_ID }}
+          private_key: ${{ secrets.APP_PRIVATE_KEY }}
+          ref: refs/tags/${{ inputs.version }}
+
+      # Sets the S3_ASSETS environment variable used later
+      - name: "Set up drivers-github-tools"
+        uses: mongodb-labs/drivers-github-tools/setup@v2
+        with:
+          aws_role_arn: ${{ secrets.AWS_ROLE_ARN }}
+          aws_region_name: ${{ vars.AWS_REGION_NAME }}
+          aws_secret_id: ${{ secrets.AWS_SECRET_ID }}
+
+      - name: "Remove unnecessary files"
+        run: rm -f ${RELEASE_ASSETS}/release_run_id.txt
+        shell: bash
+
+      - name: Download all release artifacts
+        run: gh release download ${{ inputs.version }} --dir ${{ env.RELEASE_ASSETS }}
+
+      - name: "Generate authorized publication document"
+        uses: mongodb-labs/drivers-github-tools/authorized-pub@v2
+        with:
+          product_name: "MongoDB PHP Driver (extension)"
+          release_version: ${{ inputs.version }}
+          filenames: "${{ env.RELEASE_ASSETS }}/*"
+          token: ${{ env.GH_TOKEN }}
+
+      - name: "Download SBOM file from Silk"
+        uses: mongodb-labs/drivers-github-tools/sbom@v2
+        with:
+          silk_asset_group: mongodb-php-driver-extension
+
+      - name: "Upload SBOM as release artifact"
+        run: gh release upload ${{ inputs.version }} ${{ env.S3_ASSETS }}/cyclonedx.sbom.json
+
+      - name: "Generate SARIF report from code scanning alerts"
+        uses: mongodb-labs/drivers-github-tools/code-scanning-export@v2
+        with:
+          ref: ${{ inputs.version }}
+          output-file: ${{ env.S3_ASSETS }}/code-scanning-alerts.json
+
+      - name: "Generate compliance report"
+        uses: mongodb-labs/drivers-github-tools/compliance-report@v2
+        with:
+          token: ${{ env.GH_TOKEN }}
+
+      - name: Upload S3 assets
+        uses: mongodb-labs/drivers-github-tools/upload-s3-assets@v2
+        with:
+          version: ${{ inputs.version }}
+          product_name: mongo-php-driver
