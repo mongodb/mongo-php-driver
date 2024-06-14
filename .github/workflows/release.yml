@@ -62,6 +62,7 @@ jobs:
           app_id: ${{ vars.APP_ID }}
           private_key: ${{ secrets.APP_PRIVATE_KEY }}
           submodules: true
+          fetch-depth: 0
 
       - name: "Set up drivers-github-tools"
         uses: mongodb-labs/drivers-github-tools/setup@v2
@@ -109,6 +110,8 @@ jobs:
         with:
           version: ${{ inputs.version }}
           tag_message_template: 'Release ${VERSION}'
+          # Don't push tag, we'll do that after merging up
+          push_tag: false
 
       - name: "Bump to next development release and commit"
         uses: mongodb-labs/drivers-github-tools/bump-version@v2
@@ -116,13 +119,34 @@ jobs:
           version: ${{ inputs.version }}
           version_bump_script: "./bin/update-release-version.php to-next-patch-dev"
           commit_template: 'Back to -dev'
+          # Don't push commit, we still need to merge up
+          push_commit: false
 
-      # TODO: Manually merge using ours strategy. This avoids merge-up pull requests being created
-      # Process is:
-      # 1. switch to next branch (according to merge-up action)
-      # 2. merge release branch using --strategy=ours
-      # 3. push next branch
-      # 4. switch back to release branch, then push
+      - name: "Determine branch to merge up to"
+        id: get-next-branch
+        uses: alcaeus/automatic-merge-up-action/get-next-branch@main
+        with:
+          ref: ${{ github.ref_name }}
+          branchNamePattern: 'v<major>.<minor>'
+          fallbackBranch: 'master'
+
+      - name: "Manually merge up changes"
+        if: ${{ steps.get-next-branch.outputs.hasNextBranch }}
+        run: |
+          git checkout ${NEXT_BRANCH}
+          git merge --strategy=ours ${RELEASE_BRANCH}
+          git push origin ${NEXT_BRANCH}
+          git checkout ${RELEASE_BRANCH}
+        env:
+          NEXT_BRANCH: ${{ steps.get-next-branch.outputs.branchName }}
+          RELEASE_BRANCH: ${{ github.ref_name }}
+
+      - name: "Push tag and release branch"
+        run: |
+          git push origin ${RELEASE_BRANCH}
+          git push origin ${{ inputs.version }}
+        env:
+          RELEASE_BRANCH: ${{ github.ref_name }}
 
       - name: "Prepare release message"
         run: |
