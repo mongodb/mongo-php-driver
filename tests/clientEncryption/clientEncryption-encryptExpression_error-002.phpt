@@ -22,10 +22,10 @@ $keyId = $clientEncryption->createDataKey('local');
 
 $encryptOpts = [
     'keyId' => $keyId,
-    'algorithm' => MongoDB\Driver\ClientEncryption::ALGORITHM_RANGE_PREVIEW,
-    'queryType' => MongoDB\Driver\ClientEncryption::QUERY_TYPE_RANGE_PREVIEW,
+    'algorithm' => MongoDB\Driver\ClientEncryption::ALGORITHM_RANGE,
+    'queryType' => MongoDB\Driver\ClientEncryption::QUERY_TYPE_RANGE,
     'contentionFactor' => 0,
-    'rangeOpts' => ['min' => 0, 'max' => 200, 'sparsity' => 1],
+    'rangeOpts' => ['min' => 0, 'max' => 200, 'sparsity' => 1, 'trimFactor' => 1],
 ];
 
 echo throws(function() use ($clientEncryption, $encryptOpts) {
