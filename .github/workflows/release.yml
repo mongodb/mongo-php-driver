@@ -144,7 +144,7 @@ jobs:
       - name: "Push tag and release branch"
         run: |
           git push origin ${RELEASE_BRANCH}
-          git push origin ${{ inputs.version }}
+          git push origin tag ${{ inputs.version }}
         env:
           RELEASE_BRANCH: ${{ github.ref_name }}
 
