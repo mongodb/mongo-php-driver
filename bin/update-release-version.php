@@ -9,9 +9,11 @@ function usage()
 
 echo <<<EOT
 Usage:
-{$argv[0]} <command>
+{$argv[0]} <command> [<version>]
 
 Commands:
+    release:            Release the given version (requires second argument)
+    to-next-dev:        Update to the next version following the current version
     to-stable:          Mark the current version as stable
     to-next-patch-dev:  Update to the next patch development version
     to-next-minor-dev:  Update to the next minor development version
@@ -48,6 +50,25 @@ function read_release_version(string $filename): array
     $versions['versionComponents'] = array_slice($matches, 1);
 
     return $versions;
+}
+
+function parse_release_version(string $version): array
+{
+    // Regex copied from https://github.com/pear/pear-core/blob/6f4c3a0b134626d238d75a44af01a2f7c4e688d9/PEAR/Common.php#L32
+    if (! preg_match('#^(?<major>\d+)\.(?<minor>\d+)\.(?<patch>\d+)(?:(?<stability>(?:alpha|beta))(?<prereleasenum>\d+))?$#', $version, $matches)) {
+        throw new Exception(sprintf('Given version "%s" is not in the PEAR version format'));
+    }
+
+    return [
+        'version' => $version,
+        'stability' => $matches['stability'] ?? 'stable',
+        'versionComponents' => [
+            $matches['major'],
+            $matches['minor'],
+            $matches['patch'],
+            0,
+        ],
+    ];
 }
 
 function write_release_version(string $filename, array $version): void
@@ -140,6 +161,45 @@ function get_next_minor_version(array $versions): array
     ];
 }
 
+function get_next_release_version(array $versions, string $releaseVersion): array
+{
+    $releaseVersion = parse_release_version($releaseVersion);
+
+    // When bumping to the specified release version, check if the major, minor, and patch versions match what's currently in the file
+    if (array_slice($versions['versionComponents'], 0, 3) !== array_slice($releaseVersion['versionComponents'], 0, 3)) {
+        throw new Exception(sprintf('Cannot bump version "%s" to version "%s".', $versions['version'], $releaseVersion['version']));
+    }
+
+    // Now, re-use the existing version components to copy over the previous build number used for DLLs
+    $releaseVersion['versionComponents'] = $versions['versionComponents'];
+
+    return $releaseVersion;
+}
+
+function get_next_dev_version(array $versions): array
+{
+    $versionComponents = $versions['versionComponents'];
+
+    // We're dealing with a pre-release. The next version is a devel version of the corresponding stable release
+    // Examples:
+    // 1.19.1snapshot => 1.19.1dev
+    // 1.20.0alpha1 => 1.20.0dev
+    // 1.20.0beta1 => 1.20.0dev
+    if ($versions['stability'] != 'stable') {
+        // Increase the build number for unique DLL versions
+        $versionComponents[3]++;
+
+        return [
+            'version' => get_version_string_from_components($versionComponents) . 'dev',
+            'stability' => 'devel',
+            'versionComponents' => $versionComponents,
+        ];
+    }
+
+    // For all other releases, return the next patch version
+    return get_next_patch_version($versions);
+}
+
 // Allow 2 arguments as the bump-version action always passes a version number, even when not needed
 if (! in_array($argc, [2, 3])) {
     usage();
@@ -152,6 +212,18 @@ switch ($argv[1] ?? null) {
         echo $currentVersion['version'];
 
         exit(0);
+
+    case 'release':
+        if ($argc !== 3) {
+            usage();
+        }
+
+        $newVersion = get_next_release_version($currentVersion, $argv[2]);
+        break;
+
+    case 'to-next-dev':
+        $newVersion = get_next_dev_version($currentVersion);
+        break;
 
     case 'to-stable':
         $newVersion = get_stable_version($currentVersion);

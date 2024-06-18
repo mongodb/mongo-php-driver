@@ -46,10 +46,17 @@ enter the version number and the corresponding JIRA version ID for the release.
 This version ID can be obtained from a link in the "Version" column on the
 [PHPC releases page](https://jira.mongodb.org/projects/PHPC?selectedItem=com.atlassian.jira.jira-projects-plugin%3Arelease-page&status=unreleased).
 
-The automation will then create and push the necessary commits and tag, create a
-draft release, and trigger the packaging builds for the newly created tag. The
-release is created in a draft state and can be published once the release notes
-have been updated.
+The automation will create and push the necessary commits and tag, create a
+draft release, trigger the packaging builds for the newly created tag, and
+publish all required SSDLC assets. The release is created in a draft state and
+can be published once the release notes have been updated.
+
+Pre-releases (e.g. alpha and beta stability) can be released using the
+automation as well. When entering a pre-release version number, make sure to not
+include a dash before the stability, e.g. `1.20.0beta1` not `1.20.0-beta1`. PECL
+versions do not include a dash before the stability. GitHub Releases for
+pre-release versions will be marked as such and will not be marked as "latest"
+release.
 
 Alternatively, you may follow the [manual release process](#manual-release-process)
 before continuing with the next section.
