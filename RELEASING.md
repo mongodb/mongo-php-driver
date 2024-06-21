@@ -51,15 +51,21 @@ draft release, trigger the packaging builds for the newly created tag, and
 publish all required SSDLC assets. The release is created in a draft state and
 can be published once the release notes have been updated.
 
-Pre-releases (e.g. alpha and beta stability) can be released using the
-automation as well. When entering a pre-release version number, make sure to not
-include a dash before the stability, e.g. `1.20.0beta1` not `1.20.0-beta1`. PECL
-versions do not include a dash before the stability. GitHub Releases for
-pre-release versions will be marked as such and will not be marked as "latest"
-release.
+Pre-releases (alpha, beta and RC stability) can be released using the automation
+as well. When entering a pre-release version number, make sure to not include a
+dash before the stability, e.g. `1.20.0beta1` not `1.20.0-beta1`. PECL versions
+do not include a dash before the stability. GitHub Releases for pre-release
+versions will be marked as such and will not be marked as "latest" release.
+Examples for valid pre-release versions include:
+* `1.20.0alpha1`
+* `1.20.0beta2`
+* `1.20.0RC1` (note the upper-case `RC` suffix)
 
-Alternatively, you may follow the [manual release process](#manual-release-process)
-before continuing with the next section.
+## Publish release notes
+
+The GitHub release notes are created as a draft, and without any release 
+highlights. Fill in release highlights and publish the release notes once the
+entire release workflow has completed. 
 
 ## Upload package to PECL
 
@@ -86,168 +92,3 @@ sure to update both MongoDB and Language compatibility tables, as shown in
 
 Significant release announcements should also be posted in the
 [MongoDB Product & Driver Announcements: Driver Releases](https://www.mongodb.com/community/forums/tags/c/announcements/driver-releases/110/php) forum.
-
-## Manual release process
-
-The following steps outline the manual release process. These are preserved
-for historical reasons and releases that are currently not supported by the
-release automation (e.g. beta releases). These steps are meant to be run instead
-of [triggering the release workflow](#trigger-the-release-workflow). The
-instructions assume that the steps preceding the release workflow have been
-completed successfully.
-
-The command examples below assume that the canonical "mongodb" repository has
-the remote name "mongodb". You may need to adjust these commands if you've given
-the remote another name (e.g. "upstream"). The "origin" remote name was not used
-as it likely refers to your personal fork.
-
-It helps to keep your own fork in sync with the "mongodb" repository (i.e. any
-branches and tags on the main repository should also exist in your fork). This
-is left as an exercise to the reader.
-
-### Update version info
-
-The PHP driver uses [semantic versioning](http://semver.org/). Do not break
-backwards compatibility in a non-major release or your users will kill you.
-
-Before proceeding, ensure that the `master` branch is up-to-date with all code
-changes in this maintenance branch. This is important because we will later
-merge the ensuing release commits up to master with `--strategy=ours`, which
-will ignore changes from the merged commits.
-
-Update the version and stability constants in `phongo_version.h` for the stable
-release:
-
-```shell
-$ ./bin/update-release-version.php to-stable
-```
-
-The Makefile targets for creating the PECL package depend on these constants, so
-you must rebuild the extension after updating `phongo_version.h`.
-
-> [!NOTE]
-> If this is an alpha or beta release, the version string should include the
-> X.Y.Z version followed by the stability and an increment. For instance, the
-> first beta release in the 1.4.0 series would be "1.4.0beta1". Alpha and beta
-> releases use "alpha" and "beta" stability strings, respectively. Release
-> candidates (e.g. "1.4.0RC1") also use "beta" stability. See
-> [Documenting release stability and API stability](https://pear.php.net/manual/en/guide.developers.package2.stability.php)
-> for more information. For each change to the suffixes of
-> `PHP_MONGODB_VERSION`, increment the last digit of
-> `PHP_MONGODB_VERSION_DESC`.
-
-### Build PECL package
-
-Create the PECL package description file with `make package.xml`. This creates
-a `package.xml` file from a template. Version, author, and file information will
-be filled in, but release notes must be copied manually from JIRA.
-
-After copying release notes, use `make package` to create the package file (e.g.
-`mongodb-X.Y.Z.tgz`) and ensure that it can be successfully installed:
-
-```
-$ pecl install -f mongodb-X.Y.Z.tgz
-```
-
-### Update version info
-
-Commit the modified `phongo_version.h` file and push this change:
-
-```
-$ git commit -m "Package X.Y.Z" phongo_version.h
-$ git push mongodb
-```
-
-### Tag the release
-
-Create a tag for the release and push:
-
-```
-$ git tag -a -m "Release X.Y.Z" X.Y.Z
-$ git push mongodb --tags
-```
-
-Pushing the new tag will start the packaging process which provides the PECL
-and Windows packages that should be attached to the release.
-
-### Release PECL package
-
-The PECL package may be published via the
-[Release Upload](https://pecl.php.net/release-upload.php) form. You will have
-one chance to confirm the package information after uploading.
-
-### Update version info back to dev
-
-After tagging, the version and stability constants in `phongo_version.h` should
-be updated back to development status:
-
-```shell
-$ ./bin/update-release-version.php to-next-patch-dev
-```
-
-Commit and push this change:
-
-```
-$ git commit -m "Back to -dev" phongo_version.h
-$ git push mongodb
-```
-
-> [!NOTE]
-> If this is an alpha, beta, or RC release, the version string should increment
-> the stability sequence instead of the patch version. For example, if the
-> constants were originally "1.4.0-dev" and "devel" and then changed to
-> "1.4.0beta1" and "beta" for the first beta release, this step would see them
-> ultimately changed to "1.4.0beta2-dev" and "devel".
-
-### Publish release notes
-
-The following template should be used for creating GitHub release notes via
-[this form](https://github.com/mongodb/mongo-php-driver/releases/new). The PECL
-package may also be attached to the release notes.
-
-```markdown
-The PHP team is happy to announce that version X.Y.Z of the [mongodb](https://pecl.php.net/package/mongodb) PHP extension is now available on PECL.
-
-**Release Highlights**
-
-<one or more paragraphs describing important changes in this release>
-
-A complete list of resolved issues in this release may be found in [JIRA]($JIRA_URL).
-
-**Documentation**
-
-Documentation is available on [PHP.net](https://php.net/set.mongodb).
-
-**Installation**
-
-You can either download and install the source manually, or you can install the extension with:
-
-    pecl install mongodb-X.Y.Z
-
-or update with:
-
-    pecl upgrade mongodb-X.Y.Z
-
-Windows binaries are attached to the GitHub release notes.
-```
-
-> [!NOTE]
-> If this is an alpha or beta release, the installation examples should refer to
-> the exact version (e.g. "mongodb-1.8.0beta2"). This is necessary because PECL
-> prioritizes recent, stable releases over any stability preferences
-> (e.g. "mongodb-beta").
-
-The URL for the list of resolved JIRA issues will need to be updated with each
-release. You may obtain the list from
-[this form](https://jira.mongodb.org/secure/ReleaseNote.jspa?projectId=12484).
-
-If commits from community contributors were included in this release, append the
-following section:
-
-```markdown
-**Thanks**
-
-Thanks for our community contributors for X.Y.Z:
-
-* [$CONTRIBUTOR_NAME](https://github.com/$GITHUB_USERNAME)
-```
