@@ -137,7 +137,7 @@ jobs:
 
       - name: "Create draft release"
         run: |
-          if [[ "${{ inputs.version }}" =~ (alpha|beta) ]]; then
+          if [[ "${{ inputs.version }}" =~ (alpha|beta|RC) ]]; then
             PRERELEASE="--prerelease --latest=false"
           fi
           echo "RELEASE_URL=$(gh release create ${{ inputs.version }} ${PRERELEASE} --target ${{ github.ref_name }} --title "${{ inputs.version }}" --notes-file release-message --draft)" >> "$GITHUB_ENV"

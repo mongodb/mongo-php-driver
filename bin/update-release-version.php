@@ -55,13 +55,19 @@ function read_release_version(string $filename): array
 function parse_release_version(string $version): array
 {
     // Regex copied from https://github.com/pear/pear-core/blob/6f4c3a0b134626d238d75a44af01a2f7c4e688d9/PEAR/Common.php#L32
-    if (! preg_match('#^(?<major>\d+)\.(?<minor>\d+)\.(?<patch>\d+)(?:(?<stability>(?:alpha|beta))(?<prereleasenum>\d+))?$#', $version, $matches)) {
+    if (! preg_match('#^(?<major>\d+)\.(?<minor>\d+)\.(?<patch>\d+)(?:(?<stability>(?:alpha|beta|RC))(?<prereleasenum>\d+))?$#', $version, $matches)) {
         throw new Exception(sprintf('Given version "%s" is not in the PEAR version format'));
+    }
+
+    $stability = 'stable';
+    if (isset($matches['stability'])) {
+        // PEAR does not have a stability for RC releases, so use beta instead
+        $stability = $matches['stability'] == 'RC' ? 'beta' : $matches['stability'];
     }
 
     return [
         'version' => $version,
-        'stability' => $matches['stability'] ?? 'stable',
+        'stability' => $stability,
         'versionComponents' => [
             $matches['major'],
             $matches['minor'],
@@ -185,6 +191,7 @@ function get_next_dev_version(array $versions): array
     // 1.19.1snapshot => 1.19.1dev
     // 1.20.0alpha1 => 1.20.0dev
     // 1.20.0beta1 => 1.20.0dev
+    // 1.20.0RC1 => 1.20.0dev
     if ($versions['stability'] != 'stable') {
         // Increase the build number for unique DLL versions
         $versionComponents[3]++;
