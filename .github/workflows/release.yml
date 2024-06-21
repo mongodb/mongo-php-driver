@@ -53,6 +53,13 @@ jobs:
       contents: write
 
     steps:
+      - name: "Check version number format"
+        run: |
+          if ! [[ "${{ inputs.version }}" =~ ^[0-9]+\.[0-9]+\.[0-9]+((alpha|beta|RC)[0-9]+)?$ ]]; then
+            echo '❌ Version ${{ inputs.version }} does not match expected format' >> $GITHUB_STEP_SUMMARY
+            exit 1
+          fi
+
       - name: "Create release output"
         run: echo '🎬 Release process for version ${{ inputs.version }} started by @${{ github.triggering_actor }}' >> $GITHUB_STEP_SUMMARY
 
