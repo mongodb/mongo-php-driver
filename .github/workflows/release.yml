@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: "The version to be released. This is checked for consistency with the branch name and configuration"
+        description: "The version to be released in PECL format (e.g. 1.19.1, 1.20.0beta1)"
         required: true
         type: "string"
       jira-version-number:
@@ -53,6 +53,13 @@ jobs:
       contents: write
 
     steps:
+      - name: "Check version number format"
+        run: |
+          if ! [[ "${{ inputs.version }}" =~ ^[0-9]+\.[0-9]+\.[0-9]+((alpha|beta|RC)[0-9]+)?$ ]]; then
+            echo '❌ Version ${{ inputs.version }} does not match expected format' >> $GITHUB_STEP_SUMMARY
+            exit 1
+          fi
+
       - name: "Create release output"
         run: echo '🎬 Release process for version ${{ inputs.version }} started by @${{ github.triggering_actor }}' >> $GITHUB_STEP_SUMMARY
 
@@ -76,31 +83,12 @@ jobs:
         with:
           php-version: "${{ matrix.php-version }}"
 
-      - name: "Update version information to stable release"
-        run: ./bin/update-release-version.php to-stable
-
-      - name: "Read current package version"
-        run: echo "PACKAGE_VERSION=$(./bin/update-release-version.php get-version)" >> "$GITHUB_ENV"
-
-      # Sanity check - the version from the input and the one determined by phongo_version.h need to be the same
-      - name: "Check version for consistency"
-        if: ${{ inputs.version != env.PACKAGE_VERSION }}
-        # We exit with an error to abort the workflow. This is only run if the versions don't match
-        run: |
-          echo '❌ Release failed due to version mismatch: expected ${{ inputs.version }}, got ${{ env.PACKAGE_VERSION }} from code' >> $GITHUB_STEP_SUMMARY
-          exit 1
-
-      #
-      # Preliminary checks done - commence the release process
-      #
-
       - name: "Create package commit"
         uses: mongodb-labs/drivers-github-tools/bump-version@v2
         with:
           version: ${{ inputs.version }}
-          # Use get-version as a dummy as a version_bump_script is required
-          # We run the bump script manually earlier so we can sanity-check the version number and print nice output
-          version_bump_script: "./bin/update-release-version.php get-version"
+          # Note: this script will fail and abort if the requested version can't be released
+          version_bump_script: "./bin/update-release-version.php release"
           commit_template: 'Package ${VERSION}'
           # Don't push changes as we're creating a second commit later
           push_commit: false
@@ -117,7 +105,7 @@ jobs:
         uses: mongodb-labs/drivers-github-tools/bump-version@v2
         with:
           version: ${{ inputs.version }}
-          version_bump_script: "./bin/update-release-version.php to-next-patch-dev"
+          version_bump_script: "./bin/update-release-version.php to-next-dev"
           commit_template: 'Back to -dev'
           # Don't push commit, we still need to merge up
           push_commit: false
@@ -155,7 +143,11 @@ jobs:
           EOL
 
       - name: "Create draft release"
-        run: echo "RELEASE_URL=$(gh release create ${{ inputs.version }} --target ${{ github.ref_name }} --title "${{ inputs.version }}" --notes-file release-message --draft)" >> "$GITHUB_ENV"
+        run: |
+          if [[ "${{ inputs.version }}" =~ (alpha|beta|RC) ]]; then
+            PRERELEASE="--prerelease --latest=false"
+          fi
+          echo "RELEASE_URL=$(gh release create ${{ inputs.version }} ${PRERELEASE} --target ${{ github.ref_name }} --title "${{ inputs.version }}" --notes-file release-message --draft)" >> "$GITHUB_ENV"
 
       - name: "Set summary"
         run: |
