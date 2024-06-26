@@ -1,7 +1,7 @@
 # This file is generated automatically - please edit the "templates/test/local.yml" template file instead.
 tasks:
   - name: "test-mongodb-latest-standalone-noauth-nossl"
-    tags: ["standalone", "local", "latest"]
+    tags: ["standalone", "local", "latest", "tag"]
     commands:
       - func: "bootstrap mongo-orchestration"
         vars:
@@ -10,7 +10,7 @@ tasks:
       - func: "run tests"
 
   - name: "test-mongodb-latest-standalone-auth"
-    tags: ["standalone", "local", "latest", "auth"]
+    tags: ["standalone", "local", "latest", "auth", "tag"]
     commands:
       - func: "bootstrap mongo-orchestration"
         vars:
@@ -20,7 +20,7 @@ tasks:
       - func: "run tests"
 
   - name: "test-mongodb-latest-standalone-ssl"
-    tags: ["standalone", "local", "latest", "ssl"]
+    tags: ["standalone", "local", "latest", "ssl", "tag"]
     commands:
       - func: "bootstrap mongo-orchestration"
         vars:
@@ -32,7 +32,7 @@ tasks:
           SSL: "yes"
 
   - name: "test-mongodb-latest-replicaset-noauth-nossl"
-    tags: ["replicaset", "local", "latest"]
+    tags: ["replicaset", "local", "latest", "tag"]
     commands:
       - func: "bootstrap mongo-orchestration"
         vars:
@@ -41,7 +41,7 @@ tasks:
       - func: "run tests"
 
   - name: "test-mongodb-latest-replicaset-auth"
-    tags: ["replicaset", "local", "latest", "auth"]
+    tags: ["replicaset", "local", "latest", "auth", "pr", "tag"]
     commands:
       - func: "bootstrap mongo-orchestration"
         vars:
@@ -51,7 +51,7 @@ tasks:
       - func: "run tests"
 
   - name: "test-mongodb-latest-sharded-noauth-nossl"
-    tags: ["sharded", "local", "latest"]
+    tags: ["sharded", "local", "latest", "tag"]
     commands:
       - func: "bootstrap mongo-orchestration"
         vars:

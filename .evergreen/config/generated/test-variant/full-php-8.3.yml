@@ -1,4 +1,4 @@
-# This file is generated automatically - please edit the "templates/test-variant/latest.yml" template file instead.
+# This file is generated automatically - please edit the "templates/test-variant/full.yml" template file instead.
 buildvariants:
   - name: test-debian11-php-8.3
     tags: ["test", "debian", "x64", "php8.3", "pr", "tag"]

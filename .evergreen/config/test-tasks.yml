@@ -1,6 +1,6 @@
 tasks:
   - name: "test-atlas-connectivity"
-    tags: ["atlas", "nodb"]
+    tags: ["atlas", "nodb", "pr", "tag"]
     commands:
       - func: "run tests"
         vars:

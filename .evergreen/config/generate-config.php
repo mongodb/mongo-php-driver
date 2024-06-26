@@ -65,8 +65,8 @@ $allFiles[] = generateConfigs('test', 'mongodbVersion', 'require-api-version.yml
 $allFiles[] = generateConfigs('test', 'mongodbVersion', 'skip-crypt-shared.yml', 'skip-crypt-shared-%s', $skipCryptSharedServerVersions);
 
 // Test variants
-$allFiles[] = generateConfigs('test-variant', 'phpVersion', 'latest.yml', 'latest-php-%s', [$latestPhpVersion]);
-$allFiles[] = generateConfigs('test-variant', 'phpVersion', 'replicaset-only.yml', 'replicaset-php-%s', array_diff($supportedPhpVersions, [$latestPhpVersion]));
+$allFiles[] = generateConfigs('test-variant', 'phpVersion', 'full.yml', 'full-php-%s', $supportedPhpVersions);
+$allFiles[] = generateConfigs('test-variant', 'phpVersion', 'libmongoc.yml', 'libmongoc-php-%s', [$latestPhpVersion]);
 
 echo "Generated config. Use the following list to import files:\n";
 echo implode("\n", array_map('getImportConfig', array_merge(...$allFiles))) . "\n";
