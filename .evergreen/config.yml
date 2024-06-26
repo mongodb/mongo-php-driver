@@ -45,6 +45,10 @@ git_tag_aliases:
     variant_tags: ["tag"]
     task_tags: ["tag"]
 
+github_checks_aliases:
+  - variant: ".*"
+    task: ".*"
+
 patch_aliases:
   - alias: pull-request
     variant_tags: ["pr"]
