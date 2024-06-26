@@ -25,14 +25,24 @@ post:
   - func: "stop load balancer"
   - func: "cleanup"
 
-# Define aliases for patch builds and PR builds. These only apply if no aliases are defined in project settings
-github_pr_aliases:
-  # Run all build tasks, except on Power8 and zSeries due to low number of build hardware
-  - variant: "^build-[^-]+($|-arm64)"
+# Define aliases for patch builds and PR builds. These only apply if no aliases are defined in project and repo settings
+github_pr_aliases: &github_pr_aliases
+  # Run all tasks in PR variants for PHP 8.3
+  - variant_tags: ["php8.3", "pr"]
     task: ".*"
-  # Run tests on debian, only testing local replicasets with authentication enabled
-  - variant: "test-.*"
-    task: "test-mongodb-.*-replicaset-auth"
+  # Run PR tasks for PR variants
+  - variant_tags: ["pr"]
+    task_tags: ["pr"]
+
+commit_queue_aliases: *github_pr_aliases
+
+patch_aliases:
+  - alias: pull-request
+    variant_tags: ["pr"]
+    task_tags: ["pr"]
+  - alias: pull-request-latest-php
+    variant_tags: ["php8.3", "pr"]
+    task: ".*"
 
 # Include files that contain various tasks, task groups, and build variant definitions
 include:
@@ -79,8 +89,9 @@ include:
   - filename: .evergreen/config/generated/test/skip-crypt-shared-rapid.yml
   - filename: .evergreen/config/generated/test/skip-crypt-shared-7.0.yml
   - filename: .evergreen/config/generated/test/skip-crypt-shared-6.0.yml
-  - filename: .evergreen/config/generated/test-variant/latest-php-8.3.yml
-  - filename: .evergreen/config/generated/test-variant/replicaset-php-8.2.yml
-  - filename: .evergreen/config/generated/test-variant/replicaset-php-8.1.yml
-  - filename: .evergreen/config/generated/test-variant/replicaset-php-8.0.yml
-  - filename: .evergreen/config/generated/test-variant/replicaset-php-7.4.yml
+  - filename: .evergreen/config/generated/test-variant/full-php-8.3.yml
+  - filename: .evergreen/config/generated/test-variant/full-php-8.2.yml
+  - filename: .evergreen/config/generated/test-variant/full-php-8.1.yml
+  - filename: .evergreen/config/generated/test-variant/full-php-8.0.yml
+  - filename: .evergreen/config/generated/test-variant/full-php-7.4.yml
+  - filename: .evergreen/config/generated/test-variant/libmongoc-php-8.3.yml

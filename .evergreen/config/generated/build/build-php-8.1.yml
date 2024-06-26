@@ -1,7 +1,7 @@
 # This file is generated automatically - please edit the "templates/build/build-php.yml" template file instead.
 tasks:
   - name: "build-php-8.1"
-    tags: ["build", "php8.1"]
+    tags: ["build", "php8.1", "pr", "tag"]
     commands:
       - func: "compile driver"
         vars:

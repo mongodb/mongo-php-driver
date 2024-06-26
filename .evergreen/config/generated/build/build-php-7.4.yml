@@ -1,7 +1,7 @@
 # This file is generated automatically - please edit the "templates/build/build-php.yml" template file instead.
 tasks:
   - name: "build-php-7.4"
-    tags: ["build", "php7.4"]
+    tags: ["build", "php7.4", "pr", "tag"]
     commands:
       - func: "compile driver"
         vars:

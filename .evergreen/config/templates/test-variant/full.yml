@@ -1,6 +1,6 @@
 buildvariants:
   - name: test-debian11-php-%phpVersion%
-    tags: ["test", "debian", "x64"]
+    tags: ["test", "debian", "x64", "php%phpVersion%", "pr", "tag"]
     display_name: "Test: Debian 11, PHP %phpVersion%"
     run_on: debian11-small
     expansions:
@@ -31,7 +31,7 @@ buildvariants:
           - ".ocsp .6.0"
 
   - name: test-debian92-php-%phpVersion%
-    tags: ["test", "debian", "x64"]
+    tags: ["test", "debian", "x64", "php%phpVersion%", "pr", "tag"]
     display_name: "Test: Debian 9.2, PHP %phpVersion%"
     run_on: debian92-small
     expansions:
@@ -54,43 +54,3 @@ buildvariants:
       - name: "test-ocsp-4.4"
         execution_tasks:
           - ".ocsp .4.4"
-
-  # Variants with different libmongoc
-  - name: test-debian11-php-%phpVersion%-libmongoc-lowest-supported
-    display_name: "Test: Debian 11, PHP %phpVersion%, libmongoc lowest"
-    tags: ["test", "libmongoc", "debian", "x64"]
-    run_on: debian11-small
-    expansions:
-      FETCH_BUILD_VARIANT: "build-debian11"
-      FETCH_BUILD_TASK: "build-php-%phpVersion%-libmongoc-lowest-supported"
-    depends_on:
-      - variant: "build-debian11"
-        name: "build-php-%phpVersion%-libmongoc-lowest-supported"
-    tasks:
-      - ".replicaset .local .7.0 .auth"
-
-  - name: test-debian11-php-%phpVersion%-libmongoc-next-stable
-    display_name: "Test: Debian 11, PHP %phpVersion%, libmongoc next stable"
-    tags: ["test", "libmongoc", "debian", "x64"]
-    run_on: debian11-small
-    expansions:
-      FETCH_BUILD_VARIANT: "build-debian11"
-      FETCH_BUILD_TASK: "build-php-%phpVersion%-libmongoc-next-stable"
-    depends_on:
-      - variant: "build-debian11"
-        name: "build-php-%phpVersion%-libmongoc-next-stable"
-    tasks:
-      - ".replicaset .local .7.0 .auth"
-
-  - name: test-debian11-php-%phpVersion%-libmongoc-latest
-    tags: ["test", "libmongoc", "debian", "x64"]
-    display_name: "Test: Debian 11, PHP %phpVersion%, libmongoc latest"
-    run_on: debian11-small
-    expansions:
-      FETCH_BUILD_VARIANT: "build-debian11"
-      FETCH_BUILD_TASK: "build-php-%phpVersion%-libmongoc-latest"
-    depends_on:
-      - variant: "build-debian11"
-        name: "build-php-%phpVersion%-libmongoc-latest"
-    tasks:
-      - ".replicaset .local .7.0 .auth"
