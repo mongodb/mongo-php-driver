@@ -25,14 +25,17 @@ post:
   - func: "stop load balancer"
   - func: "cleanup"
 
-# Define aliases for patch builds and PR builds. These only apply if no aliases are defined in project and repo settings
+# These aliases define the default variant/tasks to test for pull requests and merge queue
 github_pr_aliases: &github_pr_aliases
-  # Run all tasks in PR variants for PHP 8.3
-  - variant_tags: ["php8.3", "pr"]
-    task: ".*"
-  # Run PR tasks for PR variants
-  - variant_tags: ["pr"]
+  # Always test all builds for consistency
+  - variant_tags: ["pr build"]
     task_tags: ["pr"]
+  # Run all tasks in PR variants for PHP 8.3 (excluding MongoDB latest)
+  - variant_tags: ["pr php8.3"]
+    task_tags: ["!latest"]
+  # Run PR tasks for all PR variants (only MongoDB 7.0)
+  - variant_tags: ["pr"]
+    task_tags: ["pr 7.0"]
 
 commit_queue_aliases: *github_pr_aliases
 
