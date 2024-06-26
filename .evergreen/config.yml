@@ -36,6 +36,16 @@ github_pr_aliases: &github_pr_aliases
 
 commit_queue_aliases: *github_pr_aliases
 
+github_checks_aliases:
+  - variant: ".*"
+    task: ".*"
+
+git_tag_aliases:
+  git_tag: "*"
+  remote_path: ""
+  variant_tags: ["tag"]
+  task_tags: ["tag"]
+
 patch_aliases:
   - alias: pull-request
     variant_tags: ["pr"]
