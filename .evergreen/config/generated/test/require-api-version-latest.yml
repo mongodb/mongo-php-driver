@@ -1,7 +1,7 @@
 # This file is generated automatically - please edit the "templates/test/require-api-version.yml" template file instead.
 tasks:
   - name: "test-requireApiVersion-latest"
-    tags: [ "standalone", "local", "latest", "versioned_api", "pr", "tag" ]
+    tags: [ "standalone", "local", "latest", "versioned_api", "tag" ]
     commands:
       - func: "bootstrap mongo-orchestration"
         vars:
