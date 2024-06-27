@@ -447,10 +447,10 @@ if test "$PHP_MONGODB" != "no"; then
 
     if test "x$bundled_zlib" = "xyes"; then
       PHP_MONGODB_ZLIB_CFLAGS="$PHP_MONGODB_BUNDLED_CFLAGS $PHP_MONGODB_ZLIB_CFLAGS"
-      PHP_MONGODB_ADD_SOURCES([src/libmongoc/src/zlib-1.2.13/], $PHP_MONGODB_ZLIB_SOURCES, $PHP_MONGODB_ZLIB_CFLAGS)
-      PHP_MONGODB_ADD_INCLUDE([src/libmongoc/src/zlib-1.2.13/])
-      PHP_MONGODB_ADD_BUILD_DIR([src/libmongoc/src/zlib-1.2.13/])
-      AC_CONFIG_FILES([${ac_config_dir}/src/libmongoc/src/zlib-1.2.13/zconf.h])
+      PHP_MONGODB_ADD_SOURCES([src/libmongoc/src/zlib-1.3.1/], $PHP_MONGODB_ZLIB_SOURCES, $PHP_MONGODB_ZLIB_CFLAGS)
+      PHP_MONGODB_ADD_INCLUDE([src/libmongoc/src/zlib-1.3.1/])
+      PHP_MONGODB_ADD_BUILD_DIR([src/libmongoc/src/zlib-1.3.1/])
+      AC_CONFIG_FILES([${ac_config_dir}/src/libmongoc/src/zlib-1.3.1/zconf.h])
     fi
 
     if test "$PHP_MONGODB_CLIENT_SIDE_ENCRYPTION" = "yes"; then
