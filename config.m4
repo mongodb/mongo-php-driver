@@ -299,7 +299,7 @@ if test "$PHP_MONGODB" != "no"; then
     ])
 
     if test "$PHP_MONGODB_CLIENT_SIDE_ENCRYPTION" != "no"; then
-      PKG_CHECK_MODULES([PHP_MONGODB_MONGOCRYPT], [libmongocrypt >= 1.9.1], [
+      PKG_CHECK_MODULES([PHP_MONGODB_MONGOCRYPT], [libmongocrypt >= 1.10.1], [
         PHP_MONGODB_MONGOCRYPT_VERSION=`$PKG_CONFIG libmongocrypt --modversion`
         PHP_MONGODB_MONGOCRYPT_VERSION_STRING="System ($PHP_MONGODB_MONGOCRYPT_VERSION)"
 
@@ -307,7 +307,7 @@ if test "$PHP_MONGODB" != "no"; then
         PHP_EVAL_LIBLINE($PHP_MONGODB_MONGOCRYPT_LIBS, MONGODB_SHARED_LIBADD)
         AC_DEFINE(HAVE_SYSTEM_LIBMONGOCRYPT, 1, [Use system libmongocrypt])
       ],[
-        AC_MSG_ERROR(Could not find system library for libmongocrypt >= 1.9.1)
+        AC_MSG_ERROR(Could not find system library for libmongocrypt >= 1.10.1)
       ])
     fi
   fi
