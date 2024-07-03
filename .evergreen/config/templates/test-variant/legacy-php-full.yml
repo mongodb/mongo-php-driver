@@ -1,4 +1,6 @@
+# TODO PHPC-2343: This file can be removed when requiring PHP 8.1+
 buildvariants:
+  # Test MongoDB >= 5.0, < 8.0
   - name: test-debian11-php-%phpVersion%
     tags: ["test", "debian", "x64", "php%phpVersion%", "pr", "tag"]
     display_name: "Test: Debian 11, PHP %phpVersion%"
@@ -10,12 +12,13 @@ buildvariants:
       - variant: "build-debian11"
         name: "build-php-%phpVersion%"
     tasks:
-      - ".standalone .local !.3.6 !.4.0 !.4.2 !.4.4 !.5.0"
-      - ".replicaset .local !.3.6 !.4.0 !.4.2 !.4.4 !.5.0"
-      - ".sharded .local !.3.6 !.4.0 !.4.2 !.4.4 !.5.0"
-      - ".loadbalanced .local !.3.6 !.4.0 !.4.2 !.4.4 !.5.0"
+      # Remember to add new major versions here as they are released
+      - ".standalone .local !.3.6 !.4.0 !.4.2 !.4.4 !.8.0"
+      - ".replicaset .local !.3.6 !.4.0 !.4.2 !.4.4 !.8.0"
+      - ".sharded .local !.3.6 !.4.0 !.4.2 !.4.4 !.8.0"
+      - ".loadbalanced .local !.3.6 !.4.0 !.4.2 !.4.4 !.8.0"
+      - ".ocsp !.4.4 !.8.0"
       - "test-atlas-connectivity"
-      - ".ocsp !.4.4 !.5.0"
     display_tasks:
       - name: "test-ocsp-latest"
         execution_tasks:
@@ -29,7 +32,11 @@ buildvariants:
       - name: "test-ocsp-6.0"
         execution_tasks:
           - ".ocsp .6.0"
+      - name: "test-ocsp-5.0"
+        execution_tasks:
+          - ".ocsp .5.0"
 
+  # Test versions < 5.0
   - name: test-debian92-php-%phpVersion%
     tags: ["test", "debian", "x64", "php%phpVersion%", "pr", "tag"]
     display_name: "Test: Debian 9.2, PHP %phpVersion%"
@@ -42,15 +49,12 @@ buildvariants:
         name: "build-php-%phpVersion%"
     tasks:
       # Remember to add new major versions here as they are released
-      - ".standalone .local !.6.0 !.7.0 !.rapid !.latest"
-      - ".replicaset .local !.6.0 !.7.0 !.rapid !.latest"
-      - ".sharded .local !.6.0 !.7.0 !.rapid !.latest"
-      - ".loadbalanced .local !.6.0 !.7.0 !.rapid !.latest"
-      - ".ocsp !.6.0 !.7.0 !.rapid !.latest"
+      - ".standalone .local !.5.0 !.6.0 !.7.0 !.8.0 !.rapid !.latest"
+      - ".replicaset .local !.5.0 !.6.0 !.7.0 !.8.0 !.rapid !.latest"
+      - ".sharded .local !.5.0 !.6.0 !.7.0 !.8.0 !.rapid !.latest"
+      - ".loadbalanced .local !.5.0 !.6.0 !.7.0 !.8.0 !.rapid !.latest"
+      - ".ocsp !.5.0 !.6.0 !.7.0 !.8.0 !.rapid !.latest"
     display_tasks:
-      - name: "test-ocsp-5.0"
-        execution_tasks:
-          - ".ocsp .5.0"
       - name: "test-ocsp-4.4"
         execution_tasks:
           - ".ocsp .4.4"

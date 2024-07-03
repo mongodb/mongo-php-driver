@@ -1,22 +1,22 @@
 buildvariants:
   # Variants with different libmongoc
-  - name: test-debian11-php-%phpVersion%-libmongoc-lowest-supported
-    display_name: "Test: Debian 11, PHP %phpVersion%, libmongoc lowest"
+  - name: test-debian12-php-%phpVersion%-libmongoc-lowest-supported
     tags: ["test", "libmongoc", "debian", "x64", "php%phpVersion%", "pr", "tag"]
-    run_on: debian11-small
+    display_name: "Test: Debian 12, PHP %phpVersion%, libmongoc lowest"
+    run_on: debian12-small
     expansions:
-      FETCH_BUILD_VARIANT: "build-debian11"
+      FETCH_BUILD_VARIANT: "build-debian12"
       FETCH_BUILD_TASK: "build-php-%phpVersion%-libmongoc-lowest-supported"
     depends_on:
-      - variant: "build-debian11"
+      - variant: "build-debian12"
         name: "build-php-%phpVersion%-libmongoc-lowest-supported"
     tasks:
-      - ".standalone .local !.3.6 !.4.0 !.4.2 !.4.4 !.5.0"
-      - ".replicaset .local !.3.6 !.4.0 !.4.2 !.4.4 !.5.0"
-      - ".sharded .local !.3.6 !.4.0 !.4.2 !.4.4 !.5.0"
-      - ".loadbalanced .local !.3.6 !.4.0 !.4.2 !.4.4 !.5.0"
+      - ".standalone .local !.3.6 !.4.0 !.4.2 !.4.4 !.5.0 !.6.0"
+      - ".replicaset .local !.3.6 !.4.0 !.4.2 !.4.4 !.5.0 !.6.0"
+      - ".sharded .local !.3.6 !.4.0 !.4.2 !.4.4 !.5.0 !.6.0"
+      - ".loadbalanced .local !.3.6 !.4.0 !.4.2 !.4.4 !.5.0 !.6.0"
       - "test-atlas-connectivity"
-      - ".ocsp !.4.4 !.5.0"
+      - ".ocsp !.4.4 !.5.0 !.6.0"
     display_tasks:
       - name: "test-ocsp-latest"
         execution_tasks:
@@ -24,30 +24,30 @@ buildvariants:
       - name: "test-ocsp-rapid"
         execution_tasks:
           - ".ocsp .rapid"
+      - name: "test-ocsp-8.0"
+        execution_tasks:
+          - ".ocsp .8.0"
       - name: "test-ocsp-7.0"
         execution_tasks:
           - ".ocsp .7.0"
-      - name: "test-ocsp-6.0"
-        execution_tasks:
-          - ".ocsp .6.0"
 
-  - name: test-debian11-php-%phpVersion%-libmongoc-next-stable
-    display_name: "Test: Debian 11, PHP %phpVersion%, libmongoc next stable"
+  - name: test-debian12-php-%phpVersion%-libmongoc-next-stable
     tags: ["test", "libmongoc", "debian", "x64", "php%phpVersion%", "pr", "tag"]
-    run_on: debian11-small
+    display_name: "Test: Debian 12, PHP %phpVersion%, libmongoc next stable"
+    run_on: debian12-small
     expansions:
-      FETCH_BUILD_VARIANT: "build-debian11"
+      FETCH_BUILD_VARIANT: "build-debian12"
       FETCH_BUILD_TASK: "build-php-%phpVersion%-libmongoc-next-stable"
     depends_on:
-      - variant: "build-debian11"
+      - variant: "build-debian12"
         name: "build-php-%phpVersion%-libmongoc-next-stable"
     tasks:
-      - ".standalone .local !.3.6 !.4.0 !.4.2 !.4.4 !.5.0"
-      - ".replicaset .local !.3.6 !.4.0 !.4.2 !.4.4 !.5.0"
-      - ".sharded .local !.3.6 !.4.0 !.4.2 !.4.4 !.5.0"
-      - ".loadbalanced .local !.3.6 !.4.0 !.4.2 !.4.4 !.5.0"
+      - ".standalone .local !.3.6 !.4.0 !.4.2 !.4.4 !.5.0 !.6.0"
+      - ".replicaset .local !.3.6 !.4.0 !.4.2 !.4.4 !.5.0 !.6.0"
+      - ".sharded .local !.3.6 !.4.0 !.4.2 !.4.4 !.5.0 !.6.0"
+      - ".loadbalanced .local !.3.6 !.4.0 !.4.2 !.4.4 !.5.0 !.6.0"
       - "test-atlas-connectivity"
-      - ".ocsp !.4.4 !.5.0"
+      - ".ocsp !.4.4 !.5.0 !.6.0"
     display_tasks:
       - name: "test-ocsp-latest"
         execution_tasks:
@@ -55,30 +55,30 @@ buildvariants:
       - name: "test-ocsp-rapid"
         execution_tasks:
           - ".ocsp .rapid"
+      - name: "test-ocsp-8.0"
+        execution_tasks:
+          - ".ocsp .8.0"
       - name: "test-ocsp-7.0"
         execution_tasks:
           - ".ocsp .7.0"
-      - name: "test-ocsp-6.0"
-        execution_tasks:
-          - ".ocsp .6.0"
 
-  - name: test-debian11-php-%phpVersion%-libmongoc-latest
+  - name: test-debian12-php-%phpVersion%-libmongoc-latest
     tags: ["test", "libmongoc", "debian", "x64", "php%phpVersion%"]
-    display_name: "Test: Debian 11, PHP %phpVersion%, libmongoc latest"
-    run_on: debian11-small
+    display_name: "Test: Debian 12, PHP %phpVersion%, libmongoc latest"
+    run_on: debian12-small
     expansions:
-      FETCH_BUILD_VARIANT: "build-debian11"
+      FETCH_BUILD_VARIANT: "build-debian12"
       FETCH_BUILD_TASK: "build-php-%phpVersion%-libmongoc-latest"
     depends_on:
-      - variant: "build-debian11"
+      - variant: "build-debian12"
         name: "build-php-%phpVersion%-libmongoc-latest"
     tasks:
-      - ".standalone .local !.3.6 !.4.0 !.4.2 !.4.4 !.5.0"
-      - ".replicaset .local !.3.6 !.4.0 !.4.2 !.4.4 !.5.0"
-      - ".sharded .local !.3.6 !.4.0 !.4.2 !.4.4 !.5.0"
-      - ".loadbalanced .local !.3.6 !.4.0 !.4.2 !.4.4 !.5.0"
+      - ".standalone .local !.3.6 !.4.0 !.4.2 !.4.4 !.5.0 !.6.0"
+      - ".replicaset .local !.3.6 !.4.0 !.4.2 !.4.4 !.5.0 !.6.0"
+      - ".sharded .local !.3.6 !.4.0 !.4.2 !.4.4 !.5.0 !.6.0"
+      - ".loadbalanced .local !.3.6 !.4.0 !.4.2 !.4.4 !.5.0 !.6.0"
       - "test-atlas-connectivity"
-      - ".ocsp !.4.4 !.5.0"
+      - ".ocsp !.4.4 !.5.0 !.6.0"
     display_tasks:
       - name: "test-ocsp-latest"
         execution_tasks:
@@ -86,9 +86,9 @@ buildvariants:
       - name: "test-ocsp-rapid"
         execution_tasks:
           - ".ocsp .rapid"
+      - name: "test-ocsp-8.0"
+        execution_tasks:
+          - ".ocsp .8.0"
       - name: "test-ocsp-7.0"
         execution_tasks:
           - ".ocsp .7.0"
-      - name: "test-ocsp-6.0"
-        execution_tasks:
-          - ".ocsp .6.0"

@@ -641,7 +641,7 @@ static HashTable* php_phongo_bulkwrite_get_debug_info(phongo_compat_object_handl
 	}
 
 	ADD_ASSOC_BOOL_EX(&retval, "executed", intern->executed);
-	ADD_ASSOC_LONG_EX(&retval, "server_id", mongoc_bulk_operation_get_hint(intern->bulk));
+	ADD_ASSOC_LONG_EX(&retval, "server_id", mongoc_bulk_operation_get_server_id(intern->bulk));
 
 	if (!Z_ISUNDEF(intern->session)) {
 		ADD_ASSOC_ZVAL_EX(&retval, "session", &intern->session);

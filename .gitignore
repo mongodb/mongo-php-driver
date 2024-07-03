@@ -68,5 +68,8 @@ mongodb-*tgz
 # Coverage files
 coverage*
 
+# drivers-evergreen-tools secrets handling
+secrets-export.sh
+
 # temporary purls file
 /purls.txt

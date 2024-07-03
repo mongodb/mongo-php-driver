@@ -850,6 +850,17 @@ static mongoc_client_encryption_encrypt_range_opts_t* phongo_clientencryption_en
 		return opts;
 	}
 
+	if (php_array_existsc(options, "trimFactor")) {
+		int64_t trimfactor = php_array_fetchc_long(options, "trimFactor");
+
+		if (trimfactor < 0 || trimfactor > INT32_MAX) {
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"trimFactor\" range option to be a positive 32-bit integer, %" PRId64 " given", trimfactor);
+			goto cleanup;
+		}
+
+		mongoc_client_encryption_encrypt_range_opts_set_trim_factor(opts, (int32_t) trimfactor);
+	}
+
 	if (php_array_existsc(options, "sparsity")) {
 		int64_t sparsity = php_array_fetchc_long(options, "sparsity");
 
