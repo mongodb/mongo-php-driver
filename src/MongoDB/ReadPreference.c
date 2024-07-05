@@ -195,7 +195,7 @@ static PHP_METHOD(MongoDB_Driver_ReadPreference, __construct)
 	PHONGO_PARSE_PARAMETERS_END();
 
 	if (Z_TYPE_P(mode) == IS_LONG) {
-		php_error_docref(NULL, E_DEPRECATED, "Passing an integer mode to \"MongoDB\\Driver\\ReadPreference::__construct\" deprecated and will be removed in a future release.");
+		php_error_docref(NULL, E_DEPRECATED, "Passing an integer mode to \"MongoDB\\Driver\\ReadPreference::__construct\" is deprecated and will be removed in a future release.");
 
 		switch (Z_LVAL_P(mode)) {
 			case MONGOC_READ_PRIMARY:
