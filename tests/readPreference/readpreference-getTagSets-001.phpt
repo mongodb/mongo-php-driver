@@ -11,7 +11,7 @@ $tests = [
 ];
 
 foreach ($tests as $test) {
-    $rp = new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::RP_SECONDARY_PREFERRED, $test);
+    $rp = new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::SECONDARY_PREFERRED, $test);
     var_dump($rp->getTagSets());
 }
 

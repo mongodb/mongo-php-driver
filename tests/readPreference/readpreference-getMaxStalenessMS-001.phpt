@@ -14,7 +14,7 @@ $tests = [
 ];
 
 foreach ($tests as $test) {
-    $rp = new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::RP_SECONDARY, null, ['maxStalenessSeconds' => $test]);
+    $rp = new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::SECONDARY, null, ['maxStalenessSeconds' => $test]);
     var_dump($rp->getMaxStalenessSeconds());
 }
 

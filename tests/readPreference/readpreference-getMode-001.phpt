@@ -4,11 +4,11 @@ MongoDB\Driver\ReadPreference::getMode()
 <?php
 
 $tests = [
-    MongoDB\Driver\ReadPreference::RP_PRIMARY,
-    MongoDB\Driver\ReadPreference::RP_PRIMARY_PREFERRED,
-    MongoDB\Driver\ReadPreference::RP_SECONDARY,
-    MongoDB\Driver\ReadPreference::RP_SECONDARY_PREFERRED,
-    MongoDB\Driver\ReadPreference::RP_NEAREST,
+    MongoDB\Driver\ReadPreference::PRIMARY,
+    MongoDB\Driver\ReadPreference::PRIMARY_PREFERRED,
+    MongoDB\Driver\ReadPreference::SECONDARY,
+    MongoDB\Driver\ReadPreference::SECONDARY_PREFERRED,
+    MongoDB\Driver\ReadPreference::NEAREST,
 ];
 
 foreach ($tests as $test) {
@@ -19,10 +19,19 @@ foreach ($tests as $test) {
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECT--
+--EXPECTF--
+Deprecated: %s MongoDB\Driver\ReadPreference::getMode() is deprecated in %s
 int(1)
+
+Deprecated: %s MongoDB\Driver\ReadPreference::getMode() is deprecated in %s
 int(5)
+
+Deprecated: %s MongoDB\Driver\ReadPreference::getMode() is deprecated in %s
 int(2)
+
+Deprecated: %s MongoDB\Driver\ReadPreference::getMode() is deprecated in %s
 int(6)
+
+Deprecated: %s MongoDB\Driver\ReadPreference::getMode() is deprecated in %s
 int(10)
 ===DONE===

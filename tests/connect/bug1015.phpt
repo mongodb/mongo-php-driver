@@ -17,7 +17,7 @@ PHPC-1015: Initial DNS Seedlist test
 require_once __DIR__ . "/../utils/basic.inc";
 
 $m = create_test_manager("mongodb+srv://test1.test.build.10gen.cc/");
-$s = $m->selectServer( new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::RP_NEAREST ) );
+$s = $m->selectServer( new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::NEAREST ) );
 $servers = $m->getServers();
 
 foreach ( $servers as $server )

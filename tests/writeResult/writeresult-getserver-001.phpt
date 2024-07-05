@@ -9,7 +9,7 @@ MongoDB\Driver\WriteResult::getUpsertedIds()
 require_once __DIR__ . "/../utils/basic.inc";
 
 $manager = create_test_manager();
-$server = $manager->selectServer(new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::RP_PRIMARY));
+$server = $manager->selectServer(new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::PRIMARY));
 
 $bulk = new MongoDB\Driver\BulkWrite;
 $bulk->insert(['x' => 1]);

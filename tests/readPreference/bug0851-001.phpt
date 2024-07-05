@@ -8,7 +8,7 @@ $tagSets = [
     [],
 ];
 
-$rp = new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::RP_SECONDARY_PREFERRED, $tagSets);
+$rp = new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::SECONDARY_PREFERRED, $tagSets);
 var_dump($tagSets);
 
 /* Dump the Manager's ReadPreference to ensure that each element in the $tagSets
