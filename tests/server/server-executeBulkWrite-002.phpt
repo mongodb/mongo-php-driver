@@ -9,7 +9,7 @@ MongoDB\Driver\Server::executeBulkWrite() with write concern (standalone)
 require_once __DIR__ . "/../utils/basic.inc";
 
 $manager = create_test_manager();
-$primary = $manager->selectServer(new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::RP_PRIMARY));
+$primary = $manager->selectServer(new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::PRIMARY));
 
 $writeConcerns = array(0, 1);
 

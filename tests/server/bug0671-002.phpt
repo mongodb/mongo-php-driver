@@ -9,7 +9,7 @@ PHPC-671: Segfault if Manager is already freed when using selected Server
 require_once __DIR__ . "/../utils/basic.inc";
 
 $manager = create_test_manager();
-$server = $manager->selectServer(new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::RP_PRIMARY));
+$server = $manager->selectServer(new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::PRIMARY));
 
 unset($manager);
 

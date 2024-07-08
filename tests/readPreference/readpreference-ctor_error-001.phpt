@@ -6,7 +6,7 @@ MongoDB\Driver\ReadPreference construction (invalid mode)
 require_once __DIR__ . '/../utils/basic.inc';
 
 echo throws(function() {
-    new MongoDB\Driver\ReadPreference(42);
+    new MongoDB\Driver\ReadPreference('foo');
 }, 'MongoDB\Driver\Exception\InvalidArgumentException'), "\n";
 
 ?>
@@ -14,5 +14,5 @@ echo throws(function() {
 <?php exit(0); ?>
 --EXPECT--
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Invalid mode: 42
+Invalid mode: 'foo'
 ===DONE===

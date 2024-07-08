@@ -13,9 +13,9 @@ require_once __DIR__ . "/../utils/basic.inc";
 // Explicitly use w:1 to work around MongoDB 5.0 applying w:majority (SERVER-61790)
 $manager = create_test_manager(URI, ['retryWrites' => false, 'w' => 1]);
 
-$rp = new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::RP_PRIMARY);
+$rp = new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::PRIMARY);
 $server = $manager->selectServer($rp);
-$rp2 = new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::RP_PRIMARY);
+$rp2 = new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::PRIMARY);
 $server2 = $manager->selectServer($rp2);
 
 // load fixtures for test

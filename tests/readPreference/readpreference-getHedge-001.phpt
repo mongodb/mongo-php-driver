@@ -13,7 +13,7 @@ $tests = [
 ];
 
 foreach ($tests as $test) {
-    $rp = new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::RP_SECONDARY, null, ['hedge' => $test]);
+    $rp = new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::SECONDARY, null, ['hedge' => $test]);
     var_dump($rp->getHedge());
 }
 

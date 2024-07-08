@@ -11,7 +11,7 @@ require_once __DIR__ . "/../utils/basic.inc";
 
 $manager = create_test_manager();
 
-$primaryRp = new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::RP_PRIMARY);
+$primaryRp = new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::PRIMARY);
 $primary = $manager->selectServer($primaryRp);
 
 // Count all data-bearing members to use for the write concern
@@ -23,7 +23,7 @@ $bulk = new \MongoDB\Driver\BulkWrite;
 $bulk->insert(['_id' => 1, 'x' => 1]);
 $primary->executeBulkWrite(NS, $bulk, new MongoDB\Driver\WriteConcern($dataBearingNodes));
 
-$secondaryRp = new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::RP_SECONDARY);
+$secondaryRp = new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::SECONDARY);
 $secondary = $manager->selectServer($secondaryRp);
 
 /* Note: this is testing that the read preference (even a conflicting one) has

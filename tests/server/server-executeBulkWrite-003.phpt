@@ -10,7 +10,7 @@ MongoDB\Driver\Server::executeBulkWrite() with legacy write concern (replica set
 require_once __DIR__ . "/../utils/basic.inc";
 
 $manager = create_test_manager();
-$server = $manager->selectServer(new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::RP_PRIMARY));
+$server = $manager->selectServer(new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::PRIMARY));
 
 $writeConcerns = array(0, 1, 2, MongoDB\Driver\WriteConcern::MAJORITY);
 

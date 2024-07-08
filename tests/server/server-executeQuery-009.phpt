@@ -16,8 +16,8 @@ $bulk = new MongoDB\Driver\BulkWrite();
 $bulk->insert(['_id' => 1, 'x' => 2, 'y' => 3]);
 $manager->executeBulkWrite(NS, $bulk);
 
-$primaryRp   = new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::RP_PRIMARY);
-$secondaryRp = new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::RP_SECONDARY);
+$primaryRp   = new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::PRIMARY);
+$secondaryRp = new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::SECONDARY);
 
 $primary   = $manager->selectServer($primaryRp);
 $secondary = $manager->selectServer($secondaryRp);

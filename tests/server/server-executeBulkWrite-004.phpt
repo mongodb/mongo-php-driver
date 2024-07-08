@@ -12,7 +12,7 @@ require_once __DIR__ . "/../utils/basic.inc";
 /* Disable retryWrites since the test expects to receive a "not primary" error,
  * which retryable writes would otherwise use to retry against the primary. */
 $manager = create_test_manager(URI, ['retryWrites' => false]);
-$server = $manager->selectServer(new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::RP_SECONDARY));
+$server = $manager->selectServer(new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::SECONDARY));
 
 $writeConcerns = array(1, 2, MongoDB\Driver\WriteConcern::MAJORITY);
 

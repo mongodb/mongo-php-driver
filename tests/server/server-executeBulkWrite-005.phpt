@@ -13,7 +13,7 @@ require_once __DIR__ . "/../utils/basic.inc";
 // Disable retryWrites since the test writes to the unreplicated "local" database
 // Explicitly use w:1 to work around MongoDB 5.0 applying w:majority (SERVER-61790)
 $manager = create_test_manager(URI, ['retryWrites' => false, 'w' => 1]);
-$server = $manager->selectServer(new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::RP_SECONDARY));
+$server = $manager->selectServer(new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::SECONDARY));
 
 /* The server ignores write concerns with w>2 for writes to the local database,
  * so we won't test behavior for w=2 and w=majority. */

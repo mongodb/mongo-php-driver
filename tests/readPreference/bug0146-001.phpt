@@ -16,13 +16,13 @@ $bulk = new MongoDB\Driver\BulkWrite();
 $bulk->insert(array('my' => 'document'));
 $manager->executeBulkWrite(NS, $bulk);
 
-$rps = array(
-    MongoDB\Driver\ReadPreference::RP_PRIMARY,
-    MongoDB\Driver\ReadPreference::RP_PRIMARY_PREFERRED,
-    MongoDB\Driver\ReadPreference::RP_SECONDARY,
-    MongoDB\Driver\ReadPreference::RP_SECONDARY_PREFERRED,
-    MongoDB\Driver\ReadPreference::RP_NEAREST,
-);
+$rps = [
+    MongoDB\Driver\ReadPreference::PRIMARY,
+    MongoDB\Driver\ReadPreference::PRIMARY_PREFERRED,
+    MongoDB\Driver\ReadPreference::SECONDARY,
+    MongoDB\Driver\ReadPreference::SECONDARY_PREFERRED,
+    MongoDB\Driver\ReadPreference::NEAREST,
+];
 
 foreach($rps as $r) {
     $rp = new MongoDB\Driver\ReadPreference($r);

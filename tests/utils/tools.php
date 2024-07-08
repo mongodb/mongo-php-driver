@@ -517,7 +517,7 @@ function loadFixtures(Manager $manager, $dbname = DATABASE_NAME, $collname = COL
 
     $bulk = new BulkWrite(['ordered' => false]);
 
-    $server = $manager->selectServer(new ReadPreference(ReadPreference::RP_PRIMARY));
+    $server = $manager->selectServer(new ReadPreference(ReadPreference::PRIMARY));
 
     $data = file_get_contents($filename);
     $array = json_decode($data);

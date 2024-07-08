@@ -6,7 +6,7 @@ MongoDB\Driver\ReadPreference construction (invalid tagSets)
 require_once __DIR__ . '/../utils/basic.inc';
 
 echo throws(function() {
-    new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::RP_PRIMARY, [['tag' => 'one']]);
+    new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::PRIMARY, [['tag' => 'one']]);
 }, 'MongoDB\Driver\Exception\InvalidArgumentException'), "\n";
 
 echo throws(function() {
@@ -14,16 +14,16 @@ echo throws(function() {
 }, 'MongoDB\Driver\Exception\InvalidArgumentException'), "\n";
 
 echo throws(function() {
-    new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::RP_PRIMARY, ['invalid']);
+    new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::PRIMARY, ['invalid']);
 }, 'MongoDB\Driver\Exception\InvalidArgumentException'), "\n";
 
 echo throws(function() {
-    new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::RP_SECONDARY, ['invalid']);
+    new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::SECONDARY, ['invalid']);
 }, 'MongoDB\Driver\Exception\InvalidArgumentException'), "\n";
 
 // Ensure that tagSets is validated before maxStalenessSeconds option
 echo throws(function() {
-    new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::RP_SECONDARY, ['invalid'], ['maxStalenessSeconds' => -2]);
+    new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::SECONDARY, ['invalid'], ['maxStalenessSeconds' => -2]);
 }, 'MongoDB\Driver\Exception\InvalidArgumentException'), "\n";
 
 ?>
