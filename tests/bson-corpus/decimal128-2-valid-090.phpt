@@ -12,20 +12,11 @@ require_once __DIR__ . '/../utils/basic.inc';
 $canonicalBson = hex2bin('1800000013640007000000000000000000000000001E5F00');
 $canonicalExtJson = '{"d" : {"$numberDecimal" : "7E+5999"}}';
 
-// Canonical BSON -> Native -> Canonical BSON
-echo bin2hex(fromPHP(toPHP($canonicalBson))), "\n";
-
 // Canonical BSON -> BSON object -> Canonical BSON
 echo bin2hex((string) MongoDB\BSON\Document::fromBSON($canonicalBson)), "\n";
 
-// Canonical BSON -> Canonical extJSON
-echo json_canonicalize(toCanonicalExtendedJSON($canonicalBson)), "\n";
-
 // Canonical BSON -> BSON object -> Canonical extJSON
 echo json_canonicalize(MongoDB\BSON\Document::fromBSON($canonicalBson)->toCanonicalExtendedJSON()), "\n";
-
-// Canonical extJSON -> Canonical BSON
-echo bin2hex(fromJSON($canonicalExtJson)), "\n";
 
 // Canonical extJSON -> BSON object -> Canonical BSON
 echo bin2hex((string) MongoDB\BSON\Document::fromJSON($canonicalExtJson)), "\n";
@@ -35,9 +26,6 @@ echo bin2hex((string) MongoDB\BSON\Document::fromJSON($canonicalExtJson)), "\n";
 <?php exit(0); ?>
 --EXPECT--
 1800000013640007000000000000000000000000001e5f00
-1800000013640007000000000000000000000000001e5f00
 {"d":{"$numberDecimal":"7E+5999"}}
-{"d":{"$numberDecimal":"7E+5999"}}
-1800000013640007000000000000000000000000001e5f00
 1800000013640007000000000000000000000000001e5f00
 ===DONE===

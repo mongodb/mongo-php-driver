@@ -12,20 +12,11 @@ require_once __DIR__ . '/../utils/basic.inc';
 $canonicalBson = hex2bin('18000000136400F2AF967ED05C82DE3297FF6FDE3CFEDF00');
 $canonicalExtJson = '{"d" : {"$numberDecimal" : "-1.234567890123456789012345678901234E+6144"}}';
 
-// Canonical BSON -> Native -> Canonical BSON
-echo bin2hex(fromPHP(toPHP($canonicalBson))), "\n";
-
 // Canonical BSON -> BSON object -> Canonical BSON
 echo bin2hex((string) MongoDB\BSON\Document::fromBSON($canonicalBson)), "\n";
 
-// Canonical BSON -> Canonical extJSON
-echo json_canonicalize(toCanonicalExtendedJSON($canonicalBson)), "\n";
-
 // Canonical BSON -> BSON object -> Canonical extJSON
 echo json_canonicalize(MongoDB\BSON\Document::fromBSON($canonicalBson)->toCanonicalExtendedJSON()), "\n";
-
-// Canonical extJSON -> Canonical BSON
-echo bin2hex(fromJSON($canonicalExtJson)), "\n";
 
 // Canonical extJSON -> BSON object -> Canonical BSON
 echo bin2hex((string) MongoDB\BSON\Document::fromJSON($canonicalExtJson)), "\n";
@@ -35,9 +26,6 @@ echo bin2hex((string) MongoDB\BSON\Document::fromJSON($canonicalExtJson)), "\n";
 <?php exit(0); ?>
 --EXPECT--
 18000000136400f2af967ed05c82de3297ff6fde3cfedf00
-18000000136400f2af967ed05c82de3297ff6fde3cfedf00
 {"d":{"$numberDecimal":"-1.234567890123456789012345678901234E+6144"}}
-{"d":{"$numberDecimal":"-1.234567890123456789012345678901234E+6144"}}
-18000000136400f2af967ed05c82de3297ff6fde3cfedf00
 18000000136400f2af967ed05c82de3297ff6fde3cfedf00
 ===DONE===

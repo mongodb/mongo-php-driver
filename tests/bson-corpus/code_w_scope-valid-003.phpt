@@ -12,20 +12,11 @@ require_once __DIR__ . '/../utils/basic.inc';
 $canonicalBson = hex2bin('1D0000000F61001500000001000000000C000000107800010000000000');
 $canonicalExtJson = '{"a" : {"$code" : "", "$scope" : {"x" : {"$numberInt": "1"}}}}';
 
-// Canonical BSON -> Native -> Canonical BSON
-echo bin2hex(fromPHP(toPHP($canonicalBson))), "\n";
-
 // Canonical BSON -> BSON object -> Canonical BSON
 echo bin2hex((string) MongoDB\BSON\Document::fromBSON($canonicalBson)), "\n";
 
-// Canonical BSON -> Canonical extJSON
-echo json_canonicalize(toCanonicalExtendedJSON($canonicalBson)), "\n";
-
 // Canonical BSON -> BSON object -> Canonical extJSON
 echo json_canonicalize(MongoDB\BSON\Document::fromBSON($canonicalBson)->toCanonicalExtendedJSON()), "\n";
-
-// Canonical extJSON -> Canonical BSON
-echo bin2hex(fromJSON($canonicalExtJson)), "\n";
 
 // Canonical extJSON -> BSON object -> Canonical BSON
 echo bin2hex((string) MongoDB\BSON\Document::fromJSON($canonicalExtJson)), "\n";
@@ -35,9 +26,6 @@ echo bin2hex((string) MongoDB\BSON\Document::fromJSON($canonicalExtJson)), "\n";
 <?php exit(0); ?>
 --EXPECT--
 1d0000000f61001500000001000000000c000000107800010000000000
-1d0000000f61001500000001000000000c000000107800010000000000
 {"a":{"$code":"","$scope":{"x":{"$numberInt":"1"}}}}
-{"a":{"$code":"","$scope":{"x":{"$numberInt":"1"}}}}
-1d0000000f61001500000001000000000c000000107800010000000000
 1d0000000f61001500000001000000000c000000107800010000000000
 ===DONE===

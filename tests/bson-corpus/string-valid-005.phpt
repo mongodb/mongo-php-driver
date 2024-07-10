@@ -12,20 +12,11 @@ require_once __DIR__ . '/../utils/basic.inc';
 $canonicalBson = hex2bin('190000000261000D000000E29886E29886E29886E298860000');
 $canonicalExtJson = '{"a" : "\\u2606\\u2606\\u2606\\u2606"}';
 
-// Canonical BSON -> Native -> Canonical BSON
-echo bin2hex(fromPHP(toPHP($canonicalBson))), "\n";
-
 // Canonical BSON -> BSON object -> Canonical BSON
 echo bin2hex((string) MongoDB\BSON\Document::fromBSON($canonicalBson)), "\n";
 
-// Canonical BSON -> Canonical extJSON
-echo json_canonicalize(toCanonicalExtendedJSON($canonicalBson)), "\n";
-
 // Canonical BSON -> BSON object -> Canonical extJSON
 echo json_canonicalize(MongoDB\BSON\Document::fromBSON($canonicalBson)->toCanonicalExtendedJSON()), "\n";
-
-// Canonical extJSON -> Canonical BSON
-echo bin2hex(fromJSON($canonicalExtJson)), "\n";
 
 // Canonical extJSON -> BSON object -> Canonical BSON
 echo bin2hex((string) MongoDB\BSON\Document::fromJSON($canonicalExtJson)), "\n";
@@ -35,9 +26,6 @@ echo bin2hex((string) MongoDB\BSON\Document::fromJSON($canonicalExtJson)), "\n";
 <?php exit(0); ?>
 --EXPECT--
 190000000261000d000000e29886e29886e29886e298860000
-190000000261000d000000e29886e29886e29886e298860000
 {"a":"\u2606\u2606\u2606\u2606"}
-{"a":"\u2606\u2606\u2606\u2606"}
-190000000261000d000000e29886e29886e29886e298860000
 190000000261000d000000e29886e29886e29886e298860000
 ===DONE===

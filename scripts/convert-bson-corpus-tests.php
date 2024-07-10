@@ -3,12 +3,8 @@
 require_once __DIR__ . '/../tests/utils/basic.inc';
 
 $expectedFailures = [
-    'Int64 type: -1' => 'PHP encodes integers as 32-bit if range allows',
-    'Int64 type: 0' => 'PHP encodes integers as 32-bit if range allows',
-    'Int64 type: 1' => 'PHP encodes integers as 32-bit if range allows',
     'Javascript Code: Embedded nulls' => 'Embedded null in code string is not supported in libbson (CDRIVER-1879)',
     'Javascript Code with Scope: Unicode and embedded null in code string, empty scope' => 'Embedded null in code string is not supported in libbson (CDRIVER-1879)',
-    'Multiple types within the same document: All BSON types' => 'PHP encodes integers as 32-bit if range allows',
     'Top-level document validity: Bad $date (number, not string or hash)' => 'Legacy extended JSON $date syntax uses numbers (CDRIVER-2223)',
 ];
 
@@ -147,64 +143,36 @@ function getParamsForValid(array $test, array $case)
         $code .= sprintf('$convertedExtJson = %s;', var_export($convertedExtJson, true)) . "\n";
     }
 
-    $code .= "\n// Canonical BSON -> Native -> Canonical BSON\n";
-    $code .= 'echo bin2hex(fromPHP(toPHP($canonicalBson))), "\n";' . "\n";
-    $expect .= $expectedCanonicalBson . "\n";
-
     $code .= "\n// Canonical BSON -> BSON object -> Canonical BSON\n";
     $code .= 'echo bin2hex((string) MongoDB\BSON\Document::fromBSON($canonicalBson)), "\n";' . "\n";
     $expect .= $expectedCanonicalBson . "\n";
-
-    $code .= "\n// Canonical BSON -> Canonical extJSON\n";
-    $code .= 'echo json_canonicalize(toCanonicalExtendedJSON($canonicalBson)), "\n";' . "\n";
-    $expect .= $expectedCanonicalExtJson . "\n";
 
     $code .= "\n// Canonical BSON -> BSON object -> Canonical extJSON\n";
     $code .= 'echo json_canonicalize(MongoDB\BSON\Document::fromBSON($canonicalBson)->toCanonicalExtendedJSON()), "\n";' . "\n";
     $expect .= $expectedCanonicalExtJson . "\n";
 
     if (isset($relaxedExtJson)) {
-        $code .= "\n// Canonical BSON -> Relaxed extJSON\n";
-        $code .= 'echo json_canonicalize(toRelaxedExtendedJSON($canonicalBson)), "\n";' . "\n";
-        $expect .= $expectedRelaxedExtJson . "\n";
-
         $code .= "\n// Canonical BSON -> BSON object -> Relaxed extJSON\n";
         $code .= 'echo json_canonicalize(MongoDB\BSON\Document::fromBSON($canonicalBson)->toRelaxedExtendedJSON()), "\n";' . "\n";
         $expect .= $expectedRelaxedExtJson . "\n";
     }
 
     if (!$lossy) {
-        $code .= "\n// Canonical extJSON -> Canonical BSON\n";
-        $code .= 'echo bin2hex(fromJSON($canonicalExtJson)), "\n";' . "\n";
-        $expect .= $expectedCanonicalBson . "\n";
-
         $code .= "\n// Canonical extJSON -> BSON object -> Canonical BSON\n";
         $code .= 'echo bin2hex((string) MongoDB\BSON\Document::fromJSON($canonicalExtJson)), "\n";' . "\n";
         $expect .= $expectedCanonicalBson . "\n";
     }
 
     if (isset($degenerateBson)) {
-        $code .= "\n// Degenerate BSON -> Native -> Canonical BSON\n";
-        $code .= 'echo bin2hex(fromPHP(toPHP($degenerateBson))), "\n";' . "\n";
-        $expect .= $expectedCanonicalBson . "\n";
-
         $code .= "\n// Degenerate BSON -> BSON object -> Canonical BSON\n";
-        $code .= 'echo bin2hex(fromPHP(MongoDB\BSON\Document::fromBSON($degenerateBson)->toPHP())), "\n";' . "\n";
+        $code .= 'echo bin2hex((string) MongoDB\BSON\Document::fromPHP(MongoDB\BSON\Document::fromBSON($degenerateBson)->toPHP())), "\n";' . "\n";
         $expect .= $expectedCanonicalBson . "\n";
-
-        $code .= "\n// Degenerate BSON -> Canonical extJSON\n";
-        $code .= 'echo json_canonicalize(toCanonicalExtendedJSON($degenerateBson)), "\n";' . "\n";
-        $expect .= $expectedCanonicalExtJson . "\n";
 
         $code .= "\n// Degenerate BSON -> BSON object -> Canonical extJSON\n";
         $code .= 'echo json_canonicalize(MongoDB\BSON\Document::fromBSON($degenerateBson)->toCanonicalExtendedJSON()), "\n";' . "\n";
         $expect .= $expectedCanonicalExtJson . "\n";
 
         if (isset($relaxedExtJson)) {
-            $code .= "\n// Degenerate BSON -> Relaxed extJSON\n";
-            $code .= 'echo json_canonicalize(toRelaxedExtendedJSON($degenerateBson)), "\n";' . "\n";
-            $expect .= $expectedRelaxedExtJson . "\n";
-
             $code .= "\n// Degenerate BSON -> BSON object -> Relaxed extJSON\n";
             $code .= 'echo json_canonicalize(MongoDB\BSON\Document::fromBSON($degenerateBson)->toRelaxedExtendedJSON()), "\n";' . "\n";
             $expect .= $expectedRelaxedExtJson . "\n";
@@ -212,20 +180,12 @@ function getParamsForValid(array $test, array $case)
     }
 
     if (isset($degenerateExtJson) && !$lossy) {
-        $code .= "\n// Degenerate extJSON -> Canonical BSON\n";
-        $code .= 'echo bin2hex(fromJSON($degenerateExtJson)), "\n";' . "\n";
-        $expect .= $expectedCanonicalBson . "\n";
-
         $code .= "\n// Degenerate extJSON -> BSON object -> Canonical BSON\n";
         $code .= 'echo bin2hex((string) MongoDB\BSON\Document::fromJSON($degenerateExtJson)), "\n";' . "\n";
         $expect .= $expectedCanonicalBson . "\n";
     }
 
     if (isset($relaxedExtJson)) {
-        $code .= "\n// Relaxed extJSON -> BSON -> Relaxed extJSON\n";
-        $code .= 'echo json_canonicalize(toRelaxedExtendedJSON(fromJSON($relaxedExtJson))), "\n";' . "\n";
-        $expect .= $expectedRelaxedExtJson . "\n";
-
         $code .= "\n// Relaxed extJSON -> BSON object -> Relaxed extJSON\n";
         $code .= 'echo json_canonicalize(MongoDB\BSON\Document::fromJSON($relaxedExtJson)->toRelaxedExtendedJSON()), "\n";' . "\n";
         $expect .= $expectedRelaxedExtJson . "\n";
@@ -248,7 +208,7 @@ function getParamsForDecodeError(array $test, array $case)
 
     $code = sprintf('$bson = hex2bin(%s);', var_export($case['bson'], true)) . "\n\n";
     $code .= "throws(function() use (\$bson) {\n";
-    $code .= "    var_dump(toPHP(\$bson));\n";
+    $code .= "    MongoDB\\BSON\\Document::fromBSON(\$bson)->toPHP();\n";
     $code .= "}, 'MongoDB\Driver\Exception\UnexpectedValueException');";
 
     /* We do not test for the exception message, since that may differ based on
@@ -277,7 +237,7 @@ function getParamsForParseError(array $test, array $case)
         case '0x00': // Top-level document
         case '0x05': // Binary
             $code = "throws(function() {\n";
-            $code .= sprintf("    fromJSON(%s);\n", var_export($case['string'], true));
+            $code .= sprintf("    MongoDB\\BSON\\Document::fromJSON(%s);\n", var_export($case['string'], true));
             $code .= "}, 'MongoDB\Driver\Exception\UnexpectedValueException');";
 
             /* We do not test for the exception message, since that may differ
