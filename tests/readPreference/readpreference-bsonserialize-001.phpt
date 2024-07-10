@@ -33,5 +33,5 @@ foreach ($tests as $test) {
 { "mode" : "primary" }
 { "mode" : "secondary", "tags" : [ { "dc" : "ny" } ] }
 { "mode" : "secondary", "tags" : [ { "dc" : "ny" }, { "dc" : "sf", "use" : "reporting" }, {  } ] }
-{ "mode" : "secondary", "maxStalenessSeconds" : 1000 }
+{ "mode" : "secondary", "maxStalenessSeconds" : { "$numberInt" : "1000" } }
 ===DONE===

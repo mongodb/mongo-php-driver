@@ -32,15 +32,15 @@ foreach ($tests as $test) {
 --EXPECT--
 { "w" : "majority" }
 { }
-{ "w" : -1 }
-{ "w" : 0 }
-{ "w" : 1 }
+{ "w" : { "$numberInt" : "-1" } }
+{ "w" : { "$numberInt" : "0" } }
+{ "w" : { "$numberInt" : "1" } }
 { "w" : "majority" }
 { "w" : "tag" }
-{ "w" : 1 }
-{ "w" : 1, "j" : false }
-{ "w" : 1, "wtimeout" : 1000 }
-{ "w" : 1, "j" : true, "wtimeout" : 1000 }
+{ "w" : { "$numberInt" : "1" } }
+{ "w" : { "$numberInt" : "1" }, "j" : false }
+{ "w" : { "$numberInt" : "1" }, "wtimeout" : { "$numberInt" : "1000" } }
+{ "w" : { "$numberInt" : "1" }, "j" : true, "wtimeout" : { "$numberInt" : "1000" } }
 { "j" : true }
-{ "wtimeout" : 1000 }
+{ "wtimeout" : { "$numberInt" : "1000" } }
 ===DONE===

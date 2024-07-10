@@ -113,7 +113,7 @@ object(stdClass)#%d (1) {
 }
 
 Testing top-level NumericArray:
-{ "0" : 1, "1" : 2, "2" : 3 }
+{ "0" : { "$numberInt" : "1" }, "1" : { "$numberInt" : "2" }, "2" : { "$numberInt" : "3" } }
 Encoded BSON:
      0 : 1a 00 00 00 10 30 00 01 00 00 00 10 31 00 02 00  [.....0......1...]
     10 : 00 00 10 32 00 03 00 00 00 00                    [...2......]
@@ -131,7 +131,7 @@ object(NumericArray)#%d (0) {
 }
 
 Testing embedded NumericArray:
-{ "embed" : [ 1, 2, 3 ] }
+{ "embed" : [ { "$numberInt" : "1" }, { "$numberInt" : "2" }, { "$numberInt" : "3" } ] }
 Encoded BSON:
      0 : 26 00 00 00 04 65 6d 62 65 64 00 1a 00 00 00 10  [&....embed......]
     10 : 30 00 01 00 00 00 10 31 00 02 00 00 00 10 32 00  [0......1......2.]

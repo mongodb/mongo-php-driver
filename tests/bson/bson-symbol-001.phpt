@@ -21,8 +21,8 @@ foreach($tests as $n => $test) {
 ===DONE===
 <?php exit(0); ?>
 --EXPECT--
-Test#0 { "symbol" : "test" }
-string(21) "{ "symbol" : "test" }"
-string(21) "{ "symbol" : "test" }"
+Test#0 { "symbol" : { "$symbol" : "test" } }
+string(37) "{ "symbol" : { "$symbol" : "test" } }"
+string(37) "{ "symbol" : { "$symbol" : "test" } }"
 bool(true)
 ===DONE===

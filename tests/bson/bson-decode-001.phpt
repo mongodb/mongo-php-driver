@@ -57,9 +57,9 @@ Test#1 { "0" : { "hello" : "world" } }
 OK
 Test#2 { "0" : null }
 OK
-Test#3 { "0" : 123 }
+Test#3 { "0" : { "$numberInt" : "123" } }
 OK
-Test#4 { "0" : 4.125 }
+Test#4 { "0" : { "$numberDouble" : "4.125" } }
 OK
 Test#5 { "0" : true }
 OK

@@ -16,7 +16,7 @@ var_dump(toPHP(fromJSON($json)));
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-{ "foo" : { "$ref" : "phongo.test", "$id" : "5a2e78accd485d55b4050000" } }
+{ "foo" : { "$dbPointer" : { "$ref" : "phongo.test", "$id" : { "$oid" : "5a2e78accd485d55b4050000" } } } }
 {"foo":{"$dbPointer":{"$ref":"phongo.test","$id":{"$oid":"5a2e78accd485d55b4050000"}}}}
 object(stdClass)#%d (%d) {
   ["foo"]=>

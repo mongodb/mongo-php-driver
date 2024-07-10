@@ -26,7 +26,7 @@ foreach($tests as $n => $test) {
 Test#0
 bool(true)
 bool(true)
-string(76) "{ "dbref" : { "$ref" : "phongo.test", "$id" : "5a2e78accd485d55b405ac12" } }"
-string(76) "{ "dbref" : { "$ref" : "phongo.test", "$id" : "5a2e78accd485d55b405ac12" } }"
+string(108) "{ "dbref" : { "$dbPointer" : { "$ref" : "phongo.test", "$id" : { "$oid" : "5a2e78accd485d55b405ac12" } } } }"
+string(108) "{ "dbref" : { "$dbPointer" : { "$ref" : "phongo.test", "$id" : { "$oid" : "5a2e78accd485d55b405ac12" } } } }"
 bool(true)
 ===DONE===
