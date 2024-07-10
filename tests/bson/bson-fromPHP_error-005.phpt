@@ -28,24 +28,28 @@ class MyIndirectlyRecursiveSerializable extends MyRecursiveSerializable
 echo "\nTesting Serializable with direct circular reference\n";
 
 echo throws(function() {
-    fromPHP(new MyRecursiveSerializable);
+    MongoDB\BSON\fromPHP(new MyRecursiveSerializable);
 }, 'MongoDB\Driver\Exception\UnexpectedValueException'), "\n";
 
 echo "\nTesting Serializable with indirect circular reference\n";
 
 echo throws(function() {
-    fromPHP(new MyIndirectlyRecursiveSerializable);
+    MongoDB\BSON\fromPHP(new MyIndirectlyRecursiveSerializable);
 }, 'MongoDB\Driver\Exception\UnexpectedValueException'), "\n";
 
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECT--
+--EXPECTF--
 Testing Serializable with direct circular reference
+
+Deprecated: Function MongoDB\BSON\fromPHP() is deprecated in %s
 OK: Got MongoDB\Driver\Exception\UnexpectedValueException
 Expected MyRecursiveSerializable::bsonSerialize() to return an array, stdClass, MongoDB\BSON\Document, or MongoDB\BSON\PackedArray, MyRecursiveSerializable given
 
 Testing Serializable with indirect circular reference
+
+Deprecated: Function MongoDB\BSON\fromPHP() is deprecated in %s
 OK: Got MongoDB\Driver\Exception\UnexpectedValueException
 Detected recursion for field path "parent.parent"
 ===DONE===

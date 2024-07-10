@@ -7,11 +7,11 @@ require_once __DIR__ . '/../utils/basic.inc';
 
 $tests = array(
     // Invalid UTF-8 character in root document's field name
-    str_replace('INVALID!', "INVALID\xFE", fromPHP(['INVALID!' => 'bar'])),
+    str_replace('INVALID!', "INVALID\xFE", MongoDB\BSON\fromPHP(['INVALID!' => 'bar'])),
     // Invalid UTF-8 character in embedded document's field name
-    str_replace('INVALID!', "INVALID\xFE", fromPHP(['foo' => ['INVALID!' => 'bar']])),
+    str_replace('INVALID!', "INVALID\xFE", MongoDB\BSON\fromPHP(['foo' => ['INVALID!' => 'bar']])),
     // Invalid UTF-8 character in string within array field
-    str_replace('INVALID!', "INVALID\xFE", fromPHP(['foo' => ['INVALID!']])),
+    str_replace('INVALID!', "INVALID\xFE", MongoDB\BSON\fromPHP(['foo' => ['INVALID!']])),
     /* Note: we don't use a three-character string in the underflow case, as
      * the 4-byte string length and payload (i.e. three characters + null byte)
      * coincidentally satisfy the expected size for an 8-byte double. We also
@@ -25,22 +25,37 @@ $tests = array(
 
 foreach ($tests as $bson) {
     echo throws(function() use ($bson) {
-        toPHP($bson);
+        MongoDB\BSON\toPHP($bson);
     }, 'MongoDB\Driver\Exception\UnexpectedValueException'), "\n";
 }
 
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECT--
+--EXPECTF--
+Deprecated: Function MongoDB\BSON\fromPHP() is deprecated in %s
+
+Deprecated: Function MongoDB\BSON\fromPHP() is deprecated in %s
+
+Deprecated: Function MongoDB\BSON\fromPHP() is deprecated in %s
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 OK: Got MongoDB\Driver\Exception\UnexpectedValueException
 Detected corrupt BSON data for field path '' at offset 4
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 OK: Got MongoDB\Driver\Exception\UnexpectedValueException
 Detected corrupt BSON data for field path 'foo' at offset 0
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 OK: Got MongoDB\Driver\Exception\UnexpectedValueException
 Detected corrupt BSON data for field path 'foo' at offset 0
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 OK: Got MongoDB\Driver\Exception\UnexpectedValueException
 Detected corrupt BSON data for field path '' at offset 9
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 OK: Got MongoDB\Driver\Exception\UnexpectedValueException
 Detected unknown BSON type 0x65 for field path "". Are you using the latest driver?
 ===DONE===

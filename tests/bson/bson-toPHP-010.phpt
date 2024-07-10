@@ -93,38 +93,52 @@ var_dump($document->object->two instanceof MyWildcardArrayObject);
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECT--
+--EXPECTF--
+Deprecated: Function MongoDB\BSON\fromPHP() is deprecated in %s
+
 Setting 'array.$' path to 'MyWildcardArrayObject'
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 bool(true)
 bool(true)
 bool(true)
 bool(true)
 
 Setting 'array.1' to 'MyArrayObject' and 'array.$' path to 'MyWildcardArrayObject'
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 bool(true)
 bool(true)
 bool(true)
 bool(true)
 
 Setting 'array.$' to 'MyWildcardArrayObject' and 'array.1' path to 'MyArrayObject'
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 bool(true)
 bool(true)
 bool(true)
 bool(true)
 
 Setting 'object.$' path to 'MyWildcardArrayObject'
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 bool(true)
 bool(true)
 bool(true)
 bool(true)
 
 Setting 'object.two' to 'MyArrayObject' and 'object.$' path to 'MyWildcardArrayObject'
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 bool(true)
 bool(true)
 bool(true)
 bool(true)
 
 Setting 'object.$' to 'MyWildcardArrayObject' and 'object.one' path to 'MyArrayObject'
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 bool(true)
 bool(true)
 bool(true)

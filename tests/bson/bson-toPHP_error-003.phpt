@@ -12,7 +12,7 @@ $tests = array(
 
 foreach ($tests as $bson) {
     echo throws(function() use ($bson) {
-        toPHP($bson);
+        MongoDB\BSON\toPHP($bson);
     }, 'MongoDB\Driver\Exception\UnexpectedValueException'), "\n";
 }
 
@@ -20,8 +20,11 @@ foreach ($tests as $bson) {
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 OK: Got MongoDB\Driver\Exception\UnexpectedValueException
 Could not read document from BSON reader
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 OK: Got MongoDB\Driver\Exception\UnexpectedValueException
 Could not read document from BSON reader
 ===DONE===

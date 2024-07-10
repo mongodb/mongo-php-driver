@@ -139,9 +139,9 @@ foreach ($testGroups as $testGroup) {
     foreach ($testGroup['tests'] as $test) {
         echo $test, "\n";
 
-        $bson = fromJSON($test);
+        $bson = MongoDB\BSON\fromJSON($test);
         try {
-            var_dump(toPHP($bson, $testGroup['typemap']));
+            var_dump(MongoDB\BSON\toPHP($bson, $testGroup['typemap']));
         } catch (MongoDB\Driver\Exception\Exception $e) {
             echo $e->getMessage(), "\n";
         }
@@ -159,6 +159,10 @@ foreach ($testGroups as $testGroup) {
 === DEFAULT TYPEMAP ===
 
 { "foo": "yes", "bar" : false }
+
+Deprecated: Function MongoDB\BSON\fromJSON() is deprecated in %s
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 object(stdClass)#%d (2) {
   ["foo"]=>
   string(3) "yes"
@@ -167,6 +171,10 @@ object(stdClass)#%d (2) {
 }
 
 { "foo": "no", "array" : [ 5, 6 ] }
+
+Deprecated: Function MongoDB\BSON\fromJSON() is deprecated in %s
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 object(stdClass)#%d (2) {
   ["foo"]=>
   string(2) "no"
@@ -180,6 +188,10 @@ object(stdClass)#%d (2) {
 }
 
 { "foo": "no", "obj" : { "embedded" : 4.125 } }
+
+Deprecated: Function MongoDB\BSON\fromJSON() is deprecated in %s
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 object(stdClass)#%d (2) {
   ["foo"]=>
   string(2) "no"
@@ -191,6 +203,10 @@ object(stdClass)#%d (2) {
 }
 
 { "foo": "yes", "__pclass": "MyClass" }
+
+Deprecated: Function MongoDB\BSON\fromJSON() is deprecated in %s
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 object(stdClass)#%d (2) {
   ["foo"]=>
   string(3) "yes"
@@ -199,6 +215,10 @@ object(stdClass)#%d (2) {
 }
 
 { "foo": "yes", "__pclass": { "$binary": "TXlDbGFzcw==", "$type": "80" } }
+
+Deprecated: Function MongoDB\BSON\fromJSON() is deprecated in %s
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 object(stdClass)#%d (2) {
   ["foo"]=>
   string(3) "yes"
@@ -212,6 +232,10 @@ object(stdClass)#%d (2) {
 }
 
 { "foo": "yes", "__pclass": { "$binary": "WW91ckNsYXNz", "$type": "80" } }
+
+Deprecated: Function MongoDB\BSON\fromJSON() is deprecated in %s
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 object(stdClass)#%d (2) {
   ["foo"]=>
   string(3) "yes"
@@ -225,6 +249,10 @@ object(stdClass)#%d (2) {
 }
 
 { "foo": "yes", "__pclass": { "$binary": "T3VyQ2xhc3M=", "$type": "80" } }
+
+Deprecated: Function MongoDB\BSON\fromJSON() is deprecated in %s
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 object(OurClass)#%d (3) {
   ["foo"]=>
   string(3) "yes"
@@ -240,6 +268,10 @@ object(OurClass)#%d (3) {
 }
 
 { "foo": "yes", "__pclass": { "$binary": "WW91ckNsYXNz", "$type": "44" } }
+
+Deprecated: Function MongoDB\BSON\fromJSON() is deprecated in %s
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 object(stdClass)#%d (2) {
   ["foo"]=>
   string(3) "yes"
@@ -256,24 +288,40 @@ object(stdClass)#%d (2) {
 === NONEXISTING CLASS ===
 
 { "foo": "yes" }
+
+Deprecated: Function MongoDB\BSON\fromJSON() is deprecated in %s
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 Class MissingClass does not exist
 
 
 === DOES NOT IMPLEMENT UNSERIALIZABLE ===
 
 { "foo": "yes", "__pclass": { "$binary": "TXlDbGFzcw==", "$type": "80" } }
+
+Deprecated: Function MongoDB\BSON\fromJSON() is deprecated in %s
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 Class MyClass does not implement MongoDB\BSON\Unserializable
 
 
 === IS NOT A CONCRETE CLASS ===
 
 { "foo": "yes" }
+
+Deprecated: Function MongoDB\BSON\fromJSON() is deprecated in %s
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 Interface MongoDB\BSON\Unserializable is not instantiatable
 
 
 === IS NOT A CONCRETE CLASS VIA PCLASS ===
 
 { "foo": "yes", "__pclass" : { "$binary": "TW9uZ29EQlxCU09OXFVuc2VyaWFsaXphYmxl", "$type": "80" } }
+
+Deprecated: Function MongoDB\BSON\fromJSON() is deprecated in %s
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 object(YourClass)#%d (3) {
   ["foo"]=>
   string(3) "yes"
@@ -292,6 +340,10 @@ object(YourClass)#%d (3) {
 === PCLASS OVERRIDES TYPEMAP (1) ===
 
 { "foo": "yes", "__pclass" : { "$binary": "TXlDbGFzcw==", "$type": "80" } }
+
+Deprecated: Function MongoDB\BSON\fromJSON() is deprecated in %s
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 object(YourClass)#%d (3) {
   ["foo"]=>
   string(3) "yes"
@@ -307,6 +359,10 @@ object(YourClass)#%d (3) {
 }
 
 { "foo": "yes", "__pclass" : { "$binary": "T3VyQ2xhc3M=", "$type": "80" } }
+
+Deprecated: Function MongoDB\BSON\fromJSON() is deprecated in %s
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 object(OurClass)#%d (3) {
   ["foo"]=>
   string(3) "yes"
@@ -322,6 +378,10 @@ object(OurClass)#%d (3) {
 }
 
 { "foo": "yes", "__pclass" : { "$binary": "VGhlaXJDbGFzcw==", "$type": "80" } }
+
+Deprecated: Function MongoDB\BSON\fromJSON() is deprecated in %s
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 object(TheirClass)#%d (3) {
   ["foo"]=>
   string(3) "yes"
@@ -337,6 +397,10 @@ object(TheirClass)#%d (3) {
 }
 
 { "foo": "yes", "__pclass" : { "$binary": "WW91ckNsYXNz", "$type": "80" } }
+
+Deprecated: Function MongoDB\BSON\fromJSON() is deprecated in %s
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 object(YourClass)#%d (3) {
   ["foo"]=>
   string(3) "yes"
@@ -355,6 +419,10 @@ object(YourClass)#%d (3) {
 === PCLASS OVERRIDES TYPEMAP (2) ===
 
 { "foo": "yes", "__pclass" : { "$binary": "VGhlaXJDbGFzcw==", "$type": "80" } }
+
+Deprecated: Function MongoDB\BSON\fromJSON() is deprecated in %s
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 object(TheirClass)#%d (3) {
   ["foo"]=>
   string(3) "yes"
@@ -373,6 +441,10 @@ object(TheirClass)#%d (3) {
 === OBJECTS AS ARRAY ===
 
 { "foo": "yes", "bar" : false }
+
+Deprecated: Function MongoDB\BSON\fromJSON() is deprecated in %s
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 array(2) {
   ["foo"]=>
   string(3) "yes"
@@ -381,6 +453,10 @@ array(2) {
 }
 
 { "foo": "no", "array" : [ 5, 6 ] }
+
+Deprecated: Function MongoDB\BSON\fromJSON() is deprecated in %s
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 array(2) {
   ["foo"]=>
   string(2) "no"
@@ -394,6 +470,10 @@ array(2) {
 }
 
 { "foo": "no", "obj" : { "embedded" : 4.125 } }
+
+Deprecated: Function MongoDB\BSON\fromJSON() is deprecated in %s
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 array(2) {
   ["foo"]=>
   string(2) "no"
@@ -405,6 +485,10 @@ array(2) {
 }
 
 { "foo": "yes", "__pclass": "MyClass" }
+
+Deprecated: Function MongoDB\BSON\fromJSON() is deprecated in %s
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 array(2) {
   ["foo"]=>
   string(3) "yes"
@@ -413,6 +497,10 @@ array(2) {
 }
 
 { "foo": "yes", "__pclass" : { "$binary": "TXlDbGFzcw==", "$type": "80" } }
+
+Deprecated: Function MongoDB\BSON\fromJSON() is deprecated in %s
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 array(2) {
   ["foo"]=>
   string(3) "yes"
@@ -426,6 +514,10 @@ array(2) {
 }
 
 { "foo": "yes", "__pclass" : { "$binary": "T3VyQ2xhc3M=", "$type": "80" } }
+
+Deprecated: Function MongoDB\BSON\fromJSON() is deprecated in %s
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 array(2) {
   ["foo"]=>
   string(3) "yes"
@@ -442,6 +534,10 @@ array(2) {
 === OBJECTS AS STDCLASS ===
 
 { "foo": "yes", "__pclass" : { "$binary": "TXlDbGFzcw==", "$type": "80" } }
+
+Deprecated: Function MongoDB\BSON\fromJSON() is deprecated in %s
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 object(stdClass)#%d (2) {
   ["foo"]=>
   string(3) "yes"
@@ -455,6 +551,10 @@ object(stdClass)#%d (2) {
 }
 
 { "foo": "yes", "__pclass" : { "$binary": "T3VyQ2xhc3M=", "$type": "80" } }
+
+Deprecated: Function MongoDB\BSON\fromJSON() is deprecated in %s
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 object(stdClass)#%d (2) {
   ["foo"]=>
   string(3) "yes"

@@ -16,13 +16,14 @@ $tests = [
 ];
 
 foreach ($tests as $bson) {
-    var_dump(toPHP($bson));
+    var_dump(MongoDB\BSON\toPHP($bson));
 }
 
 ?>
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 object(stdClass)#%d (%d) {
   ["foo"]=>
   object(MongoDB\BSON\Binary)#%d (%d) {
@@ -32,6 +33,8 @@ object(stdClass)#%d (%d) {
     int(3)
   }
 }
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 object(stdClass)#%d (%d) {
   ["foo"]=>
   object(MongoDB\BSON\Binary)#%d (%d) {
@@ -41,6 +44,8 @@ object(stdClass)#%d (%d) {
     int(3)
   }
 }
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 object(stdClass)#%d (%d) {
   ["foo"]=>
   object(MongoDB\BSON\Binary)#%d (%d) {
@@ -50,6 +55,8 @@ object(stdClass)#%d (%d) {
     int(4)
   }
 }
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 object(stdClass)#%d (%d) {
   ["foo"]=>
   object(MongoDB\BSON\Binary)#%d (%d) {

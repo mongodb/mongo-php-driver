@@ -21,14 +21,17 @@ enum MyBackedEnum: int
 /* Note: the following BSON data corresponds to what might be produced by enums
  * implementing Persistable. Although that is now prohibited in the driver, it
  * could have been produced by an earlier version. */
-var_dump(toPHP(fromJSON(sprintf('{"x": {"__pclass": {"$binary": "%s", "$type": "80"}, "name": "A"}}', base64_encode(MyEnum::class)))));
+var_dump(MongoDB\BSON\toPHP(MongoDB\BSON\fromJSON(sprintf('{"x": {"__pclass": {"$binary": "%s", "$type": "80"}, "name": "A"}}', base64_encode(MyEnum::class)))));
 
-var_dump(toPHP(fromJSON(sprintf('{"x": {"__pclass": {"$binary": "%s", "$type": "80"}, "name": "A", "value": 1}}', base64_encode(MyBackedEnum::class)))));
+var_dump(MongoDB\BSON\toPHP(MongoDB\BSON\fromJSON(sprintf('{"x": {"__pclass": {"$binary": "%s", "$type": "80"}, "name": "A", "value": 1}}', base64_encode(MyBackedEnum::class)))));
 
 ?>
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
+Deprecated: Function MongoDB\BSON\fromJSON() is deprecated in %s
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 object(stdClass)#%d (%d) {
   ["x"]=>
   object(stdClass)#%d (%d) {
@@ -43,6 +46,10 @@ object(stdClass)#%d (%d) {
     string(1) "A"
   }
 }
+
+Deprecated: Function MongoDB\BSON\fromJSON() is deprecated in %s
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 object(stdClass)#%d (%d) {
   ["x"]=>
   object(stdClass)#%d (%d) {

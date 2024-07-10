@@ -49,18 +49,25 @@ var_dump($document->object instanceof MyArrayObject);
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECT--
+--EXPECTF--
+Deprecated: Function MongoDB\BSON\fromPHP() is deprecated in %s
 Default
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 bool(true)
 bool(true)
 bool(true)
 
 Setting 'object' path to 'MyArrayObject'
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 bool(true)
 bool(true)
 bool(true)
 
 Setting 'object' and 'array' path to 'MyArrayObject'
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 bool(true)
 bool(true)
 bool(true)

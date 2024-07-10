@@ -61,25 +61,34 @@ var_dump(is_array($a[2]));
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECT--
+--EXPECTF--
+Deprecated: Function MongoDB\BSON\fromPHP() is deprecated in %s
 Default
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 bool(true)
 bool(true)
 bool(true)
 bool(true)
 
 Setting 'array0' path to 'MyArrayObject'
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 bool(true)
 bool(true)
 bool(true)
 
 Setting 'array0.1' path to 'MyArrayObject'
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 bool(true)
 bool(true)
 bool(true)
 bool(true)
 
 Setting 'array1.1' path to 'MyArrayObject'
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 bool(true)
 bool(true)
 bool(true)
