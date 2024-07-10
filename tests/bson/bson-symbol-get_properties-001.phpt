@@ -3,7 +3,7 @@ MongoDB\BSON\Symbol get_properties handler (get_object_vars)
 --FILE--
 <?php
 
-$document = MongoDB\BSON\toPHP(MongoDB\BSON\fromJSON('{"symbol":{"$symbol":"test"}}'));
+$document = MongoDB\BSON\Document::fromJSON('{"symbol":{"$symbol":"test"}}')->toPHP();
 $symbol = $document->symbol;
 
 var_dump(get_object_vars($symbol));

@@ -8,7 +8,7 @@ MongoDB\BSON\Undefined can be cloned (PHP >= 8.2)
 
 require_once __DIR__ . '/../utils/basic.inc';
 
-$test = MongoDB\BSON\toPHP(MongoDB\BSON\fromJSON('{ "undefined": {"$undefined": true} }'));
+$test = MongoDB\BSON\Document::fromJSON('{ "undefined": {"$undefined": true} }')->toPHP();
 
 $undefined = $test->undefined;
 

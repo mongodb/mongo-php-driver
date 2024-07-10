@@ -5,7 +5,7 @@ MongoDB\BSON\Undefined::jsonSerialize() with json_encode()
 
 require_once __DIR__ . '/../utils/basic.inc';
 
-$doc = MongoDB\BSON\toPHP(MongoDB\BSON\fromJSON('{ "foo": {"$undefined": true} }'));
+$doc = MongoDB\BSON\Document::fromJSON('{ "foo": {"$undefined": true} }')->toPHP();
 $json = json_encode($doc);
 
 echo toJSON(fromPHP($doc)), "\n";

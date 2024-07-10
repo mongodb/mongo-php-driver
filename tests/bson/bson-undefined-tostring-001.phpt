@@ -3,7 +3,7 @@ MongoDB\BSON\Undefined::__toString()
 --FILE--
 <?php
 
-$undefined = MongoDB\BSON\toPHP(MongoDB\BSON\fromJSON('{ "undefined": {"$undefined": true} }'))->undefined;
+$undefined = MongoDB\BSON\Document::fromJSON('{ "undefined": {"$undefined": true} }')->toPHP()->undefined;
 var_dump((string) $undefined);
 
 ?>

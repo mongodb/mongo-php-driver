@@ -23,8 +23,7 @@ $a = <<<ENDJSON
 }   
 ENDJSON;
 
-$bson = MongoDB\BSON\fromJSON($a);
-var_dump(MongoDB\BSON\toPHP($bson));
+var_dump(MongoDB\BSON\Document::fromJSON($a)->toPHP());
 ?>
 ===DONE===
 <?php exit(0); ?>

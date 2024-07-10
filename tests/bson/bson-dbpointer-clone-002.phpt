@@ -8,7 +8,7 @@ MongoDB\BSON\DBPointer can be cloned (PHP >= 8.2)
 
 require_once __DIR__ . '/../utils/basic.inc';
 
-$test = MongoDB\BSON\toPHP(MongoDB\BSON\fromJSON('{ "dbref": {"$dbPointer": {"$ref": "phongo.test", "$id" : { "$oid" : "5a2e78accd485d55b405ac12" }  }} }'));
+$test = MongoDB\BSON\Document::fromJSON('{ "dbref": {"$dbPointer": {"$ref": "phongo.test", "$id" : { "$oid" : "5a2e78accd485d55b405ac12" }  }} }')->toPHP();
 
 $dbPointer = $test->dbref;
 $clone = clone($dbPointer);

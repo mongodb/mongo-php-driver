@@ -6,7 +6,7 @@ MongoDB\BSON\Symbol #001
 require_once __DIR__ . '/../utils/basic.inc';
 
 $tests = array(
-    MongoDB\BSON\toPHP(MongoDB\BSON\fromJSON('{ "symbol": {"$symbol": "test"} }')),
+    MongoDB\BSON\Document::fromJSON('{ "symbol": {"$symbol": "test"} }')->toPHP(),
 );
 
 foreach($tests as $n => $test) {
