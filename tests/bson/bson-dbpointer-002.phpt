@@ -3,7 +3,7 @@ MongoDB\BSON\DBPointer debug handler
 --FILE--
 <?php
 
-$dbptr = MongoDB\BSON\toPHP(MongoDB\BSON\fromJSON('{ "dbref": {"$dbPointer": {"$ref": "phongo.test", "$id" : { "$oid" : "5a2e78accd485d55b405ac12" }  }} }'));
+$dbptr = MongoDB\BSON\Document::fromJSON('{ "dbref": {"$dbPointer": {"$ref": "phongo.test", "$id" : { "$oid" : "5a2e78accd485d55b405ac12" }  }} }')->toPHP();
 var_dump($dbptr->dbref);
 
 ?>

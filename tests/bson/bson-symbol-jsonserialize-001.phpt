@@ -3,7 +3,7 @@ MongoDB\BSON\Symbol::jsonSerialize() return value
 --FILE--
 <?php
 
-$js = MongoDB\BSON\toPHP(MongoDB\BSON\fromJSON('{ "symbol": {"$symbol": "valSymbol"} }'))->symbol;
+$js = MongoDB\BSON\Document::fromJSON('{ "symbol": {"$symbol": "valSymbol"} }')->toPHP()->symbol;
 var_dump($js->jsonSerialize());
 
 ?>

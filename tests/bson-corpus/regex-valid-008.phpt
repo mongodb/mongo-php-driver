@@ -12,20 +12,11 @@ require_once __DIR__ . '/../utils/basic.inc';
 $canonicalBson = hex2bin('180000000B247265676578007061747465726E0069780000');
 $canonicalExtJson = '{"$regex" : {"$regularExpression" : { "pattern": "pattern", "options" : "ix"}}}';
 
-// Canonical BSON -> Native -> Canonical BSON
-echo bin2hex(fromPHP(toPHP($canonicalBson))), "\n";
-
 // Canonical BSON -> BSON object -> Canonical BSON
 echo bin2hex((string) MongoDB\BSON\Document::fromBSON($canonicalBson)), "\n";
 
-// Canonical BSON -> Canonical extJSON
-echo json_canonicalize(toCanonicalExtendedJSON($canonicalBson)), "\n";
-
 // Canonical BSON -> BSON object -> Canonical extJSON
 echo json_canonicalize(MongoDB\BSON\Document::fromBSON($canonicalBson)->toCanonicalExtendedJSON()), "\n";
-
-// Canonical extJSON -> Canonical BSON
-echo bin2hex(fromJSON($canonicalExtJson)), "\n";
 
 // Canonical extJSON -> BSON object -> Canonical BSON
 echo bin2hex((string) MongoDB\BSON\Document::fromJSON($canonicalExtJson)), "\n";
@@ -35,9 +26,6 @@ echo bin2hex((string) MongoDB\BSON\Document::fromJSON($canonicalExtJson)), "\n";
 <?php exit(0); ?>
 --EXPECT--
 180000000b247265676578007061747465726e0069780000
-180000000b247265676578007061747465726e0069780000
 {"$regex":{"$regularExpression":{"pattern":"pattern","options":"ix"}}}
-{"$regex":{"$regularExpression":{"pattern":"pattern","options":"ix"}}}
-180000000b247265676578007061747465726e0069780000
 180000000b247265676578007061747465726e0069780000
 ===DONE===

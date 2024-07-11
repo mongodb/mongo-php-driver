@@ -12,7 +12,7 @@ require_once __DIR__ . '/../utils/basic.inc';
 $bson = hex2bin('0f0000001161002A00000015CD5B00');
 
 throws(function() use ($bson) {
-    var_dump(toPHP($bson));
+    MongoDB\BSON\Document::fromBSON($bson)->toPHP();
 }, 'MongoDB\Driver\Exception\UnexpectedValueException');
 
 ?>

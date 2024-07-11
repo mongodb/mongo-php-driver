@@ -3,7 +3,7 @@ MongoDB\BSON\Undefined serialization (__serialize and __unserialize)
 --FILE--
 <?php
 
-var_dump($undefined = MongoDB\BSON\toPHP(MongoDB\BSON\fromJSON('{ "undefined": {"$undefined": true} }'))->undefined);
+var_dump($undefined = MongoDB\BSON\Document::fromJSON('{ "undefined": {"$undefined": true} }')->toPHP()->undefined);
 var_dump($s = serialize($undefined));
 var_dump(unserialize($s));
 

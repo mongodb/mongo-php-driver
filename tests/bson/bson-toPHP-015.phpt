@@ -80,8 +80,8 @@ $tests = [
 foreach ($tests as $test => [$document, $typeMap]) {
     echo "Test ", $test, "\n";
 
-    $bson = fromPHP($document);
-    var_dump(toPHP($bson, $typeMap));
+    $bson = MongoDB\BSON\fromPHP($document);
+    var_dump(MongoDB\BSON\toPHP($bson, $typeMap));
 }
 
 ?>
@@ -89,6 +89,10 @@ foreach ($tests as $test => [$document, $typeMap]) {
 <?php exit(0); ?>
 --EXPECTF--
 Test root document as object
+
+Deprecated: Function MongoDB\BSON\fromPHP() is deprecated in %s
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 object(stdClass)#%d (%d) {
   ["__pclass"]=>
   object(MongoDB\BSON\Binary)#%d (%d) {
@@ -113,6 +117,10 @@ object(stdClass)#%d (%d) {
   }
 }
 Test root document as array
+
+Deprecated: Function MongoDB\BSON\fromPHP() is deprecated in %s
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 array(3) {
   ["__pclass"]=>
   object(MongoDB\BSON\Binary)#%d (%d) {
@@ -137,6 +145,10 @@ array(3) {
   }
 }
 Test root document as bson
+
+Deprecated: Function MongoDB\BSON\fromPHP() is deprecated in %s
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 object(MongoDB\BSON\Document)#%d (%d) {
   ["data"]=>
   string(116) "VQAAAAVfX3BjbGFzcwAKAAAAgE15RG9jdW1lbnQEbGlzdAAaAAAAEDAAAQAAABAxAAIAAAAQMgADAAAAAANtYXAAEgAAAAJmb28ABAAAAGJhcgAAAA=="
@@ -172,6 +184,10 @@ object(MongoDB\BSON\Document)#%d (%d) {
   }
 }
 Test embedded document as object
+
+Deprecated: Function MongoDB\BSON\fromPHP() is deprecated in %s
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 object(stdClass)#%d (%d) {
   ["embedded"]=>
   object(stdClass)#%d (%d) {
@@ -199,6 +215,10 @@ object(stdClass)#%d (%d) {
   }
 }
 Test embedded document as array
+
+Deprecated: Function MongoDB\BSON\fromPHP() is deprecated in %s
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 object(stdClass)#%d (%d) {
   ["embedded"]=>
   array(3) {
@@ -226,6 +246,10 @@ object(stdClass)#%d (%d) {
   }
 }
 Test embedded document as bson
+
+Deprecated: Function MongoDB\BSON\fromPHP() is deprecated in %s
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 object(stdClass)#%d (%d) {
   ["embedded"]=>
   object(MongoDB\BSON\Document)#%d (%d) {
@@ -264,6 +288,10 @@ object(stdClass)#%d (%d) {
   }
 }
 Test fieldPath document as object
+
+Deprecated: Function MongoDB\BSON\fromPHP() is deprecated in %s
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 object(stdClass)#%d (%d) {
   ["embedded"]=>
   object(stdClass)#%d (%d) {
@@ -291,6 +319,10 @@ object(stdClass)#%d (%d) {
   }
 }
 Test fieldPath document as array
+
+Deprecated: Function MongoDB\BSON\fromPHP() is deprecated in %s
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 object(stdClass)#%d (%d) {
   ["embedded"]=>
   array(3) {
@@ -318,6 +350,10 @@ object(stdClass)#%d (%d) {
   }
 }
 Test fieldPath document as bson
+
+Deprecated: Function MongoDB\BSON\fromPHP() is deprecated in %s
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 object(stdClass)#%d (%d) {
   ["embedded"]=>
   object(MongoDB\BSON\Document)#%d (%d) {

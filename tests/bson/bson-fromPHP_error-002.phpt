@@ -14,16 +14,19 @@ $tests = array(
 
 foreach ($tests as $document) {
     echo throws(function() use ($document) {
-        fromPHP($document);
+        MongoDB\BSON\fromPHP($document);
     }, 'MongoDB\Driver\Exception\UnexpectedValueException'), "\n";
 }
 
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECT--
+--EXPECTF--
+Deprecated: Function MongoDB\BSON\fromPHP() is deprecated in %s
 OK: Got MongoDB\Driver\Exception\UnexpectedValueException
 Unexpected MongoDB\BSON\Type instance: UnknownType
+
+Deprecated: Function MongoDB\BSON\fromPHP() is deprecated in %s
 OK: Got MongoDB\Driver\Exception\UnexpectedValueException
 Unexpected MongoDB\BSON\Type instance: UnknownType
 ===DONE===

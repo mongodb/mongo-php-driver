@@ -16,7 +16,7 @@ var_dump(toPHP(fromJSON($json)));
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-{ "foo" : { "$code" : "function(bar) { return bar; }", "$scope" : { "foo" : 42 } } }
+{ "foo" : { "$code" : "function(bar) { return bar; }", "$scope" : { "foo" : { "$numberInt" : "42" } } } }
 {"foo":{"$code":"function(bar) { return bar; }","$scope":{"foo":42}}}
 object(stdClass)#%d (%d) {
   ["foo"]=>

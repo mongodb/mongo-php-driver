@@ -3,7 +3,7 @@ MongoDB\BSON\DBPointer serialization (__serialize and __unserialize)
 --FILE--
 <?php
 
-$test = MongoDB\BSON\toPHP(MongoDB\BSON\fromJSON('{ "dbref": {"$dbPointer": {"$ref": "phongo.test", "$id" : { "$oid" : "5a2e78accd485d55b4050000" }  }} }'))->dbref;
+$test = MongoDB\BSON\Document::fromJSON('{ "dbref": {"$dbPointer": {"$ref": "phongo.test", "$id" : { "$oid" : "5a2e78accd485d55b4050000" }  }} }')->toPHP()->dbref;
 
 var_dump($test);
 var_dump($s = serialize($test));

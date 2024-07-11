@@ -3,7 +3,7 @@ MongoDB\BSON\Symbol get_properties handler (foreach)
 --FILE--
 <?php
 
-$document = MongoDB\BSON\toPHP(MongoDB\BSON\fromJSON('{"symbol":{"$symbol":"test"}}'));
+$document = MongoDB\BSON\Document::fromJSON('{"symbol":{"$symbol":"test"}}')->toPHP();
 $symbol = $document->symbol;
 
 foreach ($symbol as $key => $value) {

@@ -5,7 +5,7 @@ MongoDB\BSON\Symbol::jsonSerialize() with json_encode()
 
 require_once __DIR__ . '/../utils/basic.inc';
 
-$doc = MongoDB\BSON\toPHP(MongoDB\BSON\fromJSON('{ "foo": {"$symbol": "symbolValue"} }'));
+$doc = MongoDB\BSON\Document::fromJSON('{ "foo": {"$symbol": "symbolValue"} }')->toPHP();
 $json = json_encode($doc);
 
 echo toJSON(fromPHP($doc)), "\n";
@@ -16,7 +16,7 @@ var_dump(toPHP(fromJSON($json)));
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-{ "foo" : "symbolValue" }
+{ "foo" : { "$symbol" : "symbolValue" } }
 {"foo":{"$symbol":"symbolValue"}}
 object(stdClass)#%d (%d) {
   ["foo"]=>

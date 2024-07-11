@@ -3,7 +3,7 @@ MongoDB\BSON\Symbol::__set_state()
 --FILE--
 <?php
 
-$symbol = MongoDB\BSON\toPHP(MongoDB\BSON\fromJSON('{ "symbol": {"$symbol": "test"} }'))->symbol;
+$symbol = MongoDB\BSON\Document::fromJSON('{ "symbol": {"$symbol": "test"} }')->toPHP()->symbol;
 
 $s = var_export($symbol, true);
 echo $s, "\n";

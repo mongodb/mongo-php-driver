@@ -13,26 +13,14 @@ $canonicalBson = hex2bin('180000001364000000000000000000000000000000007C00');
 $canonicalExtJson = '{"d" : {"$numberDecimal" : "NaN"}}';
 $degenerateExtJson = '{"d" : {"$numberDecimal" : "nAn"}}';
 
-// Canonical BSON -> Native -> Canonical BSON
-echo bin2hex(fromPHP(toPHP($canonicalBson))), "\n";
-
 // Canonical BSON -> BSON object -> Canonical BSON
 echo bin2hex((string) MongoDB\BSON\Document::fromBSON($canonicalBson)), "\n";
-
-// Canonical BSON -> Canonical extJSON
-echo json_canonicalize(toCanonicalExtendedJSON($canonicalBson)), "\n";
 
 // Canonical BSON -> BSON object -> Canonical extJSON
 echo json_canonicalize(MongoDB\BSON\Document::fromBSON($canonicalBson)->toCanonicalExtendedJSON()), "\n";
 
-// Canonical extJSON -> Canonical BSON
-echo bin2hex(fromJSON($canonicalExtJson)), "\n";
-
 // Canonical extJSON -> BSON object -> Canonical BSON
 echo bin2hex((string) MongoDB\BSON\Document::fromJSON($canonicalExtJson)), "\n";
-
-// Degenerate extJSON -> Canonical BSON
-echo bin2hex(fromJSON($degenerateExtJson)), "\n";
 
 // Degenerate extJSON -> BSON object -> Canonical BSON
 echo bin2hex((string) MongoDB\BSON\Document::fromJSON($degenerateExtJson)), "\n";
@@ -42,11 +30,7 @@ echo bin2hex((string) MongoDB\BSON\Document::fromJSON($degenerateExtJson)), "\n"
 <?php exit(0); ?>
 --EXPECT--
 180000001364000000000000000000000000000000007c00
-180000001364000000000000000000000000000000007c00
 {"d":{"$numberDecimal":"NaN"}}
-{"d":{"$numberDecimal":"NaN"}}
-180000001364000000000000000000000000000000007c00
-180000001364000000000000000000000000000000007c00
 180000001364000000000000000000000000000000007c00
 180000001364000000000000000000000000000000007c00
 ===DONE===

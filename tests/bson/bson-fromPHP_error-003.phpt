@@ -21,29 +21,46 @@ $tests = array(
 
 foreach ($tests as $document) {
     echo throws(function() use ($document) {
-        fromPHP($document);
+        MongoDB\BSON\fromPHP($document);
     }, 'MongoDB\Driver\Exception\UnexpectedValueException'), "\n";}
 
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECT--
+--EXPECTF--
+Deprecated: Function MongoDB\BSON\fromPHP() is deprecated in %s
 OK: Got MongoDB\Driver\Exception\UnexpectedValueException
 MongoDB\BSON\Type instance UnknownType cannot be serialized as a root element
+
+Deprecated: Function MongoDB\BSON\fromPHP() is deprecated in %s
 OK: Got MongoDB\Driver\Exception\UnexpectedValueException
 MongoDB\BSON\Type instance MongoDB\BSON\Binary cannot be serialized as a root element
+
+Deprecated: Function MongoDB\BSON\fromPHP() is deprecated in %s
 OK: Got MongoDB\Driver\Exception\UnexpectedValueException
 MongoDB\BSON\Type instance MongoDB\BSON\Javascript cannot be serialized as a root element
+
+Deprecated: Function MongoDB\BSON\fromPHP() is deprecated in %s
 OK: Got MongoDB\Driver\Exception\UnexpectedValueException
 MongoDB\BSON\Type instance MongoDB\BSON\MinKey cannot be serialized as a root element
+
+Deprecated: Function MongoDB\BSON\fromPHP() is deprecated in %s
 OK: Got MongoDB\Driver\Exception\UnexpectedValueException
 MongoDB\BSON\Type instance MongoDB\BSON\MaxKey cannot be serialized as a root element
+
+Deprecated: Function MongoDB\BSON\fromPHP() is deprecated in %s
 OK: Got MongoDB\Driver\Exception\UnexpectedValueException
 MongoDB\BSON\Type instance MongoDB\BSON\ObjectId cannot be serialized as a root element
+
+Deprecated: Function MongoDB\BSON\fromPHP() is deprecated in %s
 OK: Got MongoDB\Driver\Exception\UnexpectedValueException
 MongoDB\BSON\Type instance MongoDB\BSON\Regex cannot be serialized as a root element
+
+Deprecated: Function MongoDB\BSON\fromPHP() is deprecated in %s
 OK: Got MongoDB\Driver\Exception\UnexpectedValueException
 MongoDB\BSON\Type instance MongoDB\BSON\Timestamp cannot be serialized as a root element
+
+Deprecated: Function MongoDB\BSON\fromPHP() is deprecated in %s
 OK: Got MongoDB\Driver\Exception\UnexpectedValueException
 MongoDB\BSON\Type instance MongoDB\BSON\UTCDateTime cannot be serialized as a root element
 ===DONE===

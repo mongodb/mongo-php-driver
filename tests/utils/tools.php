@@ -809,22 +809,22 @@ function failMaxTimeMS(Server $server)
 }
 
 function toPHP($var, $typemap = array()) {
-    return MongoDB\BSON\toPHP($var, $typemap);
+    return MongoDB\BSON\Document::fromBSON($var)->toPHP($typemap);
 }
 function fromPHP($var) {
-    return MongoDB\BSON\fromPHP($var);
+    return (string) MongoDB\BSON\Document::fromPHP($var);
 }
 function toJSON($var) {
-    return MongoDB\BSON\toJSON($var);
+    return MongoDB\BSON\Document::fromBSON($var)->toCanonicalExtendedJSON();
 }
 function toCanonicalExtendedJSON($var) {
-    return MongoDB\BSON\toCanonicalExtendedJSON($var);
+    return MongoDB\BSON\Document::fromBSON($var)->toCanonicalExtendedJSON();
 }
 function toRelaxedExtendedJSON($var) {
-    return MongoDB\BSON\toRelaxedExtendedJSON($var);
+    return MongoDB\BSON\Document::fromBSON($var)->toRelaxedExtendedJSON();
 }
 function fromJSON($var) {
-    return MongoDB\BSON\fromJSON($var);
+    return (string) MongoDB\BSON\Document::fromJSON($var);
 }
 
 /* Note: this fail point may terminate the mongod process, so you may want to

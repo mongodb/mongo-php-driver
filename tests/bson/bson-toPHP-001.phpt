@@ -32,7 +32,7 @@ $tests = array(
 
 foreach ($tests as $test) {
     echo $test, "\n";
-    var_dump(toPHP(fromJSON($test)));
+    var_dump(MongoDB\BSON\toPHP(MongoDB\BSON\fromJSON($test)));
     echo "\n";
 }
 
@@ -41,6 +41,10 @@ foreach ($tests as $test) {
 <?php exit(0); ?>
 --EXPECTF--
 { "foo": "yes", "__pclass": { "$binary": "TXlBYnN0cmFjdERvY3VtZW50", "$type": "80" } }
+
+Deprecated: Function MongoDB\BSON\fromJSON() is deprecated in %s
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 object(stdClass)#%d (2) {
   ["foo"]=>
   string(3) "yes"
@@ -54,6 +58,10 @@ object(stdClass)#%d (2) {
 }
 
 { "foo": "yes", "__pclass": { "$binary": "TXlEb2N1bWVudA==", "$type": "80" } }
+
+Deprecated: Function MongoDB\BSON\fromJSON() is deprecated in %s
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 object(stdClass)#%d (2) {
   ["foo"]=>
   string(3) "yes"
@@ -67,6 +75,10 @@ object(stdClass)#%d (2) {
 }
 
 { "foo": "yes", "__pclass": { "$binary": "TW9uZ29EQlxCU09OXFVuc2VyaWFsaXphYmxl", "$type": "80" } }
+
+Deprecated: Function MongoDB\BSON\fromJSON() is deprecated in %s
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 object(stdClass)#%d (2) {
   ["foo"]=>
   string(3) "yes"
@@ -80,6 +92,10 @@ object(stdClass)#%d (2) {
 }
 
 { "foo": "yes", "__pclass": { "$binary": "TW9uZ29EQlxCU09OXFBlcnNpc3RhYmxl", "$type": "44" } }
+
+Deprecated: Function MongoDB\BSON\fromJSON() is deprecated in %s
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 object(stdClass)#%d (2) {
   ["foo"]=>
   string(3) "yes"

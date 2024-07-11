@@ -38,12 +38,12 @@ foreach($tests as $n => $test) {
 ===DONE===
 <?php exit(0); ?>
 --EXPECT--
-Test#0 { "0" : { "$date" : 1416445411987 } }
-string(37) "{ "0" : { "$date" : 1416445411987 } }"
-string(37) "{ "0" : { "$date" : 1416445411987 } }"
+Test#0 { "0" : { "$date" : { "$numberLong" : "1416445411987" } } }
+string(59) "{ "0" : { "$date" : { "$numberLong" : "1416445411987" } } }"
+string(59) "{ "0" : { "$date" : { "$numberLong" : "1416445411987" } } }"
 bool(true)
-Test#1 { "0" : { "$date" : 1416445411987 } }
-string(37) "{ "0" : { "$date" : 1416445411987 } }"
-string(37) "{ "0" : { "$date" : 1416445411987 } }"
+Test#1 { "0" : { "$date" : { "$numberLong" : "1416445411987" } } }
+string(59) "{ "0" : { "$date" : { "$numberLong" : "1416445411987" } } }"
+string(59) "{ "0" : { "$date" : { "$numberLong" : "1416445411987" } } }"
 bool(true)
 ===DONE===

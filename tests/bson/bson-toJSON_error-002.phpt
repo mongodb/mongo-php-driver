@@ -12,16 +12,19 @@ $tests = [
 
 foreach ($tests as $bson) {
     echo throws(function() use ($bson) {
-        toJSON($bson);
+        MongoDB\BSON\toJSON($bson);
     }, 'MongoDB\Driver\Exception\UnexpectedValueException'), "\n";
 }
 
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECT--
+--EXPECTF--
+Deprecated: Function MongoDB\BSON\toJSON() is deprecated in %s
 OK: Got MongoDB\Driver\Exception\UnexpectedValueException
 Could not read document from BSON reader
+
+Deprecated: Function MongoDB\BSON\toJSON() is deprecated in %s
 OK: Got MongoDB\Driver\Exception\UnexpectedValueException
 Could not read document from BSON reader
 ===DONE===
