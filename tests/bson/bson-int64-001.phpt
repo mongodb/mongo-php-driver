@@ -17,13 +17,15 @@ $tests = [
 ];
 
 foreach($tests as $test) {
-    $bson = fromPHP($test);
-    $testRoundtripped = toPHP($bson);
-    $bsonRoundtripped = fromPHP($testRoundtripped);
+    $bson = MongoDB\BSON\fromPHP($test);
+    $testRoundtripped = MongoDB\BSON\toPHP($bson);
+    $bsonRoundtripped = MongoDB\BSON\fromPHP($testRoundtripped);
+    $json = MongoDB\BSON\toJSON($bson);
+    $jsonRoundtripped = MongoDB\BSON\toJSON($bsonRoundtripped);
 
     var_dump($test->int64 instanceof MongoDB\BSON\Int64);
     var_dump($testRoundtripped->int64 instanceof MongoDB\BSON\Int64);
-    var_dump(toJSON($bson), toJSON($bsonRoundtripped));
+    var_dump($json, $jsonRoundtripped);
     var_dump($test == $testRoundtripped);
 
     echo "\n";
@@ -32,25 +34,64 @@ foreach($tests as $test) {
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECT--
+--EXPECTF--
+Deprecated: Function MongoDB\BSON\fromPHP() is deprecated in %s
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
+
+Deprecated: Function MongoDB\BSON\fromPHP() is deprecated in %s
+
+Deprecated: Function MongoDB\BSON\toJSON() is deprecated in %s
+
+Deprecated: Function MongoDB\BSON\toJSON() is deprecated in %s
 bool(true)
 bool(true)
 string(33) "{ "int64" : 9223372036854775807 }"
 string(33) "{ "int64" : 9223372036854775807 }"
 bool(true)
 
+
+Deprecated: Function MongoDB\BSON\fromPHP() is deprecated in %s
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
+
+Deprecated: Function MongoDB\BSON\fromPHP() is deprecated in %s
+
+Deprecated: Function MongoDB\BSON\toJSON() is deprecated in %s
+
+Deprecated: Function MongoDB\BSON\toJSON() is deprecated in %s
 bool(true)
 bool(true)
 string(34) "{ "int64" : -9223372036854775808 }"
 string(34) "{ "int64" : -9223372036854775808 }"
 bool(true)
 
+
+Deprecated: Function MongoDB\BSON\fromPHP() is deprecated in %s
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
+
+Deprecated: Function MongoDB\BSON\fromPHP() is deprecated in %s
+
+Deprecated: Function MongoDB\BSON\toJSON() is deprecated in %s
+
+Deprecated: Function MongoDB\BSON\toJSON() is deprecated in %s
 bool(true)
 bool(true)
 string(24) "{ "int64" : 2147483648 }"
 string(24) "{ "int64" : 2147483648 }"
 bool(true)
 
+
+Deprecated: Function MongoDB\BSON\fromPHP() is deprecated in %s
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
+
+Deprecated: Function MongoDB\BSON\fromPHP() is deprecated in %s
+
+Deprecated: Function MongoDB\BSON\toJSON() is deprecated in %s
+
+Deprecated: Function MongoDB\BSON\toJSON() is deprecated in %s
 bool(true)
 bool(true)
 string(25) "{ "int64" : -2147483649 }"
