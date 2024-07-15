@@ -8,25 +8,28 @@ MongoDB\BSON\Int64 wraps 64-bit integers on 32-bit platforms
 require_once __DIR__ . '/../utils/basic.inc';
 
 $tests = [
-    MongoDB\BSON\toPHP(MongoDB\BSON\fromJSON('{"max64": {"$numberLong": "9223372036854775807"}}')),
-    MongoDB\BSON\toPHP(MongoDB\BSON\fromJSON('{"min64": {"$numberLong": "-9223372036854775808"}}')),
-    MongoDB\BSON\toPHP(MongoDB\BSON\fromJSON('{"max32+1": {"$numberLong": "2147483648"}}')),
-    MongoDB\BSON\toPHP(MongoDB\BSON\fromJSON('{"min32-1": {"$numberLong": "-2147483649"}}')),
+    '{"max64": {"$numberLong": "9223372036854775807"}}',
+    '{"min64": {"$numberLong": "-9223372036854775808"}}',
+    '{"max32+1": {"$numberLong": "2147483648"}}',
+    '{"min32-1": {"$numberLong": "-2147483649"}}',
     // Numbers within the range of 32-bit integers will not be wrapped
-    MongoDB\BSON\toPHP(MongoDB\BSON\fromJSON('{"max32": {"$numberLong": "2147483647"}}')),
-    MongoDB\BSON\toPHP(MongoDB\BSON\fromJSON('{"min32": {"$numberLong": "-2147483648"}}')),
-    MongoDB\BSON\toPHP(MongoDB\BSON\fromJSON('{"zero": {"$numberLong": "0"}}')),
+    '{"max32": {"$numberLong": "2147483647"}}',
+    '{"min32": {"$numberLong": "-2147483648"}}',
+    '{"zero": {"$numberLong": "0"}}',
     
 ];
 
 foreach ($tests as $test) {
-    var_dump($test);
+    var_dump(MongoDB\BSON\toPHP(MongoDB\BSON\fromJSON($test)));
 }
 
 ?>
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
+Deprecated: Function MongoDB\BSON\fromJSON() is deprecated in %s
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 object(stdClass)#%d (%d) {
   ["max64"]=>
   object(MongoDB\BSON\Int64)#%d (%d) {
@@ -34,6 +37,10 @@ object(stdClass)#%d (%d) {
     string(19) "9223372036854775807"
   }
 }
+
+Deprecated: Function MongoDB\BSON\fromJSON() is deprecated in %s
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 object(stdClass)#%d (%d) {
   ["min64"]=>
   object(MongoDB\BSON\Int64)#%d (%d) {
@@ -41,6 +48,10 @@ object(stdClass)#%d (%d) {
     string(20) "-9223372036854775808"
   }
 }
+
+Deprecated: Function MongoDB\BSON\fromJSON() is deprecated in %s
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 object(stdClass)#%d (%d) {
   ["max32+1"]=>
   object(MongoDB\BSON\Int64)#%d (%d) {
@@ -48,6 +59,10 @@ object(stdClass)#%d (%d) {
     string(10) "2147483648"
   }
 }
+
+Deprecated: Function MongoDB\BSON\fromJSON() is deprecated in %s
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 object(stdClass)#%d (%d) {
   ["min32-1"]=>
   object(MongoDB\BSON\Int64)#%d (%d) {
@@ -55,14 +70,26 @@ object(stdClass)#%d (%d) {
     string(11) "-2147483649"
   }
 }
+
+Deprecated: Function MongoDB\BSON\fromJSON() is deprecated in %s
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 object(stdClass)#%d (%d) {
   ["max32"]=>
   int(2147483647)
 }
+
+Deprecated: Function MongoDB\BSON\fromJSON() is deprecated in %s
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 object(stdClass)#%d (%d) {
   ["min32"]=>
   int(-2147483648)
 }
+
+Deprecated: Function MongoDB\BSON\fromJSON() is deprecated in %s
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 object(stdClass)#%d (%d) {
   ["zero"]=>
   int(0)
