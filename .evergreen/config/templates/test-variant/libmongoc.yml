@@ -1,4 +1,3 @@
-buildvariants:
   # Variants with different libmongoc
   - name: test-debian11-php-%phpVersion%-libmongoc-lowest-supported
     display_name: "Test: Debian 11, PHP %phpVersion%, libmongoc lowest"
