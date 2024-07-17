@@ -4,7 +4,6 @@
 # These tasks are used in the build task group "build-php-libmongoc" defined in .evergreen/config/build-task-groups.yml,
 # where the "max_hosts" setting must be set to the number of enabled tasks.
 # Last but not least, make sure the corresponding test variants are enabled in .evergreen/config/test-variants.yml
-tasks:
   - name: "build-php-%phpVersion%-libmongoc-lowest-supported"
     tags: ["build-libmongoc", "php%phpVersion%"]
     commands:

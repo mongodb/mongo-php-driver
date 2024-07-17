@@ -1,4 +1,3 @@
-tasks:
   - name: "ocsp-test_1-rsa-delegate-%mongodbVersion%"
     tags: ["ocsp", "%mongodbVersion%"]
     commands:
