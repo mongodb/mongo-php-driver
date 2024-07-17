@@ -1,4 +1,3 @@
-buildvariants:
   # Variants with different libmongoc
   - name: test-debian12-php-%phpVersion%-libmongoc-lowest-supported
     tags: ["test", "libmongoc", "debian", "x64", "php%phpVersion%", "pr", "tag"]

@@ -1,5 +1,4 @@
-# TODO PHPC-2343: This file can be removed when requiring PHP 8.1+
-buildvariants:
+  # TODO PHPC-2343: This file can be removed when requiring PHP 8.1+
   # Test MongoDB >= 5.0, < 8.0
   - name: test-debian11-php-%phpVersion%
     tags: ["test", "debian", "x64", "php%phpVersion%", "pr", "tag"]
