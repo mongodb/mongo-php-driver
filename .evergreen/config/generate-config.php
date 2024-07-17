@@ -57,23 +57,23 @@ $skipCryptSharedServerVersions = array_filter(
 $allFiles = [];
 
 // Build tasks
-$allFiles[] = generateConfigs('build', 'phpVersion', 'build-php.yml', 'build-php-%s', $supportedPhpVersions);
-$allFiles[] = generateConfigs('build', 'phpVersion', 'build-libmongoc.yml', 'build-libmongoc-%s', $libmongocBuildPhpVersions);
+$allFiles[] = generateConfigs('tasks', 'build', 'phpVersion', 'build-php.yml', $supportedPhpVersions);
+$allFiles[] = generateConfigs('tasks', 'build', 'phpVersion', 'build-libmongoc.yml', $libmongocBuildPhpVersions);
 
 // Test tasks
-$allFiles[] = generateConfigs('test', 'mongodbVersion', 'local.yml', 'local-%s', $localServerVersions);
-$allFiles[] = generateConfigs('test', 'mongodbVersion', 'load-balanced.yml', 'load-balanced-%s', $loadBalancedServerVersions);
-$allFiles[] = generateConfigs('test', 'mongodbVersion', 'ocsp.yml', 'ocsp-%s', $ocspServerVersions);
-$allFiles[] = generateConfigs('test', 'mongodbVersion', 'require-api-version.yml', 'require-api-version-%s', $requireApiServerVersions);
-$allFiles[] = generateConfigs('test', 'mongodbVersion', 'skip-crypt-shared.yml', 'skip-crypt-shared-%s', $skipCryptSharedServerVersions);
+$allFiles[] = generateConfigs('tasks', 'test', 'mongodbVersion', 'local.yml', $localServerVersions);
+$allFiles[] = generateConfigs('tasks', 'test', 'mongodbVersion', 'load-balanced.yml', $loadBalancedServerVersions);
+$allFiles[] = generateConfigs('tasks', 'test', 'mongodbVersion', 'ocsp.yml', $ocspServerVersions);
+$allFiles[] = generateConfigs('tasks', 'test', 'mongodbVersion', 'require-api-version.yml', $requireApiServerVersions);
+$allFiles[] = generateConfigs('tasks', 'test', 'mongodbVersion', 'skip-crypt-shared.yml', $skipCryptSharedServerVersions);
 
 // Test variants
-$allFiles[] = generateConfigs('test-variant', 'phpVersion', 'modern-php-full.yml', 'full-php-%s', $modernPhpVersions);
-$allFiles[] = generateConfigs('test-variant', 'phpVersion', 'legacy-php-full.yml', 'full-php-%s', $legacyPhpVersions);
-$allFiles[] = generateConfigs('test-variant', 'phpVersion', 'libmongoc.yml', 'libmongoc-php-%s', [$latestPhpVersion]);
+$allFiles[] = generateConfigs('buildvariants', 'test-variant', 'phpVersion', 'modern-php-full.yml', $modernPhpVersions);
+$allFiles[] = generateConfigs('buildvariants', 'test-variant', 'phpVersion', 'legacy-php-full.yml', $legacyPhpVersions);
+$allFiles[] = generateConfigs('buildvariants', 'test-variant', 'phpVersion', 'libmongoc.yml', [$latestPhpVersion]);
 
 echo "Generated config. Use the following list to import files:\n";
-echo implode("\n", array_map('getImportConfig', array_merge(...$allFiles))) . "\n";
+echo implode("\n", array_map('getImportConfig', $allFiles)) . "\n";
 
 function getImportConfig(string $filename): string
 {
@@ -81,12 +81,12 @@ function getImportConfig(string $filename): string
 }
 
 function generateConfigs(
+    string $type,
     string $directory,
     string $replacementName,
     string $templateFile,
-    string $outputFormat,
     array $versions,
-): array {
+): string {
     $templateRelativePath = 'templates/' . $directory . '/' . $templateFile;
     $template = file_get_contents(__DIR__ . '/' . $templateRelativePath);
     $header = sprintf(
@@ -94,17 +94,22 @@ function generateConfigs(
         $templateRelativePath
     );
 
-    $files = [];
+    $contents = <<<HEADER
+$header
+$type:
+
+HEADER;
 
     foreach ($versions as $version) {
-        $filename = sprintf('/generated/%s/' . $outputFormat . '.yml', $directory, $version);
-        $files[] = '.evergreen/config' . $filename;
-
-        $replacements = ['%' . $replacementName . '%' => $version];
-
-        file_put_contents(__DIR__ . $filename, $header . "\n" . strtr($template, $replacements));
+        $contents .= strtr(
+            $template,
+            ['%' . $replacementName . '%' => $version],
+        );
     }
 
-    return $files;
+    $filename = '/generated/' . $directory . '/' . $templateFile;
+    file_put_contents(__DIR__ . $filename, $contents);
+
+    return '.evergreen/config' . $filename;
 }
 
