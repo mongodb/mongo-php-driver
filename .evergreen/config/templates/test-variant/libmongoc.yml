@@ -11,10 +11,10 @@ buildvariants:
       - variant: "build-debian12"
         name: "build-php-%phpVersion%-libmongoc-lowest-supported"
     tasks:
-      - ".standalone .local !.3.6 !.4.0 !.4.2 !.4.4 !.5.0 !.6.0"
-      - ".replicaset .local !.3.6 !.4.0 !.4.2 !.4.4 !.5.0 !.6.0"
-      - ".sharded .local !.3.6 !.4.0 !.4.2 !.4.4 !.5.0 !.6.0"
-      - ".loadbalanced .local !.3.6 !.4.0 !.4.2 !.4.4 !.5.0 !.6.0"
+      - ".standalone .local !.4.0 !.4.2 !.4.4 !.5.0 !.6.0"
+      - ".replicaset .local !.4.0 !.4.2 !.4.4 !.5.0 !.6.0"
+      - ".sharded .local !.4.0 !.4.2 !.4.4 !.5.0 !.6.0"
+      - ".loadbalanced .local !.4.0 !.4.2 !.4.4 !.5.0 !.6.0"
       - "test-atlas-connectivity"
       - ".ocsp !.4.4 !.5.0 !.6.0"
     display_tasks:
@@ -42,10 +42,10 @@ buildvariants:
       - variant: "build-debian12"
         name: "build-php-%phpVersion%-libmongoc-next-stable"
     tasks:
-      - ".standalone .local !.3.6 !.4.0 !.4.2 !.4.4 !.5.0 !.6.0"
-      - ".replicaset .local !.3.6 !.4.0 !.4.2 !.4.4 !.5.0 !.6.0"
-      - ".sharded .local !.3.6 !.4.0 !.4.2 !.4.4 !.5.0 !.6.0"
-      - ".loadbalanced .local !.3.6 !.4.0 !.4.2 !.4.4 !.5.0 !.6.0"
+      - ".standalone .local !.4.0 !.4.2 !.4.4 !.5.0 !.6.0"
+      - ".replicaset .local !.4.0 !.4.2 !.4.4 !.5.0 !.6.0"
+      - ".sharded .local !.4.0 !.4.2 !.4.4 !.5.0 !.6.0"
+      - ".loadbalanced .local !.4.0 !.4.2 !.4.4 !.5.0 !.6.0"
       - "test-atlas-connectivity"
       - ".ocsp !.4.4 !.5.0 !.6.0"
     display_tasks:
@@ -73,10 +73,10 @@ buildvariants:
       - variant: "build-debian12"
         name: "build-php-%phpVersion%-libmongoc-latest"
     tasks:
-      - ".standalone .local !.3.6 !.4.0 !.4.2 !.4.4 !.5.0 !.6.0"
-      - ".replicaset .local !.3.6 !.4.0 !.4.2 !.4.4 !.5.0 !.6.0"
-      - ".sharded .local !.3.6 !.4.0 !.4.2 !.4.4 !.5.0 !.6.0"
-      - ".loadbalanced .local !.3.6 !.4.0 !.4.2 !.4.4 !.5.0 !.6.0"
+      - ".standalone .local !.4.0 !.4.2 !.4.4 !.5.0 !.6.0"
+      - ".replicaset .local !.4.0 !.4.2 !.4.4 !.5.0 !.6.0"
+      - ".sharded .local !.4.0 !.4.2 !.4.4 !.5.0 !.6.0"
+      - ".loadbalanced .local !.4.0 !.4.2 !.4.4 !.5.0 !.6.0"
       - "test-atlas-connectivity"
       - ".ocsp !.4.4 !.5.0 !.6.0"
     display_tasks:

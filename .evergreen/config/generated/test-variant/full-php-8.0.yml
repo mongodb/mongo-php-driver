@@ -14,10 +14,10 @@ buildvariants:
         name: "build-php-8.0"
     tasks:
       # Remember to add new major versions here as they are released
-      - ".standalone .local !.3.6 !.4.0 !.4.2 !.4.4 !.8.0"
-      - ".replicaset .local !.3.6 !.4.0 !.4.2 !.4.4 !.8.0"
-      - ".sharded .local !.3.6 !.4.0 !.4.2 !.4.4 !.8.0"
-      - ".loadbalanced .local !.3.6 !.4.0 !.4.2 !.4.4 !.8.0"
+      - ".standalone .local !.4.0 !.4.2 !.4.4 !.8.0"
+      - ".replicaset .local !.4.0 !.4.2 !.4.4 !.8.0"
+      - ".sharded .local !.4.0 !.4.2 !.4.4 !.8.0"
+      - ".loadbalanced .local !.4.0 !.4.2 !.4.4 !.8.0"
       - ".ocsp !.4.4 !.8.0"
       - "test-atlas-connectivity"
     display_tasks:

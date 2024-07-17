@@ -12,10 +12,10 @@ buildvariants:
       - variant: "build-debian12"
         name: "build-php-8.2"
     tasks:
-      - ".standalone .local !.3.6 !.4.0 !.4.2 !.4.4 !.5.0 !.6.0"
-      - ".replicaset .local !.3.6 !.4.0 !.4.2 !.4.4 !.5.0 !.6.0"
-      - ".sharded .local !.3.6 !.4.0 !.4.2 !.4.4 !.5.0 !.6.0"
-      - ".loadbalanced .local !.3.6 !.4.0 !.4.2 !.4.4 !.5.0 !.6.0"
+      - ".standalone .local !.4.0 !.4.2 !.4.4 !.5.0 !.6.0"
+      - ".replicaset .local !.4.0 !.4.2 !.4.4 !.5.0 !.6.0"
+      - ".sharded .local !.4.0 !.4.2 !.4.4 !.5.0 !.6.0"
+      - ".loadbalanced .local !.4.0 !.4.2 !.4.4 !.5.0 !.6.0"
       - ".ocsp !.4.4 !.5.0 !.6.0"
       - "test-atlas-connectivity"
     display_tasks:
@@ -45,10 +45,10 @@ buildvariants:
         name: "build-php-8.2"
     tasks:
       # Remember to add new major versions here as they are released
-      - ".standalone .local !.3.6 !.4.0 !.4.2 !.4.4 !.7.0 !.8.0 !.rapid !.latest"
-      - ".replicaset .local !.3.6 !.4.0 !.4.2 !.4.4 !.7.0 !.8.0 !.rapid !.latest"
-      - ".sharded .local !.3.6 !.4.0 !.4.2 !.4.4 !.7.0 !.8.0 !.rapid !.latest"
-      - ".loadbalanced .local !.3.6 !.4.0 !.4.2 !.4.4 !.7.0 !.8.0 !.rapid !.latest"
+      - ".standalone .local !.4.0 !.4.2 !.4.4 !.7.0 !.8.0 !.rapid !.latest"
+      - ".replicaset .local !.4.0 !.4.2 !.4.4 !.7.0 !.8.0 !.rapid !.latest"
+      - ".sharded .local !.4.0 !.4.2 !.4.4 !.7.0 !.8.0 !.rapid !.latest"
+      - ".loadbalanced .local !.4.0 !.4.2 !.4.4 !.7.0 !.8.0 !.rapid !.latest"
       - ".ocsp !.4.4 !.7.0 !.8.0 !.rapid !.latest"
     display_tasks:
       - name: "test-ocsp-6.0"
