@@ -18,6 +18,8 @@ final class UTCDateTime implements UTCDateTimeInterface, \JsonSerializable, Type
 
     final public function toDateTime(): \DateTime {}
 
+    final public function toDateTimeImmutable(): \DateTimeImmutable {}
+
     final public function __toString(): string {}
 
     final public static function __set_state(array $properties): UTCDateTime {}

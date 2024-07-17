@@ -1,12 +1,12 @@
 --TEST--
-MongoDB\BSON\UTCDateTime::toDateTime() dumping seconds and microseconds
+MongoDB\BSON\UTCDateTime::toDateTimeImmutable() dumping seconds and microseconds
 --INI--
 date.timezone=UTC
 --FILE--
 <?php
 
 $utcdatetime = new MongoDB\BSON\UTCDateTime("1416445411987");
-$datetime = $utcdatetime->toDateTime();
+$datetime = $utcdatetime->toDateTimeImmutable();
 var_dump(get_class($datetime));
 echo $datetime->format('U.u'), "\n";
 
@@ -14,6 +14,6 @@ echo $datetime->format('U.u'), "\n";
 ===DONE===
 <?php exit(0); ?>
 --EXPECT--
-string(8) "DateTime"
+string(17) "DateTimeImmutable"
 1416445411.987000
 ===DONE===
