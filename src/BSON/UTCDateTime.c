@@ -126,6 +126,25 @@ static HashTable* php_phongo_utcdatetime_get_properties_hash(phongo_compat_objec
 	return props;
 }
 
+static void php_phongo_utcdatetime_to_php_date(zval* return_value, const zval* this, zend_class_entry* ce)
+{
+	php_phongo_utcdatetime_t* intern;
+	php_date_obj*             datetime_obj;
+	char*                     sec;
+	size_t                    sec_len;
+
+	intern = Z_UTCDATETIME_OBJ_P(this);
+
+	object_init_ex(return_value, ce);
+	datetime_obj = Z_PHPDATE_P(return_value);
+
+	sec_len = spprintf(&sec, 0, "@%" PRId64, intern->milliseconds / 1000);
+	php_date_initialize(datetime_obj, sec, sec_len, NULL, NULL, 0);
+	efree(sec);
+
+	datetime_obj->time->us = (intern->milliseconds % 1000) * 1000;
+}
+
 /* Construct a new BSON UTCDateTime type from either the current time,
    milliseconds since the epoch, or a DateTimeInterface object. Defaults to the
    current time. */
@@ -211,45 +230,17 @@ static PHP_METHOD(MongoDB_BSON_UTCDateTime, __toString)
 /* Returns a DateTime object representing this UTCDateTime */
 static PHP_METHOD(MongoDB_BSON_UTCDateTime, toDateTime)
 {
-	php_phongo_utcdatetime_t* intern;
-	php_date_obj*             datetime_obj;
-	char*                     sec;
-	size_t                    sec_len;
-
-	intern = Z_UTCDATETIME_OBJ_P(getThis());
-
 	PHONGO_PARSE_PARAMETERS_NONE();
 
-	object_init_ex(return_value, php_date_get_date_ce());
-	datetime_obj = Z_PHPDATE_P(return_value);
-
-	sec_len = spprintf(&sec, 0, "@%" PRId64, intern->milliseconds / 1000);
-	php_date_initialize(datetime_obj, sec, sec_len, NULL, NULL, 0);
-	efree(sec);
-
-	datetime_obj->time->us = (intern->milliseconds % 1000) * 1000;
+	php_phongo_utcdatetime_to_php_date(return_value, getThis(), php_date_get_date_ce());
 }
 
-/* Returns a DateTime object representing this UTCDateTime */
+/* Returns a DateTimeImmutable object representing this UTCDateTime */
 static PHP_METHOD(MongoDB_BSON_UTCDateTime, toDateTimeImmutable)
 {
-	php_phongo_utcdatetime_t* intern;
-	php_date_obj*             datetime_obj;
-	char*                     sec;
-	size_t                    sec_len;
-
-	intern = Z_UTCDATETIME_OBJ_P(getThis());
-
 	PHONGO_PARSE_PARAMETERS_NONE();
 
-	object_init_ex(return_value, php_date_get_immutable_ce());
-	datetime_obj = Z_PHPDATE_P(return_value);
-
-	sec_len = spprintf(&sec, 0, "@%" PRId64, intern->milliseconds / 1000);
-	php_date_initialize(datetime_obj, sec, sec_len, NULL, NULL, 0);
-	efree(sec);
-
-	datetime_obj->time->us = (intern->milliseconds % 1000) * 1000;
+	php_phongo_utcdatetime_to_php_date(return_value, getThis(), php_date_get_immutable_ce());
 }
 
 static PHP_METHOD(MongoDB_BSON_UTCDateTime, jsonSerialize)
