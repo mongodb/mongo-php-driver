@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: c4d05eaa04380f7a4adcb8f9c1562d7013c37121 */
+ * Stub hash: 2b7ac84585a74a210af3cb2061541977cc309e2d */
 
 #if PHP_VERSION_ID >= 80000
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_BSON_UTCDateTime___construct, 0, 0, 0)
@@ -14,6 +14,9 @@ ZEND_END_ARG_INFO()
 #endif
 
 ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_MongoDB_BSON_UTCDateTime_toDateTime, 0, 0, DateTime, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_MongoDB_BSON_UTCDateTime_toDateTimeImmutable, 0, 0, DateTimeImmutable, 0)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_BSON_UTCDateTime___toString, 0, 0, IS_STRING, 0)
@@ -62,6 +65,7 @@ static ZEND_METHOD(MongoDB_BSON_UTCDateTime, __construct);
 static ZEND_METHOD(MongoDB_BSON_UTCDateTime, __construct);
 #endif
 static ZEND_METHOD(MongoDB_BSON_UTCDateTime, toDateTime);
+static ZEND_METHOD(MongoDB_BSON_UTCDateTime, toDateTimeImmutable);
 static ZEND_METHOD(MongoDB_BSON_UTCDateTime, __toString);
 static ZEND_METHOD(MongoDB_BSON_UTCDateTime, __set_state);
 static ZEND_METHOD(MongoDB_BSON_UTCDateTime, serialize);
@@ -89,6 +93,7 @@ static const zend_function_entry class_MongoDB_BSON_UTCDateTime_methods[] = {
 	ZEND_ME(MongoDB_BSON_UTCDateTime, __construct, arginfo_class_MongoDB_BSON_UTCDateTime___construct, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 #endif
 	ZEND_ME(MongoDB_BSON_UTCDateTime, toDateTime, arginfo_class_MongoDB_BSON_UTCDateTime_toDateTime, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	ZEND_ME(MongoDB_BSON_UTCDateTime, toDateTimeImmutable, arginfo_class_MongoDB_BSON_UTCDateTime_toDateTimeImmutable, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_BSON_UTCDateTime, __toString, arginfo_class_MongoDB_BSON_UTCDateTime___toString, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_BSON_UTCDateTime, __set_state, arginfo_class_MongoDB_BSON_UTCDateTime___set_state, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_BSON_UTCDateTime, serialize, arginfo_class_MongoDB_BSON_UTCDateTime_serialize, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
