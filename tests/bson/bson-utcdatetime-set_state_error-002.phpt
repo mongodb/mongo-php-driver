@@ -9,7 +9,18 @@ echo throws(function() {
     MongoDB\BSON\UTCDateTime::__set_state(['milliseconds' => '1234.5678']);
 }, 'MongoDB\Driver\Exception\InvalidArgumentException'), "\n";
 
-/* TODO: Add tests for out-of-range values once CDRIVER-1377 is resolved */
+// Out-of-range values
+echo throws(function() {
+    MongoDB\BSON\UTCDateTime::__set_state(['milliseconds' => '9223372036854775808']);
+}, 'MongoDB\Driver\Exception\InvalidArgumentException'), "\n";
+
+echo throws(function() {
+    MongoDB\BSON\UTCDateTime::__set_state(['milliseconds' => '-9223372036854775809']);
+}, 'MongoDB\Driver\Exception\InvalidArgumentException'), "\n";
+
+echo throws(function() {
+    MongoDB\BSON\UTCDateTime::__set_state(['milliseconds' => '18446744073709551615']);
+}, 'MongoDB\Driver\Exception\InvalidArgumentException'), "\n";
 
 ?>
 ===DONE===
@@ -17,4 +28,10 @@ echo throws(function() {
 --EXPECT--
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Error parsing "1234.5678" as 64-bit integer for MongoDB\BSON\UTCDateTime initialization
+OK: Got MongoDB\Driver\Exception\InvalidArgumentException
+Error parsing "9223372036854775808" as 64-bit integer for MongoDB\BSON\UTCDateTime initialization
+OK: Got MongoDB\Driver\Exception\InvalidArgumentException
+Error parsing "-9223372036854775809" as 64-bit integer for MongoDB\BSON\UTCDateTime initialization
+OK: Got MongoDB\Driver\Exception\InvalidArgumentException
+Error parsing "18446744073709551615" as 64-bit integer for MongoDB\BSON\UTCDateTime initialization
 ===DONE===
