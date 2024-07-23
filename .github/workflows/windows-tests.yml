@@ -72,6 +72,12 @@ jobs:
         with:
           submodules: true
 
+      - id: setup-mongodb
+        uses: mongodb-labs/drivers-evergreen-tools@master
+        with:
+          version: "7.0"
+          topology: "server"
+
       - name: Prepare build environment
         id: prepare-build
         uses: ./.github/actions/windows/prepare-build
@@ -90,17 +96,11 @@ jobs:
             ${{ steps.prepare-build.outputs.build-dir }}\php_mongodb.dll
             ${{ steps.prepare-build.outputs.build-dir }}\php_mongodb.pdb
 
-      - name: Start MongoDB
-        run: |
-          sc config MongoDB start= auto
-          sc start MongoDB
-
-      - name: Wait until MongoDB is available
-        run: .github/workflows/wait-for-mongodb.bat
-
       - name: Run Tests
         run: nmake /nologo test
         env:
           NO_INTERACTION: 1
           REPORT_EXIT_STATUS: 1
           TESTS: --show-diff
+          MONGODB_URI: ${{ steps.setup-mongodb.outputs.cluster-uri }}
+          CRYPT_SHARED_LIB_PATH: ${{ steps.setup-mongodb.outputs.crypt-shared-lib-path }}
