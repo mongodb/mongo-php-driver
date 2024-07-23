@@ -1,32 +1,33 @@
 name: "Windows Tests"
+run-name: "Windows Tests (PHP ${{ inputs.php }} ${{ inputs.arch }} ${{ inputs.ts }})"
 
 on:
-  pull_request:
-    branches:
-      - "v*.*"
-      - "master"
-      - "feature/*"
-  push:
-    branches:
-      - "v*.*"
-      - "master"
-      - "feature/*"
+  workflow_call:
+    inputs:
+      php:
+        description: "The PHP version to build for"
+        type: string
+        required: true
+      arch:
+        description: "The architecture to build for (x64 or x86)"
+        type: string
+        required: true
+      ts:
+        description: "Thread safety (ts or nts)"
+        type: string
+        required: true
+      upload_release_asset:
+        description: "Whether to upload a release asset"
+        type: boolean
+        default: false
 
 jobs:
   build:
-    name: "Build Windows DLLs"
+    name: "Build Driver"
     runs-on: windows-2022
     defaults:
       run:
         shell: cmd
-
-    strategy:
-      # This matrix intentionally uses fail-fast: false to ensure other builds are finished
-      fail-fast: false
-      matrix:
-        php: [ "7.4", "8.0", "8.1", "8.2", "8.3" ]
-        arch: [ x64, x86 ]
-        ts: [ ts, nts ]
 
     steps:
       - uses: actions/checkout@v4
@@ -37,35 +38,26 @@ jobs:
         id: build-driver
         uses: ./.github/actions/windows/build
         with:
-          version: ${{ matrix.php }}
-          arch: ${{ matrix.arch }}
-          ts: ${{ matrix.ts }}
+          version: ${{ inputs.php }}
+          arch: ${{ inputs.arch }}
+          ts: ${{ inputs.ts }}
 
       - name: Cache build artifacts for subsequent builds
         id: cache-build-artifacts
         uses: actions/cache/save@v4
         with:
-          key: ${{ github.sha }}-${{ matrix.php }}-${{ matrix.ts }}-${{ matrix.arch }}
+          key: ${{ github.sha }}-${{ inputs.php }}-${{ inputs.ts }}-${{ inputs.arch }}
           path: |
             ${{ steps.build-driver.outputs.build-dir }}\php_mongodb.dll
             ${{ steps.build-driver.outputs.build-dir }}\php_mongodb.pdb
 
   test:
-    name: "Windows Tests"
+    name: "Run Tests"
     runs-on: windows-2022
     needs: build
     defaults:
       run:
         shell: cmd
-
-    strategy:
-      # Timeouts starting the MongoDB service are common and should not
-      # interrupt the overall test matrix.
-      fail-fast: false
-      matrix:
-        php: [ "7.4", "8.0", "8.1", "8.2", "8.3" ]
-        arch: [ x64, x86 ]
-        ts: [ ts, nts ]
 
     steps:
       - uses: actions/checkout@v4
@@ -82,16 +74,16 @@ jobs:
         id: prepare-build
         uses: ./.github/actions/windows/prepare-build
         with:
-          version: ${{ matrix.php }}
-          arch: ${{ matrix.arch }}
-          ts: ${{ matrix.ts }}
+          version: ${{ inputs.php }}
+          arch: ${{ inputs.arch }}
+          ts: ${{ inputs.ts }}
 
       - name: Restore cached build artifacts
         id: cache-build-artifacts
         uses: actions/cache/restore@v4
         with:
           fail-on-cache-miss: true
-          key: ${{ github.sha }}-${{ matrix.php }}-${{ matrix.ts }}-${{ matrix.arch }}
+          key: ${{ github.sha }}-${{ inputs.php }}-${{ inputs.ts }}-${{ inputs.arch }}
           path: |
             ${{ steps.prepare-build.outputs.build-dir }}\php_mongodb.dll
             ${{ steps.prepare-build.outputs.build-dir }}\php_mongodb.pdb
