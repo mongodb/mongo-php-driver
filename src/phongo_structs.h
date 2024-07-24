@@ -341,7 +341,7 @@ typedef struct {
 
 typedef struct {
 	bool               awaited;
-	uint64_t           duration_micros;
+	int64_t            duration_micros;
 	zval               z_error;
 	mongoc_host_list_t host;
 	zend_object        std;
@@ -355,7 +355,7 @@ typedef struct {
 
 typedef struct {
 	bool               awaited;
-	uint64_t           duration_micros;
+	int64_t            duration_micros;
 	mongoc_host_list_t host;
 	bson_t*            reply;
 	zend_object        std;
