@@ -110,3 +110,19 @@ jobs:
 
       - name: "Install release archive to verify correctness"
         run: sudo pecl install ${{ env.PACKAGE_FILE }}
+
+  test-windows:
+    name: "Windows Tests"
+    uses: ./.github/workflows/windows-tests.yml
+    with:
+      php: ${{ matrix.php }}
+      arch: ${{ matrix.arch }}
+      ts: ${{ matrix.ts }}
+    secrets: inherit
+    strategy:
+      fail-fast: false
+      matrix:
+        # Note: keep this in sync with the Windows matrix in package-release.yml
+        php: [ "7.4", "8.0", "8.1", "8.2", "8.3" ]
+        arch: [ x64, x86 ]
+        ts: [ ts, nts ]
