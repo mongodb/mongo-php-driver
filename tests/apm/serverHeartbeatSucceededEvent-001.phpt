@@ -68,6 +68,8 @@ object(MongoDB\Driver\Monitoring\ServerHeartbeatSucceededEvent)#%d (%d) {
   int(%d)
   ["awaited"]=>
   bool(%s)
+  ["durationMicros"]=>
+  int(%d)
   ["reply"]=>
   object(stdClass)#%d (%d) {%A
   }
