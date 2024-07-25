@@ -40,6 +40,6 @@ object(MongoDB\Driver\CursorId)#%d (%d) {
 }
 object(MongoDB\BSON\Int64)#%d (%d) {
   ["integer"]=>
-  string(19) "%d"
+  string(%d) "%d"
 }
 ===DONE===
