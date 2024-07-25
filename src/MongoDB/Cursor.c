@@ -143,12 +143,22 @@ static PHP_METHOD(MongoDB_Driver_Cursor, toArray)
 static PHP_METHOD(MongoDB_Driver_Cursor, getId)
 {
 	php_phongo_cursor_t* intern;
+	bool                 asInt64;
 
 	intern = Z_CURSOR_OBJ_P(getThis());
 
-	PHONGO_PARSE_PARAMETERS_NONE();
+	PHONGO_PARSE_PARAMETERS_START(0, 1)
+	Z_PARAM_OPTIONAL
+	Z_PARAM_BOOL(asInt64)
+	PHONGO_PARSE_PARAMETERS_END();
 
-	php_phongo_cursor_id_new_from_id(return_value, mongoc_cursor_get_id(intern->cursor));
+	if (asInt64) {
+		phongo_int64_new(return_value, mongoc_cursor_get_id(intern->cursor));
+	} else {
+		php_error_docref(NULL, E_DEPRECATED, "The method \"MongoDB\\Driver\\Cursor::getId\" will no longer return a \"MongoDB\\Driver\\CursorId\" instance in the future. Pass \"true\" as argument to change to the new behavior and receive a \"MongoDB\\BSON\\Int64\" instance instead.");
+
+		php_phongo_cursor_id_new_from_id(return_value, mongoc_cursor_get_id(intern->cursor));
+	}
 }
 
 /* Returns the Server object to which this cursor is attached */

@@ -28,12 +28,12 @@ $iterator->next();
 /* Implicit sessions for query cursors are never exposed to PHPC, as they are
  * handled internally by libmongoc. Cursor debug ouput should never report such
  * sessions. */
-printf("Cursor ID is zero: %s\n", (string) $cursor->getId() === '0' ? 'yes' : 'no');
+printf("Cursor ID is zero: %s\n", (int) $cursor->getId(true) === 0 ? 'yes' : 'no');
 var_dump($cursor);
 
 $iterator->next();
 
-printf("\nCursor ID is zero: %s\n", (string) $cursor->getId() === '0' ? 'yes' : 'no');
+printf("\nCursor ID is zero: %s\n", (int) $cursor->getId(true) === 0 ? 'yes' : 'no');
 var_dump($cursor);
 
 ?>
