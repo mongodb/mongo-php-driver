@@ -265,11 +265,23 @@ static zend_object* php_phongo_int64_clone_object(phongo_compat_object_handler_t
 	return new_object;
 }
 
-static int php_phongo_int64_compare_objects(zval* o1, zval* o2)
+static bool php_phongo_int64_is_int64_object(zval* object)
+{
+	if (Z_TYPE_P(object) != IS_OBJECT) {
+		return false;
+	}
+
+	return Z_OBJ_P(object)->ce == php_phongo_int64_ce;
+}
+
+static bool php_phongo_int64_is_long_or_double(zval* value)
+{
+	return Z_TYPE_P(value) == IS_LONG || Z_TYPE_P(value) == IS_DOUBLE;
+}
+
+static int php_phongo_int64_compare_int64_objects(zval* o1, zval* o2)
 {
 	php_phongo_int64_t *intern1, *intern2;
-
-	ZEND_COMPARE_OBJECTS_FALLBACK(o1, o2);
 
 	intern1 = Z_INT64_OBJ_P(o1);
 	intern2 = Z_INT64_OBJ_P(o2);
@@ -277,6 +289,58 @@ static int php_phongo_int64_compare_objects(zval* o1, zval* o2)
 	if (intern1->integer != intern2->integer) {
 		return intern1->integer < intern2->integer ? -1 : 1;
 	}
+
+	return 0;
+}
+
+static int php_phongo_int64_compare_with_long_or_float(zval* object, zval* value)
+{
+	php_phongo_int64_t* intern;
+	int64_t             long_value;
+	double              double_value;
+
+	intern = Z_INT64_OBJ_P(object);
+
+	assert(php_phongo_int64_is_long_or_double(value));
+
+	switch (Z_TYPE_P(value)) {
+		case IS_LONG:
+			long_value = Z_LVAL_P(value);
+			if (intern->integer != long_value) {
+				return intern->integer < long_value ? -1 : 1;
+			}
+			break;
+
+		case IS_DOUBLE:
+			double_value = Z_DVAL_P(value);
+			if (intern->integer != double_value) {
+				return intern->integer < double_value ? -1 : 1;
+			}
+			break;
+
+		default:
+			return 0;
+	}
+
+	return 0;
+}
+
+static int php_phongo_int64_compare_objects(zval* o1, zval* o2)
+{
+	if (php_phongo_int64_is_int64_object(o1) && php_phongo_int64_is_int64_object(o2)) {
+		return php_phongo_int64_compare_int64_objects(o1, o2);
+	}
+
+	if (php_phongo_int64_is_int64_object(o1) && php_phongo_int64_is_long_or_double(o2)) {
+		return php_phongo_int64_compare_with_long_or_float(o1, o2);
+	}
+
+	if (php_phongo_int64_is_long_or_double(o1) && php_phongo_int64_is_int64_object(o2)) {
+		// Invert the result as we're flipping the values used for comparison
+		return -1 * php_phongo_int64_compare_with_long_or_float(o2, o1);
+	}
+
+	ZEND_COMPARE_OBJECTS_FALLBACK(o1, o2);
 
 	return 0;
 }
