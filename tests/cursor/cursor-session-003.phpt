@@ -30,7 +30,7 @@ $iterator = new IteratorIterator($cursor);
 $iterator->rewind();
 $iterator->next();
 
-printf("Cursor ID is zero: %s\n", (int) $cursor->getId(true) === 0 ? 'yes' : 'no');
+printf("Cursor ID is zero: %s\n", $cursor->getId(true) == 0 ? 'yes' : 'no');
 var_dump($cursor);
 
 $iterator->next();
@@ -39,7 +39,7 @@ $iterator->next();
  * is exhausted. While this is primarily done to ensure implicit sessions for
  * command cursors are returned to the pool ASAP, it also applies to explicit
  * sessions. */
-printf("\nCursor ID is zero: %s\n", (int) $cursor->getId(true) === 0 ? 'yes' : 'no');
+printf("\nCursor ID is zero: %s\n", $cursor->getId(true) == 0 ? 'yes' : 'no');
 var_dump($cursor);
 
 ?>
