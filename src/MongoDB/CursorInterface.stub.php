@@ -9,8 +9,13 @@ namespace MongoDB\Driver;
 
 interface CursorInterface extends \Traversable
 {
+#if PHP_VERSION_ID >= 80000
     /** @tentative-return-type */
-    public function getId(): CursorId;
+    public function getId(): CursorId|\MongoDB\BSON\Int64;
+#else
+    /** @return CursorId|\MongoDB\BSON\Int64 */
+    public function getId();
+#endif
 
     /** @tentative-return-type */
     public function getServer(): Server;
