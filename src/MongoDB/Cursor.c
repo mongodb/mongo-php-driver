@@ -143,7 +143,7 @@ static PHP_METHOD(MongoDB_Driver_Cursor, toArray)
 static PHP_METHOD(MongoDB_Driver_Cursor, getId)
 {
 	php_phongo_cursor_t* intern;
-	zend_bool            asInt64;
+	zend_bool            asInt64 = false;
 
 	intern = Z_CURSOR_OBJ_P(getThis());
 
