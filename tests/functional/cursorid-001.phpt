@@ -32,6 +32,7 @@ var_dump($s1 > 0);
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
+Deprecated: MongoDB\Driver\Cursor::getId(): The method "MongoDB\Driver\Cursor::getId" will no longer return a "MongoDB\Driver\CursorId" instance in the future. Pass "true" as argument to change to the new behavior and receive a "MongoDB\BSON\Int64" instance instead. in %s
 object(MongoDB\Driver\CursorId)#%d (%d) {
   ["id"]=>
   %rint\(\d+\)|string\(\d+\) "\d+"%r

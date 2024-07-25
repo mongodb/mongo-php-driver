@@ -7,6 +7,7 @@
 
 namespace MongoDB\Driver;
 
+/** @deprecated deprecated without replacement */
 final class CursorId implements \Serializable
 {
     final private function __construct() {}
