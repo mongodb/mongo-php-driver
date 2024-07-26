@@ -7,7 +7,7 @@
 
 namespace MongoDB\Driver;
 
-final class CursorId implements \Serializable
+final class CursorId implements \Serializable, \Stringable
 {
     final private function __construct() {}
 

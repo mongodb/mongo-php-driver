@@ -6,7 +6,7 @@
  */
 
 namespace MongoDB\BSON;
-final class DBPointer implements \JsonSerializable, Type, \Serializable
+final class DBPointer implements \JsonSerializable, Type, \Serializable, \Stringable
 {
     final private function __construct() {}
 

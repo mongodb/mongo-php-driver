@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 3042bf80e15605e04e6429ab42924af9b9832361 */
+ * Stub hash: 22bff62df5f5363fbb44eabf77225e1b765be73f */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_BSON_ObjectId___construct, 0, 0, 0)
 	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, id, IS_STRING, 1, "null")
@@ -56,14 +56,14 @@ static const zend_function_entry class_MongoDB_BSON_ObjectId_methods[] = {
 	ZEND_FE_END
 };
 
-static zend_class_entry *register_class_MongoDB_BSON_ObjectId(zend_class_entry *class_entry_MongoDB_BSON_ObjectIdInterface, zend_class_entry *class_entry_JsonSerializable, zend_class_entry *class_entry_MongoDB_BSON_Type, zend_class_entry *class_entry_Serializable)
+static zend_class_entry *register_class_MongoDB_BSON_ObjectId(zend_class_entry *class_entry_MongoDB_BSON_ObjectIdInterface, zend_class_entry *class_entry_JsonSerializable, zend_class_entry *class_entry_MongoDB_BSON_Type, zend_class_entry *class_entry_Serializable, zend_class_entry *class_entry_Stringable)
 {
 	zend_class_entry ce, *class_entry;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\BSON", "ObjectId", class_MongoDB_BSON_ObjectId_methods);
 	class_entry = zend_register_internal_class_ex(&ce, NULL);
 	class_entry->ce_flags |= ZEND_ACC_FINAL;
-	zend_class_implements(class_entry, 4, class_entry_MongoDB_BSON_ObjectIdInterface, class_entry_JsonSerializable, class_entry_MongoDB_BSON_Type, class_entry_Serializable);
+	zend_class_implements(class_entry, 5, class_entry_MongoDB_BSON_ObjectIdInterface, class_entry_JsonSerializable, class_entry_MongoDB_BSON_Type, class_entry_Serializable, class_entry_Stringable);
 
 	return class_entry;
 }

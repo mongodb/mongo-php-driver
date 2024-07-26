@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: f7c19ff93ace3521c125fda09b214f6b6d08e764 */
+ * Stub hash: 32e036d627150cc5d09cf687eb4ae0e469fbc198 */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_BSON_Timestamp___construct, 0, 0, 2)
 	ZEND_ARG_TYPE_MASK(0, increment, MAY_BE_LONG|MAY_BE_STRING, NULL)
@@ -61,14 +61,14 @@ static const zend_function_entry class_MongoDB_BSON_Timestamp_methods[] = {
 	ZEND_FE_END
 };
 
-static zend_class_entry *register_class_MongoDB_BSON_Timestamp(zend_class_entry *class_entry_MongoDB_BSON_TimestampInterface, zend_class_entry *class_entry_JsonSerializable, zend_class_entry *class_entry_MongoDB_BSON_Type, zend_class_entry *class_entry_Serializable)
+static zend_class_entry *register_class_MongoDB_BSON_Timestamp(zend_class_entry *class_entry_MongoDB_BSON_TimestampInterface, zend_class_entry *class_entry_JsonSerializable, zend_class_entry *class_entry_MongoDB_BSON_Type, zend_class_entry *class_entry_Serializable, zend_class_entry *class_entry_Stringable)
 {
 	zend_class_entry ce, *class_entry;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\BSON", "Timestamp", class_MongoDB_BSON_Timestamp_methods);
 	class_entry = zend_register_internal_class_ex(&ce, NULL);
 	class_entry->ce_flags |= ZEND_ACC_FINAL;
-	zend_class_implements(class_entry, 4, class_entry_MongoDB_BSON_TimestampInterface, class_entry_JsonSerializable, class_entry_MongoDB_BSON_Type, class_entry_Serializable);
+	zend_class_implements(class_entry, 5, class_entry_MongoDB_BSON_TimestampInterface, class_entry_JsonSerializable, class_entry_MongoDB_BSON_Type, class_entry_Serializable, class_entry_Stringable);
 
 	return class_entry;
 }

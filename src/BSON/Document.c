@@ -635,12 +635,8 @@ void php_phongo_document_unset_dimension(zend_object* object, zval* offset)
 
 void php_phongo_document_init_ce(INIT_FUNC_ARGS)
 {
-	php_phongo_document_ce                = register_class_MongoDB_BSON_Document(zend_ce_aggregate, zend_ce_serializable, zend_ce_arrayaccess, php_phongo_type_ce);
+	php_phongo_document_ce                = register_class_MongoDB_BSON_Document(zend_ce_aggregate, zend_ce_serializable, zend_ce_arrayaccess, php_phongo_type_ce, zend_ce_stringable);
 	php_phongo_document_ce->create_object = php_phongo_document_create_object;
-
-#if PHP_VERSION_ID >= 80000
-	zend_class_implements(php_phongo_document_ce, 1, zend_ce_stringable);
-#endif
 
 	memcpy(&php_phongo_handler_document, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	php_phongo_handler_document.compare         = php_phongo_document_compare_objects;

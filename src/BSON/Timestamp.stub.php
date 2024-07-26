@@ -7,7 +7,7 @@
 
 namespace MongoDB\BSON;
 
-final class Timestamp implements TimestampInterface, \JsonSerializable, Type, \Serializable
+final class Timestamp implements TimestampInterface, \JsonSerializable, Type, \Serializable, \Stringable
 {
     final public function __construct(int|string $increment, int|string $timestamp) {}
 

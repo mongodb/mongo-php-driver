@@ -275,12 +275,8 @@ static HashTable* php_phongo_decimal128_get_properties(zend_object* object)
 
 void php_phongo_decimal128_init_ce(INIT_FUNC_ARGS)
 {
-	php_phongo_decimal128_ce                = register_class_MongoDB_BSON_Decimal128(php_phongo_decimal128_interface_ce, php_phongo_json_serializable_ce, php_phongo_type_ce, zend_ce_serializable);
+	php_phongo_decimal128_ce                = register_class_MongoDB_BSON_Decimal128(php_phongo_decimal128_interface_ce, php_phongo_json_serializable_ce, php_phongo_type_ce, zend_ce_serializable, zend_ce_stringable);
 	php_phongo_decimal128_ce->create_object = php_phongo_decimal128_create_object;
-
-#if PHP_VERSION_ID >= 80000
-	zend_class_implements(php_phongo_decimal128_ce, 1, zend_ce_stringable);
-#endif
 
 	memcpy(&php_phongo_handler_decimal128, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	php_phongo_handler_decimal128.clone_obj      = php_phongo_decimal128_clone_object;

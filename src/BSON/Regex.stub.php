@@ -7,7 +7,7 @@
 
 namespace MongoDB\BSON;
 
-final class Regex implements RegexInterface, \JsonSerializable, Type, \Serializable
+final class Regex implements RegexInterface, \JsonSerializable, Type, \Serializable, \Stringable
 {
     final public function __construct(string $pattern, string $flags = '') {}
 

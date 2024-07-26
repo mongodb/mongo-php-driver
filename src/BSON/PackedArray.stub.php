@@ -7,7 +7,7 @@
 
 namespace MongoDB\BSON;
 
-final class PackedArray implements \IteratorAggregate, \Serializable, \ArrayAccess, Type
+final class PackedArray implements \IteratorAggregate, \Serializable, \ArrayAccess, Type, \Stringable
 {
     private function __construct() {}
 

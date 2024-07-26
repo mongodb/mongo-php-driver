@@ -320,12 +320,8 @@ static HashTable* php_phongo_objectid_get_properties(zend_object* object)
 
 void php_phongo_objectid_init_ce(INIT_FUNC_ARGS)
 {
-	php_phongo_objectid_ce                = register_class_MongoDB_BSON_ObjectId(php_phongo_objectid_interface_ce, php_phongo_json_serializable_ce, php_phongo_type_ce, zend_ce_serializable);
+	php_phongo_objectid_ce                = register_class_MongoDB_BSON_ObjectId(php_phongo_objectid_interface_ce, php_phongo_json_serializable_ce, php_phongo_type_ce, zend_ce_serializable, zend_ce_stringable);
 	php_phongo_objectid_ce->create_object = php_phongo_objectid_create_object;
-
-#if PHP_VERSION_ID >= 80000
-	zend_class_implements(php_phongo_objectid_ce, 1, zend_ce_stringable);
-#endif
 
 	memcpy(&php_phongo_handler_objectid, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	php_phongo_handler_objectid.compare        = php_phongo_objectid_compare_objects;
