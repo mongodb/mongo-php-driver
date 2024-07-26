@@ -154,7 +154,7 @@ static zend_class_entry* php_phongo_fetch_internal_class(const char* class_name,
 	return NULL;
 }
 
-static HashTable* php_phongo_std_get_gc(phongo_compat_object_handler_type* object, zval** table, int* n)
+static HashTable* php_phongo_std_get_gc(zend_object* object, zval** table, int* n)
 {
 	*table = NULL;
 	*n     = 0;

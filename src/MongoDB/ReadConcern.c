@@ -124,13 +124,13 @@ static PHP_METHOD(MongoDB_Driver_ReadConcern, isDefault)
 	RETURN_BOOL(mongoc_read_concern_is_default(intern->read_concern));
 }
 
-static HashTable* php_phongo_readconcern_get_properties_hash(phongo_compat_object_handler_type* object, bool is_temp)
+static HashTable* php_phongo_readconcern_get_properties_hash(zend_object* object, bool is_temp)
 {
 	php_phongo_readconcern_t* intern;
 	HashTable*                props;
 	const char*               level;
 
-	intern = Z_OBJ_READCONCERN(PHONGO_COMPAT_GET_OBJ(object));
+	intern = Z_OBJ_READCONCERN(object);
 
 	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_temp, intern, props, 1);
 
@@ -154,7 +154,7 @@ static PHP_METHOD(MongoDB_Driver_ReadConcern, bsonSerialize)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
 
-	ZVAL_ARR(return_value, php_phongo_readconcern_get_properties_hash(PHONGO_COMPAT_OBJ_P(getThis()), true));
+	ZVAL_ARR(return_value, php_phongo_readconcern_get_properties_hash(Z_OBJ_P(getThis()), true));
 	convert_to_object(return_value);
 }
 
@@ -230,7 +230,7 @@ static PHP_METHOD(MongoDB_Driver_ReadConcern, __serialize)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
 
-	RETURN_ARR(php_phongo_readconcern_get_properties_hash(PHONGO_COMPAT_OBJ_P(getThis()), true));
+	RETURN_ARR(php_phongo_readconcern_get_properties_hash(Z_OBJ_P(getThis()), true));
 }
 
 static PHP_METHOD(MongoDB_Driver_ReadConcern, __unserialize)
@@ -275,13 +275,13 @@ static zend_object* php_phongo_readconcern_create_object(zend_class_entry* class
 	return &intern->std;
 }
 
-static HashTable* php_phongo_readconcern_get_debug_info(phongo_compat_object_handler_type* object, int* is_temp)
+static HashTable* php_phongo_readconcern_get_debug_info(zend_object* object, int* is_temp)
 {
 	*is_temp = 1;
 	return php_phongo_readconcern_get_properties_hash(object, true);
 }
 
-static HashTable* php_phongo_readconcern_get_properties(phongo_compat_object_handler_type* object)
+static HashTable* php_phongo_readconcern_get_properties(zend_object* object)
 {
 	return php_phongo_readconcern_get_properties_hash(object, false);
 }

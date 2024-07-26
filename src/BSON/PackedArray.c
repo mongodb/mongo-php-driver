@@ -58,12 +58,12 @@ static bool php_phongo_packedarray_init_from_hash(php_phongo_packedarray_t* inte
 	return false;
 }
 
-static HashTable* php_phongo_packedarray_get_properties_hash(phongo_compat_object_handler_type* object, bool is_temp, int size)
+static HashTable* php_phongo_packedarray_get_properties_hash(zend_object* object, bool is_temp, int size)
 {
 	php_phongo_packedarray_t* intern;
 	HashTable*                props;
 
-	intern = Z_OBJ_PACKEDARRAY(PHONGO_COMPAT_GET_OBJ(object));
+	intern = Z_OBJ_PACKEDARRAY(object);
 
 	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_temp, intern, props, size);
 
@@ -362,7 +362,7 @@ static PHP_METHOD(MongoDB_BSON_PackedArray, __serialize)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
 
-	RETURN_ARR(php_phongo_packedarray_get_properties_hash(PHONGO_COMPAT_OBJ_P(getThis()), true, 1));
+	RETURN_ARR(php_phongo_packedarray_get_properties_hash(Z_OBJ_P(getThis()), true, 1));
 }
 
 static PHP_METHOD(MongoDB_BSON_PackedArray, __unserialize)
@@ -407,14 +407,14 @@ static zend_object* php_phongo_packedarray_create_object(zend_class_entry* class
 	return &intern->std;
 }
 
-static zend_object* php_phongo_packedarray_clone_object(phongo_compat_object_handler_type* object)
+static zend_object* php_phongo_packedarray_clone_object(zend_object* object)
 {
 	php_phongo_packedarray_t* intern;
 	php_phongo_packedarray_t* new_intern;
 	zend_object*              new_object;
 
-	intern     = Z_OBJ_PACKEDARRAY(PHONGO_COMPAT_GET_OBJ(object));
-	new_object = php_phongo_packedarray_create_object(PHONGO_COMPAT_GET_OBJ(object)->ce);
+	intern     = Z_OBJ_PACKEDARRAY(object);
+	new_object = php_phongo_packedarray_create_object(object->ce);
 
 	new_intern = Z_OBJ_PACKEDARRAY(new_object);
 	zend_objects_clone_members(&new_intern->std, &intern->std);
@@ -436,13 +436,13 @@ static int php_phongo_packedarray_compare_objects(zval* o1, zval* o2)
 	return bson_compare(intern1->bson, intern2->bson);
 }
 
-static HashTable* php_phongo_packedarray_get_debug_info(phongo_compat_object_handler_type* object, int* is_temp)
+static HashTable* php_phongo_packedarray_get_debug_info(zend_object* object, int* is_temp)
 {
 	php_phongo_packedarray_t* intern;
 	HashTable*                props;
 
 	*is_temp = 1;
-	intern   = Z_OBJ_PACKEDARRAY(PHONGO_COMPAT_GET_OBJ(object));
+	intern   = Z_OBJ_PACKEDARRAY(object);
 
 	/* This get_debug_info handler reports an additional property. This does not
 	 * conflict with other uses of php_phongo_document_get_properties_hash since
@@ -471,16 +471,16 @@ failure:
 	return NULL;
 }
 
-static HashTable* php_phongo_packedarray_get_properties(phongo_compat_object_handler_type* object)
+static HashTable* php_phongo_packedarray_get_properties(zend_object* object)
 {
 	return php_phongo_packedarray_get_properties_hash(object, false, 1);
 }
 
-zval* php_phongo_packedarray_read_dimension(phongo_compat_object_handler_type* object, zval* offset, int type, zval* rv)
+zval* php_phongo_packedarray_read_dimension(zend_object* object, zval* offset, int type, zval* rv)
 {
 	php_phongo_packedarray_t* intern;
 
-	intern = Z_OBJ_PACKEDARRAY(PHONGO_COMPAT_GET_OBJ(object));
+	intern = Z_OBJ_PACKEDARRAY(object);
 
 	if (Z_TYPE_P(offset) != IS_LONG) {
 		if (type == BP_VAR_IS) {
@@ -500,16 +500,16 @@ zval* php_phongo_packedarray_read_dimension(phongo_compat_object_handler_type* o
 	return rv;
 }
 
-void php_phongo_packedarray_write_dimension(phongo_compat_object_handler_type* object, zval* offset, zval* value)
+void php_phongo_packedarray_write_dimension(zend_object* object, zval* offset, zval* value)
 {
 	phongo_throw_exception(PHONGO_ERROR_LOGIC, "Cannot write to %s offset", ZSTR_VAL(php_phongo_packedarray_ce->name));
 }
 
-int php_phongo_packedarray_has_dimension(phongo_compat_object_handler_type* object, zval* member, int check_empty)
+int php_phongo_packedarray_has_dimension(zend_object* object, zval* member, int check_empty)
 {
 	php_phongo_packedarray_t* intern;
 
-	intern = Z_OBJ_PACKEDARRAY(PHONGO_COMPAT_GET_OBJ(object));
+	intern = Z_OBJ_PACKEDARRAY(object);
 
 	if (Z_TYPE_P(member) != IS_LONG) {
 		return false;
@@ -518,7 +518,7 @@ int php_phongo_packedarray_has_dimension(phongo_compat_object_handler_type* obje
 	return php_phongo_packedarray_has(intern, Z_LVAL_P(member));
 }
 
-void php_phongo_packedarray_unset_dimension(phongo_compat_object_handler_type* object, zval* offset)
+void php_phongo_packedarray_unset_dimension(zend_object* object, zval* offset)
 {
 	phongo_throw_exception(PHONGO_ERROR_LOGIC, "Cannot unset %s offset", ZSTR_VAL(php_phongo_packedarray_ce->name));
 }
@@ -533,7 +533,7 @@ void php_phongo_packedarray_init_ce(INIT_FUNC_ARGS)
 #endif
 
 	memcpy(&php_phongo_handler_packedarray, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
-	PHONGO_COMPAT_SET_COMPARE_OBJECTS_HANDLER(packedarray);
+	php_phongo_handler_packedarray.compare         = php_phongo_packedarray_compare_objects;
 	php_phongo_handler_packedarray.clone_obj       = php_phongo_packedarray_clone_object;
 	php_phongo_handler_packedarray.get_debug_info  = php_phongo_packedarray_get_debug_info;
 	php_phongo_handler_packedarray.get_properties  = php_phongo_packedarray_get_properties;

@@ -52,13 +52,13 @@ static bool php_phongo_session_get_timestamp_parts(zval* obj, uint32_t* timestam
 	zval ztimestamp = ZVAL_STATIC_INIT;
 	zval zincrement = ZVAL_STATIC_INIT;
 
-	zend_call_method_with_0_params(PHONGO_COMPAT_OBJ_P(obj), NULL, NULL, "getTimestamp", &ztimestamp);
+	zend_call_method_with_0_params(Z_OBJ_P(obj), NULL, NULL, "getTimestamp", &ztimestamp);
 
 	if (Z_ISUNDEF(ztimestamp) || EG(exception)) {
 		goto cleanup;
 	}
 
-	zend_call_method_with_0_params(PHONGO_COMPAT_OBJ_P(obj), NULL, NULL, "getIncrement", &zincrement);
+	zend_call_method_with_0_params(Z_OBJ_P(obj), NULL, NULL, "getIncrement", &zincrement);
 
 	if (Z_ISUNDEF(zincrement) || EG(exception)) {
 		goto cleanup;
@@ -580,13 +580,13 @@ static zend_object* php_phongo_session_create_object(zend_class_entry* class_typ
 	return &intern->std;
 }
 
-static HashTable* php_phongo_session_get_debug_info(phongo_compat_object_handler_type* object, int* is_temp)
+static HashTable* php_phongo_session_get_debug_info(zend_object* object, int* is_temp)
 {
 	php_phongo_session_t* intern = NULL;
 	zval                  retval = ZVAL_STATIC_INIT;
 
 	*is_temp = 1;
-	intern   = Z_OBJ_SESSION(PHONGO_COMPAT_GET_OBJ(object));
+	intern   = Z_OBJ_SESSION(object);
 
 	array_init(&retval);
 

@@ -173,7 +173,7 @@ static void php_phongo_bson_append_object(bson_t* bson, php_phongo_field_path* f
 			zval   obj_data;
 			bson_t child;
 
-			zend_call_method_with_0_params(PHONGO_COMPAT_OBJ_P(object), NULL, NULL, BSON_SERIALIZE_FUNC_NAME, &obj_data);
+			zend_call_method_with_0_params(Z_OBJ_P(object), NULL, NULL, BSON_SERIALIZE_FUNC_NAME, &obj_data);
 
 			if (Z_ISUNDEF(obj_data)) {
 				/* zend_call_method() failed or bsonSerialize() threw an
@@ -485,7 +485,7 @@ static void php_phongo_zval_to_bson_internal(zval* data, php_phongo_field_path* 
 			/* For any MongoDB\BSON\Serializable, invoke the bsonSerialize method
 			 * and work with the result. */
 			if (instanceof_function(Z_OBJCE_P(data), php_phongo_serializable_ce)) {
-				zend_call_method_with_0_params(PHONGO_COMPAT_OBJ_P(data), NULL, NULL, BSON_SERIALIZE_FUNC_NAME, &obj_data);
+				zend_call_method_with_0_params(Z_OBJ_P(data), NULL, NULL, BSON_SERIALIZE_FUNC_NAME, &obj_data);
 
 				if (Z_ISUNDEF(obj_data)) {
 					/* zend_call_method() failed or bsonSerialize() threw an
@@ -532,7 +532,7 @@ static void php_phongo_zval_to_bson_internal(zval* data, php_phongo_field_path* 
 				return;
 			}
 
-			ht_data                 = Z_OBJ_HT_P(data)->get_properties(PHONGO_COMPAT_OBJ_P(data));
+			ht_data                 = Z_OBJ_HT_P(data)->get_properties(Z_OBJ_P(data));
 			ht_data_from_properties = true;
 			break;
 

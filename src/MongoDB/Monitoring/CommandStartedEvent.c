@@ -194,7 +194,7 @@ static zend_object* php_phongo_commandstartedevent_create_object(zend_class_entr
 	return &intern->std;
 }
 
-static HashTable* php_phongo_commandstartedevent_get_debug_info(phongo_compat_object_handler_type* object, int* is_temp)
+static HashTable* php_phongo_commandstartedevent_get_debug_info(zend_object* object, int* is_temp)
 {
 	php_phongo_commandstartedevent_t* intern;
 	zval                              retval = ZVAL_STATIC_INIT;
@@ -203,7 +203,7 @@ static HashTable* php_phongo_commandstartedevent_get_debug_info(phongo_compat_ob
 
 	PHONGO_BSON_INIT_STATE(command_state);
 
-	intern   = Z_OBJ_COMMANDSTARTEDEVENT(PHONGO_COMPAT_GET_OBJ(object));
+	intern   = Z_OBJ_COMMANDSTARTEDEVENT(object);
 	*is_temp = 1;
 	array_init_size(&retval, 6);
 

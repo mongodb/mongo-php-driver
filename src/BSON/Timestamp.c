@@ -87,7 +87,7 @@ static bool php_phongo_timestamp_init_from_hash(php_phongo_timestamp_t* intern, 
 	return false;
 }
 
-static HashTable* php_phongo_timestamp_get_properties_hash(phongo_compat_object_handler_type* object, bool is_temp)
+static HashTable* php_phongo_timestamp_get_properties_hash(zend_object* object, bool is_temp)
 {
 	php_phongo_timestamp_t* intern;
 	HashTable*              props;
@@ -96,7 +96,7 @@ static HashTable* php_phongo_timestamp_get_properties_hash(phongo_compat_object_
 	int                     s_increment_len;
 	int                     s_timestamp_len;
 
-	intern = Z_OBJ_TIMESTAMP(PHONGO_COMPAT_GET_OBJ(object));
+	intern = Z_OBJ_TIMESTAMP(object);
 
 	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_temp, intern, props, 2);
 
@@ -301,7 +301,7 @@ static PHP_METHOD(MongoDB_BSON_Timestamp, __serialize)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
 
-	RETURN_ARR(php_phongo_timestamp_get_properties_hash(PHONGO_COMPAT_OBJ_P(getThis()), true));
+	RETURN_ARR(php_phongo_timestamp_get_properties_hash(Z_OBJ_P(getThis()), true));
 }
 
 static PHP_METHOD(MongoDB_BSON_Timestamp, __unserialize)
@@ -342,14 +342,14 @@ static zend_object* php_phongo_timestamp_create_object(zend_class_entry* class_t
 	return &intern->std;
 }
 
-static zend_object* php_phongo_timestamp_clone_object(phongo_compat_object_handler_type* object)
+static zend_object* php_phongo_timestamp_clone_object(zend_object* object)
 {
 	php_phongo_timestamp_t* intern;
 	php_phongo_timestamp_t* new_intern;
 	zend_object*            new_object;
 
-	intern     = Z_OBJ_TIMESTAMP(PHONGO_COMPAT_GET_OBJ(object));
-	new_object = php_phongo_timestamp_create_object(PHONGO_COMPAT_GET_OBJ(object)->ce);
+	intern     = Z_OBJ_TIMESTAMP(object);
+	new_object = php_phongo_timestamp_create_object(object->ce);
 
 	new_intern = Z_OBJ_TIMESTAMP(new_object);
 	zend_objects_clone_members(&new_intern->std, &intern->std);
@@ -380,13 +380,13 @@ static int php_phongo_timestamp_compare_objects(zval* o1, zval* o2)
 	return 0;
 }
 
-static HashTable* php_phongo_timestamp_get_debug_info(phongo_compat_object_handler_type* object, int* is_temp)
+static HashTable* php_phongo_timestamp_get_debug_info(zend_object* object, int* is_temp)
 {
 	*is_temp = 1;
 	return php_phongo_timestamp_get_properties_hash(object, true);
 }
 
-static HashTable* php_phongo_timestamp_get_properties(phongo_compat_object_handler_type* object)
+static HashTable* php_phongo_timestamp_get_properties(zend_object* object)
 {
 	return php_phongo_timestamp_get_properties_hash(object, false);
 }
@@ -401,7 +401,7 @@ void php_phongo_timestamp_init_ce(INIT_FUNC_ARGS)
 #endif
 
 	memcpy(&php_phongo_handler_timestamp, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
-	PHONGO_COMPAT_SET_COMPARE_OBJECTS_HANDLER(timestamp);
+	php_phongo_handler_timestamp.compare        = php_phongo_timestamp_compare_objects;
 	php_phongo_handler_timestamp.clone_obj      = php_phongo_timestamp_clone_object;
 	php_phongo_handler_timestamp.get_debug_info = php_phongo_timestamp_get_debug_info;
 	php_phongo_handler_timestamp.get_properties = php_phongo_timestamp_get_properties;

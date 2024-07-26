@@ -79,12 +79,12 @@ static bool php_phongo_objectid_init_from_hash(php_phongo_objectid_t* intern, Ha
 	return false;
 }
 
-static HashTable* php_phongo_objectid_get_properties_hash(phongo_compat_object_handler_type* object, bool is_temp)
+static HashTable* php_phongo_objectid_get_properties_hash(zend_object* object, bool is_temp)
 {
 	php_phongo_objectid_t* intern;
 	HashTable*             props;
 
-	intern = Z_OBJ_OBJECTID(PHONGO_COMPAT_GET_OBJ(object));
+	intern = Z_OBJ_OBJECTID(object);
 
 	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_temp, intern, props, 1);
 
@@ -234,7 +234,7 @@ static PHP_METHOD(MongoDB_BSON_ObjectId, __serialize)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
 
-	RETURN_ARR(php_phongo_objectid_get_properties_hash(PHONGO_COMPAT_OBJ_P(getThis()), true));
+	RETURN_ARR(php_phongo_objectid_get_properties_hash(Z_OBJ_P(getThis()), true));
 }
 
 static PHP_METHOD(MongoDB_BSON_ObjectId, __unserialize)
@@ -275,14 +275,14 @@ static zend_object* php_phongo_objectid_create_object(zend_class_entry* class_ty
 	return &intern->std;
 }
 
-static zend_object* php_phongo_objectid_clone_object(phongo_compat_object_handler_type* object)
+static zend_object* php_phongo_objectid_clone_object(zend_object* object)
 {
 	php_phongo_objectid_t* intern;
 	php_phongo_objectid_t* new_intern;
 	zend_object*           new_object;
 
-	intern     = Z_OBJ_OBJECTID(PHONGO_COMPAT_GET_OBJ(object));
-	new_object = php_phongo_objectid_create_object(PHONGO_COMPAT_GET_OBJ(object)->ce);
+	intern     = Z_OBJ_OBJECTID(object);
+	new_object = php_phongo_objectid_create_object(object->ce);
 
 	new_intern = Z_OBJ_OBJECTID(new_object);
 	zend_objects_clone_members(&new_intern->std, &intern->std);
@@ -307,13 +307,13 @@ static int php_phongo_objectid_compare_objects(zval* o1, zval* o2)
 	return strcmp(intern1->oid, intern2->oid);
 }
 
-static HashTable* php_phongo_objectid_get_debug_info(phongo_compat_object_handler_type* object, int* is_temp)
+static HashTable* php_phongo_objectid_get_debug_info(zend_object* object, int* is_temp)
 {
 	*is_temp = 1;
 	return php_phongo_objectid_get_properties_hash(object, true);
 }
 
-static HashTable* php_phongo_objectid_get_properties(phongo_compat_object_handler_type* object)
+static HashTable* php_phongo_objectid_get_properties(zend_object* object)
 {
 	return php_phongo_objectid_get_properties_hash(object, false);
 }
@@ -328,7 +328,7 @@ void php_phongo_objectid_init_ce(INIT_FUNC_ARGS)
 #endif
 
 	memcpy(&php_phongo_handler_objectid, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
-	PHONGO_COMPAT_SET_COMPARE_OBJECTS_HANDLER(objectid);
+	php_phongo_handler_objectid.compare        = php_phongo_objectid_compare_objects;
 	php_phongo_handler_objectid.clone_obj      = php_phongo_objectid_clone_object;
 	php_phongo_handler_objectid.get_debug_info = php_phongo_objectid_get_debug_info;
 	php_phongo_handler_objectid.get_properties = php_phongo_objectid_get_properties;

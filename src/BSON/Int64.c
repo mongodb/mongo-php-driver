@@ -64,12 +64,12 @@ static bool php_phongo_int64_init_from_hash(php_phongo_int64_t* intern, HashTabl
 	return false;
 }
 
-HashTable* php_phongo_int64_get_properties_hash(phongo_compat_object_handler_type* object, bool is_temp)
+HashTable* php_phongo_int64_get_properties_hash(zend_object* object, bool is_temp)
 {
 	php_phongo_int64_t* intern;
 	HashTable*          props;
 
-	intern = Z_OBJ_INT64(PHONGO_COMPAT_GET_OBJ(object));
+	intern = Z_OBJ_INT64(object);
 
 	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_temp, intern, props, 2);
 
@@ -207,7 +207,7 @@ static PHP_METHOD(MongoDB_BSON_Int64, __serialize)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
 
-	RETURN_ARR(php_phongo_int64_get_properties_hash(PHONGO_COMPAT_OBJ_P(getThis()), true));
+	RETURN_ARR(php_phongo_int64_get_properties_hash(Z_OBJ_P(getThis()), true));
 }
 
 static PHP_METHOD(MongoDB_BSON_Int64, __unserialize)
@@ -248,14 +248,14 @@ zend_object* php_phongo_int64_create_object(zend_class_entry* class_type)
 	return &intern->std;
 }
 
-static zend_object* php_phongo_int64_clone_object(phongo_compat_object_handler_type* object)
+static zend_object* php_phongo_int64_clone_object(zend_object* object)
 {
 	php_phongo_int64_t* intern;
 	php_phongo_int64_t* new_intern;
 	zend_object*        new_object;
 
-	intern     = Z_OBJ_INT64(PHONGO_COMPAT_GET_OBJ(object));
-	new_object = php_phongo_int64_create_object(PHONGO_COMPAT_GET_OBJ(object)->ce);
+	intern     = Z_OBJ_INT64(object);
+	new_object = php_phongo_int64_create_object(object->ce);
 
 	new_intern = Z_OBJ_INT64(new_object);
 	zend_objects_clone_members(&new_intern->std, &intern->std);
@@ -345,58 +345,11 @@ static int php_phongo_int64_compare_objects(zval* o1, zval* o2)
 	return 0;
 }
 
-#if PHP_VERSION_ID < 80000
-static int php_phongo_int64_compare_with_other_type(zval* object, zval* value)
-{
-	zval tmp_value;
-	zval result;
-	int  ret;
-
-	if (Z_OBJ_HT_P(object)->cast_object(object, &tmp_value, ((Z_TYPE_P(value) == IS_FALSE || Z_TYPE_P(value) == IS_TRUE) ? _IS_BOOL : Z_TYPE_P(value))) == FAILURE) {
-		zval_ptr_dtor(&tmp_value);
-		return 1;
-	}
-
-	compare_function(&result, &tmp_value, value);
-
-	ret = Z_LVAL(result);
-	zval_ptr_dtor(&tmp_value);
-	zval_ptr_dtor(&result);
-
-	return ret;
-}
-
-static int php_phongo_int64_compare_zvals(zval* result, zval* op1, zval* op2)
-{
-	/* Happy case: compare an int64 object with another object, long, or double */
-	if ((php_phongo_int64_is_int64_object(op1) || php_phongo_int64_is_long_or_double(op1)) && (php_phongo_int64_is_int64_object(op2) || php_phongo_int64_is_long_or_double(op2))) {
-		ZVAL_LONG(result, php_phongo_int64_compare_objects(op1, op2));
-		return SUCCESS;
-	}
-
-	/* When comparing an int64 object with any other type, cast the int64 object to the desired type.
-	 * We know that if op1 is an object, op2 has to be the other type and vice versa. For op2 being
-	 * the object, we can again flip the values used for comparison and multiply the result with -1. */
-
-	if (php_phongo_int64_is_int64_object(op1)) {
-		ZVAL_LONG(result, php_phongo_int64_compare_with_other_type(op1, op2));
-		return SUCCESS;
-	}
-
-	if (php_phongo_int64_is_int64_object(op2)) {
-		ZVAL_LONG(result, -1 * php_phongo_int64_compare_with_other_type(op2, op1));
-		return SUCCESS;
-	}
-
-	return FAILURE;
-}
-#endif
-
-static zend_result php_phongo_int64_cast_object(phongo_compat_object_handler_type* readobj, zval* retval, int type)
+static zend_result php_phongo_int64_cast_object(zend_object* readobj, zval* retval, int type)
 {
 	php_phongo_int64_t* intern;
 
-	intern = Z_OBJ_INT64(PHONGO_COMPAT_GET_OBJ(readobj));
+	intern = Z_OBJ_INT64(readobj);
 
 	switch (type) {
 		case IS_DOUBLE:
@@ -645,13 +598,13 @@ static zend_result php_phongo_int64_do_operation(zend_uchar opcode, zval* result
 #undef PHONGO_GET_INT64
 #undef INT64_SIGN_MASK
 
-static HashTable* php_phongo_int64_get_debug_info(phongo_compat_object_handler_type* object, int* is_temp)
+static HashTable* php_phongo_int64_get_debug_info(zend_object* object, int* is_temp)
 {
 	*is_temp = 1;
 	return php_phongo_int64_get_properties_hash(object, true);
 }
 
-static HashTable* php_phongo_int64_get_properties(phongo_compat_object_handler_type* object)
+static HashTable* php_phongo_int64_get_properties(zend_object* object)
 {
 	return php_phongo_int64_get_properties_hash(object, false);
 }
@@ -666,7 +619,7 @@ void php_phongo_int64_init_ce(INIT_FUNC_ARGS)
 #endif
 
 	memcpy(&php_phongo_handler_int64, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
-	PHONGO_COMPAT_SET_COMPARE_OBJECTS_HANDLER(int64);
+	php_phongo_handler_int64.compare        = php_phongo_int64_compare_objects;
 	php_phongo_handler_int64.clone_obj      = php_phongo_int64_clone_object;
 	php_phongo_handler_int64.get_debug_info = php_phongo_int64_get_debug_info;
 	php_phongo_handler_int64.get_properties = php_phongo_int64_get_properties;
@@ -674,12 +627,6 @@ void php_phongo_int64_init_ce(INIT_FUNC_ARGS)
 	php_phongo_handler_int64.offset         = XtOffsetOf(php_phongo_int64_t, std);
 	php_phongo_handler_int64.cast_object    = php_phongo_int64_cast_object;
 	php_phongo_handler_int64.do_operation   = php_phongo_int64_do_operation;
-
-	/* On PHP 7.4, compare_objects is only used when comparing two objects.
-	 * Use the compare handler to compare an object with any other zval */
-#if PHP_VERSION_ID < 80000
-	php_phongo_handler_int64.compare = php_phongo_int64_compare_zvals;
-#endif
 }
 
 bool phongo_int64_new(zval* object, int64_t integer)

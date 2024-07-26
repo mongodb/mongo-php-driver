@@ -776,7 +776,7 @@ static bool php_phongo_bson_visit_document(const bson_iter_t* iter ARG_UNUSED, c
 
 			object_init_ex(&obj, obj_ce);
 
-			zend_call_method_with_1_params(PHONGO_COMPAT_OBJ_P(&obj), NULL, NULL, BSON_UNSERIALIZE_FUNC_NAME, NULL, &state.zchild);
+			zend_call_method_with_1_params(Z_OBJ_P(&obj), NULL, NULL, BSON_UNSERIALIZE_FUNC_NAME, NULL, &state.zchild);
 			zval_ptr_dtor(&state.zchild);
 			ZVAL_COPY_VALUE(&state.zchild, &obj);
 
@@ -856,7 +856,7 @@ static bool php_phongo_bson_visit_array(const bson_iter_t* iter ARG_UNUSED, cons
 			zval obj;
 
 			object_init_ex(&obj, state.field_type.ce);
-			zend_call_method_with_1_params(PHONGO_COMPAT_OBJ_P(&obj), NULL, NULL, BSON_UNSERIALIZE_FUNC_NAME, NULL, &state.zchild);
+			zend_call_method_with_1_params(Z_OBJ_P(&obj), NULL, NULL, BSON_UNSERIALIZE_FUNC_NAME, NULL, &state.zchild);
 			zval_ptr_dtor(&state.zchild);
 			ZVAL_COPY_VALUE(&state.zchild, &obj);
 			break;
@@ -1147,7 +1147,7 @@ bool php_phongo_bson_to_zval_ex(const bson_t* b, php_phongo_bson_state* state)
 
 			object_init_ex(&obj, obj_ce);
 
-			zend_call_method_with_1_params(PHONGO_COMPAT_OBJ_P(&obj), NULL, NULL, BSON_UNSERIALIZE_FUNC_NAME, NULL, &state->zchild);
+			zend_call_method_with_1_params(Z_OBJ_P(&obj), NULL, NULL, BSON_UNSERIALIZE_FUNC_NAME, NULL, &state->zchild);
 			zval_ptr_dtor(&state->zchild);
 			ZVAL_COPY_VALUE(&state->zchild, &obj);
 

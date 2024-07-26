@@ -79,12 +79,12 @@ static zend_object* php_phongo_serverclosedevent_create_object(zend_class_entry*
 	return &intern->std;
 }
 
-static HashTable* php_phongo_serverclosedevent_get_debug_info(phongo_compat_object_handler_type* object, int* is_temp)
+static HashTable* php_phongo_serverclosedevent_get_debug_info(zend_object* object, int* is_temp)
 {
 	php_phongo_serverclosedevent_t* intern;
 	zval                            retval = ZVAL_STATIC_INIT;
 
-	intern   = Z_OBJ_SERVERCLOSEDEVENT(PHONGO_COMPAT_GET_OBJ(object));
+	intern   = Z_OBJ_SERVERCLOSEDEVENT(object);
 	*is_temp = 1;
 	array_init_size(&retval, 3);
 
