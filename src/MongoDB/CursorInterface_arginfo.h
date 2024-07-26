@@ -1,15 +1,8 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 191d790b04cda72e9949774fad866f7750de5dfa */
+ * Stub hash: 95f356a63692e1bb72d50c641e93a53113c43531 */
 
-#if PHP_VERSION_ID >= 80000
 ZEND_BEGIN_ARG_WITH_TENTATIVE_RETURN_OBJ_TYPE_MASK_EX(arginfo_class_MongoDB_Driver_CursorInterface_getId, 0, 0, MongoDB\\Driver\\CursorId|MongoDB\\BSON\\Int64, 0)
 ZEND_END_ARG_INFO()
-#endif
-
-#if !(PHP_VERSION_ID >= 80000)
-ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_Driver_CursorInterface_getId, 0, 0, 0)
-ZEND_END_ARG_INFO()
-#endif
 
 ZEND_BEGIN_ARG_WITH_TENTATIVE_RETURN_OBJ_INFO_EX(arginfo_class_MongoDB_Driver_CursorInterface_getServer, 0, 0, MongoDB\\Driver\\Server, 0)
 ZEND_END_ARG_INFO()
@@ -25,19 +18,10 @@ ZEND_BEGIN_ARG_WITH_TENTATIVE_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_Driver_C
 ZEND_END_ARG_INFO()
 
 
-#if PHP_VERSION_ID >= 80000
-#endif
-#if !(PHP_VERSION_ID >= 80000)
-#endif
 
 
 static const zend_function_entry class_MongoDB_Driver_CursorInterface_methods[] = {
-#if PHP_VERSION_ID >= 80000
 	ZEND_ABSTRACT_ME_WITH_FLAGS(MongoDB_Driver_CursorInterface, getId, arginfo_class_MongoDB_Driver_CursorInterface_getId, ZEND_ACC_PUBLIC|ZEND_ACC_ABSTRACT)
-#endif
-#if !(PHP_VERSION_ID >= 80000)
-	ZEND_ABSTRACT_ME_WITH_FLAGS(MongoDB_Driver_CursorInterface, getId, arginfo_class_MongoDB_Driver_CursorInterface_getId, ZEND_ACC_PUBLIC|ZEND_ACC_ABSTRACT)
-#endif
 	ZEND_ABSTRACT_ME_WITH_FLAGS(MongoDB_Driver_CursorInterface, getServer, arginfo_class_MongoDB_Driver_CursorInterface_getServer, ZEND_ACC_PUBLIC|ZEND_ACC_ABSTRACT)
 	ZEND_ABSTRACT_ME_WITH_FLAGS(MongoDB_Driver_CursorInterface, isDead, arginfo_class_MongoDB_Driver_CursorInterface_isDead, ZEND_ACC_PUBLIC|ZEND_ACC_ABSTRACT)
 	ZEND_ABSTRACT_ME_WITH_FLAGS(MongoDB_Driver_CursorInterface, setTypeMap, arginfo_class_MongoDB_Driver_CursorInterface_setTypeMap, ZEND_ACC_PUBLIC|ZEND_ACC_ABSTRACT)

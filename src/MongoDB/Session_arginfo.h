@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: bb079e9e8c8eb59e26ebdf981d1b0ed085c8bbe6 */
+ * Stub hash: 31ddae94bdfecf3969a8c28154c87487915828ca */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_Driver_Session___construct, 0, 0, 0)
 ZEND_END_ARG_INFO()
@@ -7,17 +7,9 @@ ZEND_END_ARG_INFO()
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_Driver_Session_abortTransaction, 0, 0, IS_VOID, 0)
 ZEND_END_ARG_INFO()
 
-#if PHP_VERSION_ID >= 80000
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_Driver_Session_advanceClusterTime, 0, 1, IS_VOID, 0)
 	ZEND_ARG_TYPE_MASK(0, clusterTime, MAY_BE_ARRAY|MAY_BE_OBJECT, NULL)
 ZEND_END_ARG_INFO()
-#endif
-
-#if !(PHP_VERSION_ID >= 80000)
-ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_Driver_Session_advanceClusterTime, 0, 1, IS_VOID, 0)
-	ZEND_ARG_INFO(0, clusterTime)
-ZEND_END_ARG_INFO()
-#endif
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_Driver_Session_advanceOperationTime, 0, 1, IS_VOID, 0)
 	ZEND_ARG_OBJ_INFO(0, operationTime, MongoDB\\BSON\\TimestampInterface, 0)
@@ -57,12 +49,7 @@ ZEND_END_ARG_INFO()
 
 static ZEND_METHOD(MongoDB_Driver_Session, __construct);
 static ZEND_METHOD(MongoDB_Driver_Session, abortTransaction);
-#if PHP_VERSION_ID >= 80000
 static ZEND_METHOD(MongoDB_Driver_Session, advanceClusterTime);
-#endif
-#if !(PHP_VERSION_ID >= 80000)
-static ZEND_METHOD(MongoDB_Driver_Session, advanceClusterTime);
-#endif
 static ZEND_METHOD(MongoDB_Driver_Session, advanceOperationTime);
 static ZEND_METHOD(MongoDB_Driver_Session, commitTransaction);
 static ZEND_METHOD(MongoDB_Driver_Session, endSession);
@@ -80,12 +67,7 @@ static ZEND_METHOD(MongoDB_Driver_Session, startTransaction);
 static const zend_function_entry class_MongoDB_Driver_Session_methods[] = {
 	ZEND_ME(MongoDB_Driver_Session, __construct, arginfo_class_MongoDB_Driver_Session___construct, ZEND_ACC_PRIVATE|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_Driver_Session, abortTransaction, arginfo_class_MongoDB_Driver_Session_abortTransaction, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-#if PHP_VERSION_ID >= 80000
 	ZEND_ME(MongoDB_Driver_Session, advanceClusterTime, arginfo_class_MongoDB_Driver_Session_advanceClusterTime, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-#endif
-#if !(PHP_VERSION_ID >= 80000)
-	ZEND_ME(MongoDB_Driver_Session, advanceClusterTime, arginfo_class_MongoDB_Driver_Session_advanceClusterTime, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-#endif
 	ZEND_ME(MongoDB_Driver_Session, advanceOperationTime, arginfo_class_MongoDB_Driver_Session_advanceOperationTime, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_Driver_Session, commitTransaction, arginfo_class_MongoDB_Driver_Session_commitTransaction, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_Driver_Session, endSession, arginfo_class_MongoDB_Driver_Session_endSession, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)

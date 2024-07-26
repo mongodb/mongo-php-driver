@@ -1,30 +1,15 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: e5e70f4036534c5aff1d55106e776e0230de53a6 */
+ * Stub hash: 81b3c0aec3fdb2364b686f161b5a5267cc80ba3d */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_Driver_Cursor___construct, 0, 0, 0)
 ZEND_END_ARG_INFO()
 
-#if PHP_VERSION_ID >= 80000
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_MASK_EX(arginfo_class_MongoDB_Driver_Cursor_current, 0, 0, MAY_BE_ARRAY|MAY_BE_OBJECT|MAY_BE_NULL)
 ZEND_END_ARG_INFO()
-#endif
 
-#if !(PHP_VERSION_ID >= 80000)
-ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_Driver_Cursor_current, 0, 0, 0)
-ZEND_END_ARG_INFO()
-#endif
-
-#if PHP_VERSION_ID >= 80000
 ZEND_BEGIN_ARG_WITH_TENTATIVE_RETURN_OBJ_TYPE_MASK_EX(arginfo_class_MongoDB_Driver_Cursor_getId, 0, 0, MongoDB\\Driver\\CursorId|MongoDB\\BSON\\Int64, 0)
 	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, asInt64, _IS_BOOL, 0, "false")
 ZEND_END_ARG_INFO()
-#endif
-
-#if !(PHP_VERSION_ID >= 80000)
-ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_Driver_Cursor_getId, 0, 0, 0)
-	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, asInt64, _IS_BOOL, 0, "false")
-ZEND_END_ARG_INFO()
-#endif
 
 ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_MongoDB_Driver_Cursor_getServer, 0, 0, MongoDB\\Driver\\Server, 0)
 ZEND_END_ARG_INFO()
@@ -51,18 +36,8 @@ ZEND_END_ARG_INFO()
 
 
 static ZEND_METHOD(MongoDB_Driver_Cursor, __construct);
-#if PHP_VERSION_ID >= 80000
 static ZEND_METHOD(MongoDB_Driver_Cursor, current);
-#endif
-#if !(PHP_VERSION_ID >= 80000)
-static ZEND_METHOD(MongoDB_Driver_Cursor, current);
-#endif
-#if PHP_VERSION_ID >= 80000
 static ZEND_METHOD(MongoDB_Driver_Cursor, getId);
-#endif
-#if !(PHP_VERSION_ID >= 80000)
-static ZEND_METHOD(MongoDB_Driver_Cursor, getId);
-#endif
 static ZEND_METHOD(MongoDB_Driver_Cursor, getServer);
 static ZEND_METHOD(MongoDB_Driver_Cursor, isDead);
 static ZEND_METHOD(MongoDB_Driver_Cursor, key);
@@ -75,18 +50,8 @@ static ZEND_METHOD(MongoDB_Driver_Cursor, valid);
 
 static const zend_function_entry class_MongoDB_Driver_Cursor_methods[] = {
 	ZEND_ME(MongoDB_Driver_Cursor, __construct, arginfo_class_MongoDB_Driver_Cursor___construct, ZEND_ACC_PRIVATE|ZEND_ACC_FINAL)
-#if PHP_VERSION_ID >= 80000
 	ZEND_ME(MongoDB_Driver_Cursor, current, arginfo_class_MongoDB_Driver_Cursor_current, ZEND_ACC_PUBLIC)
-#endif
-#if !(PHP_VERSION_ID >= 80000)
-	ZEND_ME(MongoDB_Driver_Cursor, current, arginfo_class_MongoDB_Driver_Cursor_current, ZEND_ACC_PUBLIC)
-#endif
-#if PHP_VERSION_ID >= 80000
 	ZEND_ME(MongoDB_Driver_Cursor, getId, arginfo_class_MongoDB_Driver_Cursor_getId, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-#endif
-#if !(PHP_VERSION_ID >= 80000)
-	ZEND_ME(MongoDB_Driver_Cursor, getId, arginfo_class_MongoDB_Driver_Cursor_getId, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-#endif
 	ZEND_ME(MongoDB_Driver_Cursor, getServer, arginfo_class_MongoDB_Driver_Cursor_getServer, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_Driver_Cursor, isDead, arginfo_class_MongoDB_Driver_Cursor_isDead, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_Driver_Cursor, key, arginfo_class_MongoDB_Driver_Cursor_key, ZEND_ACC_PUBLIC)

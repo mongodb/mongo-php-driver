@@ -71,28 +71,13 @@ final class ClientEncryption
 
     final public function createDataKey(string $kmsProvider, ?array $options = null): \MongoDB\BSON\Binary {}
 
-#if PHP_VERSION_ID >= 80000
     final public function decrypt(\MongoDB\BSON\Binary $value): mixed {}
-#else
-    /** @return mixed */
-    final public function decrypt(\MongoDB\BSON\Binary $value) {}
-#endif
 
     final public function deleteKey(\MongoDB\BSON\Binary $keyId): object {}
 
-#if PHP_VERSION_ID >= 80000
     final public function encrypt(mixed $value, ?array $options = null): \MongoDB\BSON\Binary {}
-#else
-    /** @param mixed $value */
-    final public function encrypt($value, ?array $options = null): \MongoDB\BSON\Binary {}
-#endif
 
-#if PHP_VERSION_ID >= 80000
     final public function encryptExpression(array|object $expr, ?array $options = null): object {}
-#else
-    /** @param array|object $expr */
-    final public function encryptExpression($expr, ?array $options = null): object {}
-#endif
 
     final public function getKey(\MongoDB\BSON\Binary $keyId): ?object {}
 
@@ -102,10 +87,5 @@ final class ClientEncryption
 
     final public function removeKeyAltName(\MongoDB\BSON\Binary $keyId, string $keyAltName): ?object {}
 
-#if PHP_VERSION_ID >= 80000
     final public function rewrapManyDataKey(array|object $filter, ?array $options = null): object {}
-#else
-    /** @param array|object $filter */
-    final public function rewrapManyDataKey($filter, ?array $options = null): object {}
-#endif
 }
