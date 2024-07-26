@@ -341,14 +341,12 @@ static void php_phongo_iterator_it_rewind(zend_object_iterator* iter)
 	php_phongo_iterator_rewind(intern);
 }
 
-#if PHP_VERSION_ID >= 80000
 static HashTable* php_phongo_iterator_it_get_gc(zend_object_iterator* iter, zval** table, int* n)
 {
 	*n     = 1;
 	*table = &iter->data;
 	return NULL;
 }
-#endif
 
 static const zend_object_iterator_funcs php_phongo_iterator_it_funcs = {
 	php_phongo_iterator_it_dtor,
