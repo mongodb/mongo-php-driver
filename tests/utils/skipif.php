@@ -17,10 +17,6 @@ function disable_skipif_caching()
 {
     static $skipifCachingDisabled;
 
-    if (PHP_VERSION_ID < 80100) {
-        return;
-    }
-
     if (! isset($skipifCachingDisabled)) {
         $skipifCachingDisabled = true;
 

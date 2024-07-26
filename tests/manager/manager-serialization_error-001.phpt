@@ -1,8 +1,5 @@
 --TEST--
 MongoDB\Driver\Manager does not support serialization (PHP >= 8.1)
---SKIPIF--
-<?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
-<?php skip_if_php_version('<', '8.1'); ?>
 --FILE--
 <?php
  
