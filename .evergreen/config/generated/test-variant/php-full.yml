@@ -1,4 +1,4 @@
-# This file is generated automatically - please edit the "templates/test-variant/modern-php-full.yml" template file instead.
+# This file is generated automatically - please edit the "templates/test-variant/php-full.yml" template file instead.
 buildvariants:
   # Test MongoDB >= 7.0
   - name: test-debian12-php-8.3
