@@ -93,7 +93,7 @@ static int php_phongo_is_array_or_document(zval* val)
 /* Checks the return type of a bsonSerialize() method. Returns true on
  * success; otherwise, throws an exception and returns false.
  *
- * TODO: obsolete once PHP 8.0+ is required and tentative return type is enforced.
+ * TODO: obsolete once the tentative return type in Serializable::bsonSerialize is enforced.
  */
 static inline bool phongo_check_bson_serialize_return_type(zval* retval, zend_class_entry* ce)
 {
