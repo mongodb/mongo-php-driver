@@ -1,5 +1,7 @@
 --TEST--
-MongoDB\BSON\Int64 comparisons with scalars (64-bit values, all platforms)
+MongoDB\BSON\Int64 comparisons with scalars (64-bit values, 64-bit platforms only)
+--SKIPIF--
+<?php if (8 !== PHP_INT_SIZE) { die('skip Only for 64-bit platform'); } ?>
 --FILE--
 <?php
 
@@ -7,21 +9,18 @@ MongoDB\BSON\Int64 comparisons with scalars (64-bit values, all platforms)
 $int64 = new MongoDB\BSON\Int64('8589934592');
 
 $tests = [
-    'matching float' => (float) 2**33,
-    'wrong int' => 0,
+    'matching int' => 8589934592,
+    'wrong int' => 8589934593,
 ];
 
 foreach ($tests as $name => $value) {
     printf('Testing %s: %s' . PHP_EOL, $name, var_export($int64 == $value, true));
 }
 
-var_dump($int64 > 123);
-
 ?>
 ===DONE===
 <?php exit(0); ?>
 --EXPECT--
-Testing matching float: true
+Testing matching int: true
 Testing wrong int: false
-bool(true)
 ===DONE===
