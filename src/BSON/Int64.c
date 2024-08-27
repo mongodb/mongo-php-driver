@@ -346,11 +346,49 @@ static int php_phongo_int64_compare_objects(zval* o1, zval* o2)
 }
 
 #if PHP_VERSION_ID < 80000
+static int php_phongo_int64_compare_with_other_type(zval* object, zval* value)
+{
+	zval tmp_value;
+	zval result;
+	int  ret;
+
+	if (Z_OBJ_HT_P(object)->cast_object(object, &tmp_value, ((Z_TYPE_P(value) == IS_FALSE || Z_TYPE_P(value) == IS_TRUE) ? _IS_BOOL : Z_TYPE_P(value))) == FAILURE) {
+		zval_ptr_dtor(&tmp_value);
+		return 1;
+	}
+
+	compare_function(&result, &tmp_value, value);
+
+	ret = Z_LVAL(result);
+	zval_ptr_dtor(&tmp_value);
+	zval_ptr_dtor(&result);
+
+	return ret;
+}
+
 static int php_phongo_int64_compare_zvals(zval* result, zval* op1, zval* op2)
 {
-	ZVAL_LONG(result, php_phongo_int64_compare_objects(op1, op2));
+	/* Happy case: compare an int64 object with another object, long, or double */
+	if ((php_phongo_int64_is_int64_object(op1) || php_phongo_int64_is_long_or_double(op1)) && (php_phongo_int64_is_int64_object(op2) || php_phongo_int64_is_long_or_double(op2))) {
+		ZVAL_LONG(result, php_phongo_int64_compare_objects(op1, op2));
+		return SUCCESS;
+	}
 
-	return SUCCESS;
+	/* When comparing an int64 object with any other type, cast the int64 object to the desired type.
+	 * We know that if op1 is an object, op2 has to be the other type and vice versa. For op2 being
+	 * the object, we can again flip the values used for comparison and multiply the result with -1. */
+
+	if (php_phongo_int64_is_int64_object(op1)) {
+		ZVAL_LONG(result, php_phongo_int64_compare_with_other_type(op1, op2));
+		return SUCCESS;
+	}
+
+	if (php_phongo_int64_is_int64_object(op2)) {
+		ZVAL_LONG(result, -1 * php_phongo_int64_compare_with_other_type(op2, op1));
+		return SUCCESS;
+	}
+
+	return FAILURE;
 }
 #endif
 
