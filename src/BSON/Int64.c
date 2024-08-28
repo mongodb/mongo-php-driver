@@ -265,11 +265,23 @@ static zend_object* php_phongo_int64_clone_object(phongo_compat_object_handler_t
 	return new_object;
 }
 
-static int php_phongo_int64_compare_objects(zval* o1, zval* o2)
+static bool php_phongo_int64_is_int64_object(zval* object)
+{
+	if (Z_TYPE_P(object) != IS_OBJECT) {
+		return false;
+	}
+
+	return Z_OBJ_P(object)->ce == php_phongo_int64_ce;
+}
+
+static bool php_phongo_int64_is_long_or_double(zval* value)
+{
+	return Z_TYPE_P(value) == IS_LONG || Z_TYPE_P(value) == IS_DOUBLE;
+}
+
+static int php_phongo_int64_compare_int64_objects(zval* o1, zval* o2)
 {
 	php_phongo_int64_t *intern1, *intern2;
-
-	ZEND_COMPARE_OBJECTS_FALLBACK(o1, o2);
 
 	intern1 = Z_INT64_OBJ_P(o1);
 	intern2 = Z_INT64_OBJ_P(o2);
@@ -280,6 +292,105 @@ static int php_phongo_int64_compare_objects(zval* o1, zval* o2)
 
 	return 0;
 }
+
+static int php_phongo_int64_compare_with_long_or_float(zval* object, zval* value)
+{
+	php_phongo_int64_t* intern;
+	int64_t             long_value;
+	double              double_value;
+
+	intern = Z_INT64_OBJ_P(object);
+
+	assert(php_phongo_int64_is_long_or_double(value));
+
+	switch (Z_TYPE_P(value)) {
+		case IS_LONG:
+			long_value = Z_LVAL_P(value);
+			if (intern->integer != long_value) {
+				return intern->integer < long_value ? -1 : 1;
+			}
+			break;
+
+		case IS_DOUBLE:
+			double_value = Z_DVAL_P(value);
+			if (intern->integer != double_value) {
+				return intern->integer < double_value ? -1 : 1;
+			}
+			break;
+
+		default:
+			return 0;
+	}
+
+	return 0;
+}
+
+static int php_phongo_int64_compare_objects(zval* o1, zval* o2)
+{
+	if (php_phongo_int64_is_int64_object(o1) && php_phongo_int64_is_int64_object(o2)) {
+		return php_phongo_int64_compare_int64_objects(o1, o2);
+	}
+
+	if (php_phongo_int64_is_int64_object(o1) && php_phongo_int64_is_long_or_double(o2)) {
+		return php_phongo_int64_compare_with_long_or_float(o1, o2);
+	}
+
+	if (php_phongo_int64_is_long_or_double(o1) && php_phongo_int64_is_int64_object(o2)) {
+		// Invert the result as we're flipping the values used for comparison
+		return -1 * php_phongo_int64_compare_with_long_or_float(o2, o1);
+	}
+
+	ZEND_COMPARE_OBJECTS_FALLBACK(o1, o2);
+
+	return 0;
+}
+
+#if PHP_VERSION_ID < 80000
+static int php_phongo_int64_compare_with_other_type(zval* object, zval* value)
+{
+	zval tmp_value;
+	zval result;
+	int  ret;
+
+	if (Z_OBJ_HT_P(object)->cast_object(object, &tmp_value, ((Z_TYPE_P(value) == IS_FALSE || Z_TYPE_P(value) == IS_TRUE) ? _IS_BOOL : Z_TYPE_P(value))) == FAILURE) {
+		zval_ptr_dtor(&tmp_value);
+		return 1;
+	}
+
+	compare_function(&result, &tmp_value, value);
+
+	ret = Z_LVAL(result);
+	zval_ptr_dtor(&tmp_value);
+	zval_ptr_dtor(&result);
+
+	return ret;
+}
+
+static int php_phongo_int64_compare_zvals(zval* result, zval* op1, zval* op2)
+{
+	/* Happy case: compare an int64 object with another object, long, or double */
+	if ((php_phongo_int64_is_int64_object(op1) || php_phongo_int64_is_long_or_double(op1)) && (php_phongo_int64_is_int64_object(op2) || php_phongo_int64_is_long_or_double(op2))) {
+		ZVAL_LONG(result, php_phongo_int64_compare_objects(op1, op2));
+		return SUCCESS;
+	}
+
+	/* When comparing an int64 object with any other type, cast the int64 object to the desired type.
+	 * We know that if op1 is an object, op2 has to be the other type and vice versa. For op2 being
+	 * the object, we can again flip the values used for comparison and multiply the result with -1. */
+
+	if (php_phongo_int64_is_int64_object(op1)) {
+		ZVAL_LONG(result, php_phongo_int64_compare_with_other_type(op1, op2));
+		return SUCCESS;
+	}
+
+	if (php_phongo_int64_is_int64_object(op2)) {
+		ZVAL_LONG(result, -1 * php_phongo_int64_compare_with_other_type(op2, op1));
+		return SUCCESS;
+	}
+
+	return FAILURE;
+}
+#endif
 
 static zend_result php_phongo_int64_cast_object(phongo_compat_object_handler_type* readobj, zval* retval, int type)
 {
@@ -563,6 +674,12 @@ void php_phongo_int64_init_ce(INIT_FUNC_ARGS)
 	php_phongo_handler_int64.offset         = XtOffsetOf(php_phongo_int64_t, std);
 	php_phongo_handler_int64.cast_object    = php_phongo_int64_cast_object;
 	php_phongo_handler_int64.do_operation   = php_phongo_int64_do_operation;
+
+	/* On PHP 7.4, compare_objects is only used when comparing two objects.
+	 * Use the compare handler to compare an object with any other zval */
+#if PHP_VERSION_ID < 80000
+	php_phongo_handler_int64.compare = php_phongo_int64_compare_zvals;
+#endif
 }
 
 bool phongo_int64_new(zval* object, int64_t integer)
