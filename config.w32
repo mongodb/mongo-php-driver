@@ -177,6 +177,7 @@ if (PHP_MONGODB != "no") {
     // TODO: Support building with Secure Channel on Windows
     MONGOC_ENABLE_SSL_SECURE_CHANNEL: 0,
     MONGOC_ENABLE_CRYPTO_CNG: 0,
+    MONGOC_HAVE_BCRYPT_PBKDF2: 0,
     // Secure Transport does not apply to Windows
     MONGOC_ENABLE_SSL_SECURE_TRANSPORT: 0,
     MONGOC_ENABLE_CRYPTO_COMMON_CRYPTO: 0,
