@@ -236,7 +236,7 @@ static PHP_METHOD(MongoDB_BSON_UTCDateTime, toDateTime)
 		usec = 1000000 - usec;
 	}
 
-	/* TODO PHP 8.1.6+: microseconds can be included in the format string */
+	/* TODO PHP 8.1.7+: microseconds can be included in the format string */
 	sec_len = spprintf(&sec_str, 0, "@%" PRId64, sec);
 	php_date_initialize(datetime_obj, sec_str, sec_len, NULL, NULL, 0);
 	efree(sec_str);
