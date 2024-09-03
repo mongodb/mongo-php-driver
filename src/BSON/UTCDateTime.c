@@ -15,6 +15,7 @@
  */
 
 #include <math.h>
+#include <inttypes.h>
 
 #include <php.h>
 #include <zend_smart_str.h>
