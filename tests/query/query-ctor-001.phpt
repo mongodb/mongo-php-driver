@@ -13,7 +13,7 @@ class MyClass implements MongoDB\BSON\Persistable
     private $id;
     private $child;
 
-    public function __construct($id, MyClass $child = null)
+    public function __construct($id, ?MyClass $child = null)
     {
         $this->id = $id;
         $this->child = $child;
