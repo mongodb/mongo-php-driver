@@ -29,7 +29,7 @@ post:
 github_pr_aliases: &github_pr_aliases
   # Always test all builds for consistency
   - variant_tags: ["pr build"]
-    task_tags: ["pr"]
+    task_tags: ["pr !build-libmongoc"]
   # Run all tasks in PR variants for PHP 8.3 (excluding MongoDB latest)
   - variant_tags: ["pr php8.3"]
     task_tags: ["!latest"]
@@ -74,5 +74,6 @@ include:
   - filename: .evergreen/config/generated/test/ocsp.yml
   - filename: .evergreen/config/generated/test/require-api-version.yml
   - filename: .evergreen/config/generated/test/skip-crypt-shared.yml
-  - filename: .evergreen/config/generated/test-variant/full.yml
+  - filename: .evergreen/config/generated/test-variant/modern-php-full.yml
+  - filename: .evergreen/config/generated/test-variant/legacy-php-full.yml
   - filename: .evergreen/config/generated/test-variant/libmongoc.yml

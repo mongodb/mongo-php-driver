@@ -16,8 +16,8 @@ $bulk = new MongoDB\Driver\BulkWrite();
 $bulk->insert(['_id' => 1, 'x' => 2, 'y' => 3]);
 $manager->executeBulkWrite(NS, $bulk);
 
-$primary   = new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::RP_PRIMARY);
-$secondary = new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::RP_SECONDARY);
+$primary   = new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::PRIMARY);
+$secondary = new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::SECONDARY);
 
 echo "Testing primary:\n";
 $query = new MongoDB\Driver\Query(['x' => 3], ['projection' => ['y' => 1]]);

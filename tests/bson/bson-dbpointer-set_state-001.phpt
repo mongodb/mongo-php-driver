@@ -3,7 +3,7 @@ MongoDB\BSON\DBPointer::__set_state()
 --FILE--
 <?php
 
-$dbPointer = MongoDB\BSON\toPHP(MongoDB\BSON\fromJSON('{ "dbref": {"$dbPointer": {"$ref": "phongo.test", "$id" : { "$oid" : "5a2e78accd485d55b4050000" }  }} }'))->dbref;
+$dbPointer = MongoDB\BSON\Document::fromJSON('{ "dbref": {"$dbPointer": {"$ref": "phongo.test", "$id" : { "$oid" : "5a2e78accd485d55b4050000" }  }} }')->toPHP()->dbref;
 
 $s = var_export($dbPointer, true);
 echo $s, "\n";

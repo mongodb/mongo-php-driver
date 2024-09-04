@@ -210,7 +210,6 @@ functions:
       params:
         include_expansions_in_env:
           - API_VERSION
-          - ATLAS_CONNECTIVITY_URIS
           - CRYPT_SHARED_LIB_PATH
           - MONGODB_URI
           - APPEND_URI

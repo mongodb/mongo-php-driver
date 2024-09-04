@@ -5,23 +5,23 @@ MongoDB\Driver\ReadPreference construction with strings
 $data = [
     "primary",
     "PrImAry",
-    MongoDB\Driver\ReadPreference::RP_PRIMARY,
+    MongoDB\Driver\ReadPreference::PRIMARY,
 
     "primaryPreferred",
     "primarypreferred",
-    MongoDB\Driver\ReadPreference::RP_PRIMARY_PREFERRED,
+    MongoDB\Driver\ReadPreference::PRIMARY_PREFERRED,
 
     "secondary",
     "SEcOndArY",
-    MongoDB\Driver\ReadPreference::RP_SECONDARY,
+    MongoDB\Driver\ReadPreference::SECONDARY,
 
     "secondaryPreferred",
     "secondarypreferred",
-    MongoDB\Driver\ReadPreference::RP_SECONDARY_PREFERRED,
+    MongoDB\Driver\ReadPreference::SECONDARY_PREFERRED,
 
     "nearest",
     "NeaRest",
-    MongoDB\Driver\ReadPreference::RP_NEAREST,
+    MongoDB\Driver\ReadPreference::NEAREST,
 ];
 
 foreach ($data as $item) {

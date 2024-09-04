@@ -9,7 +9,7 @@ MongoDB\Driver\Server::executeBulkWrite() with empty BulkWrite
 require_once __DIR__ . "/../utils/basic.inc";
 
 $manager = create_test_manager();
-$server = $manager->selectServer(new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::RP_PRIMARY));
+$server = $manager->selectServer(new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::PRIMARY));
 
 echo throws(function() use ($server) {
     $server->executeBulkWrite(NS, new MongoDB\Driver\BulkWrite);

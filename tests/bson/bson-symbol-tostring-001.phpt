@@ -3,7 +3,7 @@ MongoDB\BSON\Symbol::__toString()
 --FILE--
 <?php
 
-$symbol = MongoDB\BSON\toPHP(MongoDB\BSON\fromJSON('{ "symbol": {"$symbol": "symbolValue"} }'))->symbol;
+$symbol = MongoDB\BSON\Document::fromJSON('{ "symbol": {"$symbol": "symbolValue"} }')->toPHP()->symbol;
 var_dump((string) $symbol);
 
 ?>

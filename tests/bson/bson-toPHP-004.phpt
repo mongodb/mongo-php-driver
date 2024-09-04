@@ -34,20 +34,20 @@ $tests = [
 
 foreach ($tests as $value) {
     printf("Testing %s visitor function\n", is_object($value) ? get_class($value) : gettype($value));
-    $bson = fromPHP(['x' => [$value]]);
+    $bson = MongoDB\BSON\fromPHP(['x' => [$value]]);
     // Alter the key of the BSON array's first element
     $bson[12] = '1';
 
-    var_dump(toPHP($bson));
+    var_dump(MongoDB\BSON\toPHP($bson));
 
     /* Note that numeric indexes within the HashTable are not accessible without
      * casting the object to an array. This is because the entries are only
      * stored with numeric indexes and do not also have string equivalents, as
      * might be created with zend_symtable_update(). This behavior is not unique
      * to the driver, as `(object) ['foo']` would demonstrate the same issue. */
-    var_dump(toPHP($bson, ['array' => 'object']));
+    var_dump(MongoDB\BSON\toPHP($bson, ['array' => 'object']));
 
-    var_dump(toPHP($bson, ['array' => 'MyArrayObject']));
+    var_dump(MongoDB\BSON\toPHP($bson, ['array' => 'MyArrayObject']));
 
     echo "\n";
 }
@@ -57,6 +57,10 @@ foreach ($tests as $value) {
 <?php exit(0); ?>
 --EXPECTF--
 Testing NULL visitor function
+
+Deprecated: Function MongoDB\BSON\fromPHP() is deprecated in %s
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 object(stdClass)#%d (1) {
   ["x"]=>
   array(1) {
@@ -64,6 +68,8 @@ object(stdClass)#%d (1) {
     NULL
   }
 }
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 object(stdClass)#%d (1) {
   ["x"]=>
   object(stdClass)#%d (1) {
@@ -71,6 +77,8 @@ object(stdClass)#%d (1) {
     NULL
   }
 }
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 object(stdClass)#%d (1) {
   ["x"]=>
   object(MyArrayObject)#%d (1) {
@@ -83,6 +91,10 @@ object(stdClass)#%d (1) {
 }
 
 Testing boolean visitor function
+
+Deprecated: Function MongoDB\BSON\fromPHP() is deprecated in %s
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 object(stdClass)#%d (1) {
   ["x"]=>
   array(1) {
@@ -90,6 +102,8 @@ object(stdClass)#%d (1) {
     bool(true)
   }
 }
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 object(stdClass)#%d (1) {
   ["x"]=>
   object(stdClass)#%d (1) {
@@ -97,6 +111,8 @@ object(stdClass)#%d (1) {
     bool(true)
   }
 }
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 object(stdClass)#%d (1) {
   ["x"]=>
   object(MyArrayObject)#%d (1) {
@@ -109,6 +125,10 @@ object(stdClass)#%d (1) {
 }
 
 Testing integer visitor function
+
+Deprecated: Function MongoDB\BSON\fromPHP() is deprecated in %s
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 object(stdClass)#%d (1) {
   ["x"]=>
   array(1) {
@@ -116,6 +136,8 @@ object(stdClass)#%d (1) {
     int(1)
   }
 }
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 object(stdClass)#%d (1) {
   ["x"]=>
   object(stdClass)#%d (1) {
@@ -123,6 +145,8 @@ object(stdClass)#%d (1) {
     int(1)
   }
 }
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 object(stdClass)#%d (1) {
   ["x"]=>
   object(MyArrayObject)#%d (1) {
@@ -135,6 +159,10 @@ object(stdClass)#%d (1) {
 }
 
 Testing double visitor function
+
+Deprecated: Function MongoDB\BSON\fromPHP() is deprecated in %s
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 object(stdClass)#%d (1) {
   ["x"]=>
   array(1) {
@@ -142,6 +170,8 @@ object(stdClass)#%d (1) {
     float(4.125)
   }
 }
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 object(stdClass)#%d (1) {
   ["x"]=>
   object(stdClass)#%d (1) {
@@ -149,6 +179,8 @@ object(stdClass)#%d (1) {
     float(4.125)
   }
 }
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 object(stdClass)#%d (1) {
   ["x"]=>
   object(MyArrayObject)#%d (1) {
@@ -161,6 +193,10 @@ object(stdClass)#%d (1) {
 }
 
 Testing string visitor function
+
+Deprecated: Function MongoDB\BSON\fromPHP() is deprecated in %s
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 object(stdClass)#%d (1) {
   ["x"]=>
   array(1) {
@@ -168,6 +204,8 @@ object(stdClass)#%d (1) {
     string(3) "foo"
   }
 }
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 object(stdClass)#%d (1) {
   ["x"]=>
   object(stdClass)#%d (1) {
@@ -175,6 +213,8 @@ object(stdClass)#%d (1) {
     string(3) "foo"
   }
 }
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 object(stdClass)#%d (1) {
   ["x"]=>
   object(MyArrayObject)#%d (1) {
@@ -187,6 +227,10 @@ object(stdClass)#%d (1) {
 }
 
 Testing array visitor function
+
+Deprecated: Function MongoDB\BSON\fromPHP() is deprecated in %s
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 object(stdClass)#%d (1) {
   ["x"]=>
   array(1) {
@@ -195,6 +239,8 @@ object(stdClass)#%d (1) {
     }
   }
 }
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 object(stdClass)#%d (1) {
   ["x"]=>
   object(stdClass)#%d (1) {
@@ -203,6 +249,8 @@ object(stdClass)#%d (1) {
     }
   }
 }
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 object(stdClass)#%d (1) {
   ["x"]=>
   object(MyArrayObject)#%d (1) {
@@ -219,6 +267,10 @@ object(stdClass)#%d (1) {
 }
 
 Testing stdClass visitor function
+
+Deprecated: Function MongoDB\BSON\fromPHP() is deprecated in %s
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 object(stdClass)#%d (1) {
   ["x"]=>
   array(1) {
@@ -227,6 +279,8 @@ object(stdClass)#%d (1) {
     }
   }
 }
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 object(stdClass)#%d (1) {
   ["x"]=>
   object(stdClass)#%d (1) {
@@ -235,6 +289,8 @@ object(stdClass)#%d (1) {
     }
   }
 }
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 object(stdClass)#%d (1) {
   ["x"]=>
   object(MyArrayObject)#%d (1) {
@@ -248,6 +304,10 @@ object(stdClass)#%d (1) {
 }
 
 Testing MongoDB\BSON\Binary visitor function
+
+Deprecated: Function MongoDB\BSON\fromPHP() is deprecated in %s
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 object(stdClass)#%d (1) {
   ["x"]=>
   array(1) {
@@ -260,6 +320,8 @@ object(stdClass)#%d (1) {
     }
   }
 }
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 object(stdClass)#%d (1) {
   ["x"]=>
   object(stdClass)#%d (1) {
@@ -272,6 +334,8 @@ object(stdClass)#%d (1) {
     }
   }
 }
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 object(stdClass)#%d (1) {
   ["x"]=>
   object(MyArrayObject)#%d (1) {
@@ -289,6 +353,10 @@ object(stdClass)#%d (1) {
 }
 
 Testing MongoDB\BSON\Decimal128 visitor function
+
+Deprecated: Function MongoDB\BSON\fromPHP() is deprecated in %s
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 object(stdClass)#%d (1) {
   ["x"]=>
   array(1) {
@@ -299,6 +367,8 @@ object(stdClass)#%d (1) {
     }
   }
 }
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 object(stdClass)#%d (1) {
   ["x"]=>
   object(stdClass)#%d (1) {
@@ -309,6 +379,8 @@ object(stdClass)#%d (1) {
     }
   }
 }
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 object(stdClass)#%d (1) {
   ["x"]=>
   object(MyArrayObject)#%d (1) {
@@ -324,6 +396,10 @@ object(stdClass)#%d (1) {
 }
 
 Testing MongoDB\BSON\Javascript visitor function
+
+Deprecated: Function MongoDB\BSON\fromPHP() is deprecated in %s
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 object(stdClass)#%d (1) {
   ["x"]=>
   array(1) {
@@ -336,6 +412,8 @@ object(stdClass)#%d (1) {
     }
   }
 }
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 object(stdClass)#%d (1) {
   ["x"]=>
   object(stdClass)#%d (1) {
@@ -348,6 +426,8 @@ object(stdClass)#%d (1) {
     }
   }
 }
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 object(stdClass)#%d (1) {
   ["x"]=>
   object(MyArrayObject)#%d (1) {
@@ -365,6 +445,10 @@ object(stdClass)#%d (1) {
 }
 
 Testing MongoDB\BSON\MaxKey visitor function
+
+Deprecated: Function MongoDB\BSON\fromPHP() is deprecated in %s
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 object(stdClass)#%d (1) {
   ["x"]=>
   array(1) {
@@ -373,6 +457,8 @@ object(stdClass)#%d (1) {
     }
   }
 }
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 object(stdClass)#%d (1) {
   ["x"]=>
   object(stdClass)#%d (1) {
@@ -381,6 +467,8 @@ object(stdClass)#%d (1) {
     }
   }
 }
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 object(stdClass)#%d (1) {
   ["x"]=>
   object(MyArrayObject)#%d (1) {
@@ -394,6 +482,10 @@ object(stdClass)#%d (1) {
 }
 
 Testing MongoDB\BSON\MinKey visitor function
+
+Deprecated: Function MongoDB\BSON\fromPHP() is deprecated in %s
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 object(stdClass)#%d (1) {
   ["x"]=>
   array(1) {
@@ -402,6 +494,8 @@ object(stdClass)#%d (1) {
     }
   }
 }
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 object(stdClass)#%d (1) {
   ["x"]=>
   object(stdClass)#%d (1) {
@@ -410,6 +504,8 @@ object(stdClass)#%d (1) {
     }
   }
 }
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 object(stdClass)#%d (1) {
   ["x"]=>
   object(MyArrayObject)#%d (1) {
@@ -423,6 +519,10 @@ object(stdClass)#%d (1) {
 }
 
 Testing MongoDB\BSON\ObjectId visitor function
+
+Deprecated: Function MongoDB\BSON\fromPHP() is deprecated in %s
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 object(stdClass)#%d (1) {
   ["x"]=>
   array(1) {
@@ -433,6 +533,8 @@ object(stdClass)#%d (1) {
     }
   }
 }
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 object(stdClass)#%d (1) {
   ["x"]=>
   object(stdClass)#%d (1) {
@@ -443,6 +545,8 @@ object(stdClass)#%d (1) {
     }
   }
 }
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 object(stdClass)#%d (1) {
   ["x"]=>
   object(MyArrayObject)#%d (1) {
@@ -458,6 +562,10 @@ object(stdClass)#%d (1) {
 }
 
 Testing MongoDB\BSON\Regex visitor function
+
+Deprecated: Function MongoDB\BSON\fromPHP() is deprecated in %s
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 object(stdClass)#%d (1) {
   ["x"]=>
   array(1) {
@@ -470,6 +578,8 @@ object(stdClass)#%d (1) {
     }
   }
 }
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 object(stdClass)#%d (1) {
   ["x"]=>
   object(stdClass)#%d (1) {
@@ -482,6 +592,8 @@ object(stdClass)#%d (1) {
     }
   }
 }
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 object(stdClass)#%d (1) {
   ["x"]=>
   object(MyArrayObject)#%d (1) {
@@ -499,6 +611,10 @@ object(stdClass)#%d (1) {
 }
 
 Testing MongoDB\BSON\Timestamp visitor function
+
+Deprecated: Function MongoDB\BSON\fromPHP() is deprecated in %s
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 object(stdClass)#%d (1) {
   ["x"]=>
   array(1) {
@@ -511,6 +627,8 @@ object(stdClass)#%d (1) {
     }
   }
 }
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 object(stdClass)#%d (1) {
   ["x"]=>
   object(stdClass)#%d (1) {
@@ -523,6 +641,8 @@ object(stdClass)#%d (1) {
     }
   }
 }
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 object(stdClass)#%d (1) {
   ["x"]=>
   object(MyArrayObject)#%d (1) {
@@ -540,6 +660,10 @@ object(stdClass)#%d (1) {
 }
 
 Testing MongoDB\BSON\UTCDateTime visitor function
+
+Deprecated: Function MongoDB\BSON\fromPHP() is deprecated in %s
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 object(stdClass)#%d (1) {
   ["x"]=>
   array(1) {
@@ -550,6 +674,8 @@ object(stdClass)#%d (1) {
     }
   }
 }
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 object(stdClass)#%d (1) {
   ["x"]=>
   object(stdClass)#%d (1) {
@@ -560,6 +686,8 @@ object(stdClass)#%d (1) {
     }
   }
 }
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 object(stdClass)#%d (1) {
   ["x"]=>
   object(MyArrayObject)#%d (1) {

@@ -12,30 +12,35 @@ final class ReadPreference implements \MongoDB\BSON\Serializable, \Serializable
     /**
      * @var int
      * @cvalue MONGOC_READ_PRIMARY
+     * @deprecated
      */
     public const RP_PRIMARY = UNKNOWN;
 
     /**
      * @var int
      * @cvalue MONGOC_READ_PRIMARY_PREFERRED
+     * @deprecated
      */
     public const RP_PRIMARY_PREFERRED = UNKNOWN;
 
     /**
      * @var int
      * @cvalue MONGOC_READ_SECONDARY
+     * @deprecated
      */
     public const RP_SECONDARY = UNKNOWN;
 
     /**
      * @var int
      * @cvalue MONGOC_READ_SECONDARY_PREFERRED
+     * @deprecated
      */
     public const RP_SECONDARY_PREFERRED = UNKNOWN;
 
     /**
      * @var int
      * @cvalue MONGOC_READ_NEAREST
+     * @deprecated
      */
     public const RP_NEAREST = UNKNOWN;
 
@@ -92,6 +97,7 @@ final class ReadPreference implements \MongoDB\BSON\Serializable, \Serializable
 
     final public function getMaxStalenessSeconds(): int {}
 
+    /** @deprecated */
     final public function getMode(): int {}
 
     final public function getModeString(): string {}

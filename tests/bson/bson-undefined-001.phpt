@@ -6,7 +6,7 @@ MongoDB\BSON\Undefined #001
 require_once __DIR__ . '/../utils/basic.inc';
 
 $tests = array(
-    MongoDB\BSON\toPHP(MongoDB\BSON\fromJSON('{ "undefined": {"$undefined": true} }')),
+    MongoDB\BSON\Document::fromJSON('{ "undefined": {"$undefined": true} }')->toPHP(),
 );
 
 foreach($tests as $n => $test) {

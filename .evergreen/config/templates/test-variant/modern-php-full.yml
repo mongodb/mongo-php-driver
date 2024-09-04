@@ -1,0 +1,80 @@
+  # Test MongoDB >= 7.0
+  - name: test-debian12-php-%phpVersion%
+    tags: ["test", "debian", "x64", "php%phpVersion%", "pr", "tag"]
+    display_name: "Test: Debian 12, PHP %phpVersion%"
+    run_on: debian12-small
+    expansions:
+      FETCH_BUILD_VARIANT: "build-debian12"
+      FETCH_BUILD_TASK: "build-php-%phpVersion%"
+    depends_on:
+      - variant: "build-debian12"
+        name: "build-php-%phpVersion%"
+    tasks:
+      - ".standalone .local !.4.0 !.4.2 !.4.4 !.5.0 !.6.0"
+      - ".replicaset .local !.4.0 !.4.2 !.4.4 !.5.0 !.6.0"
+      - ".sharded .local !.4.0 !.4.2 !.4.4 !.5.0 !.6.0"
+      - ".loadbalanced .local !.4.0 !.4.2 !.4.4 !.5.0 !.6.0"
+      - ".ocsp !.4.4 !.5.0 !.6.0"
+      - "test-atlas-connectivity"
+    display_tasks:
+      - name: "test-ocsp-latest"
+        execution_tasks:
+          - ".ocsp .latest"
+      - name: "test-ocsp-rapid"
+        execution_tasks:
+          - ".ocsp .rapid"
+      - name: "test-ocsp-8.0"
+        execution_tasks:
+          - ".ocsp .8.0"
+      - name: "test-ocsp-7.0"
+        execution_tasks:
+          - ".ocsp .7.0"
+
+  # Test MongoDB 5.0 and 6.0
+  - name: test-debian11-php-%phpVersion%
+    tags: ["test", "debian", "x64", "php%phpVersion%", "pr", "tag"]
+    display_name: "Test: Debian 11, PHP %phpVersion%"
+    run_on: debian11-small
+    expansions:
+      FETCH_BUILD_VARIANT: "build-debian11"
+      FETCH_BUILD_TASK: "build-php-%phpVersion%"
+    depends_on:
+      - variant: "build-debian11"
+        name: "build-php-%phpVersion%"
+    tasks:
+      # Remember to add new major versions here as they are released
+      - ".standalone .local !.4.0 !.4.2 !.4.4 !.7.0 !.8.0 !.rapid !.latest"
+      - ".replicaset .local !.4.0 !.4.2 !.4.4 !.7.0 !.8.0 !.rapid !.latest"
+      - ".sharded .local !.4.0 !.4.2 !.4.4 !.7.0 !.8.0 !.rapid !.latest"
+      - ".loadbalanced .local !.4.0 !.4.2 !.4.4 !.7.0 !.8.0 !.rapid !.latest"
+      - ".ocsp !.4.4 !.7.0 !.8.0 !.rapid !.latest"
+    display_tasks:
+      - name: "test-ocsp-6.0"
+        execution_tasks:
+          - ".ocsp .6.0"
+      - name: "test-ocsp-5.0"
+        execution_tasks:
+          - ".ocsp .5.0"
+
+  # Test versions < 5.0
+  - name: test-debian92-php-%phpVersion%
+    tags: ["test", "debian", "x64", "php%phpVersion%", "pr", "tag"]
+    display_name: "Test: Debian 9.2, PHP %phpVersion%"
+    run_on: debian92-small
+    expansions:
+      FETCH_BUILD_VARIANT: "build-debian92"
+      FETCH_BUILD_TASK: "build-php-%phpVersion%"
+    depends_on:
+      - variant: "build-debian92"
+        name: "build-php-%phpVersion%"
+    tasks:
+      # Remember to add new major versions here as they are released
+      - ".standalone .local !.5.0 !.6.0 !.7.0 !.8.0 !.rapid !.latest"
+      - ".replicaset .local !.5.0 !.6.0 !.7.0 !.8.0 !.rapid !.latest"
+      - ".sharded .local !.5.0 !.6.0 !.7.0 !.8.0 !.rapid !.latest"
+      - ".loadbalanced .local !.5.0 !.6.0 !.7.0 !.8.0 !.rapid !.latest"
+      - ".ocsp !.5.0 !.6.0 !.7.0 !.8.0 !.rapid !.latest"
+    display_tasks:
+      - name: "test-ocsp-4.4"
+        execution_tasks:
+          - ".ocsp .4.4"

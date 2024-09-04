@@ -3,7 +3,7 @@ MongoDB\BSON\Symbol serialization (__serialize and __unserialize)
 --FILE--
 <?php
 
-$test = MongoDB\BSON\toPHP(MongoDB\BSON\fromJSON('{ "symbol": {"$symbol": "symbolValue"} }'))->symbol;
+$test = MongoDB\BSON\Document::fromJSON('{ "symbol": {"$symbol": "symbolValue"} }')->toPHP()->symbol;
 
 var_dump($symbol = $test);
 var_dump($s = serialize($symbol));

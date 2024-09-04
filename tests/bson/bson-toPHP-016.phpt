@@ -5,7 +5,7 @@ MongoDB\BSON\toPHP(): Decoding with raw BSON type
 
 require_once __DIR__ . "/../utils/basic.inc";
 
-$bson = fromPHP([
+$bson = MongoDB\BSON\fromPHP([
     '_id' => 1,
     'object' => [
         'parent1' => [
@@ -29,13 +29,17 @@ $tests = [
 
 foreach ($tests as $name => $typeMap) {
     echo "\n" . $name . "\n";
-    var_dump(toPHP($bson, $typeMap));
+    var_dump(MongoDB\BSON\toPHP($bson, $typeMap));
 }
 ?>
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
+Deprecated: Function MongoDB\BSON\fromPHP() is deprecated in %s
+
 Root as BSON
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 object(MongoDB\BSON\Document)#%d (%d) {
   ["data"]=>
   string(256) "%a"
@@ -127,6 +131,8 @@ object(MongoDB\BSON\Document)#%d (%d) {
 }
 
 Arrays as BSON
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 object(stdClass)#%d (%d) {
   ["_id"]=>
   int(1)
@@ -198,6 +204,8 @@ object(stdClass)#%d (%d) {
 }
 
 Documents as BSON
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 object(stdClass)#%d (%d) {
   ["_id"]=>
   int(1)
@@ -284,6 +292,8 @@ object(stdClass)#%d (%d) {
 }
 
 Field path as BSON
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 object(stdClass)#%d (%d) {
   ["_id"]=>
   int(1)
@@ -355,6 +365,8 @@ object(stdClass)#%d (%d) {
 }
 
 Non-complex field ignores BSON typemap element
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 object(stdClass)#%d (%d) {
   ["_id"]=>
   int(1)

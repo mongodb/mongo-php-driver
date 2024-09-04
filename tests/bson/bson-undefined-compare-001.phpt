@@ -3,9 +3,9 @@ MongoDB\BSON\Undefined comparisons
 --FILE--
 <?php
 
-var_dump(MongoDB\BSON\toPHP(MongoDB\BSON\fromJSON('{ "undefined": {"$undefined": true} }')) == MongoDB\BSON\toPHP(MongoDB\BSON\fromJSON('{ "undefined": {"$undefined": true} }')));
-var_dump(MongoDB\BSON\toPHP(MongoDB\BSON\fromJSON('{ "undefined": {"$undefined": true} }')) < MongoDB\BSON\toPHP(MongoDB\BSON\fromJSON('{ "undefined": {"$undefined": true} }')));
-var_dump(MongoDB\BSON\toPHP(MongoDB\BSON\fromJSON('{ "undefined": {"$undefined": true} }')) > MongoDB\BSON\toPHP(MongoDB\BSON\fromJSON('{ "undefined": {"$undefined": true} }')));
+var_dump(MongoDB\BSON\Document::fromJSON('{ "undefined": {"$undefined": true} }')->toPHP() == MongoDB\BSON\Document::fromJSON('{ "undefined": {"$undefined": true} }')->toPHP());
+var_dump(MongoDB\BSON\Document::fromJSON('{ "undefined": {"$undefined": true} }')->toPHP() < MongoDB\BSON\Document::fromJSON('{ "undefined": {"$undefined": true} }')->toPHP());
+var_dump(MongoDB\BSON\Document::fromJSON('{ "undefined": {"$undefined": true} }')->toPHP() > MongoDB\BSON\Document::fromJSON('{ "undefined": {"$undefined": true} }')->toPHP());
 
 ?>
 ===DONE===

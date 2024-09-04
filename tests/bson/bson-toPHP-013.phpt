@@ -20,13 +20,16 @@ $classes = [
 ];
 
 foreach ($classes as $class) {
-    var_dump(toPHP(fromJSON(sprintf('{"x": {"__pclass": {"$binary": "%s", "$type": "80"}, "y": 1}}', base64_encode($class)))));
+    var_dump(MongoDB\BSON\toPHP(MongoDB\BSON\fromJSON(sprintf('{"x": {"__pclass": {"$binary": "%s", "$type": "80"}, "y": 1}}', base64_encode($class)))));
 }
 
 ?>
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
+Deprecated: Function MongoDB\BSON\fromJSON() is deprecated in %s
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 object(stdClass)#%d (%d) {
   ["x"]=>
   object(stdClass)#%d (%d) {
@@ -41,6 +44,10 @@ object(stdClass)#%d (%d) {
     int(1)
   }
 }
+
+Deprecated: Function MongoDB\BSON\fromJSON() is deprecated in %s
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 object(stdClass)#%d (%d) {
   ["x"]=>
   object(stdClass)#%d (%d) {
@@ -55,6 +62,10 @@ object(stdClass)#%d (%d) {
     int(1)
   }
 }
+
+Deprecated: Function MongoDB\BSON\fromJSON() is deprecated in %s
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 object(stdClass)#%d (%d) {
   ["x"]=>
   object(stdClass)#%d (%d) {
@@ -69,6 +80,10 @@ object(stdClass)#%d (%d) {
     int(1)
   }
 }
+
+Deprecated: Function MongoDB\BSON\fromJSON() is deprecated in %s
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 object(stdClass)#%d (%d) {
   ["x"]=>
   object(stdClass)#%d (%d) {
@@ -83,6 +98,10 @@ object(stdClass)#%d (%d) {
     int(1)
   }
 }
+
+Deprecated: Function MongoDB\BSON\fromJSON() is deprecated in %s
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 object(stdClass)#%d (%d) {
   ["x"]=>
   object(stdClass)#%d (%d) {

@@ -2,25 +2,28 @@
 <?php
 
 // Supported PHP versions. Add new versions to the beginning of the list
-$supportedPhpVersions = [
+$modernPhpVersions = [
     '8.3',
     '8.2',
     '8.1',
+];
+$legacyPhpVersions = [
     '8.0',
     '7.4',
 ];
+$supportedPhpVersions = array_merge($modernPhpVersions, $legacyPhpVersions);
 
 // Supported MongoDB versions. Add new versions after "rapid"
 $supportedMongoDBVersions = [
     'latest',
     'rapid',
+    '8.0',
     '7.0',
     '6.0',
     '5.0',
     '4.4',
     '4.2',
     '4.0',
-    '3.6',
 ];
 
 $latestPhpVersion = max($supportedPhpVersions);
@@ -65,7 +68,8 @@ $allFiles[] = generateConfigs('tasks', 'test', 'mongodbVersion', 'require-api-ve
 $allFiles[] = generateConfigs('tasks', 'test', 'mongodbVersion', 'skip-crypt-shared.yml', $skipCryptSharedServerVersions);
 
 // Test variants
-$allFiles[] = generateConfigs('buildvariants', 'test-variant', 'phpVersion', 'full.yml', $supportedPhpVersions);
+$allFiles[] = generateConfigs('buildvariants', 'test-variant', 'phpVersion', 'modern-php-full.yml', $modernPhpVersions);
+$allFiles[] = generateConfigs('buildvariants', 'test-variant', 'phpVersion', 'legacy-php-full.yml', $legacyPhpVersions);
 $allFiles[] = generateConfigs('buildvariants', 'test-variant', 'phpVersion', 'libmongoc.yml', [$latestPhpVersion]);
 
 echo "Generated config. Use the following list to import files:\n";

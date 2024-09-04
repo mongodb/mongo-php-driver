@@ -44,12 +44,12 @@ echo "Testing top-level objects\n";
 
 foreach ($tests as $test) {
     try {
-        echo toJson(fromPHP(new MyDocument($test))), "\n";
+        echo MongoDB\BSON\toJson(MongoDB\BSON\fromPHP(new MyDocument($test))), "\n";
     } catch (Exception $e) {
         printf("%s: %s\n", get_class($e), $e->getMessage());
     }
     try {
-        echo toJson(fromPHP(new MyPersistableDocument($test))), "\n";
+        echo MongoDB\BSON\toJson(MongoDB\BSON\fromPHP(new MyPersistableDocument($test))), "\n";
     } catch (Exception $e) {
         printf("%s: %s\n", get_class($e), $e->getMessage());
     }
@@ -59,12 +59,12 @@ echo "\nTesting nested objects\n";
 
 foreach ($tests as $test) {
     try {
-        echo toJson(fromPHP(new MyDocument(['nested' => new MyDocument($test)]))), "\n";
+        echo MongoDB\BSON\toJson(MongoDB\BSON\fromPHP(new MyDocument(['nested' => new MyDocument($test)]))), "\n";
     } catch (Exception $e) {
         printf("%s: %s\n", get_class($e), $e->getMessage());
     }
     try {
-        echo toJson(fromPHP(new MyDocument(['nested' => new MyPersistableDocument($test)]))), "\n";
+        echo MongoDB\BSON\toJson(MongoDB\BSON\fromPHP(new MyDocument(['nested' => new MyPersistableDocument($test)]))), "\n";
     } catch (Exception $e) {
         printf("%s: %s\n", get_class($e), $e->getMessage());
     }
@@ -73,32 +73,122 @@ foreach ($tests as $test) {
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECT--
+--EXPECTF--
 Testing top-level objects
+
+Deprecated: Function MongoDB\BSON\fromPHP() is deprecated in %s
+
+Deprecated: Function MongoDB\BSON\toJSON() is deprecated in %s
 { "0" : 1, "1" : 2, "2" : 3 }
+
+Deprecated: Function MongoDB\BSON\fromPHP() is deprecated in %s
+
+Deprecated: Function MongoDB\BSON\toJSON() is deprecated in %s
 { "__pclass" : { "$binary" : "TXlQZXJzaXN0YWJsZURvY3VtZW50", "$type" : "80" }, "0" : 1, "1" : 2, "2" : 3 }
+
+Deprecated: Function MongoDB\BSON\fromPHP() is deprecated in %s
+
+Deprecated: Function MongoDB\BSON\toJSON() is deprecated in %s
 { "foo" : "bar" }
+
+Deprecated: Function MongoDB\BSON\fromPHP() is deprecated in %s
+
+Deprecated: Function MongoDB\BSON\toJSON() is deprecated in %s
 { "__pclass" : { "$binary" : "TXlQZXJzaXN0YWJsZURvY3VtZW50", "$type" : "80" }, "foo" : "bar" }
+
+Deprecated: Function MongoDB\BSON\fromPHP() is deprecated in %s
+
+Deprecated: Function MongoDB\BSON\toJSON() is deprecated in %s
 { "0" : 1, "1" : 2, "2" : 3 }
+
+Deprecated: Function MongoDB\BSON\fromPHP() is deprecated in %s
+
+Deprecated: Function MongoDB\BSON\toJSON() is deprecated in %s
 { "__pclass" : { "$binary" : "TXlQZXJzaXN0YWJsZURvY3VtZW50", "$type" : "80" }, "0" : 1, "1" : 2, "2" : 3 }
+
+Deprecated: Function MongoDB\BSON\fromPHP() is deprecated in %s
+
+Deprecated: Function MongoDB\BSON\toJSON() is deprecated in %s
 { "foo" : "bar" }
+
+Deprecated: Function MongoDB\BSON\fromPHP() is deprecated in %s
+
+Deprecated: Function MongoDB\BSON\toJSON() is deprecated in %s
 { "__pclass" : { "$binary" : "TXlQZXJzaXN0YWJsZURvY3VtZW50", "$type" : "80" }, "foo" : "bar" }
+
+Deprecated: Function MongoDB\BSON\fromPHP() is deprecated in %s
 MongoDB\Driver\Exception\UnexpectedValueException: MongoDB\BSON\PackedArray cannot be serialized as a root document
+
+Deprecated: Function MongoDB\BSON\fromPHP() is deprecated in %s
 MongoDB\Driver\Exception\UnexpectedValueException: Expected MyPersistableDocument::bsonSerialize() to return an array, stdClass, or MongoDB\BSON\Document, MongoDB\BSON\PackedArray given
+
+Deprecated: Function MongoDB\BSON\fromPHP() is deprecated in %s
+
+Deprecated: Function MongoDB\BSON\toJSON() is deprecated in %s
 { "foo" : "bar" }
+
+Deprecated: Function MongoDB\BSON\fromPHP() is deprecated in %s
+
+Deprecated: Function MongoDB\BSON\toJSON() is deprecated in %s
 { "__pclass" : { "$binary" : "TXlQZXJzaXN0YWJsZURvY3VtZW50", "$type" : "80" }, "foo" : "bar" }
 
 Testing nested objects
+
+Deprecated: Function MongoDB\BSON\fromPHP() is deprecated in %s
+
+Deprecated: Function MongoDB\BSON\toJSON() is deprecated in %s
 { "nested" : [ 1, 2, 3 ] }
+
+Deprecated: Function MongoDB\BSON\fromPHP() is deprecated in %s
+
+Deprecated: Function MongoDB\BSON\toJSON() is deprecated in %s
 { "nested" : { "__pclass" : { "$binary" : "TXlQZXJzaXN0YWJsZURvY3VtZW50", "$type" : "80" }, "0" : 1, "1" : 2, "2" : 3 } }
+
+Deprecated: Function MongoDB\BSON\fromPHP() is deprecated in %s
+
+Deprecated: Function MongoDB\BSON\toJSON() is deprecated in %s
 { "nested" : { "foo" : "bar" } }
+
+Deprecated: Function MongoDB\BSON\fromPHP() is deprecated in %s
+
+Deprecated: Function MongoDB\BSON\toJSON() is deprecated in %s
 { "nested" : { "__pclass" : { "$binary" : "TXlQZXJzaXN0YWJsZURvY3VtZW50", "$type" : "80" }, "foo" : "bar" } }
+
+Deprecated: Function MongoDB\BSON\fromPHP() is deprecated in %s
+
+Deprecated: Function MongoDB\BSON\toJSON() is deprecated in %s
 { "nested" : { "0" : 1, "1" : 2, "2" : 3 } }
+
+Deprecated: Function MongoDB\BSON\fromPHP() is deprecated in %s
+
+Deprecated: Function MongoDB\BSON\toJSON() is deprecated in %s
 { "nested" : { "__pclass" : { "$binary" : "TXlQZXJzaXN0YWJsZURvY3VtZW50", "$type" : "80" }, "0" : 1, "1" : 2, "2" : 3 } }
+
+Deprecated: Function MongoDB\BSON\fromPHP() is deprecated in %s
+
+Deprecated: Function MongoDB\BSON\toJSON() is deprecated in %s
 { "nested" : { "foo" : "bar" } }
+
+Deprecated: Function MongoDB\BSON\fromPHP() is deprecated in %s
+
+Deprecated: Function MongoDB\BSON\toJSON() is deprecated in %s
 { "nested" : { "__pclass" : { "$binary" : "TXlQZXJzaXN0YWJsZURvY3VtZW50", "$type" : "80" }, "foo" : "bar" } }
+
+Deprecated: Function MongoDB\BSON\fromPHP() is deprecated in %s
+
+Deprecated: Function MongoDB\BSON\toJSON() is deprecated in %s
 { "nested" : [ 1, 2, 3 ] }
+
+Deprecated: Function MongoDB\BSON\fromPHP() is deprecated in %s
 MongoDB\Driver\Exception\UnexpectedValueException: Expected MyPersistableDocument::bsonSerialize() to return an array, stdClass, or MongoDB\BSON\Document, MongoDB\BSON\PackedArray given
+
+Deprecated: Function MongoDB\BSON\fromPHP() is deprecated in %s
+
+Deprecated: Function MongoDB\BSON\toJSON() is deprecated in %s
 { "nested" : { "foo" : "bar" } }
+
+Deprecated: Function MongoDB\BSON\fromPHP() is deprecated in %s
+
+Deprecated: Function MongoDB\BSON\toJSON() is deprecated in %s
 { "nested" : { "__pclass" : { "$binary" : "TXlQZXJzaXN0YWJsZURvY3VtZW50", "$type" : "80" }, "foo" : "bar" } }
 ===DONE===

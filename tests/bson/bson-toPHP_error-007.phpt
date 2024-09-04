@@ -35,7 +35,7 @@ foreach ($classes as $class) {
         printf("Test typeMap: %s\n", json_encode($typeMap));
 
         echo throws(function() use ($typeMap) {
-            toPHP(fromJSON('{}'), $typeMap);
+            MongoDB\BSON\toPHP(MongoDB\BSON\fromJSON('{}'), $typeMap);
         }, MongoDB\Driver\Exception\InvalidArgumentException::class), "\n\n";
     }
 }
@@ -43,36 +43,68 @@ foreach ($classes as $class) {
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECT--
+--EXPECTF--
 Test typeMap: {"array":"MyEnum"}
+
+Deprecated: Function MongoDB\BSON\fromJSON() is deprecated in %s
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Enum MyEnum is not instantiatable
 
 Test typeMap: {"document":"MyEnum"}
+
+Deprecated: Function MongoDB\BSON\fromJSON() is deprecated in %s
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Enum MyEnum is not instantiatable
 
 Test typeMap: {"root":"MyEnum"}
+
+Deprecated: Function MongoDB\BSON\fromJSON() is deprecated in %s
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Enum MyEnum is not instantiatable
 
 Test typeMap: {"fieldPaths":{"x":"MyEnum"}}
+
+Deprecated: Function MongoDB\BSON\fromJSON() is deprecated in %s
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Enum MyEnum is not instantiatable
 
 Test typeMap: {"array":"MyBackedEnum"}
+
+Deprecated: Function MongoDB\BSON\fromJSON() is deprecated in %s
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Enum MyBackedEnum is not instantiatable
 
 Test typeMap: {"document":"MyBackedEnum"}
+
+Deprecated: Function MongoDB\BSON\fromJSON() is deprecated in %s
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Enum MyBackedEnum is not instantiatable
 
 Test typeMap: {"root":"MyBackedEnum"}
+
+Deprecated: Function MongoDB\BSON\fromJSON() is deprecated in %s
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Enum MyBackedEnum is not instantiatable
 
 Test typeMap: {"fieldPaths":{"x":"MyBackedEnum"}}
+
+Deprecated: Function MongoDB\BSON\fromJSON() is deprecated in %s
+
+Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Enum MyBackedEnum is not instantiatable
 

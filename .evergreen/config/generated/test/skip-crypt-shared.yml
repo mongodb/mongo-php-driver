@@ -20,6 +20,16 @@ tasks:
       - func: "run tests"
         vars:
           SKIP_CRYPT_SHARED: "yes"
+  - name: "test-skip_crypt_shared-8.0"
+    tags: [ "replicaset", "local", "8.0", "skip_crypt_shared" ]
+    commands:
+      - func: "bootstrap mongo-orchestration"
+        vars:
+          TOPOLOGY: "replica_set"
+          MONGODB_VERSION: "8.0"
+      - func: "run tests"
+        vars:
+          SKIP_CRYPT_SHARED: "yes"
   - name: "test-skip_crypt_shared-7.0"
     tags: [ "replicaset", "local", "7.0", "skip_crypt_shared" ]
     commands:

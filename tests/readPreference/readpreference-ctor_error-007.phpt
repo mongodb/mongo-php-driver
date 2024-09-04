@@ -6,7 +6,7 @@ MongoDB\Driver\ReadPreference construction (combining hedge with primary read pr
 require_once __DIR__ . '/../utils/basic.inc';
 
 echo throws(function() {
-    new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::RP_PRIMARY, null, ['hedge' => ['enabled' => true]]);
+    new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::PRIMARY, null, ['hedge' => ['enabled' => true]]);
 }, 'MongoDB\Driver\Exception\InvalidArgumentException'), "\n";
 
 ?>

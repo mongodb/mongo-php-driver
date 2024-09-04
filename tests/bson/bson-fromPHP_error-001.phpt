@@ -27,7 +27,7 @@ echo "Testing top-level objects\n";
 
 foreach ($invalidValues as $invalidValue) {
     try {
-        hex_dump(fromPHP(new MyDocument($invalidValue)));
+        hex_dump(MongoDB\BSON\fromPHP(new MyDocument($invalidValue)));
     } catch (MongoDB\Driver\Exception\UnexpectedValueException $e) {
         echo $e->getMessage(), "\n";
     }
@@ -37,7 +37,7 @@ echo "\nTesting nested objects\n";
 
 foreach ($invalidValues as $invalidValue) {
     try {
-        hex_dump(fromPHP(new MyDocument(array('nested' => new MyDocument($invalidValue)))));
+        hex_dump(MongoDB\BSON\fromPHP(new MyDocument(array('nested' => new MyDocument($invalidValue)))));
     } catch (MongoDB\Driver\Exception\UnexpectedValueException $e) {
         echo $e->getMessage(), "\n";
     }
@@ -46,18 +46,38 @@ foreach ($invalidValues as $invalidValue) {
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECT--
+--EXPECTF--
 Testing top-level objects
+
+Deprecated: Function MongoDB\BSON\fromPHP() is deprecated in %s
 Expected MyDocument::bsonSerialize() to return an array, stdClass, MongoDB\BSON\Document, or MongoDB\BSON\PackedArray, null given
+
+Deprecated: Function MongoDB\BSON\fromPHP() is deprecated in %s
 Expected MyDocument::bsonSerialize() to return an array, stdClass, MongoDB\BSON\Document, or MongoDB\BSON\PackedArray, int given
+
+Deprecated: Function MongoDB\BSON\fromPHP() is deprecated in %s
 Expected MyDocument::bsonSerialize() to return an array, stdClass, MongoDB\BSON\Document, or MongoDB\BSON\PackedArray, string given
+
+Deprecated: Function MongoDB\BSON\fromPHP() is deprecated in %s
 Expected MyDocument::bsonSerialize() to return an array, stdClass, MongoDB\BSON\Document, or MongoDB\BSON\PackedArray, bool given
+
+Deprecated: Function MongoDB\BSON\fromPHP() is deprecated in %s
 Expected MyDocument::bsonSerialize() to return an array, stdClass, MongoDB\BSON\Document, or MongoDB\BSON\PackedArray, MyDocument given
 
 Testing nested objects
+
+Deprecated: Function MongoDB\BSON\fromPHP() is deprecated in %s
 Expected MyDocument::bsonSerialize() to return an array, stdClass, MongoDB\BSON\Document, or MongoDB\BSON\PackedArray, null given
+
+Deprecated: Function MongoDB\BSON\fromPHP() is deprecated in %s
 Expected MyDocument::bsonSerialize() to return an array, stdClass, MongoDB\BSON\Document, or MongoDB\BSON\PackedArray, int given
+
+Deprecated: Function MongoDB\BSON\fromPHP() is deprecated in %s
 Expected MyDocument::bsonSerialize() to return an array, stdClass, MongoDB\BSON\Document, or MongoDB\BSON\PackedArray, string given
+
+Deprecated: Function MongoDB\BSON\fromPHP() is deprecated in %s
 Expected MyDocument::bsonSerialize() to return an array, stdClass, MongoDB\BSON\Document, or MongoDB\BSON\PackedArray, bool given
+
+Deprecated: Function MongoDB\BSON\fromPHP() is deprecated in %s
 Expected MyDocument::bsonSerialize() to return an array, stdClass, MongoDB\BSON\Document, or MongoDB\BSON\PackedArray, MyDocument given
 ===DONE===

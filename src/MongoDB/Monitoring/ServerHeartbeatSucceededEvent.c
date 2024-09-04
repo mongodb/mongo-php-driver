@@ -124,6 +124,7 @@ static HashTable* php_phongo_serverheartbeatsucceededevent_get_debug_info(phongo
 	ADD_ASSOC_STRING(&retval, "host", intern->host.host);
 	ADD_ASSOC_LONG_EX(&retval, "port", intern->host.port);
 	ADD_ASSOC_BOOL_EX(&retval, "awaited", intern->awaited);
+	ADD_ASSOC_INT64(&retval, "durationMicros", intern->duration_micros);
 
 	if (!php_phongo_bson_to_zval_ex(intern->reply, &reply_state)) {
 		zval_ptr_dtor(&reply_state.zchild);

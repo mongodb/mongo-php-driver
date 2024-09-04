@@ -5,7 +5,7 @@ MongoDB\BSON\DBPointer::jsonSerialize() with json_encode()
 
 require_once __DIR__ . '/../utils/basic.inc';
 
-$doc = MongoDB\BSON\toPHP(MongoDB\BSON\fromJSON('{ "foo": {"$dbPointer": {"$ref": "phongo.test", "$id" : { "$oid" : "5a2e78accd485d55b4050000" }  }} }'));
+$doc = MongoDB\BSON\Document::fromJSON('{ "foo": {"$dbPointer": {"$ref": "phongo.test", "$id" : { "$oid" : "5a2e78accd485d55b4050000" }  }} }')->toPHP();
 $json = json_encode($doc);
 
 echo toJSON(fromPHP($doc)), "\n";
@@ -16,7 +16,7 @@ var_dump(toPHP(fromJSON($json)));
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-{ "foo" : { "$ref" : "phongo.test", "$id" : "5a2e78accd485d55b4050000" } }
+{ "foo" : { "$dbPointer" : { "$ref" : "phongo.test", "$id" : { "$oid" : "5a2e78accd485d55b4050000" } } } }
 {"foo":{"$dbPointer":{"$ref":"phongo.test","$id":{"$oid":"5a2e78accd485d55b4050000"}}}}
 object(stdClass)#%d (%d) {
   ["foo"]=>

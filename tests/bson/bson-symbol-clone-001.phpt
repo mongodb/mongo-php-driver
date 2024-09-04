@@ -8,7 +8,7 @@ MongoDB\BSON\Symbol can be cloned (PHP < 8.2)
 
 require_once __DIR__ . '/../utils/basic.inc';
 
-$test = MongoDB\BSON\toPHP(MongoDB\BSON\fromJSON('{ "symbol": {"$symbol": "test"} }'));
+$test = MongoDB\BSON\Document::fromJSON('{ "symbol": {"$symbol": "test"} }')->toPHP();
 
 $symbol = $test->symbol;
 

@@ -3,13 +3,19 @@
 #
 buildvariants:
   # Debian
+  - name: build-debian12
+    display_name: "Build: Debian 12"
+    tags: ["build", "debian", "x64", "pr", "tag"]
+    run_on: debian12-small
+    tasks:
+      - name: "build-php-openssl3"
+      - name: "build-php-libmongoc"
   - name: build-debian11
     display_name: "Build: Debian 11"
     tags: ["build", "debian", "x64", "pr", "tag"]
     run_on: debian11-small
     tasks:
       - name: "build-all-php"
-      - name: "build-php-libmongoc"
   - name: build-debian10
     display_name: "Build: Debian 10"
     tags: ["build", "debian", "x64", "pr", "tag"]

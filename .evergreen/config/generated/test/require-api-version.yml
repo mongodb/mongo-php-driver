@@ -24,6 +24,18 @@ tasks:
       - func: "run tests"
         vars:
           API_VERSION: "1"
+  - name: "test-requireApiVersion-8.0"
+    tags: [ "standalone", "local", "8.0", "versioned_api", "tag" ]
+    commands:
+      - func: "bootstrap mongo-orchestration"
+        vars:
+          TOPOLOGY: "server"
+          AUTH: "auth"
+          REQUIRE_API_VERSION: "yes"
+          MONGODB_VERSION: "8.0"
+      - func: "run tests"
+        vars:
+          API_VERSION: "1"
   - name: "test-requireApiVersion-7.0"
     tags: [ "standalone", "local", "7.0", "versioned_api", "tag" ]
     commands:

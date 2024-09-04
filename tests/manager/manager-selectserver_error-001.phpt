@@ -4,7 +4,7 @@ MongoDB\Driver\Manager::selectServer() should not issue warning before exception
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
 
-$rp = new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::RP_PRIMARY);
+$rp = new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::PRIMARY);
 
 // Invalid host cannot be resolved
 $manager = create_test_manager('mongodb://example.invalid:27017', ['serverSelectionTimeoutMS' => 1]);

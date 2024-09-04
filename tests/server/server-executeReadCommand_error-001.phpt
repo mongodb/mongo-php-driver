@@ -11,7 +11,7 @@ MongoDB\Driver\Server::executeReadCommand() with invalid options
 require_once __DIR__ . "/../utils/basic.inc";
 
 $manager = create_test_manager();
-$server = $manager->selectServer(new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::RP_SECONDARY));
+$server = $manager->selectServer(new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::SECONDARY));
 
 $command = new MongoDB\Driver\Command(['ping' => 1]);
 

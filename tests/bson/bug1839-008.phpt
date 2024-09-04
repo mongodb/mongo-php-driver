@@ -11,12 +11,12 @@ $rootValue = 'array';
 $documentValue = 'array';
 
 $typemap = ['root' => &$rootValue, 'document' => &$documentValue];
-$bson    = MongoDB\BSON\fromPhp((object) []);
+$bson    = MongoDB\BSON\Document::fromPHP((object) []);
 
 echo "Before:\n";
 debug_zval_dump($typemap);
 
-MongoDB\BSON\toPHP($bson, $typemap);
+$bson->toPHP($typemap);
 
 echo "After:\n";
 debug_zval_dump($typemap);

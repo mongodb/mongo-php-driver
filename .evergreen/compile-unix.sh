@@ -65,19 +65,21 @@ esac
 # Report the current PHP version
 echo "PHP: `php --version | head -n 1`"
 
-# If we're testing a specific version of libmongoc, update submodule sources
+# If we're testing a specific version of libmongoc, update submodule sources and version
 if [ -n "$LIBMONGOC_VERSION" ]; then
+   echo "Finding Python3 binary..."
+   PYTHON="$(bash -c ". $DRIVERS_TOOLS/.evergreen/find-python3.sh && find_python3 2>/dev/null")"
+   echo "Finding Python3 binary... done."
+
    php scripts/update-submodule-sources.php
+
+   # We invoke python manually as it may not be in the path
+   pushd src/libmongoc/
+   $PYTHON build/calc_release_version.py > ../LIBMONGOC_VERSION_CURRENT
+   popd
 fi
 
 phpize
 ./configure --enable-mongodb-developer-flags
-
-# configure relies on version information in libmongoc-version-current, but the target is not available until after calling configure
-# To work around this, run the make target, then run configure again
-if [ -n "$LIBMONGOC_VERSION" ]; then
-   make libmongoc-version-current
-  ./configure --enable-mongodb-developer-flags
-fi
 
 make test TESTS="tests/smoketest.phpt"

@@ -31,7 +31,7 @@ $server2 = $server->executeBulkWrite(NS, $bulk)->getServer();
 var_dump($server == $server2);
 
 
-$rp = new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::RP_SECONDARY);
+$rp = new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::SECONDARY);
 /* Fetch a secondary */
 $server3 = $manager->executeQuery(NS, new MongoDB\Driver\Query(array()), $rp)->getServer();
 

@@ -30,7 +30,7 @@ class Database {
     }
  
     public function query($scheme, $query) {
-        return $this->Database->executeQuery($scheme, $query, new ReadPreference(ReadPreference::RP_PRIMARY));
+        return $this->Database->executeQuery($scheme, $query, new ReadPreference(ReadPreference::PRIMARY));
     }
 }
  

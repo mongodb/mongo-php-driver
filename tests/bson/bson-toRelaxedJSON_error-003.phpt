@@ -21,18 +21,23 @@ $tests = [
 
 foreach ($tests as $bson) {
     echo throws(function() use ($bson) {
-        toRelaxedExtendedJSON($bson);
+        MongoDB\BSON\toRelaxedExtendedJSON($bson);
     }, 'MongoDB\Driver\Exception\UnexpectedValueException'), "\n";
 }
 
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECT--
+--EXPECTF--
+Deprecated: Function MongoDB\BSON\toRelaxedExtendedJSON() is deprecated in %s
 OK: Got MongoDB\Driver\Exception\UnexpectedValueException
 Could not convert BSON document to a JSON string
+
+Deprecated: Function MongoDB\BSON\toRelaxedExtendedJSON() is deprecated in %s
 OK: Got MongoDB\Driver\Exception\UnexpectedValueException
 Could not convert BSON document to a JSON string
+
+Deprecated: Function MongoDB\BSON\toRelaxedExtendedJSON() is deprecated in %s
 OK: Got MongoDB\Driver\Exception\UnexpectedValueException
 Could not convert BSON document to a JSON string
 ===DONE===

@@ -11,8 +11,8 @@ require_once __DIR__ . "/../utils/basic.inc";
 
 $manager = create_test_manager();
 
-$primary   = new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::RP_PRIMARY);
-$secondary = new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::RP_SECONDARY);
+$primary   = new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::PRIMARY);
+$secondary = new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::SECONDARY);
 
 echo "Testing primary:\n";
 $command = new MongoDB\Driver\Command(['ping' => 1]);

@@ -13,14 +13,8 @@ $canonicalBson = hex2bin('18000000136400000000000000000000000000000000FC00');
 $canonicalExtJson = '{"d" : {"$numberDecimal" : "NaN"}}';
 $degenerateExtJson = '{"d" : {"$numberDecimal" : "-NaN"}}';
 
-// Canonical BSON -> Native -> Canonical BSON
-echo bin2hex(fromPHP(toPHP($canonicalBson))), "\n";
-
 // Canonical BSON -> BSON object -> Canonical BSON
 echo bin2hex((string) MongoDB\BSON\Document::fromBSON($canonicalBson)), "\n";
-
-// Canonical BSON -> Canonical extJSON
-echo json_canonicalize(toCanonicalExtendedJSON($canonicalBson)), "\n";
 
 // Canonical BSON -> BSON object -> Canonical extJSON
 echo json_canonicalize(MongoDB\BSON\Document::fromBSON($canonicalBson)->toCanonicalExtendedJSON()), "\n";
@@ -30,7 +24,5 @@ echo json_canonicalize(MongoDB\BSON\Document::fromBSON($canonicalBson)->toCanoni
 <?php exit(0); ?>
 --EXPECT--
 18000000136400000000000000000000000000000000fc00
-18000000136400000000000000000000000000000000fc00
-{"d":{"$numberDecimal":"NaN"}}
 {"d":{"$numberDecimal":"NaN"}}
 ===DONE===

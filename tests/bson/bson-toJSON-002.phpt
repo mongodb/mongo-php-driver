@@ -18,21 +18,56 @@ $tests = [
 ];
 
 foreach ($tests as $value) {
-    $bson = fromPHP($value);
-    echo toJSON($bson), "\n";
+    $bson = MongoDB\BSON\fromPHP($value);
+    echo MongoDB\BSON\toJSON($bson), "\n";
 }
 
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECT--
+--EXPECTF--
+Deprecated: Function MongoDB\BSON\fromPHP() is deprecated in %s
+
+Deprecated: Function MongoDB\BSON\toJSON() is deprecated in %s
 { "_id" : { "$oid" : "56315a7c6118fd1b920270b1" } }
+
+Deprecated: Function MongoDB\BSON\fromPHP() is deprecated in %s
+
+Deprecated: Function MongoDB\BSON\toJSON() is deprecated in %s
 { "binary" : { "$binary" : "Zm9v", "$type" : "00" } }
+
+Deprecated: Function MongoDB\BSON\fromPHP() is deprecated in %s
+
+Deprecated: Function MongoDB\BSON\toJSON() is deprecated in %s
 { "date" : { "$date" : 1445990400000 } }
+
+Deprecated: Function MongoDB\BSON\fromPHP() is deprecated in %s
+
+Deprecated: Function MongoDB\BSON\toJSON() is deprecated in %s
 { "timestamp" : { "$timestamp" : { "t" : 5678, "i" : 1234 } } }
+
+Deprecated: Function MongoDB\BSON\fromPHP() is deprecated in %s
+
+Deprecated: Function MongoDB\BSON\toJSON() is deprecated in %s
 { "regex" : { "$regex" : "pattern", "$options" : "i" } }
+
+Deprecated: Function MongoDB\BSON\fromPHP() is deprecated in %s
+
+Deprecated: Function MongoDB\BSON\toJSON() is deprecated in %s
 { "code" : { "$code" : "function() { return 1; }" } }
+
+Deprecated: Function MongoDB\BSON\fromPHP() is deprecated in %s
+
+Deprecated: Function MongoDB\BSON\toJSON() is deprecated in %s
 { "code_ws" : { "$code" : "function() { return a; }", "$scope" : { "a" : 1 } } }
+
+Deprecated: Function MongoDB\BSON\fromPHP() is deprecated in %s
+
+Deprecated: Function MongoDB\BSON\toJSON() is deprecated in %s
 { "minkey" : { "$minKey" : 1 } }
+
+Deprecated: Function MongoDB\BSON\fromPHP() is deprecated in %s
+
+Deprecated: Function MongoDB\BSON\toJSON() is deprecated in %s
 { "maxkey" : { "$maxKey" : 1 } }
 ===DONE===
