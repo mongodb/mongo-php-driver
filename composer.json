@@ -1,0 +1,72 @@
+{
+  "name": "mongodb/mongodb-extension",
+  "type": "php-ext",
+  "keywords": ["database", "driver", "mongodb", "persistence"],
+  "homepage": "https://jira.mongodb.org/browse/PHPC",
+  "license": "Apache-2.0",
+  "authors": [
+    { "name": "Andreas Braun", "email": "andreas.braun@mongodb.com" },
+    { "name": "Jeremy Mikola", "email": "jmikola@gmail.com" },
+    { "name": "Jérôme Tamarelle", "email": "jerome.tamarelle@mongodb.com" }
+  ],
+  "require": {
+    "php": ">=7.4,<9",
+    "ext-date": "*",
+    "ext-json": "*"
+  },
+  "php-ext": {
+    "extension-name": "ext-mongodb",
+    "configure-options": [
+      {
+        "name": "enable-mongodb-developer-flags",
+        "description": "Enable developer flags",
+        "needs-value": true
+      },
+      {
+        "name": "enable-mongodb-coverage",
+        "description": "Enable code coverage",
+        "needs-value": true
+      },
+      {
+        "name": "with-mongodb-system-libs",
+        "description": "Use system libraries for libbson, libmongoc, and libmongocrypt",
+        "needs-value": true
+      },
+      {
+        "name": "with-mongodb-client-side-encryption",
+        "description": "Enable client-side encryption (auto/yes/no)",
+        "needs-value": true
+      },
+      {
+        "name": "with-mongodb-snappy",
+        "description": "Enable Snappy for compression (auto/yes/no)",
+        "needs-value": true
+      },
+      {
+        "name": "with-mongodb-zlib",
+        "description": "Enable zlib for compression (auto/system/bundled/no)",
+        "needs-value": true
+      },
+      {
+        "name": "with-mongodb-zstd",
+        "description": "Enable zstd for compression (auto/yes/no)",
+        "needs-value": true
+      },
+      {
+        "name": "with-mongodb-sasl",
+        "description": "Enable SASL for Kerberos authentication (auto/cyrus/no)",
+        "needs-value": true
+      },
+      {
+        "name": "with-mongodb-ssl",
+        "description": "Enable crypto and TLS (auto/openssl/libressl/darwin/no)",
+        "needs-value": true
+      },
+      {
+        "name": "enable-mongodb-crypto-system-profile",
+        "description": "Use system crypto profile (OpenSSL only) (yes/no)",
+        "needs-value": true
+      }
+    ]
+  }
+}
