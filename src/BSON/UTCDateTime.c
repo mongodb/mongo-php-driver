@@ -15,6 +15,7 @@
  */
 
 #include <math.h>
+#include <inttypes.h>
 
 #include <php.h>
 #include <zend_smart_str.h>
@@ -213,8 +214,9 @@ static PHP_METHOD(MongoDB_BSON_UTCDateTime, toDateTime)
 {
 	php_phongo_utcdatetime_t* intern;
 	php_date_obj*             datetime_obj;
-	char*                     sec;
+	char*                     sec_str;
 	size_t                    sec_len;
+	int64_t                   sec, usec;
 
 	intern = Z_UTCDATETIME_OBJ_P(getThis());
 
@@ -223,11 +225,23 @@ static PHP_METHOD(MongoDB_BSON_UTCDateTime, toDateTime)
 	object_init_ex(return_value, php_date_get_date_ce());
 	datetime_obj = Z_PHPDATE_P(return_value);
 
-	sec_len = spprintf(&sec, 0, "@%" PRId64, intern->milliseconds / 1000);
-	php_date_initialize(datetime_obj, sec, sec_len, NULL, NULL, 0);
-	efree(sec);
+	sec  = intern->milliseconds / 1000;
+	usec = (llabs(intern->milliseconds) % 1000) * 1000;
+	if (intern->milliseconds < 0 && usec != 0) {
+		/* For dates before the unix epoch, we need to subtract the microseconds from the timestamp.
+		 * Since we can't directly pass microseconds when calling php_date_initialize due to a bug in PHP,
+		 * we manually decrement the timestamp and subtract the number of microseconds from a full seconds
+		 * to store in the us field. */
+		sec--;
+		usec = 1000000 - usec;
+	}
 
-	datetime_obj->time->us = (intern->milliseconds % 1000) * 1000;
+	/* TODO PHP 8.1.7+: microseconds can be included in the format string */
+	sec_len = spprintf(&sec_str, 0, "@%" PRId64, sec);
+	php_date_initialize(datetime_obj, sec_str, sec_len, NULL, NULL, 0);
+	efree(sec_str);
+
+	datetime_obj->time->us = usec;
 }
 
 static PHP_METHOD(MongoDB_BSON_UTCDateTime, jsonSerialize)
