@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 857b13ac89a77f86aaac34eedba8ac836d0ca526 */
+ * Stub hash: 7f5bb1818756794e7ac1d2fe75f1a0f3d8d710a1 */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_Driver_CursorId___construct, 0, 0, 0)
 ZEND_END_ARG_INFO()
@@ -69,7 +69,7 @@ static zend_class_entry *register_class_MongoDB_Driver_CursorId(zend_class_entry
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver", "CursorId", class_MongoDB_Driver_CursorId_methods);
 	class_entry = zend_register_internal_class_ex(&ce, NULL);
-	class_entry->ce_flags |= ZEND_ACC_FINAL|ZEND_ACC_DEPRECATED;
+	class_entry->ce_flags |= ZEND_ACC_FINAL;
 	zend_class_implements(class_entry, 1, class_entry_Serializable);
 
 	return class_entry;
