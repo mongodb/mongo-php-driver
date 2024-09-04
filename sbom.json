@@ -19,22 +19,22 @@
       "version": "1.10.1"
     },
     {
-      "bom-ref": "pkg:github/mongodb/mongo-c-driver@1.27.4",
+      "bom-ref": "pkg:github/mongodb/mongo-c-driver@1.27.6",
       "externalReferences": [
         {
           "type": "distribution",
-          "url": "https://github.com/mongodb/mongo-c-driver/archive/refs/tags/1.27.4.tar.gz"
+          "url": "https://github.com/mongodb/mongo-c-driver/archive/refs/tags/1.27.6.tar.gz"
         },
         {
           "type": "website",
-          "url": "https://github.com/mongodb/mongo-c-driver/tree/1.27.4"
+          "url": "https://github.com/mongodb/mongo-c-driver/tree/1.27.6"
         }
       ],
       "group": "mongodb",
       "name": "mongo-c-driver",
-      "purl": "pkg:github/mongodb/mongo-c-driver@1.27.4",
+      "purl": "pkg:github/mongodb/mongo-c-driver@1.27.6",
       "type": "library",
-      "version": "1.27.4"
+      "version": "1.27.6"
     }
   ],
   "dependencies": [
@@ -42,11 +42,11 @@
       "ref": "pkg:github/mongodb/libmongocrypt@1.10.1"
     },
     {
-      "ref": "pkg:github/mongodb/mongo-c-driver@1.27.4"
+      "ref": "pkg:github/mongodb/mongo-c-driver@1.27.6"
     }
   ],
   "metadata": {
-    "timestamp": "2024-07-03T10:31:03.600797+00:00",
+    "timestamp": "2024-09-04T08:11:03.863506+00:00",
     "tools": [
       {
         "externalReferences": [
@@ -90,7 +90,7 @@
     ]
   },
   "serialNumber": "urn:uuid:acb30d08-ee47-4ff0-b301-d66ef1f54082",
-  "version": 3,
+  "version": 4,
   "$schema": "http://cyclonedx.org/schema/bom-1.5.schema.json",
   "bomFormat": "CycloneDX",
   "specVersion": "1.5"
