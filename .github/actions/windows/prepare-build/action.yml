@@ -31,7 +31,7 @@ runs:
 
     - name: Setup PHP SDK
       id: setup-php
-      uses: php/setup-php-sdk@v0.8
+      uses: php/setup-php-sdk@v0.9
       with:
         version: ${{ inputs.version }}
         arch: ${{ inputs.arch }}
