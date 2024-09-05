@@ -49,11 +49,9 @@ const char* zend_get_object_type_case(const zend_class_entry* ce, zend_bool uppe
 	if (ce->ce_flags & ZEND_ACC_INTERFACE) {
 		return upper_case ? "Interface" : "interface";
 	}
-#if PHP_VERSION_ID >= 80100
 	if (ce->ce_flags & ZEND_ACC_ENUM) {
 		return upper_case ? "Enum" : "enum";
 	}
-#endif /* PHP_VERSION_ID > 80100 */
 	return upper_case ? "Class" : "class";
 }
 #endif /* PHP_VERSION_ID < 80200 */

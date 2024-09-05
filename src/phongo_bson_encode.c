@@ -17,9 +17,7 @@
 #include "bson/bson.h"
 
 #include <php.h>
-#if PHP_VERSION_ID >= 80100
 #include <Zend/zend_enum.h>
-#endif
 #include <Zend/zend_interfaces.h>
 
 #include "php_phongo.h"
@@ -293,7 +291,6 @@ static void php_phongo_bson_append_object(bson_t* bson, php_phongo_field_path* f
 		return;
 	}
 
-#if PHP_VERSION_ID >= 80100
 	if (Z_TYPE_P(object) == IS_OBJECT && Z_OBJCE_P(object)->ce_flags & ZEND_ACC_ENUM) {
 		if (Z_OBJCE_P(object)->enum_backing_type == IS_UNDEF) {
 			char* path_string = php_phongo_field_path_as_string(field_path);
@@ -305,7 +302,6 @@ static void php_phongo_bson_append_object(bson_t* bson, php_phongo_field_path* f
 		php_phongo_bson_append(bson, field_path, flags, key, key_len, zend_enum_fetch_case_value(Z_OBJ_P(object)));
 		return;
 	}
-#endif /* PHP_VERSION_ID >= 80100 */
 
 	{
 		bson_t child;
@@ -520,12 +516,10 @@ static void php_phongo_zval_to_bson_internal(zval* data, php_phongo_field_path* 
 			/* For the error handling that follows, we can safely assume that we
 			 * are at the root level, since php_phongo_bson_append_object would
 			 * have already been called for a non-root level. */
-#if PHP_VERSION_ID >= 80100
 			if (Z_OBJCE_P(data)->ce_flags & ZEND_ACC_ENUM) {
 				phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Enum %s cannot be serialized as a root element", ZSTR_VAL(Z_OBJCE_P(data)->name));
 				return;
 			}
-#endif /* PHP_VERSION_ID >= 80100 */
 
 			if (instanceof_function(Z_OBJCE_P(data), php_phongo_type_ce)) {
 				phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "%s instance %s cannot be serialized as a root element", ZSTR_VAL(php_phongo_type_ce->name), ZSTR_VAL(Z_OBJCE_P(data)->name));

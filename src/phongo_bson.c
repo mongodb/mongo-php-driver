@@ -17,9 +17,7 @@
 #include "bson/bson.h"
 
 #include <php.h>
-#if PHP_VERSION_ID >= 80100
 #include <Zend/zend_enum.h>
-#endif
 #include <Zend/zend_interfaces.h>
 #include <Zend/zend_portability.h>
 
@@ -67,11 +65,9 @@ static inline bool phongo_is_class_instantiatable(const zend_class_entry* ce)
 		return false;
 	}
 
-#if PHP_VERSION_ID >= 80100
 	if (ce->ce_flags & ZEND_ACC_ENUM) {
 		return false;
 	}
-#endif /* PHP_VERSION_ID < 80100 */
 
 	return true;
 }
