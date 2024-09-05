@@ -60,11 +60,6 @@ ZEND_TSRMLS_CACHE_EXTERN()
 
 zend_object_handlers* phongo_get_std_object_handlers(void);
 
-#define PHONGO_CE_FINAL(ce)             \
-	do {                                \
-		ce->ce_flags |= ZEND_ACC_FINAL; \
-	} while (0)
-
 #define PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_temp, intern, props, size) \
 	do {                                                                  \
 		if (is_temp) {                                                    \
