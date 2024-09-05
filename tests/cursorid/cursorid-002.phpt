@@ -21,7 +21,7 @@ $bulk->insert(['_id' => 3]);
 $server->executeBulkWrite(NS, $bulk);
 
 $cursor = $server->executeQuery(NS, new MongoDB\Driver\Query([], ['batchSize' => 2]));
-$cursorId = $cursor->getId(true);
+$cursorId = $cursor->getId();
 
 $command = new MongoDB\Driver\Command([
     'killCursors' => COLLECTION_NAME,
@@ -32,12 +32,13 @@ $command = new MongoDB\Driver\Command([
  * unserializing the result document requires a 64-bit platform. */
 $result = $server->executeCommand(DATABASE_NAME, $command)->toArray()[0];
 printf("Killed %d cursor(s)\n", count($result->cursorsKilled));
-printf("Killed expected cursor: %s\n", $cursorId == $result->cursorsKilled[0] ? 'yes' : 'no');
+printf("Killed expected cursor: %s\n", (string) $cursorId === (string) $result->cursorsKilled[0] ? 'yes' : 'no');
 
 ?>
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
+Deprecated: MongoDB\Driver\Cursor::getId(): The method "MongoDB\Driver\Cursor::getId" will no longer return a "MongoDB\Driver\CursorId" instance in the future. Pass "true" as argument to change to the new behavior and receive a "MongoDB\BSON\Int64" instance instead. in %s
 Killed 1 cursor(s)
 Killed expected cursor: yes
 ===DONE===
