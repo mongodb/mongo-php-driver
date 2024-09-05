@@ -37,7 +37,8 @@ printf("Killed expected cursor: %s\n", (string) $cursorId === (string) $result->
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECT--
+--EXPECTF--
+Deprecated: MongoDB\Driver\Cursor::getId(): The method "MongoDB\Driver\Cursor::getId" will no longer return a "MongoDB\Driver\CursorId" instance in the future. Pass "true" as argument to change to the new behavior and receive a "MongoDB\BSON\Int64" instance instead. in %s
 Killed 1 cursor(s)
 Killed expected cursor: yes
 ===DONE===

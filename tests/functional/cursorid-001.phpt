@@ -20,22 +20,17 @@ $query = new MongoDB\Driver\Query(array(), array(
 
 $cursor = $manager->executeQuery(NS, $query);
 
-$cursorid = $cursor->getId();
-$s1 = (string)$cursorid;
-var_dump(
-    $cursorid,
-    $s1
-);
-var_dump($s1 > 0); 
+$cursorid = $cursor->getId(true);
+var_dump($cursorid);
+var_dump($cursorid != 0);
 
 ?>
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-object(MongoDB\Driver\CursorId)#%d (%d) {
-  ["id"]=>
-  %rint\(\d+\)|string\(\d+\) "\d+"%r
+object(MongoDB\BSON\Int64)#%d (%d) {
+  ["integer"]=>
+  string(%d) "%d"
 }
-string(%d) "%d"
 bool(true)
 ===DONE===
