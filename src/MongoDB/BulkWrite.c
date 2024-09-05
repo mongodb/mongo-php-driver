@@ -667,7 +667,6 @@ void php_phongo_bulkwrite_init_ce(INIT_FUNC_ARGS)
 {
 	php_phongo_bulkwrite_ce                = register_class_MongoDB_Driver_BulkWrite(zend_ce_countable);
 	php_phongo_bulkwrite_ce->create_object = php_phongo_bulkwrite_create_object;
-	PHONGO_CE_DISABLE_SERIALIZATION(php_phongo_bulkwrite_ce);
 
 	memcpy(&php_phongo_handler_bulkwrite, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	php_phongo_handler_bulkwrite.get_debug_info = php_phongo_bulkwrite_get_debug_info;

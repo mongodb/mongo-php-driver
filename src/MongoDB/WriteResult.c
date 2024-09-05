@@ -437,7 +437,6 @@ void php_phongo_writeresult_init_ce(INIT_FUNC_ARGS)
 {
 	php_phongo_writeresult_ce                = register_class_MongoDB_Driver_WriteResult();
 	php_phongo_writeresult_ce->create_object = php_phongo_writeresult_create_object;
-	PHONGO_CE_DISABLE_SERIALIZATION(php_phongo_writeresult_ce);
 
 	memcpy(&php_phongo_handler_writeresult, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	php_phongo_handler_writeresult.get_debug_info = php_phongo_writeresult_get_debug_info;

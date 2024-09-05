@@ -7,6 +7,7 @@
 
 namespace MongoDB\Driver;
 
+/** @not-serializable */
 final class Manager
 {
     final public function __construct(?string $uri = null, ?array $uriOptions = null, ?array $driverOptions = null) {}

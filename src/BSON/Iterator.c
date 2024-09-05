@@ -383,7 +383,6 @@ void php_phongo_iterator_init_ce(INIT_FUNC_ARGS)
 	php_phongo_iterator_ce                = register_class_MongoDB_BSON_Iterator(zend_ce_iterator);
 	php_phongo_iterator_ce->create_object = php_phongo_iterator_create_object;
 	php_phongo_iterator_ce->get_iterator  = php_phongo_iterator_get_iterator;
-	PHONGO_CE_DISABLE_SERIALIZATION(php_phongo_iterator_ce);
 
 	memcpy(&php_phongo_handler_iterator, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	php_phongo_handler_iterator.clone_obj      = php_phongo_iterator_clone_object;

@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 04aa095fba77e78f9a42f36aa2ea1bbad46a953b */
+ * Stub hash: 20071882771d0743a38efc1d7d7d19659cfb637b */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_Driver_Monitoring_TopologyChangedEvent___construct, 0, 0, 0)
 ZEND_END_ARG_INFO()
@@ -33,7 +33,7 @@ static zend_class_entry *register_class_MongoDB_Driver_Monitoring_TopologyChange
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver\\Monitoring", "TopologyChangedEvent", class_MongoDB_Driver_Monitoring_TopologyChangedEvent_methods);
 	class_entry = zend_register_internal_class_ex(&ce, NULL);
-	class_entry->ce_flags |= ZEND_ACC_FINAL;
+	class_entry->ce_flags |= ZEND_ACC_FINAL|ZEND_ACC_NOT_SERIALIZABLE;
 
 	return class_entry;
 }

@@ -7,6 +7,7 @@
 
 namespace MongoDB\Driver\Monitoring;
 
+/** @not-serializable */
 final class CommandFailedEvent
 {
     final private function __construct() {}

@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 7d55bc5c8a71a31dabe9375c567d9b0ab732cf74 */
+ * Stub hash: 1e91ce9db35aa0f3b77c3042099b02ac0fb381a9 */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_Driver_BulkWrite___construct, 0, 0, 0)
 	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, options, IS_ARRAY, 1, "null")
@@ -46,7 +46,7 @@ static zend_class_entry *register_class_MongoDB_Driver_BulkWrite(zend_class_entr
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver", "BulkWrite", class_MongoDB_Driver_BulkWrite_methods);
 	class_entry = zend_register_internal_class_ex(&ce, NULL);
-	class_entry->ce_flags |= ZEND_ACC_FINAL;
+	class_entry->ce_flags |= ZEND_ACC_FINAL|ZEND_ACC_NOT_SERIALIZABLE;
 	zend_class_implements(class_entry, 1, class_entry_Countable);
 
 	return class_entry;

@@ -136,7 +136,6 @@ void php_phongo_writeerror_init_ce(INIT_FUNC_ARGS)
 {
 	php_phongo_writeerror_ce                = register_class_MongoDB_Driver_WriteError();
 	php_phongo_writeerror_ce->create_object = php_phongo_writeerror_create_object;
-	PHONGO_CE_DISABLE_SERIALIZATION(php_phongo_writeerror_ce);
 
 	memcpy(&php_phongo_handler_writeerror, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	php_phongo_handler_writeerror.get_debug_info = php_phongo_writeerror_get_debug_info;

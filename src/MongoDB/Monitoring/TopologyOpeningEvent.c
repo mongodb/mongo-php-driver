@@ -87,7 +87,6 @@ void php_phongo_topologyopeningevent_init_ce(INIT_FUNC_ARGS)
 {
 	php_phongo_topologyopeningevent_ce                = register_class_MongoDB_Driver_Monitoring_TopologyOpeningEvent();
 	php_phongo_topologyopeningevent_ce->create_object = php_phongo_topologyopeningevent_create_object;
-	PHONGO_CE_DISABLE_SERIALIZATION(php_phongo_topologyopeningevent_ce);
 
 	memcpy(&php_phongo_handler_topologyopeningevent, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	php_phongo_handler_topologyopeningevent.get_debug_info = php_phongo_topologyopeningevent_get_debug_info;

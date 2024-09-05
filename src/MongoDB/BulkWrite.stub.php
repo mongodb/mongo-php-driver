@@ -7,6 +7,7 @@
 
 namespace MongoDB\Driver;
 
+/** @not-serializable */
 final class BulkWrite implements \Countable
 {
     final public function __construct(?array $options = null) {}

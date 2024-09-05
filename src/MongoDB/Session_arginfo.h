@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 31ddae94bdfecf3969a8c28154c87487915828ca */
+ * Stub hash: 22e0a387ed21d232c61f805ba258c4781a08a68e */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_Driver_Session___construct, 0, 0, 0)
 ZEND_END_ARG_INFO()
@@ -89,7 +89,7 @@ static zend_class_entry *register_class_MongoDB_Driver_Session(void)
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver", "Session", class_MongoDB_Driver_Session_methods);
 	class_entry = zend_register_internal_class_ex(&ce, NULL);
-	class_entry->ce_flags |= ZEND_ACC_FINAL;
+	class_entry->ce_flags |= ZEND_ACC_FINAL|ZEND_ACC_NOT_SERIALIZABLE;
 
 	zval const_TRANSACTION_NONE_value;
 	zend_string *const_TRANSACTION_NONE_value_str = zend_string_init(PHONGO_TRANSACTION_NONE, strlen(PHONGO_TRANSACTION_NONE), 1);

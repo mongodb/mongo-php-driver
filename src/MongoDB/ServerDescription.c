@@ -271,7 +271,6 @@ void php_phongo_serverdescription_init_ce(INIT_FUNC_ARGS)
 {
 	php_phongo_serverdescription_ce                = register_class_MongoDB_Driver_ServerDescription();
 	php_phongo_serverdescription_ce->create_object = php_phongo_serverdescription_create_object;
-	PHONGO_CE_DISABLE_SERIALIZATION(php_phongo_serverdescription_ce);
 
 	memcpy(&php_phongo_handler_serverdescription, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	php_phongo_handler_serverdescription.get_debug_info = php_phongo_serverdescription_get_debug_info;

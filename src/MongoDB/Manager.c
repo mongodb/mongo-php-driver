@@ -901,7 +901,6 @@ void php_phongo_manager_init_ce(INIT_FUNC_ARGS)
 {
 	php_phongo_manager_ce                = register_class_MongoDB_Driver_Manager();
 	php_phongo_manager_ce->create_object = php_phongo_manager_create_object;
-	PHONGO_CE_DISABLE_SERIALIZATION(php_phongo_manager_ce);
 
 	memcpy(&php_phongo_handler_manager, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	php_phongo_handler_manager.get_debug_info = php_phongo_manager_get_debug_info;

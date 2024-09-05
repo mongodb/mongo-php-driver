@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 6fd7c6597ad8e67b399cf4e7c41bb6cc5e6666d6 */
+ * Stub hash: a66722614a1820947312559a1e57991c488487b7 */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_Driver_Monitoring_CommandFailedEvent___construct, 0, 0, 0)
 ZEND_END_ARG_INFO()
@@ -66,7 +66,7 @@ static zend_class_entry *register_class_MongoDB_Driver_Monitoring_CommandFailedE
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver\\Monitoring", "CommandFailedEvent", class_MongoDB_Driver_Monitoring_CommandFailedEvent_methods);
 	class_entry = zend_register_internal_class_ex(&ce, NULL);
-	class_entry->ce_flags |= ZEND_ACC_FINAL;
+	class_entry->ce_flags |= ZEND_ACC_FINAL|ZEND_ACC_NOT_SERIALIZABLE;
 
 	return class_entry;
 }

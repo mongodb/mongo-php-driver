@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 6ade5e98c33aa0cb68c2a2d90b8acd6f2194c2d5 */
+ * Stub hash: ce2904be644a230dc05dc1427f74c3717035eb06 */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_Driver_Manager___construct, 0, 0, 0)
 	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, uri, IS_STRING, 1, "null")
@@ -115,7 +115,7 @@ static zend_class_entry *register_class_MongoDB_Driver_Manager(void)
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver", "Manager", class_MongoDB_Driver_Manager_methods);
 	class_entry = zend_register_internal_class_ex(&ce, NULL);
-	class_entry->ce_flags |= ZEND_ACC_FINAL;
+	class_entry->ce_flags |= ZEND_ACC_FINAL|ZEND_ACC_NOT_SERIALIZABLE;
 
 	return class_entry;
 }

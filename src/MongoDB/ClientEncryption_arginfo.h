@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 293b2f11ffa79d3bf583e2c0dcfe835009a0caea */
+ * Stub hash: 29a1460703051cab24abd6b42228c90928e18049 */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_Driver_ClientEncryption___construct, 0, 0, 1)
 	ZEND_ARG_TYPE_INFO(0, options, IS_ARRAY, 0)
@@ -88,7 +88,7 @@ static zend_class_entry *register_class_MongoDB_Driver_ClientEncryption(void)
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver", "ClientEncryption", class_MongoDB_Driver_ClientEncryption_methods);
 	class_entry = zend_register_internal_class_ex(&ce, NULL);
-	class_entry->ce_flags |= ZEND_ACC_FINAL;
+	class_entry->ce_flags |= ZEND_ACC_FINAL|ZEND_ACC_NOT_SERIALIZABLE;
 
 	zval const_AEAD_AES_256_CBC_HMAC_SHA_512_DETERMINISTIC_value;
 	zend_string *const_AEAD_AES_256_CBC_HMAC_SHA_512_DETERMINISTIC_value_str = zend_string_init(MONGOC_AEAD_AES_256_CBC_HMAC_SHA_512_DETERMINISTIC, strlen(MONGOC_AEAD_AES_256_CBC_HMAC_SHA_512_DETERMINISTIC), 1);

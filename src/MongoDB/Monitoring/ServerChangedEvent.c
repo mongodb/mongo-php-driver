@@ -154,7 +154,6 @@ void php_phongo_serverchangedevent_init_ce(INIT_FUNC_ARGS)
 {
 	php_phongo_serverchangedevent_ce                = register_class_MongoDB_Driver_Monitoring_ServerChangedEvent();
 	php_phongo_serverchangedevent_ce->create_object = php_phongo_serverchangedevent_create_object;
-	PHONGO_CE_DISABLE_SERIALIZATION(php_phongo_serverchangedevent_ce);
 
 	memcpy(&php_phongo_handler_serverchangedevent, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	php_phongo_handler_serverchangedevent.get_debug_info = php_phongo_serverchangedevent_get_debug_info;

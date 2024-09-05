@@ -172,7 +172,6 @@ void php_phongo_command_init_ce(INIT_FUNC_ARGS)
 {
 	php_phongo_command_ce                = register_class_MongoDB_Driver_Command();
 	php_phongo_command_ce->create_object = php_phongo_command_create_object;
-	PHONGO_CE_DISABLE_SERIALIZATION(php_phongo_command_ce);
 
 	memcpy(&php_phongo_handler_command, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	php_phongo_handler_command.get_debug_info = php_phongo_command_get_debug_info;

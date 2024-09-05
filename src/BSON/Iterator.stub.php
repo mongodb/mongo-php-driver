@@ -7,6 +7,7 @@
 
 namespace MongoDB\BSON;
 
+/** @not-serializable */
 final class Iterator implements \Iterator
 {
     final private function __construct() {}

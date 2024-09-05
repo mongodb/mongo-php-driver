@@ -258,7 +258,6 @@ void php_phongo_commandstartedevent_init_ce(INIT_FUNC_ARGS)
 {
 	php_phongo_commandstartedevent_ce                = register_class_MongoDB_Driver_Monitoring_CommandStartedEvent();
 	php_phongo_commandstartedevent_ce->create_object = php_phongo_commandstartedevent_create_object;
-	PHONGO_CE_DISABLE_SERIALIZATION(php_phongo_commandstartedevent_ce);
 
 	memcpy(&php_phongo_handler_commandstartedevent, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	php_phongo_handler_commandstartedevent.get_debug_info = php_phongo_commandstartedevent_get_debug_info;
