@@ -25,7 +25,7 @@ $encryptOpts = [
     'algorithm' => MongoDB\Driver\ClientEncryption::ALGORITHM_RANGE,
     'queryType' => MongoDB\Driver\ClientEncryption::QUERY_TYPE_RANGE,
     'contentionFactor' => 0,
-    'rangeOpts' => ['min' => 0, 'max' => 200, 'sparsity' => 1, 'trimFactor' => 1],
+    'rangeOpts' => ['min' => 0, 'max' => 200],
 ];
 
 echo throws(function() use ($clientEncryption, $encryptOpts) {
