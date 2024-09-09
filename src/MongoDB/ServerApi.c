@@ -139,14 +139,14 @@ static PHP_METHOD(MongoDB_Driver_ServerApi, __set_state)
 	php_phongo_serverapi_init_from_hash(intern, props);
 }
 
-static HashTable* php_phongo_serverapi_get_properties_hash(phongo_compat_object_handler_type* object, bool is_temp, bool include_null)
+static HashTable* php_phongo_serverapi_get_properties_hash(zend_object* object, bool is_temp, bool include_null)
 {
 	php_phongo_serverapi_t* intern;
 	HashTable*              props;
 	zval                    version, strict, deprecation_errors;
 	bool                    is_set;
 
-	intern = Z_OBJ_SERVERAPI(PHONGO_COMPAT_GET_OBJ(object));
+	intern = Z_OBJ_SERVERAPI(object);
 
 	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_temp, intern, props, 1);
 
@@ -182,7 +182,7 @@ static PHP_METHOD(MongoDB_Driver_ServerApi, bsonSerialize)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
 
-	ZVAL_ARR(return_value, php_phongo_serverapi_get_properties_hash(PHONGO_COMPAT_OBJ_P(getThis()), true, false));
+	ZVAL_ARR(return_value, php_phongo_serverapi_get_properties_hash(Z_OBJ_P(getThis()), true, false));
 	convert_to_object(return_value);
 }
 
@@ -260,7 +260,7 @@ static PHP_METHOD(MongoDB_Driver_ServerApi, __serialize)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
 
-	RETURN_ARR(php_phongo_serverapi_get_properties_hash(PHONGO_COMPAT_OBJ_P(getThis()), true, true));
+	RETURN_ARR(php_phongo_serverapi_get_properties_hash(Z_OBJ_P(getThis()), true, true));
 }
 
 static PHP_METHOD(MongoDB_Driver_ServerApi, __unserialize)
@@ -305,13 +305,13 @@ static zend_object* php_phongo_serverapi_create_object(zend_class_entry* class_t
 	return &intern->std;
 }
 
-static HashTable* php_phongo_serverapi_get_debug_info(phongo_compat_object_handler_type* object, int* is_temp)
+static HashTable* php_phongo_serverapi_get_debug_info(zend_object* object, int* is_temp)
 {
 	*is_temp = 1;
 	return php_phongo_serverapi_get_properties_hash(object, true, true);
 }
 
-static HashTable* php_phongo_serverapi_get_properties(phongo_compat_object_handler_type* object)
+static HashTable* php_phongo_serverapi_get_properties(zend_object* object)
 {
 	return php_phongo_serverapi_get_properties_hash(object, false, true);
 }

@@ -55,13 +55,13 @@ static bool php_phongo_decimal128_init_from_hash(php_phongo_decimal128_t* intern
 	return false;
 }
 
-static HashTable* php_phongo_decimal128_get_properties_hash(phongo_compat_object_handler_type* object, bool is_temp)
+static HashTable* php_phongo_decimal128_get_properties_hash(zend_object* object, bool is_temp)
 {
 	php_phongo_decimal128_t* intern;
 	HashTable*               props;
 	char                     outbuf[BSON_DECIMAL128_STRING] = "";
 
-	intern = Z_OBJ_DECIMAL128(PHONGO_COMPAT_GET_OBJ(object));
+	intern = Z_OBJ_DECIMAL128(object);
 
 	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_temp, intern, props, 1);
 
@@ -202,7 +202,7 @@ static PHP_METHOD(MongoDB_BSON_Decimal128, __serialize)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
 
-	RETURN_ARR(php_phongo_decimal128_get_properties_hash(PHONGO_COMPAT_OBJ_P(getThis()), true));
+	RETURN_ARR(php_phongo_decimal128_get_properties_hash(Z_OBJ_P(getThis()), true));
 }
 
 static PHP_METHOD(MongoDB_BSON_Decimal128, __unserialize)
@@ -243,14 +243,14 @@ static zend_object* php_phongo_decimal128_create_object(zend_class_entry* class_
 	return &intern->std;
 }
 
-static zend_object* php_phongo_decimal128_clone_object(phongo_compat_object_handler_type* object)
+static zend_object* php_phongo_decimal128_clone_object(zend_object* object)
 {
 	php_phongo_decimal128_t* intern;
 	php_phongo_decimal128_t* new_intern;
 	zend_object*             new_object;
 
-	intern     = Z_OBJ_DECIMAL128(PHONGO_COMPAT_GET_OBJ(object));
-	new_object = php_phongo_decimal128_create_object(PHONGO_COMPAT_GET_OBJ(object)->ce);
+	intern     = Z_OBJ_DECIMAL128(object);
+	new_object = php_phongo_decimal128_create_object(object->ce);
 
 	new_intern = Z_OBJ_DECIMAL128(new_object);
 	zend_objects_clone_members(&new_intern->std, &intern->std);
@@ -262,25 +262,21 @@ static zend_object* php_phongo_decimal128_clone_object(phongo_compat_object_hand
 	return new_object;
 }
 
-static HashTable* php_phongo_decimal128_get_debug_info(phongo_compat_object_handler_type* object, int* is_temp)
+static HashTable* php_phongo_decimal128_get_debug_info(zend_object* object, int* is_temp)
 {
 	*is_temp = 1;
 	return php_phongo_decimal128_get_properties_hash(object, true);
 }
 
-static HashTable* php_phongo_decimal128_get_properties(phongo_compat_object_handler_type* object)
+static HashTable* php_phongo_decimal128_get_properties(zend_object* object)
 {
 	return php_phongo_decimal128_get_properties_hash(object, false);
 }
 
 void php_phongo_decimal128_init_ce(INIT_FUNC_ARGS)
 {
-	php_phongo_decimal128_ce                = register_class_MongoDB_BSON_Decimal128(php_phongo_decimal128_interface_ce, php_phongo_json_serializable_ce, php_phongo_type_ce, zend_ce_serializable);
+	php_phongo_decimal128_ce                = register_class_MongoDB_BSON_Decimal128(php_phongo_decimal128_interface_ce, php_phongo_json_serializable_ce, php_phongo_type_ce, zend_ce_serializable, zend_ce_stringable);
 	php_phongo_decimal128_ce->create_object = php_phongo_decimal128_create_object;
-
-#if PHP_VERSION_ID >= 80000
-	zend_class_implements(php_phongo_decimal128_ce, 1, zend_ce_stringable);
-#endif
 
 	memcpy(&php_phongo_handler_decimal128, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	php_phongo_handler_decimal128.clone_obj      = php_phongo_decimal128_clone_object;

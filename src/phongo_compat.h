@@ -65,31 +65,6 @@
 #define PHONGO_BREAK_INTENTIONALLY_MISSING
 #endif
 
-#if PHP_VERSION_ID >= 80000
-#define PHONGO_COMPAT_OBJ_P(val) Z_OBJ_P(val)
-#define phongo_compat_object_handler_type zend_object
-#define PHONGO_COMPAT_GET_OBJ(val) val
-#define PHONGO_COMPAT_SET_COMPARE_OBJECTS_HANDLER(type) php_phongo_handler_##type.compare = php_phongo_##type##_compare_objects;
-#define phongo_compat_property_accessor_name_type zend_string
-#define PHONGO_COMPAT_PROPERTY_ACCESSOR_NAME_TO_STRING(value, key, len) \
-	do {                                                                \
-		(key) = ZSTR_VAL((value));                                      \
-		(len) = ZSTR_LEN((value));                                      \
-	} while (0)
-#else /* PHP_VERSION_ID < 80000 */
-#define PHONGO_COMPAT_OBJ_P(val) val
-#define phongo_compat_object_handler_type zval
-#define PHONGO_COMPAT_GET_OBJ(val) Z_OBJ_P(val)
-#define PHONGO_COMPAT_SET_COMPARE_OBJECTS_HANDLER(type) php_phongo_handler_##type.compare_objects = php_phongo_##type##_compare_objects;
-#define ZEND_COMPARE_OBJECTS_FALLBACK(o1, o2)
-#define phongo_compat_property_accessor_name_type zval
-#define PHONGO_COMPAT_PROPERTY_ACCESSOR_NAME_TO_STRING(value, key, len) \
-	do {                                                                \
-		(key) = Z_STRVAL_P((value));                                    \
-		(len) = Z_STRLEN_P((value));                                    \
-	} while (0)
-#endif /* PHP_VERSION_ID >= 80000 */
-
 #if SIZEOF_ZEND_LONG == 8
 #define PHONGO_LONG_FORMAT PRId64
 #elif SIZEOF_ZEND_LONG == 4
@@ -233,70 +208,6 @@
 	} while (0)
 #endif
 
-/* Z_PARAM_*_OR_NULL macros were introduced in PHP 8.0.
- * See: https://github.com/php/php-src/commit/e93d20ad7ebc1075ef1248a663935ee5ea69f1cd */
-#ifndef Z_PARAM_OBJECT_OF_CLASS_OR_NULL
-#define Z_PARAM_OBJECT_OF_CLASS_OR_NULL(dest, _ce) \
-	Z_PARAM_OBJECT_OF_CLASS_EX(dest, _ce, 1, 0)
-#endif
-#ifndef Z_PARAM_STRING_OR_NULL
-#define Z_PARAM_STRING_OR_NULL(dest, dest_len) \
-	Z_PARAM_STRING_EX(dest, dest_len, 1, 0)
-#endif
-#ifndef Z_PARAM_ARRAY_OR_NULL
-#define Z_PARAM_ARRAY_OR_NULL(dest) \
-	Z_PARAM_ARRAY_EX(dest, 1, 0)
-#endif
-#ifndef Z_PARAM_ZVAL_OR_NULL
-#define Z_PARAM_ZVAL_OR_NULL(dest) \
-	Z_PARAM_ZVAL_EX(dest, 1, 0)
-#endif
-
-/* ZEND_ABSTRACT_ME_WITH_FLAGS was introduced in PHP 8.0. */
-#ifndef ZEND_ABSTRACT_ME_WITH_FLAGS
-#define ZEND_ABSTRACT_ME_WITH_FLAGS(classname, name, arg_info, flags) ZEND_RAW_FENTRY(#name, NULL, arg_info, flags)
-#endif
-
-/* ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE was introduced in PHP 8.0. */
-#ifndef ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE
-#define ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(pass_by_ref, name, type_hint, allow_null, default_value) \
-	ZEND_ARG_TYPE_INFO(pass_by_ref, name, type_hint, allow_null)
-#endif
-
-/* ZEND_ARG_INFO_WITH_DEFAULT_VALUE was introduced in PHP 8.0. */
-#ifndef ZEND_ARG_INFO_WITH_DEFAULT_VALUE
-#define ZEND_ARG_INFO_WITH_DEFAULT_VALUE(pass_by_ref, name, default_value) \
-	ZEND_ARG_INFO(pass_by_ref, name)
-#endif
-
-/* ZEND_ARG_OBJ_INFO_WITH_DEFAULT_VALUE was introduced in PHP 8.0. */
-#ifndef ZEND_ARG_OBJ_INFO_WITH_DEFAULT_VALUE
-#define ZEND_ARG_OBJ_INFO_WITH_DEFAULT_VALUE(pass_by_ref, name, classname, allow_null, default_value) \
-	ZEND_ARG_OBJ_INFO(pass_by_ref, name, classname, allow_null)
-#endif
-
-/* The ZEND_BEGIN_ARG_WITH_TENTATIVE_* set of macros was introduced in PHP 8.1 */
-#ifndef ZEND_BEGIN_ARG_WITH_TENTATIVE_RETURN_TYPE_INFO_EX
-#define ZEND_BEGIN_ARG_WITH_TENTATIVE_RETURN_TYPE_INFO_EX(name, return_reference, required_num_args, type, allow_null) \
-	ZEND_BEGIN_ARG_INFO_EX(name, 0, return_reference, required_num_args)
-#endif
-#ifndef ZEND_BEGIN_ARG_WITH_TENTATIVE_RETURN_TYPE_INFO_EX
-#define ZEND_BEGIN_ARG_WITH_TENTATIVE_RETURN_TYPE_INFO_EX(name, return_reference, required_num_args, type, allow_null) \
-	ZEND_BEGIN_ARG_INFO_EX(name, 0, return_reference, required_num_args)
-#endif
-#ifndef ZEND_BEGIN_ARG_WITH_TENTATIVE_RETURN_TYPE_MASK_EX
-#define ZEND_BEGIN_ARG_WITH_TENTATIVE_RETURN_TYPE_MASK_EX(name, return_reference, required_num_args, type) \
-	ZEND_BEGIN_ARG_INFO_EX(name, 0, return_reference, required_num_args)
-#endif
-#ifndef ZEND_BEGIN_ARG_WITH_TENTATIVE_RETURN_OBJ_INFO_EX
-#define ZEND_BEGIN_ARG_WITH_TENTATIVE_RETURN_OBJ_INFO_EX(name, return_reference, required_num_args, class_name, allow_null) \
-	ZEND_BEGIN_ARG_INFO_EX(name, 0, return_reference, required_num_args)
-#endif
-#ifndef ZEND_BEGIN_ARG_WITH_TENTATIVE_RETURN_OBJ_TYPE_MASK_EX
-#define ZEND_BEGIN_ARG_WITH_TENTATIVE_RETURN_OBJ_TYPE_MASK_EX(name, return_reference, required_num_args, class_name, type) \
-	ZEND_BEGIN_ARG_INFO_EX(name, 0, return_reference, required_num_args)
-#endif
-
 zend_bool php_phongo_zend_hash_apply_protection_begin(HashTable* ht);
 zend_bool php_phongo_zend_hash_apply_protection_end(HashTable* ht);
 
@@ -306,56 +217,5 @@ const char* zend_get_object_type_case(const zend_class_entry* ce, zend_bool uppe
 #define zend_get_object_type(ce) zend_get_object_type_case((ce), false)
 #define zend_get_object_type_uc(ce) zend_get_object_type_case((ce), true)
 #endif /* PHP_VERSION_ID < 80200 */
-
-#if PHP_VERSION_ID < 80100
-zend_bool zend_array_is_list(zend_array* array);
-#endif /* PHP_VERSION_ID < 80100 */
-
-#if PHP_VERSION_ID < 80000
-typedef ZEND_RESULT_CODE zend_result;
-#endif
-
-/* get_gc iterator handler was added in PHP 8.0 */
-#if PHP_VERSION_ID >= 80000
-#define PHONGO_ITERATOR_FUNCS(dtor, valid, get_current_data, get_current_key, move_forward, rewind, invalidate_current, get_gc) \
-	{                                                                                                                           \
-		(dtor),                                                                                                                 \
-			(valid),                                                                                                            \
-			(get_current_data),                                                                                                 \
-			(get_current_key),                                                                                                  \
-			(move_forward),                                                                                                     \
-			(rewind),                                                                                                           \
-			(invalidate_current),                                                                                               \
-			(get_gc),                                                                                                           \
-	}
-#else /* PHP_VERSION_ID < 80000 */
-#define PHONGO_ITERATOR_FUNCS(dtor, valid, get_current_data, get_current_key, move_forward, rewind, invalidate_current, get_gc) \
-	{                                                                                                                           \
-		(dtor),                                                                                                                 \
-			(valid),                                                                                                            \
-			(get_current_data),                                                                                                 \
-			(get_current_key),                                                                                                  \
-			(move_forward),                                                                                                     \
-			(rewind),                                                                                                           \
-			(invalidate_current),                                                                                               \
-	}
-#endif /* PHP_VERSION_ID >= 80000 */
-
-/* ZVAL_OBJ_COPY was added in PHP 8.0 */
-#ifndef ZVAL_OBJ_COPY
-#define ZVAL_OBJ_COPY(z, o)                \
-	do {                                   \
-		zval*        __z = (z);            \
-		zend_object* __o = (o);            \
-		GC_ADDREF(__o);                    \
-		Z_OBJ_P(__z)       = __o;          \
-		Z_TYPE_INFO_P(__z) = IS_OBJECT_EX; \
-	} while (0)
-#endif
-
-/* zend_string_concat functions were introduced in PHP 8.0 */
-#if PHP_VERSION_ID < 80000
-zend_string* zend_string_concat3(const char* str1, size_t str1_len, const char* str2, size_t str2_len, const char* str3, size_t str3_len);
-#endif /* PHP_VERSION_ID < 80000 */
 
 #endif /* PHONGO_COMPAT_H */

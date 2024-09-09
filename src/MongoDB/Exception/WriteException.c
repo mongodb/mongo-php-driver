@@ -30,7 +30,7 @@ static PHP_METHOD(MongoDB_Driver_Exception_WriteException, getWriteResult)
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
-	writeresult = zend_read_property(php_phongo_writeexception_ce, PHONGO_COMPAT_OBJ_P(getThis()), ZEND_STRL("writeResult"), 0, &rv);
+	writeresult = zend_read_property(php_phongo_writeexception_ce, Z_OBJ_P(getThis()), ZEND_STRL("writeResult"), 0, &rv);
 
 	RETURN_ZVAL(writeresult, 1, 0);
 }

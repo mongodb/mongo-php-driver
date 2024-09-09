@@ -1,8 +1,5 @@
 --TEST--
-MongoDB\BSON\Int64 operation errors (PHP 8)
---SKIPIF--
-<?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
-<?php skip_if_php_version('<', '8.0'); ?>
+MongoDB\BSON\Int64 operation errors
 --FILE--
 <?php
 

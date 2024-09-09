@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: ac66509ce4aa08f433f90d4cddd406172995531e */
+ * Stub hash: ba0a81f27f99579e332ef8d3a3a477b3ebe1ec31 */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_Driver_Monitoring_ServerHeartbeatFailedEvent___construct, 0, 0, 0)
 ZEND_END_ARG_INFO()
@@ -43,7 +43,7 @@ static zend_class_entry *register_class_MongoDB_Driver_Monitoring_ServerHeartbea
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver\\Monitoring", "ServerHeartbeatFailedEvent", class_MongoDB_Driver_Monitoring_ServerHeartbeatFailedEvent_methods);
 	class_entry = zend_register_internal_class_ex(&ce, NULL);
-	class_entry->ce_flags |= ZEND_ACC_FINAL;
+	class_entry->ce_flags |= ZEND_ACC_FINAL|ZEND_ACC_NOT_SERIALIZABLE;
 
 	return class_entry;
 }
