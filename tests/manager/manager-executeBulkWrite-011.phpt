@@ -57,7 +57,7 @@ var_dump(iterator_to_array($cursor));
 OK: Got MongoDB\Driver\Exception\BulkWriteException
 Document failed validation
 OK: Got MongoDB\Driver\Exception\BulkWriteException
-Document failed validation
+%SDocument failed validation
 array(3) {
   [0]=>
   object(stdClass)#%d (2) {
