@@ -1,5 +1,6 @@
 {
   "name": "mongodb/mongodb-extension",
+  "description": "MongoDB driver extension",
   "type": "php-ext",
   "keywords": ["database", "driver", "mongodb", "persistence"],
   "homepage": "https://jira.mongodb.org/browse/PHPC",
