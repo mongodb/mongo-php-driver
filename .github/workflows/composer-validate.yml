@@ -1,0 +1,35 @@
+name: "Check validity of composer.json"
+
+on:
+  pull_request:
+    branches:
+      - "v*.*"
+      - "master"
+      - "feature/*"
+  push:
+    branches:
+      - "v*.*"
+      - "master"
+      - "feature/*"
+
+env:
+  PHP_VERSION: "8.2"
+
+jobs:
+  composer-validate:
+    name: "Check validity of composer.json"
+    runs-on: "ubuntu-24.04"
+
+    steps:
+      - name: "Checkout"
+        uses: "actions/checkout@v4"
+        with:
+          submodules: true
+
+      - name: "Install PHP"
+        uses: "shivammathur/setup-php@v2"
+        with:
+          php-version: "${{ env.PHP_VERSION }}"
+
+      - name: "Run composer validate"
+        run: "composer validate --strict"
