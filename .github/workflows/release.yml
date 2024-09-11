@@ -116,7 +116,7 @@ jobs:
         with:
           ref: ${{ github.ref_name }}
           branchNamePattern: 'v<major>.<minor>'
-          fallbackBranch: 'master'
+          devBranchNamePattern: 'v<major>.x'
 
       - name: "Manually merge up changes"
         if: ${{ steps.get-next-branch.outputs.hasNextBranch }}
