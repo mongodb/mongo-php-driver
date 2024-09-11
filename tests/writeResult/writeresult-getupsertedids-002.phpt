@@ -25,7 +25,7 @@ $tests = [
     new MongoDB\BSON\MinKey,
     new MongoDB\BSON\ObjectId('586c18d86118fd6c9012dec1'),
     new MongoDB\BSON\Timestamp(1234, 5678),
-    new MongoDB\BSON\UTCDateTime('1483479256924'),
+    new MongoDB\BSON\UTCDateTime(new MongoDB\BSON\Int64('1483479256924')),
 ];
 
 $manager = create_test_manager();

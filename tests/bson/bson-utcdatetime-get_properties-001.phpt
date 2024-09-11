@@ -3,7 +3,7 @@ MongoDB\BSON\UTCDateTime get_properties handler (get_object_vars)
 --FILE--
 <?php
 
-$utcdatetime = new MongoDB\BSON\UTCDateTime('1416445411987');
+$utcdatetime = new MongoDB\BSON\UTCDateTime(new MongoDB\BSON\Int64('1416445411987'));
 
 var_dump(get_object_vars($utcdatetime));
 

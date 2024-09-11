@@ -4,9 +4,9 @@ MongoDB\BSON\UTCDateTime serialization (__serialize and __unserialize)
 <?php
 
 $tests = [
-    '0',
-    '-1416445411987',
-    '1416445411987',
+    0,
+    new MongoDB\BSON\Int64('-1416445411987'),
+    new MongoDB\BSON\Int64('1416445411987'),
 ];
 
 foreach ($tests as $milliseconds) {

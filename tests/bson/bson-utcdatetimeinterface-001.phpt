@@ -3,7 +3,7 @@ MongoDB\BSON\UTCDateTimeInterface is implemented by MongoDB\BSON\UTCDateTime
 --FILE--
 <?php
 
-$date = new MongoDB\BSON\UTCDateTime('1416445411987');
+$date = new MongoDB\BSON\UTCDateTime(new MongoDB\BSON\Int64('1416445411987'));
 var_dump($date instanceof MongoDB\BSON\UTCDateTimeInterface);
 
 ?>

@@ -12,8 +12,8 @@ class MyDocument {
 }
 
 $tests = array(
-    array(new MongoDB\BSON\UTCDateTime('1416445411987')),
-    array('x' => new MongoDB\BSON\UTCDateTime('1416445411987')),
+    array(new MongoDB\BSON\UTCDateTime(new MongoDB\BSON\Int64('1416445411987'))),
+    array('x' => new MongoDB\BSON\UTCDateTime(new MongoDB\BSON\Int64('1416445411987'))),
     array(new MyDocument),
     array('x' => new MyDocument),
 );

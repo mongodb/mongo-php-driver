@@ -11,7 +11,7 @@ require_once __DIR__ . "/../utils/basic.inc";
 
 $manager = create_test_manager();
 
-$utcdatetime = new MongoDB\BSON\UTCDateTime("1416445411987");
+$utcdatetime = new MongoDB\BSON\UTCDateTime(2147483647);
 
 $bulk = new MongoDB\Driver\BulkWrite();
 $bulk->insert(array('_id' => 1, 'x' => $utcdatetime));
@@ -38,12 +38,12 @@ foreach($tests as $n => $test) {
 ===DONE===
 <?php exit(0); ?>
 --EXPECT--
-Test#0 { "0" : { "$date" : { "$numberLong" : "1416445411987" } } }
-string(59) "{ "0" : { "$date" : { "$numberLong" : "1416445411987" } } }"
-string(59) "{ "0" : { "$date" : { "$numberLong" : "1416445411987" } } }"
+Test#0 { "0" : { "$date" : { "$numberLong" : "2147483647" } } }
+string(56) "{ "0" : { "$date" : { "$numberLong" : "2147483647" } } }"
+string(56) "{ "0" : { "$date" : { "$numberLong" : "2147483647" } } }"
 bool(true)
-Test#1 { "0" : { "$date" : { "$numberLong" : "1416445411987" } } }
-string(59) "{ "0" : { "$date" : { "$numberLong" : "1416445411987" } } }"
-string(59) "{ "0" : { "$date" : { "$numberLong" : "1416445411987" } } }"
+Test#1 { "0" : { "$date" : { "$numberLong" : "2147483647" } } }
+string(56) "{ "0" : { "$date" : { "$numberLong" : "2147483647" } } }"
+string(56) "{ "0" : { "$date" : { "$numberLong" : "2147483647" } } }"
 bool(true)
 ===DONE===
