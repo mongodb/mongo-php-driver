@@ -36,8 +36,7 @@ $manager->executeCommand('admin', $command);
 
 ?>
 --EXPECTF--
-
-Deprecated: Method MongoDB\Driver\Monitoring\CommandSucceededEvent::getServer() is deprecated in %s
+Deprecated: %r(Function|Method)%r MongoDB\Driver\Monitoring\CommandSucceededEvent::getServer() is deprecated in %s
 object(MongoDB\Driver\Server)#%d (%d) {
   %A
 }
