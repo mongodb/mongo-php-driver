@@ -183,8 +183,10 @@ static PHP_METHOD(MongoDB_BSON_UTCDateTime, __construct)
 		case IS_OBJECT:
 			if (instanceof_function(Z_OBJCE_P(milliseconds), php_date_get_interface_ce())) {
 				php_phongo_utcdatetime_init_from_date(intern, Z_PHPDATE_P(milliseconds));
+			} else if (instanceof_function(Z_OBJCE_P(milliseconds), php_phongo_int64_ce)) {
+				php_phongo_utcdatetime_init(intern, Z_INT64_OBJ_P(milliseconds)->integer);
 			} else {
-				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected instance of DateTimeInterface, %s given", ZSTR_VAL(Z_OBJCE_P(milliseconds)->name));
+				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected instance of %s or %s, %s given", ZSTR_VAL(php_date_get_interface_ce()->name), ZSTR_VAL(php_phongo_int64_ce->name), ZSTR_VAL(Z_OBJCE_P(milliseconds)->name));
 			}
 			return;
 
