@@ -179,36 +179,36 @@ static PHP_METHOD(MongoDB_BSON_UTCDateTime, __construct)
 		return;
 	}
 
-	if (Z_TYPE_P(milliseconds) == IS_OBJECT) {
-		if (instanceof_function(Z_OBJCE_P(milliseconds), php_date_get_interface_ce())) {
-			php_phongo_utcdatetime_init_from_date(intern, Z_PHPDATE_P(milliseconds));
-		} else {
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected instance of DateTimeInterface, %s given", ZSTR_VAL(Z_OBJCE_P(milliseconds)->name));
+	switch (Z_TYPE_P(milliseconds)) {
+		case IS_OBJECT:
+			if (instanceof_function(Z_OBJCE_P(milliseconds), php_date_get_interface_ce())) {
+				php_phongo_utcdatetime_init_from_date(intern, Z_PHPDATE_P(milliseconds));
+			} else {
+				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected instance of DateTimeInterface, %s given", ZSTR_VAL(Z_OBJCE_P(milliseconds)->name));
+			}
+			return;
+
+		case IS_LONG:
+			php_phongo_utcdatetime_init(intern, Z_LVAL_P(milliseconds));
+			return;
+
+		case IS_DOUBLE: {
+			char tmp[24];
+			int  tmp_len;
+
+			tmp_len = snprintf(tmp, sizeof(tmp), "%.0f", Z_DVAL_P(milliseconds) > 0 ? floor(Z_DVAL_P(milliseconds)) : ceil(Z_DVAL_P(milliseconds)));
+
+			php_phongo_utcdatetime_init_from_string(intern, tmp, tmp_len);
 		}
-		return;
+
+			return;
+
+		case IS_STRING:
+			php_phongo_utcdatetime_init_from_string(intern, Z_STRVAL_P(milliseconds), Z_STRLEN_P(milliseconds));
+			return;
 	}
 
-	if (Z_TYPE_P(milliseconds) == IS_LONG) {
-		php_phongo_utcdatetime_init(intern, Z_LVAL_P(milliseconds));
-		return;
-	}
-
-	if (Z_TYPE_P(milliseconds) == IS_DOUBLE) {
-		char tmp[24];
-		int  tmp_len;
-
-		tmp_len = snprintf(tmp, sizeof(tmp), "%.0f", Z_DVAL_P(milliseconds) > 0 ? floor(Z_DVAL_P(milliseconds)) : ceil(Z_DVAL_P(milliseconds)));
-
-		php_phongo_utcdatetime_init_from_string(intern, tmp, tmp_len);
-		return;
-	}
-
-	if (Z_TYPE_P(milliseconds) != IS_STRING) {
-		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected integer or string, %s given", PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(milliseconds));
-		return;
-	}
-
-	php_phongo_utcdatetime_init_from_string(intern, Z_STRVAL_P(milliseconds), Z_STRLEN_P(milliseconds));
+	phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected integer or string, %s given", PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(milliseconds));
 }
 
 static PHP_METHOD(MongoDB_BSON_UTCDateTime, __set_state)
