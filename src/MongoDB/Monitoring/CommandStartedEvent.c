@@ -75,6 +75,16 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_CommandStartedEvent, getDatabaseName
 	RETVAL_STRING(intern->database_name);
 }
 
+/* Returns this event's host */
+static PHP_METHOD(MongoDB_Driver_Monitoring_CommandStartedEvent, getHost)
+{
+	php_phongo_commandstartedevent_t* intern = Z_COMMANDSTARTEDEVENT_OBJ_P(getThis());
+
+	PHONGO_PARSE_PARAMETERS_NONE();
+
+	RETVAL_STRING(intern->host.host);
+}
+
 /* Returns the event's operation ID */
 static PHP_METHOD(MongoDB_Driver_Monitoring_CommandStartedEvent, getOperationId)
 {
@@ -87,6 +97,16 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_CommandStartedEvent, getOperationId)
 
 	snprintf(operation_id, sizeof(operation_id), "%" PRId64, intern->operation_id);
 	RETVAL_STRING(operation_id);
+}
+
+/* Returns this event's port */
+static PHP_METHOD(MongoDB_Driver_Monitoring_CommandStartedEvent, getPort)
+{
+	php_phongo_commandstartedevent_t* intern = Z_COMMANDSTARTEDEVENT_OBJ_P(getThis());
+
+	PHONGO_PARSE_PARAMETERS_NONE();
+
+	RETVAL_LONG(intern->host.port);
 }
 
 /* Returns the event's request ID */
@@ -205,7 +225,12 @@ static HashTable* php_phongo_commandstartedevent_get_debug_info(phongo_compat_ob
 
 	intern   = Z_OBJ_COMMANDSTARTEDEVENT(PHONGO_COMPAT_GET_OBJ(object));
 	*is_temp = 1;
-	array_init_size(&retval, 6);
+	array_init_size(&retval, 10);
+
+	ADD_ASSOC_STRING(&retval, "host", intern->host.host);
+	ADD_ASSOC_LONG_EX(&retval, "port", intern->host.port);
+	ADD_ASSOC_STRING(&retval, "commandName", intern->command_name);
+	ADD_ASSOC_STRING(&retval, "databaseName", intern->database_name);
 
 	if (!php_phongo_bson_to_zval_ex(intern->command, &command_state)) {
 		zval_ptr_dtor(&command_state.zchild);
@@ -213,9 +238,6 @@ static HashTable* php_phongo_commandstartedevent_get_debug_info(phongo_compat_ob
 	}
 
 	ADD_ASSOC_ZVAL(&retval, "command", &command_state.zchild);
-
-	ADD_ASSOC_STRING(&retval, "commandName", intern->command_name);
-	ADD_ASSOC_STRING(&retval, "databaseName", intern->database_name);
 
 	snprintf(operation_id, sizeof(operation_id), "%" PRId64, intern->operation_id);
 	ADD_ASSOC_STRING(&retval, "operationId", operation_id);

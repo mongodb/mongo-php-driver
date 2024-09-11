@@ -79,6 +79,16 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_CommandFailedEvent, getError)
 	RETURN_ZVAL(&intern->z_error, 1, 0);
 }
 
+/* Returns this event's host */
+static PHP_METHOD(MongoDB_Driver_Monitoring_CommandFailedEvent, getHost)
+{
+	php_phongo_commandfailedevent_t* intern = Z_COMMANDFAILEDEVENT_OBJ_P(getThis());
+
+	PHONGO_PARSE_PARAMETERS_NONE();
+
+	RETVAL_STRING(intern->host.host);
+}
+
 /* Returns the event's operation ID */
 static PHP_METHOD(MongoDB_Driver_Monitoring_CommandFailedEvent, getOperationId)
 {
@@ -91,6 +101,16 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_CommandFailedEvent, getOperationId)
 
 	snprintf(operation_id, sizeof(operation_id), "%" PRId64, intern->operation_id);
 	RETVAL_STRING(operation_id);
+}
+
+/* Returns this event's port */
+static PHP_METHOD(MongoDB_Driver_Monitoring_CommandFailedEvent, getPort)
+{
+	php_phongo_commandfailedevent_t* intern = Z_COMMANDFAILEDEVENT_OBJ_P(getThis());
+
+	PHONGO_PARSE_PARAMETERS_NONE();
+
+	RETVAL_LONG(intern->host.port);
 }
 
 /* Returns the reply document associated with the event */
@@ -233,16 +253,15 @@ static HashTable* php_phongo_commandfailedevent_get_debug_info(phongo_compat_obj
 
 	intern   = Z_OBJ_COMMANDFAILEDEVENT(PHONGO_COMPAT_GET_OBJ(object));
 	*is_temp = 1;
-	array_init_size(&retval, 6);
+	array_init_size(&retval, 11);
 
+	ADD_ASSOC_STRING(&retval, "host", intern->host.host);
+	ADD_ASSOC_LONG_EX(&retval, "port", intern->host.port);
 	ADD_ASSOC_STRING(&retval, "commandName", intern->command_name);
 	ADD_ASSOC_INT64(&retval, "durationMicros", intern->duration_micros);
 
 	ADD_ASSOC_ZVAL_EX(&retval, "error", &intern->z_error);
 	Z_ADDREF(intern->z_error);
-
-	snprintf(operation_id, sizeof(operation_id), "%" PRId64, intern->operation_id);
-	ADD_ASSOC_STRING(&retval, "operationId", operation_id);
 
 	if (!php_phongo_bson_to_zval_ex(intern->reply, &reply_state)) {
 		zval_ptr_dtor(&reply_state.zchild);
@@ -250,6 +269,9 @@ static HashTable* php_phongo_commandfailedevent_get_debug_info(phongo_compat_obj
 	}
 
 	ADD_ASSOC_ZVAL(&retval, "reply", &reply_state.zchild);
+
+	snprintf(operation_id, sizeof(operation_id), "%" PRId64, intern->operation_id);
+	ADD_ASSOC_STRING(&retval, "operationId", operation_id);
 
 	snprintf(request_id, sizeof(request_id), "%" PRId64, intern->request_id);
 	ADD_ASSOC_STRING(&retval, "requestId", request_id);

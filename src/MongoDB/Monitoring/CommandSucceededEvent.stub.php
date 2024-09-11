@@ -17,12 +17,17 @@ final class CommandSucceededEvent
 
     final public function getDurationMicros(): int {}
 
+    final public function getHost(): string {}
+
     final public function getOperationId(): string {}
+
+    final public function getPort(): int {}
 
     final public function getReply(): object {}
 
     final public function getRequestId(): string {}
 
+    /** @deprecated */
     final public function getServer(): \MongoDB\Driver\Server {}
 
     final public function getServiceId(): ?\MongoDB\BSON\ObjectId {}

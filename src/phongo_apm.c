@@ -143,6 +143,8 @@ static void phongo_apm_command_started(const mongoc_apm_command_started_t* event
 	object_init_ex(&z_event, php_phongo_commandstartedevent_ce);
 	p_event = Z_COMMANDSTARTEDEVENT_OBJ_P(&z_event);
 
+	memcpy(&p_event->host, mongoc_apm_command_started_get_host(event), sizeof(mongoc_host_list_t));
+
 	p_event->command_name         = estrdup(mongoc_apm_command_started_get_command_name(event));
 	p_event->database_name        = estrdup(mongoc_apm_command_started_get_database_name(event));
 	p_event->server_id            = mongoc_apm_command_started_get_server_id(event);
@@ -188,6 +190,8 @@ static void phongo_apm_command_succeeded(const mongoc_apm_command_succeeded_t* e
 
 	object_init_ex(&z_event, php_phongo_commandsucceededevent_ce);
 	p_event = Z_COMMANDSUCCEEDEDEVENT_OBJ_P(&z_event);
+
+	memcpy(&p_event->host, mongoc_apm_command_succeeded_get_host(event), sizeof(mongoc_host_list_t));
 
 	p_event->command_name         = estrdup(mongoc_apm_command_succeeded_get_command_name(event));
 	p_event->database_name        = estrdup(mongoc_apm_command_succeeded_get_database_name(event));
@@ -236,6 +240,8 @@ static void phongo_apm_command_failed(const mongoc_apm_command_failed_t* event)
 
 	object_init_ex(&z_event, php_phongo_commandfailedevent_ce);
 	p_event = Z_COMMANDFAILEDEVENT_OBJ_P(&z_event);
+
+	memcpy(&p_event->host, mongoc_apm_command_failed_get_host(event), sizeof(mongoc_host_list_t));
 
 	p_event->command_name         = estrdup(mongoc_apm_command_failed_get_command_name(event));
 	p_event->database_name        = estrdup(mongoc_apm_command_failed_get_database_name(event));

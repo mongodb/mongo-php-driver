@@ -42,6 +42,10 @@ throws(function() use ($manager, $command) {
 <?php exit(0); ?>
 --EXPECTF--
 object(MongoDB\Driver\Monitoring\CommandFailedEvent)#%d (%d) {
+  ["host"]=>
+  string(%d) "%s"
+  ["port"]=>
+  int(%d)
   ["commandName"]=>
   string(9) "aggregate"
   ["durationMicros"]=>
@@ -49,11 +53,11 @@ object(MongoDB\Driver\Monitoring\CommandFailedEvent)#%d (%d) {
   ["error"]=>
   object(MongoDB\Driver\Exception\ServerException)#%d (%d) {%A
   }
-  ["operationId"]=>
-  string(%d) "%d"
   ["reply"]=>
   object(stdClass)#%d (%d) {%A
   }
+  ["operationId"]=>
+  string(%d) "%d"
   ["requestId"]=>
   string(%d) "%d"
   ["server"]=>

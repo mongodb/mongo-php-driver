@@ -33,13 +33,17 @@ $manager->executeCommand(DATABASE_NAME, new MongoDB\Driver\Command(['ping' => 1]
 <?php exit(0); ?>
 --EXPECTF--
 object(MongoDB\Driver\Monitoring\CommandStartedEvent)#%d (%d) {
-  ["command"]=>
-  object(stdClass)#%d (%d) {%A
-  }
+  ["host"]=>
+  string(%d) "%s"
+  ["port"]=>
+  int(%d)
   ["commandName"]=>
   string(4) "ping"
   ["databaseName"]=>
   string(%d) "%s"
+  ["command"]=>
+  object(stdClass)#%d (%d) {%A
+  }
   ["operationId"]=>
   string(%d) "%d"
   ["requestId"]=>

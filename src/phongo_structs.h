@@ -281,48 +281,51 @@ typedef struct {
 } php_phongo_utcdatetime_t;
 
 typedef struct {
-	zval        manager;
-	char*       command_name;
-	char*       database_name;
-	uint32_t    server_id;
-	int64_t     operation_id;
-	int64_t     request_id;
-	int64_t     duration_micros;
-	bson_t*     reply;
-	zval        z_error;
-	bool        has_service_id;
-	bson_oid_t  service_id;
-	int64_t     server_connection_id;
-	zend_object std;
+	zval               manager;
+	char*              command_name;
+	char*              database_name;
+	uint32_t           server_id;
+	int64_t            operation_id;
+	int64_t            request_id;
+	int64_t            duration_micros;
+	bson_t*            reply;
+	zval               z_error;
+	bool               has_service_id;
+	bson_oid_t         service_id;
+	int64_t            server_connection_id;
+	mongoc_host_list_t host;
+	zend_object        std;
 } php_phongo_commandfailedevent_t;
 
 typedef struct {
-	zval        manager;
-	char*       command_name;
-	char*       database_name;
-	uint32_t    server_id;
-	int64_t     operation_id;
-	int64_t     request_id;
-	bson_t*     command;
-	bool        has_service_id;
-	bson_oid_t  service_id;
-	int64_t     server_connection_id;
-	zend_object std;
+	zval               manager;
+	char*              command_name;
+	char*              database_name;
+	uint32_t           server_id;
+	int64_t            operation_id;
+	int64_t            request_id;
+	bson_t*            command;
+	bool               has_service_id;
+	bson_oid_t         service_id;
+	int64_t            server_connection_id;
+	mongoc_host_list_t host;
+	zend_object        std;
 } php_phongo_commandstartedevent_t;
 
 typedef struct {
-	zval        manager;
-	char*       command_name;
-	char*       database_name;
-	uint32_t    server_id;
-	int64_t     operation_id;
-	int64_t     request_id;
-	int64_t     duration_micros;
-	bson_t*     reply;
-	bool        has_service_id;
-	bson_oid_t  service_id;
-	int64_t     server_connection_id;
-	zend_object std;
+	zval               manager;
+	char*              command_name;
+	char*              database_name;
+	uint32_t           server_id;
+	int64_t            operation_id;
+	int64_t            request_id;
+	int64_t            duration_micros;
+	bson_t*            reply;
+	bool               has_service_id;
+	bson_oid_t         service_id;
+	int64_t            server_connection_id;
+	mongoc_host_list_t host;
+	zend_object        std;
 } php_phongo_commandsucceededevent_t;
 
 typedef struct {
