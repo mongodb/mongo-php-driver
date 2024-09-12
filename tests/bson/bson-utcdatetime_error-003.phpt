@@ -27,19 +27,19 @@ echo throws(function() {
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-Deprecated: MongoDB\BSON\UTCDateTime::__construct(): Creating a MongoDB\BSON\UTCDateTime instance with a string is deprecated and be removed in ext-mongodb 2.0 in %S
+Deprecated: MongoDB\BSON\UTCDateTime::__construct(): Creating a MongoDB\BSON\UTCDateTime instance with a string is deprecated and will be removed in ext-mongodb 2.0 in %s
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Error parsing "1234.5678" as 64-bit integer for MongoDB\BSON\UTCDateTime initialization
 
-Deprecated: MongoDB\BSON\UTCDateTime::__construct(): Creating a MongoDB\BSON\UTCDateTime instance with a string is deprecated and be removed in ext-mongodb 2.0 in %S
+Deprecated: MongoDB\BSON\UTCDateTime::__construct(): Creating a MongoDB\BSON\UTCDateTime instance with a string is deprecated and will be removed in ext-mongodb 2.0 in %s
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Error parsing "9223372036854775808" as 64-bit integer for MongoDB\BSON\UTCDateTime initialization
 
-Deprecated: MongoDB\BSON\UTCDateTime::__construct(): Creating a MongoDB\BSON\UTCDateTime instance with a string is deprecated and be removed in ext-mongodb 2.0 in %S
+Deprecated: MongoDB\BSON\UTCDateTime::__construct(): Creating a MongoDB\BSON\UTCDateTime instance with a string is deprecated and will be removed in ext-mongodb 2.0 in %s
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Error parsing "-9223372036854775809" as 64-bit integer for MongoDB\BSON\UTCDateTime initialization
 
-Deprecated: MongoDB\BSON\UTCDateTime::__construct(): Creating a MongoDB\BSON\UTCDateTime instance with a string is deprecated and be removed in ext-mongodb 2.0 in %S
+Deprecated: MongoDB\BSON\UTCDateTime::__construct(): Creating a MongoDB\BSON\UTCDateTime instance with a string is deprecated and will be removed in ext-mongodb 2.0 in %s
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Error parsing "18446744073709551615" as 64-bit integer for MongoDB\BSON\UTCDateTime initialization
 ===DONE===
