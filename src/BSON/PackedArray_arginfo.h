@@ -1,7 +1,11 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: db49af73e3b8ef35fa6ed70fd8c097e0de69f17e */
+ * Stub hash: 792eeecef52e338fc07db86926729eecc024885a */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_BSON_PackedArray___construct, 0, 0, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_MongoDB_BSON_PackedArray_fromJSON, 0, 1, MongoDB\\BSON\\PackedArray, 0)
+	ZEND_ARG_TYPE_INFO(0, json, IS_STRING, 0)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_MongoDB_BSON_PackedArray_fromPHP, 0, 1, MongoDB\\BSON\\PackedArray, 0)
@@ -38,6 +42,11 @@ ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_BSON_PackedArray_toPHP, 0, 0, 0)
 	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, typeMap, IS_ARRAY, 1, "null")
 ZEND_END_ARG_INFO()
 #endif
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_BSON_PackedArray_toCanonicalExtendedJSON, 0, 0, IS_STRING, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_MongoDB_BSON_PackedArray_toRelaxedExtendedJSON arginfo_class_MongoDB_BSON_PackedArray_toCanonicalExtendedJSON
 
 #if PHP_VERSION_ID >= 80000
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_BSON_PackedArray_offsetExists, 0, 1, _IS_BOOL, 0)
@@ -89,14 +98,13 @@ ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_BSON_PackedArray_o
 ZEND_END_ARG_INFO()
 #endif
 
-ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_BSON_PackedArray___toString, 0, 0, IS_STRING, 0)
-ZEND_END_ARG_INFO()
+#define arginfo_class_MongoDB_BSON_PackedArray___toString arginfo_class_MongoDB_BSON_PackedArray_toCanonicalExtendedJSON
 
 ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_MongoDB_BSON_PackedArray___set_state, 0, 1, MongoDB\\BSON\\PackedArray, 0)
 	ZEND_ARG_TYPE_INFO(0, properties, IS_ARRAY, 0)
 ZEND_END_ARG_INFO()
 
-#define arginfo_class_MongoDB_BSON_PackedArray_serialize arginfo_class_MongoDB_BSON_PackedArray___toString
+#define arginfo_class_MongoDB_BSON_PackedArray_serialize arginfo_class_MongoDB_BSON_PackedArray_toCanonicalExtendedJSON
 
 #if PHP_VERSION_ID >= 80000
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_BSON_PackedArray_unserialize, 0, 1, IS_VOID, 0)
@@ -119,6 +127,7 @@ ZEND_END_ARG_INFO()
 
 
 static ZEND_METHOD(MongoDB_BSON_PackedArray, __construct);
+static ZEND_METHOD(MongoDB_BSON_PackedArray, fromJSON);
 static ZEND_METHOD(MongoDB_BSON_PackedArray, fromPHP);
 #if PHP_VERSION_ID >= 80000
 static ZEND_METHOD(MongoDB_BSON_PackedArray, get);
@@ -134,6 +143,8 @@ static ZEND_METHOD(MongoDB_BSON_PackedArray, toPHP);
 #if !(PHP_VERSION_ID >= 80000)
 static ZEND_METHOD(MongoDB_BSON_PackedArray, toPHP);
 #endif
+static ZEND_METHOD(MongoDB_BSON_PackedArray, toCanonicalExtendedJSON);
+static ZEND_METHOD(MongoDB_BSON_PackedArray, toRelaxedExtendedJSON);
 #if PHP_VERSION_ID >= 80000
 static ZEND_METHOD(MongoDB_BSON_PackedArray, offsetExists);
 #endif
@@ -173,6 +184,7 @@ static ZEND_METHOD(MongoDB_BSON_PackedArray, __serialize);
 
 static const zend_function_entry class_MongoDB_BSON_PackedArray_methods[] = {
 	ZEND_ME(MongoDB_BSON_PackedArray, __construct, arginfo_class_MongoDB_BSON_PackedArray___construct, ZEND_ACC_PRIVATE)
+	ZEND_ME(MongoDB_BSON_PackedArray, fromJSON, arginfo_class_MongoDB_BSON_PackedArray_fromJSON, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_BSON_PackedArray, fromPHP, arginfo_class_MongoDB_BSON_PackedArray_fromPHP, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC|ZEND_ACC_FINAL)
 #if PHP_VERSION_ID >= 80000
 	ZEND_ME(MongoDB_BSON_PackedArray, get, arginfo_class_MongoDB_BSON_PackedArray_get, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
@@ -188,6 +200,8 @@ static const zend_function_entry class_MongoDB_BSON_PackedArray_methods[] = {
 #if !(PHP_VERSION_ID >= 80000)
 	ZEND_ME(MongoDB_BSON_PackedArray, toPHP, arginfo_class_MongoDB_BSON_PackedArray_toPHP, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 #endif
+	ZEND_ME(MongoDB_BSON_PackedArray, toCanonicalExtendedJSON, arginfo_class_MongoDB_BSON_PackedArray_toCanonicalExtendedJSON, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	ZEND_ME(MongoDB_BSON_PackedArray, toRelaxedExtendedJSON, arginfo_class_MongoDB_BSON_PackedArray_toRelaxedExtendedJSON, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 #if PHP_VERSION_ID >= 80000
 	ZEND_ME(MongoDB_BSON_PackedArray, offsetExists, arginfo_class_MongoDB_BSON_PackedArray_offsetExists, ZEND_ACC_PUBLIC)
 #endif
