@@ -3,7 +3,7 @@ MongoDB\BSON\UTCDateTime debug handler
 --FILE--
 <?php
 
-$utcdatetime = new MongoDB\BSON\UTCDateTime(2147483647);
+$utcdatetime = new MongoDB\BSON\UTCDateTime(new MongoDB\BSON\Int64('1416445411987'));
 
 var_dump($utcdatetime);
 
@@ -13,6 +13,6 @@ var_dump($utcdatetime);
 --EXPECTF--
 object(MongoDB\BSON\UTCDateTime)#%d (%d) {
   ["milliseconds"]=>
-  %rint\(|string\(10\) "|%r2147483647%r"|\)%r
+  string(13) "1416445411987"
 }
 ===DONE===
