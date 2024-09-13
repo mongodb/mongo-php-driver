@@ -31,7 +31,6 @@ zend_class_entry* php_phongo_commandstartedevent_ce;
 
 PHONGO_DISABLED_CONSTRUCTOR(MongoDB_Driver_Monitoring_CommandStartedEvent)
 
-/* Returns the command document associated with the event */
 static PHP_METHOD(MongoDB_Driver_Monitoring_CommandStartedEvent, getCommand)
 {
 	php_phongo_commandstartedevent_t* intern;
@@ -51,7 +50,6 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_CommandStartedEvent, getCommand)
 	RETURN_ZVAL(&state.zchild, 0, 1);
 }
 
-/* Returns the command name for this event */
 static PHP_METHOD(MongoDB_Driver_Monitoring_CommandStartedEvent, getCommandName)
 {
 	php_phongo_commandstartedevent_t* intern;
@@ -63,7 +61,6 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_CommandStartedEvent, getCommandName)
 	RETVAL_STRING(intern->command_name);
 }
 
-/* Returns the database name for this event */
 static PHP_METHOD(MongoDB_Driver_Monitoring_CommandStartedEvent, getDatabaseName)
 {
 	php_phongo_commandstartedevent_t* intern;
@@ -75,7 +72,6 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_CommandStartedEvent, getDatabaseName
 	RETVAL_STRING(intern->database_name);
 }
 
-/* Returns this event's host */
 static PHP_METHOD(MongoDB_Driver_Monitoring_CommandStartedEvent, getHost)
 {
 	php_phongo_commandstartedevent_t* intern = Z_COMMANDSTARTEDEVENT_OBJ_P(getThis());
@@ -85,7 +81,6 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_CommandStartedEvent, getHost)
 	RETVAL_STRING(intern->host.host);
 }
 
-/* Returns the event's operation ID */
 static PHP_METHOD(MongoDB_Driver_Monitoring_CommandStartedEvent, getOperationId)
 {
 	php_phongo_commandstartedevent_t* intern;
@@ -99,7 +94,6 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_CommandStartedEvent, getOperationId)
 	RETVAL_STRING(operation_id);
 }
 
-/* Returns this event's port */
 static PHP_METHOD(MongoDB_Driver_Monitoring_CommandStartedEvent, getPort)
 {
 	php_phongo_commandstartedevent_t* intern = Z_COMMANDSTARTEDEVENT_OBJ_P(getThis());
@@ -109,7 +103,6 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_CommandStartedEvent, getPort)
 	RETVAL_LONG(intern->host.port);
 }
 
-/* Returns the event's request ID */
 static PHP_METHOD(MongoDB_Driver_Monitoring_CommandStartedEvent, getRequestId)
 {
 	php_phongo_commandstartedevent_t* intern;
@@ -123,7 +116,6 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_CommandStartedEvent, getRequestId)
 	RETVAL_STRING(request_id);
 }
 
-/* Returns the Server from which the event originated */
 static PHP_METHOD(MongoDB_Driver_Monitoring_CommandStartedEvent, getServer)
 {
 	php_phongo_commandstartedevent_t* intern;
@@ -135,7 +127,6 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_CommandStartedEvent, getServer)
 	phongo_server_init(return_value, &intern->manager, intern->server_id);
 }
 
-/* Returns the event's service ID */
 static PHP_METHOD(MongoDB_Driver_Monitoring_CommandStartedEvent, getServiceId)
 {
 	php_phongo_commandstartedevent_t* intern = Z_COMMANDSTARTEDEVENT_OBJ_P(getThis());
@@ -149,7 +140,6 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_CommandStartedEvent, getServiceId)
 	phongo_objectid_new(return_value, &intern->service_id);
 }
 
-/* Returns the event's server connection ID */
 static PHP_METHOD(MongoDB_Driver_Monitoring_CommandStartedEvent, getServerConnectionId)
 {
 	php_phongo_commandstartedevent_t* intern = Z_COMMANDSTARTEDEVENT_OBJ_P(getThis());
@@ -169,12 +159,6 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_CommandStartedEvent, getServerConnec
 
 	RETURN_LONG(intern->server_connection_id);
 }
-
-/**
- * Event thrown when a command has started to execute.
- *
- * This class is only constructed internally.
- */
 
 /* MongoDB\Driver\Monitoring\CommandStartedEvent object handlers */
 static zend_object_handlers php_phongo_handler_commandstartedevent;

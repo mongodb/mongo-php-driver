@@ -31,7 +31,6 @@ zend_class_entry* php_phongo_commandsucceededevent_ce;
 
 PHONGO_DISABLED_CONSTRUCTOR(MongoDB_Driver_Monitoring_CommandSucceededEvent)
 
-/* Returns the command name for this event */
 static PHP_METHOD(MongoDB_Driver_Monitoring_CommandSucceededEvent, getCommandName)
 {
 	php_phongo_commandsucceededevent_t* intern;
@@ -43,7 +42,6 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_CommandSucceededEvent, getCommandNam
 	RETVAL_STRING(intern->command_name);
 }
 
-/* Returns the database name for this event */
 static PHP_METHOD(MongoDB_Driver_Monitoring_CommandSucceededEvent, getDatabaseName)
 {
 	php_phongo_commandsucceededevent_t* intern;
@@ -55,7 +53,6 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_CommandSucceededEvent, getDatabaseNa
 	RETVAL_STRING(intern->database_name);
 }
 
-/* Returns the event's duration in microseconds */
 static PHP_METHOD(MongoDB_Driver_Monitoring_CommandSucceededEvent, getDurationMicros)
 {
 	php_phongo_commandsucceededevent_t* intern;
@@ -67,7 +64,6 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_CommandSucceededEvent, getDurationMi
 	RETURN_LONG(intern->duration_micros);
 }
 
-/* Returns this event's host */
 static PHP_METHOD(MongoDB_Driver_Monitoring_CommandSucceededEvent, getHost)
 {
 	php_phongo_commandsucceededevent_t* intern = Z_COMMANDSUCCEEDEDEVENT_OBJ_P(getThis());
@@ -77,7 +73,6 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_CommandSucceededEvent, getHost)
 	RETVAL_STRING(intern->host.host);
 }
 
-/* Returns the event's operation ID */
 static PHP_METHOD(MongoDB_Driver_Monitoring_CommandSucceededEvent, getOperationId)
 {
 	php_phongo_commandsucceededevent_t* intern;
@@ -91,7 +86,6 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_CommandSucceededEvent, getOperationI
 	RETVAL_STRING(operation_id);
 }
 
-/* Returns this event's port */
 static PHP_METHOD(MongoDB_Driver_Monitoring_CommandSucceededEvent, getPort)
 {
 	php_phongo_commandsucceededevent_t* intern = Z_COMMANDSUCCEEDEDEVENT_OBJ_P(getThis());
@@ -101,7 +95,6 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_CommandSucceededEvent, getPort)
 	RETVAL_LONG(intern->host.port);
 }
 
-/* Returns the reply document associated with the event */
 static PHP_METHOD(MongoDB_Driver_Monitoring_CommandSucceededEvent, getReply)
 {
 	php_phongo_commandsucceededevent_t* intern;
@@ -121,7 +114,6 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_CommandSucceededEvent, getReply)
 	RETURN_ZVAL(&state.zchild, 0, 1);
 }
 
-/* Returns the event's request ID */
 static PHP_METHOD(MongoDB_Driver_Monitoring_CommandSucceededEvent, getRequestId)
 {
 	php_phongo_commandsucceededevent_t* intern;
@@ -135,7 +127,6 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_CommandSucceededEvent, getRequestId)
 	RETVAL_STRING(request_id);
 }
 
-/* Returns the Server from which the event originated */
 static PHP_METHOD(MongoDB_Driver_Monitoring_CommandSucceededEvent, getServer)
 {
 	php_phongo_commandsucceededevent_t* intern;
@@ -147,7 +138,6 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_CommandSucceededEvent, getServer)
 	phongo_server_init(return_value, &intern->manager, intern->server_id);
 }
 
-/* Returns the event's service ID */
 static PHP_METHOD(MongoDB_Driver_Monitoring_CommandSucceededEvent, getServiceId)
 {
 	php_phongo_commandsucceededevent_t* intern = Z_COMMANDSUCCEEDEDEVENT_OBJ_P(getThis());
@@ -161,7 +151,6 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_CommandSucceededEvent, getServiceId)
 	phongo_objectid_new(return_value, &intern->service_id);
 }
 
-/* Returns the event's server connection ID */
 static PHP_METHOD(MongoDB_Driver_Monitoring_CommandSucceededEvent, getServerConnectionId)
 {
 	php_phongo_commandsucceededevent_t* intern = Z_COMMANDSUCCEEDEDEVENT_OBJ_P(getThis());
@@ -181,12 +170,6 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_CommandSucceededEvent, getServerConn
 
 	RETURN_LONG(intern->server_connection_id);
 }
-
-/**
- * Event thrown when a command has succeeded to execute.
- *
- * This class is only constructed internally.
- */
 
 /* MongoDB\Driver\Monitoring\CommandSucceededEvent object handlers */
 static zend_object_handlers php_phongo_handler_commandsucceededevent;
