@@ -5,7 +5,7 @@ date.timezone=UTC
 --FILE--
 <?php
 
-$utcdatetime = new MongoDB\BSON\UTCDateTime("1416445411987");
+$utcdatetime = new MongoDB\BSON\UTCDateTime(new MongoDB\BSON\Int64('1416445411987'));
 $datetime = $utcdatetime->toDateTimeImmutable();
 var_dump(get_class($datetime));
 echo $datetime->format('U.u'), "\n";

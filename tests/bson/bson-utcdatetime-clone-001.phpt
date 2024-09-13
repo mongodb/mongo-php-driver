@@ -8,7 +8,7 @@ MongoDB\BSON\UTCDateTime can be cloned (PHP < 8.2)
 
 require_once __DIR__ . "/../utils/basic.inc";
 
-$utcdatetime = new MongoDB\BSON\UTCDateTime("1416445411987");
+$utcdatetime = new MongoDB\BSON\UTCDateTime(new MongoDB\BSON\Int64('1416445411987'));
 
 $clone = clone $utcdatetime;
 

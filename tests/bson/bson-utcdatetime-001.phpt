@@ -11,7 +11,7 @@ require_once __DIR__ . "/../utils/basic.inc";
 
 $manager = create_test_manager();
 
-$utcdatetime = new MongoDB\BSON\UTCDateTime("1416445411987");
+$utcdatetime = new MongoDB\BSON\UTCDateTime(new MongoDB\BSON\Int64('1416445411987'));
 
 $bulk = new MongoDB\Driver\BulkWrite();
 $bulk->insert(array('_id' => 1, 'x' => $utcdatetime));

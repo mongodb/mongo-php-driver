@@ -14,5 +14,5 @@ echo throws(function() {
 <?php exit(0); ?>
 --EXPECT--
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected instance of DateTimeInterface, stdClass given
+Expected instance of DateTimeInterface or MongoDB\BSON\Int64, stdClass given
 ===DONE===

@@ -5,7 +5,7 @@ date.timezone=America/Los_Angeles
 --FILE--
 <?php
 
-$utcdatetime = new MongoDB\BSON\UTCDateTime("1416445411987");
+$utcdatetime = new MongoDB\BSON\UTCDateTime(new MongoDB\BSON\Int64('1416445411987'));
 $datetime = $utcdatetime->toDateTime();
 var_dump(get_class($datetime));
 var_dump($datetime->format(DATE_RSS));
