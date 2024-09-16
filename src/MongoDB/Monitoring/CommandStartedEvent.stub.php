@@ -17,10 +17,15 @@ final class CommandStartedEvent
 
     final public function getDatabaseName(): string {}
 
+    final public function getHost(): string {}
+
     final public function getOperationId(): string {}
+
+    final public function getPort(): int {}
 
     final public function getRequestId(): string {}
 
+    /** @deprecated */
     final public function getServer(): \MongoDB\Driver\Server {}
 
     final public function getServiceId(): ?\MongoDB\BSON\ObjectId {}

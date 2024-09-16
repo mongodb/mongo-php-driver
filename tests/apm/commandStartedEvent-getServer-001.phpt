@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\Driver\Monitoring\CommandStartedEvent
+MongoDB\Driver\Monitoring\CommandStartedEvent::getServer()
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_live(); ?>
@@ -12,16 +12,7 @@ class MySubscriber implements MongoDB\Driver\Monitoring\CommandSubscriber
 {
     public function commandStarted(MongoDB\Driver\Monitoring\CommandStartedEvent $event): void
     {
-        var_dump($event->getCommand());
-        var_dump($event->getCommandName());
-        var_dump($event->getDatabaseName());
-        var_dump($event->getHost());
-        var_dump($event->getOperationId());
-        var_dump($event->getPort());
-        var_dump($event->getRequestId());
-
-        /* Note: getServerConnectionId() and getServiceId() have more stringent
-         * requirements and are tested separately. */
+        var_dump($event->getServer());
     }
 
     public function commandSucceeded(MongoDB\Driver\Monitoring\CommandSucceededEvent $event): void
@@ -43,12 +34,7 @@ $manager->executeCommand('admin', $command);
 
 ?>
 --EXPECTF--
-object(stdClass)#%d (%d) {
+Deprecated: %r(Function|Method)%r MongoDB\Driver\Monitoring\CommandStartedEvent::getServer() is deprecated in %s
+object(MongoDB\Driver\Server)#%d (%d) {
   %A
 }
-string(4) "ping"
-string(5) "admin"
-string(%d) "%s"
-string(%d) "%d"
-int(%d)
-string(%d) "%d"
