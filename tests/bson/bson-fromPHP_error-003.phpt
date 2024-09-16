@@ -16,7 +16,7 @@ $tests = array(
     new MongoDB\BSON\ObjectId,
     new MongoDB\BSON\Regex('regexp', 'i'),
     new MongoDB\BSON\Timestamp(1234, 5678),
-    new MongoDB\BSON\UTCDateTime('1416445411987'),
+    new MongoDB\BSON\UTCDateTime(new MongoDB\BSON\Int64('1416445411987')),
 );
 
 foreach ($tests as $document) {

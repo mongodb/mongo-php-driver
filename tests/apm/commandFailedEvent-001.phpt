@@ -31,10 +31,11 @@ class MySubscriber implements MongoDB\Driver\Monitoring\CommandSubscriber
         var_dump($event->getDurationMicros());
         echo "getDurationMicros() returns > 0: ", $event->getDurationMicros() > 0 ? 'yes' : 'no', "\n";
         var_dump($event->getError() instanceof MongoDB\Driver\Exception\Exception);
+        var_dump($event->getHost());
         var_dump($event->getOperationId());
+        var_dump($event->getPort());
         var_dump($event->getReply());
         var_dump($event->getRequestId());
-        var_dump($event->getServer());
 
         /* Note: getServerConnectionId() and getServiceId() have more stringent
          * requirements and are tested separately. */
@@ -60,11 +61,10 @@ string(5) "admin"
 int(%d)
 getDurationMicros() returns > 0: yes
 bool(true)
+string(%d) "%s"
 string(%d) "%d"
+int(%d)
 object(stdClass)#%d (%d) {
   %A
 }
 string(%d) "%d"
-object(MongoDB\Driver\Server)#%d (%d) {
-  %A
-}

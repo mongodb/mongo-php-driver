@@ -31,7 +31,6 @@ zend_class_entry* php_phongo_commandfailedevent_ce;
 
 PHONGO_DISABLED_CONSTRUCTOR(MongoDB_Driver_Monitoring_CommandFailedEvent)
 
-/* Returns the command name for this event */
 static PHP_METHOD(MongoDB_Driver_Monitoring_CommandFailedEvent, getCommandName)
 {
 	php_phongo_commandfailedevent_t* intern;
@@ -43,7 +42,6 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_CommandFailedEvent, getCommandName)
 	RETVAL_STRING(intern->command_name);
 }
 
-/* Returns the database name for this event */
 static PHP_METHOD(MongoDB_Driver_Monitoring_CommandFailedEvent, getDatabaseName)
 {
 	php_phongo_commandfailedevent_t* intern;
@@ -55,7 +53,6 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_CommandFailedEvent, getDatabaseName)
 	RETVAL_STRING(intern->database_name);
 }
 
-/* Returns the event's duration in microseconds */
 static PHP_METHOD(MongoDB_Driver_Monitoring_CommandFailedEvent, getDurationMicros)
 {
 	php_phongo_commandfailedevent_t* intern;
@@ -67,7 +64,6 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_CommandFailedEvent, getDurationMicro
 	RETURN_LONG(intern->duration_micros);
 }
 
-/* Returns the error document associated with the event */
 static PHP_METHOD(MongoDB_Driver_Monitoring_CommandFailedEvent, getError)
 {
 	php_phongo_commandfailedevent_t* intern;
@@ -79,7 +75,15 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_CommandFailedEvent, getError)
 	RETURN_ZVAL(&intern->z_error, 1, 0);
 }
 
-/* Returns the event's operation ID */
+static PHP_METHOD(MongoDB_Driver_Monitoring_CommandFailedEvent, getHost)
+{
+	php_phongo_commandfailedevent_t* intern = Z_COMMANDFAILEDEVENT_OBJ_P(getThis());
+
+	PHONGO_PARSE_PARAMETERS_NONE();
+
+	RETVAL_STRING(intern->host.host);
+}
+
 static PHP_METHOD(MongoDB_Driver_Monitoring_CommandFailedEvent, getOperationId)
 {
 	php_phongo_commandfailedevent_t* intern;
@@ -93,7 +97,15 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_CommandFailedEvent, getOperationId)
 	RETVAL_STRING(operation_id);
 }
 
-/* Returns the reply document associated with the event */
+static PHP_METHOD(MongoDB_Driver_Monitoring_CommandFailedEvent, getPort)
+{
+	php_phongo_commandfailedevent_t* intern = Z_COMMANDFAILEDEVENT_OBJ_P(getThis());
+
+	PHONGO_PARSE_PARAMETERS_NONE();
+
+	RETVAL_LONG(intern->host.port);
+}
+
 static PHP_METHOD(MongoDB_Driver_Monitoring_CommandFailedEvent, getReply)
 {
 	php_phongo_commandfailedevent_t* intern;
@@ -113,7 +125,6 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_CommandFailedEvent, getReply)
 	RETURN_ZVAL(&state.zchild, 0, 1);
 }
 
-/* Returns the event's request ID */
 static PHP_METHOD(MongoDB_Driver_Monitoring_CommandFailedEvent, getRequestId)
 {
 	php_phongo_commandfailedevent_t* intern;
@@ -127,7 +138,6 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_CommandFailedEvent, getRequestId)
 	RETVAL_STRING(request_id);
 }
 
-/* Returns the Server from which the event originated */
 static PHP_METHOD(MongoDB_Driver_Monitoring_CommandFailedEvent, getServer)
 {
 	php_phongo_commandfailedevent_t* intern;
@@ -139,7 +149,6 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_CommandFailedEvent, getServer)
 	phongo_server_init(return_value, &intern->manager, intern->server_id);
 }
 
-/* Returns the event's service ID */
 static PHP_METHOD(MongoDB_Driver_Monitoring_CommandFailedEvent, getServiceId)
 {
 	php_phongo_commandfailedevent_t* intern = Z_COMMANDFAILEDEVENT_OBJ_P(getThis());
@@ -153,7 +162,6 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_CommandFailedEvent, getServiceId)
 	phongo_objectid_new(return_value, &intern->service_id);
 }
 
-/* Returns the event's server connection ID */
 static PHP_METHOD(MongoDB_Driver_Monitoring_CommandFailedEvent, getServerConnectionId)
 {
 	php_phongo_commandfailedevent_t* intern = Z_COMMANDFAILEDEVENT_OBJ_P(getThis());
@@ -173,12 +181,6 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_CommandFailedEvent, getServerConnect
 
 	RETURN_LONG(intern->server_connection_id);
 }
-
-/**
- * Event thrown when a command has failed to execute.
- *
- * This class is only constructed internally.
- */
 
 /* MongoDB\Driver\Monitoring\CommandFailedEvent object handlers */
 static zend_object_handlers php_phongo_handler_commandfailedevent;
@@ -233,16 +235,15 @@ static HashTable* php_phongo_commandfailedevent_get_debug_info(zend_object* obje
 
 	intern   = Z_OBJ_COMMANDFAILEDEVENT(object);
 	*is_temp = 1;
-	array_init_size(&retval, 6);
+	array_init_size(&retval, 11);
 
+	ADD_ASSOC_STRING(&retval, "host", intern->host.host);
+	ADD_ASSOC_LONG_EX(&retval, "port", intern->host.port);
 	ADD_ASSOC_STRING(&retval, "commandName", intern->command_name);
 	ADD_ASSOC_INT64(&retval, "durationMicros", intern->duration_micros);
 
 	ADD_ASSOC_ZVAL_EX(&retval, "error", &intern->z_error);
 	Z_ADDREF(intern->z_error);
-
-	snprintf(operation_id, sizeof(operation_id), "%" PRId64, intern->operation_id);
-	ADD_ASSOC_STRING(&retval, "operationId", operation_id);
 
 	if (!php_phongo_bson_to_zval_ex(intern->reply, &reply_state)) {
 		zval_ptr_dtor(&reply_state.zchild);
@@ -250,6 +251,9 @@ static HashTable* php_phongo_commandfailedevent_get_debug_info(zend_object* obje
 	}
 
 	ADD_ASSOC_ZVAL(&retval, "reply", &reply_state.zchild);
+
+	snprintf(operation_id, sizeof(operation_id), "%" PRId64, intern->operation_id);
+	ADD_ASSOC_STRING(&retval, "operationId", operation_id);
 
 	snprintf(request_id, sizeof(request_id), "%" PRId64, intern->request_id);
 	ADD_ASSOC_STRING(&retval, "requestId", request_id);

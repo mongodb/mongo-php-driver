@@ -104,6 +104,35 @@ static bool php_phongo_utcdatetime_init_from_date(php_phongo_utcdatetime_t* inte
 	return true;
 }
 
+static bool php_phongo_utcdatetime_init_from_object(php_phongo_utcdatetime_t* intern, zend_object* object)
+{
+	if (instanceof_function(object->ce, php_date_get_interface_ce())) {
+		php_phongo_utcdatetime_init_from_date(intern, php_date_obj_from_obj(object));
+
+		return true;
+	}
+
+	if (instanceof_function(object->ce, php_phongo_int64_ce)) {
+		php_phongo_utcdatetime_init(intern, php_int64_fetch_object(object)->integer);
+
+		return true;
+	}
+
+	phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected instance of %s or %s, %s given", ZSTR_VAL(php_date_get_interface_ce()->name), ZSTR_VAL(php_phongo_int64_ce->name), ZSTR_VAL(object->ce->name));
+
+	return false;
+}
+
+static bool php_phongo_utcdatetime_init_from_double(php_phongo_utcdatetime_t* intern, double milliseconds)
+{
+	char tmp[24];
+	int  tmp_len;
+
+	tmp_len = snprintf(tmp, sizeof(tmp), "%.0f", milliseconds > 0 ? floor(milliseconds) : ceil(milliseconds));
+
+	return php_phongo_utcdatetime_init_from_string(intern, tmp, tmp_len);
+}
+
 static HashTable* php_phongo_utcdatetime_get_properties_hash(zend_object* object, bool is_temp)
 {
 	php_phongo_utcdatetime_t* intern;
@@ -179,36 +208,27 @@ static PHP_METHOD(MongoDB_BSON_UTCDateTime, __construct)
 		return;
 	}
 
-	if (Z_TYPE_P(milliseconds) == IS_OBJECT) {
-		if (instanceof_function(Z_OBJCE_P(milliseconds), php_date_get_interface_ce())) {
-			php_phongo_utcdatetime_init_from_date(intern, Z_PHPDATE_P(milliseconds));
-		} else {
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected instance of DateTimeInterface, %s given", ZSTR_VAL(Z_OBJCE_P(milliseconds)->name));
-		}
-		return;
+	switch (Z_TYPE_P(milliseconds)) {
+		case IS_OBJECT:
+			php_phongo_utcdatetime_init_from_object(intern, Z_OBJ_P(milliseconds));
+			return;
+
+		case IS_LONG:
+			php_phongo_utcdatetime_init(intern, Z_LVAL_P(milliseconds));
+			return;
+
+		case IS_DOUBLE:
+			php_phongo_utcdatetime_init_from_double(intern, Z_DVAL_P(milliseconds));
+			return;
+
+		case IS_STRING:
+			php_error_docref(NULL, E_DEPRECATED, "Creating a %s instance with a string is deprecated and will be removed in ext-mongodb 2.0", ZSTR_VAL(php_phongo_utcdatetime_ce->name));
+
+			php_phongo_utcdatetime_init_from_string(intern, Z_STRVAL_P(milliseconds), Z_STRLEN_P(milliseconds));
+			return;
 	}
 
-	if (Z_TYPE_P(milliseconds) == IS_LONG) {
-		php_phongo_utcdatetime_init(intern, Z_LVAL_P(milliseconds));
-		return;
-	}
-
-	if (Z_TYPE_P(milliseconds) == IS_DOUBLE) {
-		char tmp[24];
-		int  tmp_len;
-
-		tmp_len = snprintf(tmp, sizeof(tmp), "%.0f", Z_DVAL_P(milliseconds) > 0 ? floor(Z_DVAL_P(milliseconds)) : ceil(Z_DVAL_P(milliseconds)));
-
-		php_phongo_utcdatetime_init_from_string(intern, tmp, tmp_len);
-		return;
-	}
-
-	if (Z_TYPE_P(milliseconds) != IS_STRING) {
-		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected integer or string, %s given", PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(milliseconds));
-		return;
-	}
-
-	php_phongo_utcdatetime_init_from_string(intern, Z_STRVAL_P(milliseconds), Z_STRLEN_P(milliseconds));
+	phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected integer or string, %s given", PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(milliseconds));
 }
 
 static PHP_METHOD(MongoDB_BSON_UTCDateTime, __set_state)

@@ -1,7 +1,9 @@
 --TEST--
-MongoDB\BSON\UTCDateTime debug handler
+MongoDB\BSON\UTCDateTime construction from Int64 object
 --FILE--
 <?php
+
+require_once __DIR__ . '/../utils/basic.inc';
 
 $utcdatetime = new MongoDB\BSON\UTCDateTime(new MongoDB\BSON\Int64('1416445411987'));
 
