@@ -129,7 +129,9 @@ static PHP_METHOD(MongoDB_BSON_PackedArray, fromJSON)
 	// Check if BSON contains only numeric keys
 	if (!bson_empty(bson)) {
 		bson_iter_t iter;
-		uint64_t    expected_key = 0;
+		uint32_t    expected_key = 0;
+		char        expected_key_str[11];
+		const char* key_str;
 
 		if (!bson_iter_init(&iter, bson)) {
 			phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Received invalid JSON array");
@@ -138,12 +140,11 @@ static PHP_METHOD(MongoDB_BSON_PackedArray, fromJSON)
 		}
 
 		while (bson_iter_next(&iter)) {
-			const char* string_key = bson_iter_key(&iter);
-			char*       string_key_end;
-			uint64_t    int_key = strtoll(string_key, &string_key_end, 10);
+			key_str = bson_iter_key(&iter);
+			snprintf(expected_key_str, sizeof(expected_key_str), "%" PRIu32, expected_key);
 
-			if (*string_key_end != '\0' || int_key != expected_key) {
-				phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Received invalid JSON array: expected key %" PRId64 ", but found \"%s\"", expected_key, string_key);
+			if (strcmp(key_str, expected_key_str)) {
+				phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Received invalid JSON array: expected key %" PRIu32 ", but found \"%s\"", expected_key, key_str);
 				bson_destroy(bson);
 				return;
 			}
