@@ -1,12 +1,12 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 2a749d00f223cb25242c2f3a303b183074f5841c */
+ * Stub hash: 6943cf9694dde756ed5ad2b7220c1c39e6157165 */
 
-ZEND_BEGIN_ARG_WITH_TENTATIVE_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_BSON_TimestampInterface_getTimestamp, 0, 0, IS_LONG, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_BSON_TimestampInterface_getTimestamp, 0, 0, IS_LONG, 0)
 ZEND_END_ARG_INFO()
 
 #define arginfo_class_MongoDB_BSON_TimestampInterface_getIncrement arginfo_class_MongoDB_BSON_TimestampInterface_getTimestamp
 
-ZEND_BEGIN_ARG_WITH_TENTATIVE_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_BSON_TimestampInterface___toString, 0, 0, IS_STRING, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_BSON_TimestampInterface___toString, 0, 0, IS_STRING, 0)
 ZEND_END_ARG_INFO()
 
 

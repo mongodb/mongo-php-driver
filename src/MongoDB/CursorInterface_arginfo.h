@@ -1,20 +1,20 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: a349f3142a48084fd7359d202a6384b7927c2936 */
+ * Stub hash: 71c9e3683a8febbea12d06536568667135a4a6c8 */
 
-ZEND_BEGIN_ARG_WITH_TENTATIVE_RETURN_OBJ_TYPE_MASK_EX(arginfo_class_MongoDB_Driver_CursorInterface_getId, 0, 0, MongoDB\\Driver\\CursorId|MongoDB\\BSON\\Int64, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_TYPE_MASK_EX(arginfo_class_MongoDB_Driver_CursorInterface_getId, 0, 0, MongoDB\\Driver\\CursorId|MongoDB\\BSON\\Int64, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_WITH_TENTATIVE_RETURN_OBJ_INFO_EX(arginfo_class_MongoDB_Driver_CursorInterface_getServer, 0, 0, MongoDB\\Driver\\Server, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_MongoDB_Driver_CursorInterface_getServer, 0, 0, MongoDB\\Driver\\Server, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_WITH_TENTATIVE_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_Driver_CursorInterface_isDead, 0, 0, _IS_BOOL, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_Driver_CursorInterface_isDead, 0, 0, _IS_BOOL, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_WITH_TENTATIVE_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_Driver_CursorInterface_setTypeMap, 0, 1, IS_VOID, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_Driver_CursorInterface_setTypeMap, 0, 1, IS_VOID, 0)
 	ZEND_ARG_TYPE_INFO(0, typemap, IS_ARRAY, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_WITH_TENTATIVE_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_Driver_CursorInterface_toArray, 0, 0, IS_ARRAY, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_Driver_CursorInterface_toArray, 0, 0, IS_ARRAY, 0)
 ZEND_END_ARG_INFO()
 
 

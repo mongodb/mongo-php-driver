@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 00390b38afb06e7361930fa5de69ca2bbfcc30d3 */
+ * Stub hash: 154a75fecea87014fd07315ddec5d9f182dcf768 */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_Driver_Cursor___construct, 0, 0, 0)
 ZEND_END_ARG_INFO()
@@ -7,7 +7,7 @@ ZEND_END_ARG_INFO()
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_MASK_EX(arginfo_class_MongoDB_Driver_Cursor_current, 0, 0, MAY_BE_ARRAY|MAY_BE_OBJECT|MAY_BE_NULL)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_WITH_TENTATIVE_RETURN_OBJ_TYPE_MASK_EX(arginfo_class_MongoDB_Driver_Cursor_getId, 0, 0, MongoDB\\Driver\\CursorId|MongoDB\\BSON\\Int64, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_TYPE_MASK_EX(arginfo_class_MongoDB_Driver_Cursor_getId, 0, 0, MongoDB\\Driver\\CursorId|MongoDB\\BSON\\Int64, 0)
 	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, asInt64, _IS_BOOL, 0, "false")
 ZEND_END_ARG_INFO()
 
