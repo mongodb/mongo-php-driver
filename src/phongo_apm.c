@@ -120,7 +120,7 @@ static void phongo_apm_dispatch_event(HashTable* subscribers, const char* functi
 
 		/* We can't use the zend_call_method_with_1_params macro here, as it
 		 * assumes the function name is a string literal. */
-		zend_call_method(PHONGO_COMPAT_OBJ_P(subscriber), NULL, NULL, function_name, strlen(function_name), NULL, 1, event, NULL);
+		zend_call_method(Z_OBJ_P(subscriber), NULL, NULL, function_name, strlen(function_name), NULL, 1, event, NULL);
 	}
 	ZEND_HASH_FOREACH_END();
 }
@@ -270,8 +270,8 @@ static void phongo_apm_command_failed(const mongoc_apm_command_failed_t* event)
 	mongoc_apm_command_failed_get_error(event, &tmp_error);
 
 	object_init_ex(&p_event->z_error, phongo_exception_from_mongoc_domain(tmp_error.domain, tmp_error.code));
-	zend_update_property_string(zend_ce_exception, PHONGO_COMPAT_OBJ_P(&p_event->z_error), ZEND_STRL("message"), tmp_error.message);
-	zend_update_property_long(zend_ce_exception, PHONGO_COMPAT_OBJ_P(&p_event->z_error), ZEND_STRL("code"), tmp_error.code);
+	zend_update_property_string(zend_ce_exception, Z_OBJ_P(&p_event->z_error), ZEND_STRL("message"), tmp_error.message);
+	zend_update_property_long(zend_ce_exception, Z_OBJ_P(&p_event->z_error), ZEND_STRL("code"), tmp_error.code);
 
 	phongo_apm_dispatch_event(subscribers, "commandFailed", &z_event);
 	zval_ptr_dtor(&z_event);
@@ -370,8 +370,8 @@ static void phongo_apm_server_heartbeat_failed(const mongoc_apm_server_heartbeat
 	mongoc_apm_server_heartbeat_failed_get_error(event, &tmp_error);
 
 	object_init_ex(&p_event->z_error, phongo_exception_from_mongoc_domain(tmp_error.domain, tmp_error.code));
-	zend_update_property_string(zend_ce_exception, PHONGO_COMPAT_OBJ_P(&p_event->z_error), ZEND_STRL("message"), tmp_error.message);
-	zend_update_property_long(zend_ce_exception, PHONGO_COMPAT_OBJ_P(&p_event->z_error), ZEND_STRL("code"), tmp_error.code);
+	zend_update_property_string(zend_ce_exception, Z_OBJ_P(&p_event->z_error), ZEND_STRL("message"), tmp_error.message);
+	zend_update_property_long(zend_ce_exception, Z_OBJ_P(&p_event->z_error), ZEND_STRL("code"), tmp_error.code);
 
 	phongo_apm_dispatch_event(subscribers, "serverHeartbeatFailed", &z_event);
 	zval_ptr_dtor(&z_event);

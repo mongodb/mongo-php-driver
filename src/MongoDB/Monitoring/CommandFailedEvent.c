@@ -224,7 +224,7 @@ static zend_object* php_phongo_commandfailedevent_create_object(zend_class_entry
 	return &intern->std;
 }
 
-static HashTable* php_phongo_commandfailedevent_get_debug_info(phongo_compat_object_handler_type* object, int* is_temp)
+static HashTable* php_phongo_commandfailedevent_get_debug_info(zend_object* object, int* is_temp)
 {
 	php_phongo_commandfailedevent_t* intern;
 	zval                             retval = ZVAL_STATIC_INIT;
@@ -233,7 +233,7 @@ static HashTable* php_phongo_commandfailedevent_get_debug_info(phongo_compat_obj
 
 	PHONGO_BSON_INIT_STATE(reply_state);
 
-	intern   = Z_OBJ_COMMANDFAILEDEVENT(PHONGO_COMPAT_GET_OBJ(object));
+	intern   = Z_OBJ_COMMANDFAILEDEVENT(object);
 	*is_temp = 1;
 	array_init_size(&retval, 11);
 
@@ -293,7 +293,6 @@ void php_phongo_commandfailedevent_init_ce(INIT_FUNC_ARGS)
 {
 	php_phongo_commandfailedevent_ce                = register_class_MongoDB_Driver_Monitoring_CommandFailedEvent();
 	php_phongo_commandfailedevent_ce->create_object = php_phongo_commandfailedevent_create_object;
-	PHONGO_CE_DISABLE_SERIALIZATION(php_phongo_commandfailedevent_ce);
 
 	memcpy(&php_phongo_handler_commandfailedevent, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	php_phongo_handler_commandfailedevent.get_debug_info = php_phongo_commandfailedevent_get_debug_info;

@@ -7,6 +7,7 @@
 
 namespace MongoDB\Driver;
 
+/** @not-serializable */
 final class Session
 {
     /**
@@ -43,12 +44,7 @@ final class Session
 
     final public function abortTransaction(): void {}
 
-#if PHP_VERSION_ID >= 80000
     final public function advanceClusterTime(array|object $clusterTime): void {}
-#else
-    /** @param array|object $clusterTime */
-    final public function advanceClusterTime($clusterTime): void {}
-#endif
 
     final public function advanceOperationTime(\MongoDB\BSON\TimestampInterface $operationTime): void {}
 

@@ -568,7 +568,7 @@ static zend_object* php_phongo_server_create_object(zend_class_entry* class_type
 	return &intern->std;
 }
 
-static HashTable* php_phongo_server_get_debug_info(phongo_compat_object_handler_type* object, int* is_temp)
+static HashTable* php_phongo_server_get_debug_info(zend_object* object, int* is_temp)
 {
 	php_phongo_server_t*         intern = NULL;
 	zval                         retval = ZVAL_STATIC_INIT;
@@ -576,7 +576,7 @@ static HashTable* php_phongo_server_get_debug_info(phongo_compat_object_handler_
 	mongoc_server_description_t* sd;
 
 	*is_temp = 1;
-	intern   = Z_OBJ_SERVER(PHONGO_COMPAT_GET_OBJ(object));
+	intern   = Z_OBJ_SERVER(object);
 	client   = Z_MANAGER_OBJ_P(&intern->manager)->client;
 
 	if (!(sd = mongoc_client_get_server_description(client, intern->server_id))) {
@@ -594,10 +594,9 @@ void php_phongo_server_init_ce(INIT_FUNC_ARGS)
 {
 	php_phongo_server_ce                = register_class_MongoDB_Driver_Server();
 	php_phongo_server_ce->create_object = php_phongo_server_create_object;
-	PHONGO_CE_DISABLE_SERIALIZATION(php_phongo_server_ce);
 
 	memcpy(&php_phongo_handler_server, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
-	PHONGO_COMPAT_SET_COMPARE_OBJECTS_HANDLER(server);
+	php_phongo_handler_server.compare        = php_phongo_server_compare_objects;
 	php_phongo_handler_server.get_debug_info = php_phongo_server_get_debug_info;
 	php_phongo_handler_server.free_obj       = php_phongo_server_free_object;
 	php_phongo_handler_server.offset         = XtOffsetOf(php_phongo_server_t, std);

@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: da6e980fbfe2102334158e3018b827e0bb0a9ec3 */
+ * Stub hash: d039252f9f7e9b8c30ba4794d488ad7c5cd493d2 */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_Driver_ReadConcern___construct, 0, 0, 0)
 	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, level, IS_STRING, 1, "null")
@@ -21,17 +21,9 @@ ZEND_END_ARG_INFO()
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_Driver_ReadConcern_serialize, 0, 0, IS_STRING, 0)
 ZEND_END_ARG_INFO()
 
-#if PHP_VERSION_ID >= 80000
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_Driver_ReadConcern_unserialize, 0, 1, IS_VOID, 0)
 	ZEND_ARG_TYPE_INFO(0, data, IS_STRING, 0)
 ZEND_END_ARG_INFO()
-#endif
-
-#if !(PHP_VERSION_ID >= 80000)
-ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_Driver_ReadConcern_unserialize, 0, 1, IS_VOID, 0)
-	ZEND_ARG_INFO(0, serialized)
-ZEND_END_ARG_INFO()
-#endif
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_Driver_ReadConcern___unserialize, 0, 1, IS_VOID, 0)
 	ZEND_ARG_TYPE_INFO(0, data, IS_ARRAY, 0)
@@ -47,12 +39,7 @@ static ZEND_METHOD(MongoDB_Driver_ReadConcern, isDefault);
 static ZEND_METHOD(MongoDB_Driver_ReadConcern, __set_state);
 static ZEND_METHOD(MongoDB_Driver_ReadConcern, bsonSerialize);
 static ZEND_METHOD(MongoDB_Driver_ReadConcern, serialize);
-#if PHP_VERSION_ID >= 80000
 static ZEND_METHOD(MongoDB_Driver_ReadConcern, unserialize);
-#endif
-#if !(PHP_VERSION_ID >= 80000)
-static ZEND_METHOD(MongoDB_Driver_ReadConcern, unserialize);
-#endif
 static ZEND_METHOD(MongoDB_Driver_ReadConcern, __unserialize);
 static ZEND_METHOD(MongoDB_Driver_ReadConcern, __serialize);
 
@@ -64,12 +51,7 @@ static const zend_function_entry class_MongoDB_Driver_ReadConcern_methods[] = {
 	ZEND_ME(MongoDB_Driver_ReadConcern, __set_state, arginfo_class_MongoDB_Driver_ReadConcern___set_state, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_Driver_ReadConcern, bsonSerialize, arginfo_class_MongoDB_Driver_ReadConcern_bsonSerialize, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_Driver_ReadConcern, serialize, arginfo_class_MongoDB_Driver_ReadConcern_serialize, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-#if PHP_VERSION_ID >= 80000
 	ZEND_ME(MongoDB_Driver_ReadConcern, unserialize, arginfo_class_MongoDB_Driver_ReadConcern_unserialize, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-#endif
-#if !(PHP_VERSION_ID >= 80000)
-	ZEND_ME(MongoDB_Driver_ReadConcern, unserialize, arginfo_class_MongoDB_Driver_ReadConcern_unserialize, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-#endif
 	ZEND_ME(MongoDB_Driver_ReadConcern, __unserialize, arginfo_class_MongoDB_Driver_ReadConcern___unserialize, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_Driver_ReadConcern, __serialize, arginfo_class_MongoDB_Driver_ReadConcern___serialize, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_FE_END

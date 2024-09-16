@@ -1,8 +1,5 @@
 --TEST--
 MongoDB\BSON\toPHP(): Type map classes must be instantiatable and implement Unserializable (enums)
---SKIPIF--
-<?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
-<?php skip_if_php_version('<', '8.1.0'); ?>
 --FILE--
 <?php
 

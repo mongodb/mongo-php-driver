@@ -23,12 +23,10 @@ zend_class_entry* php_phongo_persistable_ce;
 
 static int php_phongo_implement_persistable(zend_class_entry* interface, zend_class_entry* class_type)
 {
-#if PHP_VERSION_ID >= 80100
 	if (class_type->ce_flags & ZEND_ACC_ENUM) {
 		zend_error_noreturn(E_ERROR, "Enum class %s cannot implement interface %s", ZSTR_VAL(class_type->name), ZSTR_VAL(interface->name));
 		return FAILURE;
 	}
-#endif /* PHP_VERSION_ID >= 80100 */
 
 	return SUCCESS;
 }

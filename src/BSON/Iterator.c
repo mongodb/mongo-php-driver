@@ -153,12 +153,12 @@ static void php_phongo_iterator_rewind(php_phongo_iterator_t* intern)
 	intern->valid = bson_iter_next(&intern->iter);
 }
 
-static HashTable* php_phongo_iterator_get_properties_hash(phongo_compat_object_handler_type* object, bool is_temp)
+static HashTable* php_phongo_iterator_get_properties_hash(zend_object* object, bool is_temp)
 {
 	php_phongo_iterator_t* intern;
 	HashTable*             props;
 
-	intern = Z_OBJ_ITERATOR(PHONGO_COMPAT_GET_OBJ(object));
+	intern = Z_OBJ_ITERATOR(object);
 
 	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_temp, intern, props, 1);
 
@@ -270,14 +270,14 @@ static zend_object* php_phongo_iterator_create_object(zend_class_entry* class_ty
 	return &intern->std;
 }
 
-static zend_object* php_phongo_iterator_clone_object(phongo_compat_object_handler_type* object)
+static zend_object* php_phongo_iterator_clone_object(zend_object* object)
 {
 	php_phongo_iterator_t* intern;
 	php_phongo_iterator_t* new_intern;
 	zend_object*           new_object;
 
-	intern     = Z_OBJ_ITERATOR(PHONGO_COMPAT_GET_OBJ(object));
-	new_object = php_phongo_iterator_create_object(PHONGO_COMPAT_GET_OBJ(object)->ce);
+	intern     = Z_OBJ_ITERATOR(object);
+	new_object = php_phongo_iterator_create_object(object->ce);
 	new_intern = Z_OBJ_ITERATOR(new_object);
 
 	php_phongo_iterator_init_with_zval(new_intern, &intern->bson);
@@ -286,13 +286,13 @@ static zend_object* php_phongo_iterator_clone_object(phongo_compat_object_handle
 	return new_object;
 }
 
-static HashTable* php_phongo_iterator_get_debug_info(phongo_compat_object_handler_type* object, int* is_temp)
+static HashTable* php_phongo_iterator_get_debug_info(zend_object* object, int* is_temp)
 {
 	*is_temp = 1;
 	return php_phongo_iterator_get_properties_hash(object, true);
 }
 
-static HashTable* php_phongo_iterator_get_properties(phongo_compat_object_handler_type* object)
+static HashTable* php_phongo_iterator_get_properties(zend_object* object)
 {
 	return php_phongo_iterator_get_properties_hash(object, false);
 }
@@ -341,16 +341,14 @@ static void php_phongo_iterator_it_rewind(zend_object_iterator* iter)
 	php_phongo_iterator_rewind(intern);
 }
 
-#if PHP_VERSION_ID >= 80000
 static HashTable* php_phongo_iterator_it_get_gc(zend_object_iterator* iter, zval** table, int* n)
 {
 	*n     = 1;
 	*table = &iter->data;
 	return NULL;
 }
-#endif
 
-static const zend_object_iterator_funcs php_phongo_iterator_it_funcs = PHONGO_ITERATOR_FUNCS(
+static const zend_object_iterator_funcs php_phongo_iterator_it_funcs = {
 	php_phongo_iterator_it_dtor,
 	php_phongo_iterator_it_valid,
 	php_phongo_iterator_it_get_current_data,
@@ -358,7 +356,8 @@ static const zend_object_iterator_funcs php_phongo_iterator_it_funcs = PHONGO_IT
 	php_phongo_iterator_it_move_forward,
 	php_phongo_iterator_it_rewind,
 	NULL, /* invalidate_current */
-	php_phongo_iterator_it_get_gc);
+	php_phongo_iterator_it_get_gc
+};
 
 static zend_object_iterator* php_phongo_iterator_get_iterator(zend_class_entry* ce, zval* object, int by_ref)
 {
@@ -384,7 +383,6 @@ void php_phongo_iterator_init_ce(INIT_FUNC_ARGS)
 	php_phongo_iterator_ce                = register_class_MongoDB_BSON_Iterator(zend_ce_iterator);
 	php_phongo_iterator_ce->create_object = php_phongo_iterator_create_object;
 	php_phongo_iterator_ce->get_iterator  = php_phongo_iterator_get_iterator;
-	PHONGO_CE_DISABLE_SERIALIZATION(php_phongo_iterator_ce);
 
 	memcpy(&php_phongo_handler_iterator, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	php_phongo_handler_iterator.clone_obj      = php_phongo_iterator_clone_object;
