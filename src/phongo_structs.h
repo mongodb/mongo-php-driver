@@ -281,7 +281,6 @@ typedef struct {
 } php_phongo_utcdatetime_t;
 
 typedef struct {
-	zval               manager;
 	char*              command_name;
 	char*              database_name;
 	uint32_t           server_id;
@@ -298,7 +297,6 @@ typedef struct {
 } php_phongo_commandfailedevent_t;
 
 typedef struct {
-	zval               manager;
 	char*              command_name;
 	char*              database_name;
 	uint32_t           server_id;
@@ -313,7 +311,6 @@ typedef struct {
 } php_phongo_commandstartedevent_t;
 
 typedef struct {
-	zval               manager;
 	char*              command_name;
 	char*              database_name;
 	uint32_t           server_id;
