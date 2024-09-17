@@ -81,7 +81,84 @@ static HashTable* php_phongo_packedarray_get_properties_hash(phongo_compat_objec
 	return props;
 }
 
+static bool php_phongo_packedarray_to_json(zval* return_value, bson_json_mode_t mode, const bson_t* bson)
+{
+	char*             json = NULL;
+	size_t            json_len;
+	bson_json_opts_t* opts = bson_json_opts_new(mode, BSON_MAX_LEN_UNLIMITED);
+	bool              ret  = false;
+
+	bson_json_opts_set_outermost_array(opts, true);
+
+	json = bson_as_json_with_opts(bson, &json_len, opts);
+
+	if (json) {
+		ZVAL_STRINGL(return_value, json, json_len);
+		bson_free(json);
+		ret = true;
+	} else {
+		ZVAL_UNDEF(return_value);
+		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Could not convert BSON array to a JSON string");
+	}
+
+	bson_json_opts_destroy(opts);
+
+	return ret;
+}
+
 PHONGO_DISABLED_CONSTRUCTOR(MongoDB_BSON_PackedArray)
+
+static PHP_METHOD(MongoDB_BSON_PackedArray, fromJSON)
+{
+	zval                      zv;
+	php_phongo_packedarray_t* intern;
+	zend_string*              json;
+	bson_t*                   bson;
+	bson_error_t              error;
+
+	PHONGO_PARSE_PARAMETERS_START(1, 1)
+	Z_PARAM_STR(json)
+	PHONGO_PARSE_PARAMETERS_END();
+
+	bson = bson_new_from_json((const uint8_t*) ZSTR_VAL(json), ZSTR_LEN(json), &error);
+	if (!bson) {
+		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "%s", error.domain == BSON_ERROR_JSON ? error.message : "Error parsing JSON");
+		return;
+	}
+
+	// Check if BSON contains only numeric keys
+	if (!bson_empty(bson)) {
+		bson_iter_t iter;
+		uint32_t    expected_key = 0;
+		char        expected_key_str[11];
+		const char* key_str;
+
+		if (!bson_iter_init(&iter, bson)) {
+			phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Received invalid JSON array");
+			bson_destroy(bson);
+			return;
+		}
+
+		while (bson_iter_next(&iter)) {
+			key_str = bson_iter_key(&iter);
+			snprintf(expected_key_str, sizeof(expected_key_str), "%" PRIu32, expected_key);
+
+			if (strcmp(key_str, expected_key_str)) {
+				phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Received invalid JSON array: expected key %" PRIu32 ", but found \"%s\"", expected_key, key_str);
+				bson_destroy(bson);
+				return;
+			}
+
+			expected_key++;
+		}
+	}
+
+	object_init_ex(&zv, php_phongo_packedarray_ce);
+	intern       = Z_PACKEDARRAY_OBJ_P(&zv);
+	intern->bson = bson;
+
+	RETURN_ZVAL(&zv, 1, 1);
+}
 
 static PHP_METHOD(MongoDB_BSON_PackedArray, fromPHP)
 {
@@ -190,6 +267,28 @@ static PHP_METHOD(MongoDB_BSON_PackedArray, has)
 	intern = Z_PACKEDARRAY_OBJ_P(getThis());
 
 	RETURN_BOOL(php_phongo_packedarray_has(intern, index));
+}
+
+static PHP_METHOD(MongoDB_BSON_PackedArray, toCanonicalExtendedJSON)
+{
+	php_phongo_packedarray_t* intern;
+
+	PHONGO_PARSE_PARAMETERS_NONE();
+
+	intern = Z_PACKEDARRAY_OBJ_P(getThis());
+
+	php_phongo_packedarray_to_json(return_value, BSON_JSON_MODE_CANONICAL, intern->bson);
+}
+
+static PHP_METHOD(MongoDB_BSON_PackedArray, toRelaxedExtendedJSON)
+{
+	php_phongo_packedarray_t* intern;
+
+	PHONGO_PARSE_PARAMETERS_NONE();
+
+	intern = Z_PACKEDARRAY_OBJ_P(getThis());
+
+	php_phongo_packedarray_to_json(return_value, BSON_JSON_MODE_RELAXED, intern->bson);
 }
 
 static PHP_METHOD(MongoDB_BSON_PackedArray, toPHP)

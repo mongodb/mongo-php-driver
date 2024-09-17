@@ -11,6 +11,8 @@ final class PackedArray implements \IteratorAggregate, \Serializable, \ArrayAcce
 {
     private function __construct() {}
 
+    final static public function fromJSON(string $json): PackedArray {}
+
     final static public function fromPHP(array $value): PackedArray {}
 
 #if PHP_VERSION_ID >= 80000
@@ -30,6 +32,10 @@ final class PackedArray implements \IteratorAggregate, \Serializable, \ArrayAcce
     /** @return array|object */
     final public function toPHP(?array $typeMap = null) {}
 #endif
+
+    final public function toCanonicalExtendedJSON(): string {}
+
+    final public function toRelaxedExtendedJSON(): string {}
 
 #if PHP_VERSION_ID >= 80000
     public function offsetExists(mixed $offset): bool {}
