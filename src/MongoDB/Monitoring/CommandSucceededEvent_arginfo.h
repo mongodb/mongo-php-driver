@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: c29b3eb0f340867cc1707b29e935f42fdbc0f031 */
+ * Stub hash: f1367c3735acf21f72b420fa4adabaf7a3098713 */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_Driver_Monitoring_CommandSucceededEvent___construct, 0, 0, 0)
 ZEND_END_ARG_INFO()
@@ -69,7 +69,7 @@ static zend_class_entry *register_class_MongoDB_Driver_Monitoring_CommandSucceed
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver\\Monitoring", "CommandSucceededEvent", class_MongoDB_Driver_Monitoring_CommandSucceededEvent_methods);
 	class_entry = zend_register_internal_class_ex(&ce, NULL);
-	class_entry->ce_flags |= ZEND_ACC_FINAL;
+	class_entry->ce_flags |= ZEND_ACC_FINAL|ZEND_ACC_NOT_SERIALIZABLE;
 
 	return class_entry;
 }

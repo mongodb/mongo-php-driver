@@ -56,12 +56,12 @@ static bool php_phongo_cursorid_init_from_hash(php_phongo_cursorid_t* intern, Ha
 	return false;
 }
 
-static HashTable* php_phongo_cursorid_get_properties_hash(phongo_compat_object_handler_type* object, bool is_temp, bool is_serialize)
+static HashTable* php_phongo_cursorid_get_properties_hash(zend_object* object, bool is_temp, bool is_serialize)
 {
 	php_phongo_cursorid_t* intern;
 	HashTable*             props;
 
-	intern = Z_OBJ_CURSORID(PHONGO_COMPAT_GET_OBJ(object));
+	intern = Z_OBJ_CURSORID(object);
 
 	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_temp, intern, props, 1);
 
@@ -182,7 +182,7 @@ PHP_METHOD(MongoDB_Driver_CursorId, __serialize)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
 
-	RETURN_ARR(php_phongo_cursorid_get_properties_hash(PHONGO_COMPAT_OBJ_P(getThis()), true, true));
+	RETURN_ARR(php_phongo_cursorid_get_properties_hash(Z_OBJ_P(getThis()), true, true));
 }
 
 PHP_METHOD(MongoDB_Driver_CursorId, __unserialize)
@@ -225,25 +225,21 @@ static zend_object* php_phongo_cursorid_create_object(zend_class_entry* class_ty
 	return &intern->std;
 }
 
-static HashTable* php_phongo_cursorid_get_debug_info(phongo_compat_object_handler_type* object, int* is_temp)
+static HashTable* php_phongo_cursorid_get_debug_info(zend_object* object, int* is_temp)
 {
 	*is_temp = 1;
 	return php_phongo_cursorid_get_properties_hash(object, true, false);
 }
 
-static HashTable* php_phongo_cursorid_get_properties(phongo_compat_object_handler_type* object)
+static HashTable* php_phongo_cursorid_get_properties(zend_object* object)
 {
 	return php_phongo_cursorid_get_properties_hash(object, false, false);
 }
 
 void php_phongo_cursorid_init_ce(INIT_FUNC_ARGS)
 {
-	php_phongo_cursorid_ce                = register_class_MongoDB_Driver_CursorId(zend_ce_serializable);
+	php_phongo_cursorid_ce                = register_class_MongoDB_Driver_CursorId(zend_ce_serializable, zend_ce_stringable);
 	php_phongo_cursorid_ce->create_object = php_phongo_cursorid_create_object;
-
-#if PHP_VERSION_ID >= 80000
-	zend_class_implements(php_phongo_cursorid_ce, 1, zend_ce_stringable);
-#endif
 
 	memcpy(&php_phongo_handler_cursorid, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	php_phongo_handler_cursorid.get_debug_info = php_phongo_cursorid_get_debug_info;

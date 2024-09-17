@@ -111,12 +111,12 @@ static zend_object* php_phongo_serverchangedevent_create_object(zend_class_entry
 	return &intern->std;
 }
 
-static HashTable* php_phongo_serverchangedevent_get_debug_info(phongo_compat_object_handler_type* object, int* is_temp)
+static HashTable* php_phongo_serverchangedevent_get_debug_info(zend_object* object, int* is_temp)
 {
 	php_phongo_serverchangedevent_t* intern;
 	zval                             retval = ZVAL_STATIC_INIT;
 
-	intern   = Z_OBJ_SERVERCHANGEDEVENT(PHONGO_COMPAT_GET_OBJ(object));
+	intern   = Z_OBJ_SERVERCHANGEDEVENT(object);
 	*is_temp = 1;
 	array_init_size(&retval, 4);
 
@@ -154,7 +154,6 @@ void php_phongo_serverchangedevent_init_ce(INIT_FUNC_ARGS)
 {
 	php_phongo_serverchangedevent_ce                = register_class_MongoDB_Driver_Monitoring_ServerChangedEvent();
 	php_phongo_serverchangedevent_ce->create_object = php_phongo_serverchangedevent_create_object;
-	PHONGO_CE_DISABLE_SERIALIZATION(php_phongo_serverchangedevent_ce);
 
 	memcpy(&php_phongo_handler_serverchangedevent, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	php_phongo_handler_serverchangedevent.get_debug_info = php_phongo_serverchangedevent_get_debug_info;

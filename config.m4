@@ -38,8 +38,8 @@ if test "$PHP_MONGODB" != "no"; then
 
   AC_MSG_RESULT($PHP_MONGODB_PHP_VERSION)
 
-  if test "$PHP_MONGODB_PHP_VERSION_ID" -lt "70400"; then
-    AC_MSG_ERROR([not supported. Need a PHP version >= 7.4.0 (found $PHP_MONGODB_PHP_VERSION)])
+  if test "$PHP_MONGODB_PHP_VERSION_ID" -lt "80100"; then
+    AC_MSG_ERROR([not supported. Need a PHP version >= 8.1.0 (found $PHP_MONGODB_PHP_VERSION)])
   fi
 
   PHP_MONGODB_STD_CFLAGS=""

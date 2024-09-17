@@ -7,6 +7,7 @@
 
 namespace MongoDB\Driver\Monitoring;
 
+/** @not-serializable */
 final class TopologyOpeningEvent
 {
     final private function __construct() {}
