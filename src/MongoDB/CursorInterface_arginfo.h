@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 95f356a63692e1bb72d50c641e93a53113c43531 */
+ * Stub hash: a349f3142a48084fd7359d202a6384b7927c2936 */
 
 ZEND_BEGIN_ARG_WITH_TENTATIVE_RETURN_OBJ_TYPE_MASK_EX(arginfo_class_MongoDB_Driver_CursorInterface_getId, 0, 0, MongoDB\\Driver\\CursorId|MongoDB\\BSON\\Int64, 0)
 ZEND_END_ARG_INFO()
@@ -29,13 +29,13 @@ static const zend_function_entry class_MongoDB_Driver_CursorInterface_methods[] 
 	ZEND_FE_END
 };
 
-static zend_class_entry *register_class_MongoDB_Driver_CursorInterface(zend_class_entry *class_entry_Traversable)
+static zend_class_entry *register_class_MongoDB_Driver_CursorInterface(zend_class_entry *class_entry_Iterator)
 {
 	zend_class_entry ce, *class_entry;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver", "CursorInterface", class_MongoDB_Driver_CursorInterface_methods);
 	class_entry = zend_register_internal_interface(&ce);
-	zend_class_implements(class_entry, 1, class_entry_Traversable);
+	zend_class_implements(class_entry, 1, class_entry_Iterator);
 
 	return class_entry;
 }

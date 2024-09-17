@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: c2927c5d481f305b1579a8968eeecc39ba921ddd */
+ * Stub hash: 00390b38afb06e7361930fa5de69ca2bbfcc30d3 */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_Driver_Cursor___construct, 0, 0, 0)
 ZEND_END_ARG_INFO()
@@ -63,14 +63,14 @@ static const zend_function_entry class_MongoDB_Driver_Cursor_methods[] = {
 	ZEND_FE_END
 };
 
-static zend_class_entry *register_class_MongoDB_Driver_Cursor(zend_class_entry *class_entry_Iterator, zend_class_entry *class_entry_MongoDB_Driver_CursorInterface)
+static zend_class_entry *register_class_MongoDB_Driver_Cursor(zend_class_entry *class_entry_MongoDB_Driver_CursorInterface)
 {
 	zend_class_entry ce, *class_entry;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver", "Cursor", class_MongoDB_Driver_Cursor_methods);
 	class_entry = zend_register_internal_class_ex(&ce, NULL);
 	class_entry->ce_flags |= ZEND_ACC_FINAL|ZEND_ACC_NOT_SERIALIZABLE;
-	zend_class_implements(class_entry, 2, class_entry_Iterator, class_entry_MongoDB_Driver_CursorInterface);
+	zend_class_implements(class_entry, 1, class_entry_MongoDB_Driver_CursorInterface);
 
 	return class_entry;
 }
