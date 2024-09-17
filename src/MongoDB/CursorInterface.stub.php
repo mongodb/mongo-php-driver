@@ -7,7 +7,7 @@
 
 namespace MongoDB\Driver;
 
-interface CursorInterface extends \Traversable
+interface CursorInterface extends \Iterator
 {
     /** @tentative-return-type */
     public function getId(): CursorId|\MongoDB\BSON\Int64;
