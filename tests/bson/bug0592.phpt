@@ -23,8 +23,8 @@ $tests = [
 foreach ($tests as $json) {
     printf("Test %s\n", $json);
     try {
-        $encoded = MongoDB\BSON\toPHP(MongoDB\BSON\fromJSON($json));
-        var_dump( $encoded );
+        $encoded = MongoDB\BSON\Document::fromJSON($json)->toPHP();
+        var_dump($encoded);
     } catch ( MongoDB\Driver\Exception\InvalidArgumentException $e ) {
         echo "MongoDB\Driver\Exception\InvalidArgumentException: ", $e->getMessage(), "\n";
     }
@@ -36,30 +36,24 @@ foreach ($tests as $json) {
 <?php exit(0); ?>
 --EXPECTF--
 Test { "x": { "$numberLong": "-2147483648" }}
-
-Deprecated: Function MongoDB\BSON\fromJSON() is deprecated in %s
-
-Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 object(stdClass)#%d (%d) {
   ["x"]=>
-  int(-2147483648)
+  object(MongoDB\BSON\Int64)#%d (%d) {
+    ["integer"]=>
+    string(11) "-2147483648"
+  }
 }
 
 Test { "x": { "$numberLong": "2147483647" }}
-
-Deprecated: Function MongoDB\BSON\fromJSON() is deprecated in %s
-
-Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 object(stdClass)#%d (%d) {
   ["x"]=>
-  int(2147483647)
+  object(MongoDB\BSON\Int64)#%d (%d) {
+    ["integer"]=>
+    string(10) "2147483647"
+  }
 }
 
 Test { "x": { "$numberLong": "4294967294" }}
-
-Deprecated: Function MongoDB\BSON\fromJSON() is deprecated in %s
-
-Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 object(stdClass)#%d (%d) {
   ["x"]=>
   object(MongoDB\BSON\Int64)#%d (%d) {
@@ -69,10 +63,6 @@ object(stdClass)#%d (%d) {
 }
 
 Test { "x": { "$numberLong": "4294967295" }}
-
-Deprecated: Function MongoDB\BSON\fromJSON() is deprecated in %s
-
-Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 object(stdClass)#%d (%d) {
   ["x"]=>
   object(MongoDB\BSON\Int64)#%d (%d) {
@@ -82,10 +72,6 @@ object(stdClass)#%d (%d) {
 }
 
 Test { "x": { "$numberLong": "9223372036854775807" }}
-
-Deprecated: Function MongoDB\BSON\fromJSON() is deprecated in %s
-
-Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 object(stdClass)#%d (%d) {
   ["x"]=>
   object(MongoDB\BSON\Int64)#%d (%d) {
@@ -95,30 +81,24 @@ object(stdClass)#%d (%d) {
 }
 
 Test { "longFieldName": { "$numberLong": "-2147483648" }}
-
-Deprecated: Function MongoDB\BSON\fromJSON() is deprecated in %s
-
-Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 object(stdClass)#%d (%d) {
   ["longFieldName"]=>
-  int(-2147483648)
+  object(MongoDB\BSON\Int64)#%d (%d) {
+    ["integer"]=>
+    string(11) "-2147483648"
+  }
 }
 
 Test { "longFieldName": { "$numberLong": "2147483647" }}
-
-Deprecated: Function MongoDB\BSON\fromJSON() is deprecated in %s
-
-Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 object(stdClass)#%d (%d) {
   ["longFieldName"]=>
-  int(2147483647)
+  object(MongoDB\BSON\Int64)#%d (%d) {
+    ["integer"]=>
+    string(10) "2147483647"
+  }
 }
 
 Test { "longFieldName": { "$numberLong": "4294967294" }}
-
-Deprecated: Function MongoDB\BSON\fromJSON() is deprecated in %s
-
-Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 object(stdClass)#%d (%d) {
   ["longFieldName"]=>
   object(MongoDB\BSON\Int64)#%d (%d) {
@@ -128,10 +108,6 @@ object(stdClass)#%d (%d) {
 }
 
 Test { "longFieldName": { "$numberLong": "4294967295" }}
-
-Deprecated: Function MongoDB\BSON\fromJSON() is deprecated in %s
-
-Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 object(stdClass)#%d (%d) {
   ["longFieldName"]=>
   object(MongoDB\BSON\Int64)#%d (%d) {
@@ -141,10 +117,6 @@ object(stdClass)#%d (%d) {
 }
 
 Test { "longFieldName": { "$numberLong": "9223372036854775807" }}
-
-Deprecated: Function MongoDB\BSON\fromJSON() is deprecated in %s
-
-Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
 object(stdClass)#%d (%d) {
   ["longFieldName"]=>
   object(MongoDB\BSON\Int64)#%d (%d) {
