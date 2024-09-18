@@ -22,12 +22,7 @@ $tests = [
 
 foreach ($tests as $json) {
     printf("Test %s\n", $json);
-    try {
-        $encoded = MongoDB\BSON\Document::fromJSON($json)->toPHP();
-        var_dump($encoded);
-    } catch ( MongoDB\Driver\Exception\InvalidArgumentException $e ) {
-        echo "MongoDB\Driver\Exception\InvalidArgumentException: ", $e->getMessage(), "\n";
-    }
+    var_dump(MongoDB\BSON\Document::fromJSON($json)->toPHP());
     echo "\n";
 }
 
