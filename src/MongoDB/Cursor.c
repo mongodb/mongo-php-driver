@@ -115,17 +115,6 @@ static int php_phongo_cursor_to_array_apply(zend_object_iterator* iter, void* pu
 	return ZEND_HASH_APPLY_KEEP;
 }
 
-static void php_phongo_cursor_id_new_from_id(zval* object, int64_t cursorid)
-{
-	php_phongo_cursorid_t* intern;
-
-	object_init_ex(object, php_phongo_cursorid_ce);
-
-	intern              = Z_CURSORID_OBJ_P(object);
-	intern->id          = cursorid;
-	intern->initialized = true;
-}
-
 /* Returns an array of all result documents for this cursor */
 static PHP_METHOD(MongoDB_Driver_Cursor, toArray)
 {
@@ -143,22 +132,12 @@ static PHP_METHOD(MongoDB_Driver_Cursor, toArray)
 static PHP_METHOD(MongoDB_Driver_Cursor, getId)
 {
 	php_phongo_cursor_t* intern;
-	zend_bool            asInt64 = false;
 
 	intern = Z_CURSOR_OBJ_P(getThis());
 
-	PHONGO_PARSE_PARAMETERS_START(0, 1)
-	Z_PARAM_OPTIONAL
-	Z_PARAM_BOOL(asInt64)
-	PHONGO_PARSE_PARAMETERS_END();
+	PHONGO_PARSE_PARAMETERS_NONE();
 
-	if (asInt64) {
-		phongo_int64_new(return_value, mongoc_cursor_get_id(intern->cursor));
-	} else {
-		php_error_docref(NULL, E_DEPRECATED, "The method \"MongoDB\\Driver\\Cursor::getId\" will no longer return a \"MongoDB\\Driver\\CursorId\" instance in the future. Pass \"true\" as argument to change to the new behavior and receive a \"MongoDB\\BSON\\Int64\" instance instead.");
-
-		php_phongo_cursor_id_new_from_id(return_value, mongoc_cursor_get_id(intern->cursor));
-	}
+	phongo_int64_new(return_value, mongoc_cursor_get_id(intern->cursor));
 }
 
 /* Returns the Server object to which this cursor is attached */

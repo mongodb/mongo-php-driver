@@ -14,7 +14,7 @@ final class Cursor implements CursorInterface
 
     public function current(): array|object|null {}
 
-    final public function getId(bool $asInt64 = false): CursorId|\MongoDB\BSON\Int64 {}
+    final public function getId(): \MongoDB\BSON\Int64 {}
 
     final public function getServer(): Server {}
 

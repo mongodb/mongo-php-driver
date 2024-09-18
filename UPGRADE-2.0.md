@@ -15,3 +15,7 @@ UPGRADE FROM 1.x to 2.0
    implementing classes to also implement iterator methods. The return types for
    the `key` and `current` methods have been narrowed to the types returned by
    cursor instances.
+ * The `MongoDB\Driver\CursorId` class was removed. 
+   `MongoDB\Driver\Cursor::getId()` and
+   `MongoDB\Driver\CursorInterface::getId()` now return a `MongoDB\BSON\Int64`
+   instance.

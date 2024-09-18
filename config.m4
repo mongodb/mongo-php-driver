@@ -169,7 +169,6 @@ if test "$PHP_MONGODB" != "no"; then
     src/MongoDB/ClientEncryption.c \
     src/MongoDB/Command.c \
     src/MongoDB/Cursor.c \
-    src/MongoDB/CursorId.c \
     src/MongoDB/CursorInterface.c \
     src/MongoDB/Manager.c \
     src/MongoDB/Query.c \
