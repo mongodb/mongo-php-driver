@@ -114,9 +114,27 @@ jobs:
       - name: "Copy signature file"
         run: cp ${RELEASE_ASSETS}/php_mongodb.dll.sig .
 
+      - name: "Set compiler environment variable"
+        run: |
+          case "$PHP_VERSION" in
+            "7.4")
+              COMPILER="vc15"
+              ;;
+            "8.0" | "8.1" | "8.2")
+              COMPILER="vs16"
+              ;;
+            "8.4")
+              COMPILER="vs17"
+              ;;
+          esac
+          echo "COMPILER=${COMPILER}" >> "$GITHUB_ENV"
+        shell: bash
+        env:
+          PHP_VERSION: ${{ inputs.php }}
+
       - name: "Create and upload release asset"
         if: ${{ inputs.upload_release_asset }}
         run: |
-          ARCHIVE=php_mongodb-${{ inputs.version }}-${{ inputs.php }}-${{ inputs.ts }}-${{ inputs.arch }}.zip
+          ARCHIVE=php_mongodb-${{ inputs.version }}-${{ inputs.php }}-${{ inputs.ts }}-${{ env.COMPILER }}-${{ inputs.arch }}.zip
           zip ${ARCHIVE} php_mongodb.dll php_mongodb.dll.sig php_mongodb.pdb CREDITS CONTRIBUTING.md LICENSE README.md THIRD_PARTY_NOTICES
           gh release upload ${{ inputs.version }} ${ARCHIVE}
