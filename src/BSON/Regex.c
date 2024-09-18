@@ -194,60 +194,6 @@ static PHP_METHOD(MongoDB_BSON_Regex, jsonSerialize)
 	ADD_ASSOC_STRINGL(return_value, "$options", intern->flags, intern->flags_len);
 }
 
-static PHP_METHOD(MongoDB_BSON_Regex, serialize)
-{
-	php_phongo_regex_t*  intern;
-	zval                 retval;
-	php_serialize_data_t var_hash;
-	smart_str            buf = { 0 };
-
-	intern = Z_REGEX_OBJ_P(getThis());
-
-	PHONGO_PARSE_PARAMETERS_NONE();
-
-	array_init_size(&retval, 2);
-	ADD_ASSOC_STRINGL(&retval, "pattern", intern->pattern, intern->pattern_len);
-	ADD_ASSOC_STRINGL(&retval, "flags", intern->flags, intern->flags_len);
-
-	PHP_VAR_SERIALIZE_INIT(var_hash);
-	php_var_serialize(&buf, &retval, &var_hash);
-	smart_str_0(&buf);
-	PHP_VAR_SERIALIZE_DESTROY(var_hash);
-
-	PHONGO_RETVAL_SMART_STR(buf);
-
-	smart_str_free(&buf);
-	zval_ptr_dtor(&retval);
-}
-
-static PHP_METHOD(MongoDB_BSON_Regex, unserialize)
-{
-	php_phongo_regex_t*    intern;
-	char*                  serialized;
-	size_t                 serialized_len;
-	zval                   props;
-	php_unserialize_data_t var_hash;
-
-	intern = Z_REGEX_OBJ_P(getThis());
-
-	PHONGO_PARSE_PARAMETERS_START(1, 1)
-	Z_PARAM_STRING(serialized, serialized_len)
-	PHONGO_PARSE_PARAMETERS_END();
-
-	PHP_VAR_UNSERIALIZE_INIT(var_hash);
-	if (!php_var_unserialize(&props, (const unsigned char**) &serialized, (unsigned char*) serialized + serialized_len, &var_hash)) {
-		zval_ptr_dtor(&props);
-		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "%s unserialization failed", ZSTR_VAL(php_phongo_regex_ce->name));
-
-		PHP_VAR_UNSERIALIZE_DESTROY(var_hash);
-		return;
-	}
-	PHP_VAR_UNSERIALIZE_DESTROY(var_hash);
-
-	php_phongo_regex_init_from_hash(intern, HASH_OF(&props));
-	zval_ptr_dtor(&props);
-}
-
 static PHP_METHOD(MongoDB_BSON_Regex, __serialize)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
@@ -351,7 +297,7 @@ static HashTable* php_phongo_regex_get_properties(zend_object* object)
 
 void php_phongo_regex_init_ce(INIT_FUNC_ARGS)
 {
-	php_phongo_regex_ce                = register_class_MongoDB_BSON_Regex(php_phongo_regex_interface_ce, php_phongo_json_serializable_ce, php_phongo_type_ce, zend_ce_serializable, zend_ce_stringable);
+	php_phongo_regex_ce                = register_class_MongoDB_BSON_Regex(php_phongo_regex_interface_ce, php_phongo_json_serializable_ce, php_phongo_type_ce, zend_ce_stringable);
 	php_phongo_regex_ce->create_object = php_phongo_regex_create_object;
 
 	memcpy(&php_phongo_handler_regex, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));

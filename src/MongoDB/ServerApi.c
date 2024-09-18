@@ -186,76 +186,6 @@ static PHP_METHOD(MongoDB_Driver_ServerApi, bsonSerialize)
 	convert_to_object(return_value);
 }
 
-static PHP_METHOD(MongoDB_Driver_ServerApi, serialize)
-{
-	php_phongo_serverapi_t* intern;
-	zval                    retval;
-	php_serialize_data_t    var_hash;
-	smart_str               buf = { 0 };
-
-	intern = Z_SERVERAPI_OBJ_P(getThis());
-
-	PHONGO_PARSE_PARAMETERS_NONE();
-
-	array_init_size(&retval, 3);
-
-	ADD_ASSOC_STRING(&retval, "version", mongoc_server_api_version_to_string(mongoc_server_api_get_version(intern->server_api)));
-
-	if (mongoc_optional_is_set(mongoc_server_api_get_strict(intern->server_api))) {
-		ADD_ASSOC_BOOL_EX(&retval, "strict", mongoc_optional_value(mongoc_server_api_get_strict(intern->server_api)));
-	} else {
-		ADD_ASSOC_NULL_EX(&retval, "strict");
-	}
-
-	if (mongoc_optional_is_set(mongoc_server_api_get_deprecation_errors(intern->server_api))) {
-		ADD_ASSOC_BOOL_EX(&retval, "deprecationErrors", mongoc_optional_value(mongoc_server_api_get_deprecation_errors(intern->server_api)));
-	} else {
-		ADD_ASSOC_NULL_EX(&retval, "deprecationErrors");
-	}
-
-	PHP_VAR_SERIALIZE_INIT(var_hash);
-	php_var_serialize(&buf, &retval, &var_hash);
-	smart_str_0(&buf);
-	PHP_VAR_SERIALIZE_DESTROY(var_hash);
-
-	PHONGO_RETVAL_SMART_STR(buf);
-
-	smart_str_free(&buf);
-	zval_ptr_dtor(&retval);
-}
-
-static PHP_METHOD(MongoDB_Driver_ServerApi, unserialize)
-{
-	php_phongo_serverapi_t* intern;
-	char*                   serialized;
-	size_t                  serialized_len;
-	zval                    props;
-	php_unserialize_data_t  var_hash;
-
-	intern = Z_SERVERAPI_OBJ_P(getThis());
-
-	PHONGO_PARSE_PARAMETERS_START(1, 1)
-	Z_PARAM_STRING(serialized, serialized_len)
-	PHONGO_PARSE_PARAMETERS_END();
-
-	if (!serialized_len) {
-		return;
-	}
-
-	PHP_VAR_UNSERIALIZE_INIT(var_hash);
-	if (!php_var_unserialize(&props, (const unsigned char**) &serialized, (unsigned char*) serialized + serialized_len, &var_hash)) {
-		zval_ptr_dtor(&props);
-		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "%s unserialization failed", ZSTR_VAL(php_phongo_serverapi_ce->name));
-
-		PHP_VAR_UNSERIALIZE_DESTROY(var_hash);
-		return;
-	}
-	PHP_VAR_UNSERIALIZE_DESTROY(var_hash);
-
-	php_phongo_serverapi_init_from_hash(intern, HASH_OF(&props));
-	zval_ptr_dtor(&props);
-}
-
 static PHP_METHOD(MongoDB_Driver_ServerApi, __serialize)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
@@ -318,7 +248,7 @@ static HashTable* php_phongo_serverapi_get_properties(zend_object* object)
 
 void php_phongo_serverapi_init_ce(INIT_FUNC_ARGS)
 {
-	php_phongo_serverapi_ce                = register_class_MongoDB_Driver_ServerApi(php_phongo_serializable_ce, zend_ce_serializable);
+	php_phongo_serverapi_ce                = register_class_MongoDB_Driver_ServerApi(php_phongo_serializable_ce);
 	php_phongo_serverapi_ce->create_object = php_phongo_serverapi_create_object;
 
 	memcpy(&php_phongo_handler_serverapi, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));

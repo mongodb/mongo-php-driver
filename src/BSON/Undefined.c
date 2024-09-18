@@ -54,23 +54,6 @@ static PHP_METHOD(MongoDB_BSON_Undefined, jsonSerialize)
 	ADD_ASSOC_BOOL_EX(return_value, "$undefined", 1);
 }
 
-static PHP_METHOD(MongoDB_BSON_Undefined, serialize)
-{
-	PHONGO_PARSE_PARAMETERS_NONE();
-
-	RETURN_STRING("");
-}
-
-static PHP_METHOD(MongoDB_BSON_Undefined, unserialize)
-{
-	char*  serialized;
-	size_t serialized_len;
-
-	PHONGO_PARSE_PARAMETERS_START(1, 1)
-	Z_PARAM_STRING(serialized, serialized_len)
-	PHONGO_PARSE_PARAMETERS_END();
-}
-
 static PHP_METHOD(MongoDB_BSON_Undefined, __serialize)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
@@ -111,7 +94,7 @@ static zend_object* php_phongo_undefined_create_object(zend_class_entry* class_t
 
 void php_phongo_undefined_init_ce(INIT_FUNC_ARGS)
 {
-	php_phongo_undefined_ce                = register_class_MongoDB_BSON_Undefined(php_phongo_json_serializable_ce, php_phongo_type_ce, zend_ce_serializable, zend_ce_stringable);
+	php_phongo_undefined_ce                = register_class_MongoDB_BSON_Undefined(php_phongo_json_serializable_ce, php_phongo_type_ce, zend_ce_stringable);
 	php_phongo_undefined_ce->create_object = php_phongo_undefined_create_object;
 
 	memcpy(&php_phongo_handler_undefined, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));

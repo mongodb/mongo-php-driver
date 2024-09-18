@@ -44,23 +44,6 @@ static PHP_METHOD(MongoDB_BSON_MinKey, jsonSerialize)
 	ADD_ASSOC_LONG_EX(return_value, "$minKey", 1);
 }
 
-static PHP_METHOD(MongoDB_BSON_MinKey, serialize)
-{
-	PHONGO_PARSE_PARAMETERS_NONE();
-
-	RETURN_STRING("");
-}
-
-static PHP_METHOD(MongoDB_BSON_MinKey, unserialize)
-{
-	char*  serialized;
-	size_t serialized_len;
-
-	PHONGO_PARSE_PARAMETERS_START(1, 1)
-	Z_PARAM_STRING(serialized, serialized_len)
-	PHONGO_PARSE_PARAMETERS_END();
-}
-
 static PHP_METHOD(MongoDB_BSON_MinKey, __serialize)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
@@ -101,7 +84,7 @@ static zend_object* php_phongo_minkey_create_object(zend_class_entry* class_type
 
 void php_phongo_minkey_init_ce(INIT_FUNC_ARGS)
 {
-	php_phongo_minkey_ce                = register_class_MongoDB_BSON_MinKey(php_phongo_minkey_interface_ce, php_phongo_json_serializable_ce, php_phongo_type_ce, zend_ce_serializable);
+	php_phongo_minkey_ce                = register_class_MongoDB_BSON_MinKey(php_phongo_minkey_interface_ce, php_phongo_json_serializable_ce, php_phongo_type_ce);
 	php_phongo_minkey_ce->create_object = php_phongo_minkey_create_object;
 
 	memcpy(&php_phongo_handler_minkey, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));

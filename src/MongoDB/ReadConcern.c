@@ -158,74 +158,6 @@ static PHP_METHOD(MongoDB_Driver_ReadConcern, bsonSerialize)
 	convert_to_object(return_value);
 }
 
-static PHP_METHOD(MongoDB_Driver_ReadConcern, serialize)
-{
-	php_phongo_readconcern_t* intern;
-	zval                      retval;
-	php_serialize_data_t      var_hash;
-	smart_str                 buf = { 0 };
-	const char*               level;
-
-	intern = Z_READCONCERN_OBJ_P(getThis());
-
-	PHONGO_PARSE_PARAMETERS_NONE();
-
-	if (!intern->read_concern) {
-		return;
-	}
-
-	level = mongoc_read_concern_get_level(intern->read_concern);
-
-	if (!level) {
-		RETURN_STRING("");
-	}
-
-	array_init_size(&retval, 1);
-	ADD_ASSOC_STRING(&retval, "level", level);
-
-	PHP_VAR_SERIALIZE_INIT(var_hash);
-	php_var_serialize(&buf, &retval, &var_hash);
-	smart_str_0(&buf);
-	PHP_VAR_SERIALIZE_DESTROY(var_hash);
-
-	PHONGO_RETVAL_SMART_STR(buf);
-
-	smart_str_free(&buf);
-	zval_ptr_dtor(&retval);
-}
-
-static PHP_METHOD(MongoDB_Driver_ReadConcern, unserialize)
-{
-	php_phongo_readconcern_t* intern;
-	char*                     serialized;
-	size_t                    serialized_len;
-	zval                      props;
-	php_unserialize_data_t    var_hash;
-
-	intern = Z_READCONCERN_OBJ_P(getThis());
-
-	PHONGO_PARSE_PARAMETERS_START(1, 1)
-	Z_PARAM_STRING(serialized, serialized_len)
-	PHONGO_PARSE_PARAMETERS_END();
-
-	if (!serialized_len) {
-		return;
-	}
-
-	PHP_VAR_UNSERIALIZE_INIT(var_hash);
-	if (!php_var_unserialize(&props, (const unsigned char**) &serialized, (unsigned char*) serialized + serialized_len, &var_hash)) {
-		zval_ptr_dtor(&props);
-		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "%s unserialization failed", ZSTR_VAL(php_phongo_readconcern_ce->name));
-
-		PHP_VAR_UNSERIALIZE_DESTROY(var_hash);
-		return;
-	}
-	PHP_VAR_UNSERIALIZE_DESTROY(var_hash);
-
-	php_phongo_readconcern_init_from_hash(intern, HASH_OF(&props));
-	zval_ptr_dtor(&props);
-}
-
 static PHP_METHOD(MongoDB_Driver_ReadConcern, __serialize)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
@@ -288,7 +220,7 @@ static HashTable* php_phongo_readconcern_get_properties(zend_object* object)
 
 void php_phongo_readconcern_init_ce(INIT_FUNC_ARGS)
 {
-	php_phongo_readconcern_ce                = register_class_MongoDB_Driver_ReadConcern(php_phongo_serializable_ce, zend_ce_serializable);
+	php_phongo_readconcern_ce                = register_class_MongoDB_Driver_ReadConcern(php_phongo_serializable_ce);
 	php_phongo_readconcern_ce->create_object = php_phongo_readconcern_create_object;
 
 	memcpy(&php_phongo_handler_readconcern, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
