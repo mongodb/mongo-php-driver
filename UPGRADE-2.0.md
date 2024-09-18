@@ -9,6 +9,10 @@ UPGRADE FROM 1.x to 2.0
  * The constants `MongoDB\Driver\ClientEncryption::ALGORITHM_RANGE_PREVIEW` and
    `MongoDB\Driver\ClientEncryption::QUERY_TYPE_RANGE_PREVIEW` have been 
    removed. Use the `ALGORITHM_RANGE` and `QUERY_TYPE_RANGE` instead.
+ * The `MongoDB\Driver\ReadPreference` class now requires a string value for its
+   constructor's `$mode` parameter. The integer constants for modes have been
+   removed along with the `getMode()` method. Use the string constants and
+   `getModeString()` instead.
  * All tentative return types defined in interface and non-final classes are now
    fixed and are required in implementing or extending classes.
  * `MongoDB\Driver\CursorInterface` now extends `Iterator`, requiring 
