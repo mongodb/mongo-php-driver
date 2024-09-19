@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 3fa545a3ff56acac4567ef25a48d87881711985c */
+ * Stub hash: 27261ceb122b2783b1fba08be5c17b4f48ab8523 */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_Driver_ReadPreference___construct, 0, 0, 1)
 	ZEND_ARG_TYPE_INFO(0, mode, IS_STRING, 0)
@@ -26,12 +26,6 @@ ZEND_END_ARG_INFO()
 ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_MongoDB_Driver_ReadPreference_bsonSerialize, 0, 0, stdClass, 0)
 ZEND_END_ARG_INFO()
 
-#define arginfo_class_MongoDB_Driver_ReadPreference_serialize arginfo_class_MongoDB_Driver_ReadPreference_getModeString
-
-ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_Driver_ReadPreference_unserialize, 0, 1, IS_VOID, 0)
-	ZEND_ARG_TYPE_INFO(0, data, IS_STRING, 0)
-ZEND_END_ARG_INFO()
-
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_Driver_ReadPreference___unserialize, 0, 1, IS_VOID, 0)
 	ZEND_ARG_TYPE_INFO(0, data, IS_ARRAY, 0)
 ZEND_END_ARG_INFO()
@@ -46,8 +40,6 @@ static ZEND_METHOD(MongoDB_Driver_ReadPreference, getModeString);
 static ZEND_METHOD(MongoDB_Driver_ReadPreference, getTagSets);
 static ZEND_METHOD(MongoDB_Driver_ReadPreference, __set_state);
 static ZEND_METHOD(MongoDB_Driver_ReadPreference, bsonSerialize);
-static ZEND_METHOD(MongoDB_Driver_ReadPreference, serialize);
-static ZEND_METHOD(MongoDB_Driver_ReadPreference, unserialize);
 static ZEND_METHOD(MongoDB_Driver_ReadPreference, __unserialize);
 static ZEND_METHOD(MongoDB_Driver_ReadPreference, __serialize);
 
@@ -60,21 +52,19 @@ static const zend_function_entry class_MongoDB_Driver_ReadPreference_methods[] =
 	ZEND_ME(MongoDB_Driver_ReadPreference, getTagSets, arginfo_class_MongoDB_Driver_ReadPreference_getTagSets, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_Driver_ReadPreference, __set_state, arginfo_class_MongoDB_Driver_ReadPreference___set_state, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_Driver_ReadPreference, bsonSerialize, arginfo_class_MongoDB_Driver_ReadPreference_bsonSerialize, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	ZEND_ME(MongoDB_Driver_ReadPreference, serialize, arginfo_class_MongoDB_Driver_ReadPreference_serialize, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	ZEND_ME(MongoDB_Driver_ReadPreference, unserialize, arginfo_class_MongoDB_Driver_ReadPreference_unserialize, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_Driver_ReadPreference, __unserialize, arginfo_class_MongoDB_Driver_ReadPreference___unserialize, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_Driver_ReadPreference, __serialize, arginfo_class_MongoDB_Driver_ReadPreference___serialize, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_FE_END
 };
 
-static zend_class_entry *register_class_MongoDB_Driver_ReadPreference(zend_class_entry *class_entry_MongoDB_BSON_Serializable, zend_class_entry *class_entry_Serializable)
+static zend_class_entry *register_class_MongoDB_Driver_ReadPreference(zend_class_entry *class_entry_MongoDB_BSON_Serializable)
 {
 	zend_class_entry ce, *class_entry;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver", "ReadPreference", class_MongoDB_Driver_ReadPreference_methods);
 	class_entry = zend_register_internal_class_ex(&ce, NULL);
 	class_entry->ce_flags |= ZEND_ACC_FINAL;
-	zend_class_implements(class_entry, 2, class_entry_MongoDB_BSON_Serializable, class_entry_Serializable);
+	zend_class_implements(class_entry, 1, class_entry_MongoDB_BSON_Serializable);
 
 	zval const_PRIMARY_value;
 	zend_string *const_PRIMARY_value_str = zend_string_init(PHONGO_READ_PRIMARY, strlen(PHONGO_READ_PRIMARY), 1);

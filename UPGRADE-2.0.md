@@ -23,7 +23,7 @@ UPGRADE FROM 1.x to 2.0
    `MongoDB\Driver\Cursor::getId()` and
    `MongoDB\Driver\CursorInterface::getId()` now return a `MongoDB\BSON\Int64`
    instance.
-
-* The `--with-libbson` and `--with-libmongoc` configure options have been
-  removed. Use `--with-mongodb-system-libs` instead.
-  
+ * The `--with-libbson` and `--with-libmongoc` configure options have been
+   removed. Use `--with-mongodb-system-libs` instead.
+ * All classes that previously implemented the `Serializable` interface no
+   longer implement this interface.

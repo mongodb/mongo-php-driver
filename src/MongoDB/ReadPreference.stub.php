@@ -7,7 +7,7 @@
 
 namespace MongoDB\Driver;
 
-final class ReadPreference implements \MongoDB\BSON\Serializable, \Serializable
+final class ReadPreference implements \MongoDB\BSON\Serializable
 {
     /**
      * @var string
@@ -64,10 +64,6 @@ final class ReadPreference implements \MongoDB\BSON\Serializable, \Serializable
     final public static function __set_state(array $properties): ReadPreference {}
 
     final public function bsonSerialize(): \stdClass {}
-
-    final public function serialize(): string {}
-
-    final public function unserialize(string $data): void {}
 
     final public function __unserialize(array $data): void {}
 

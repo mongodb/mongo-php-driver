@@ -1,5 +1,7 @@
 <?php
 
+use MongoDB\BSON\DBPointer;
+use MongoDB\BSON\Symbol;
 use MongoDB\Driver\BulkWrite;
 use MongoDB\Driver\Command;
 use MongoDB\Driver\Manager;
@@ -846,4 +848,24 @@ function failGetMore(Manager $manager)
     }
 
     throw new Exception("Trying to configure a getMore fail point for a server version ($version) that doesn't support it");
+}
+
+function createDBPointer(string $collection = 'phongo.test', string $id = '5a2e78accd485d55b4050000'): DBPointer
+{
+    return unserialize(sprintf(
+        'O:22:"MongoDB\BSON\DBPointer":2:{s:3:"ref";s:%d:"%s";s:2:"id";s:%d:"%s";}',
+        strlen($collection),
+        $collection,
+        strlen($id),
+        $id,
+    ));
+}
+
+function createSymbol(string $value = 'symbolValue')
+{
+    return unserialize(sprintf(
+        'O:19:"MongoDB\BSON\Symbol":1:{s:6:"symbol";s:%d:"%s";}',
+        strlen($value),
+        $value,
+    ));
 }
