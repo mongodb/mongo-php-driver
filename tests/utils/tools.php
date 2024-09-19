@@ -2,7 +2,6 @@
 
 use MongoDB\BSON\DBPointer;
 use MongoDB\BSON\Symbol;
-use MongoDB\BSON\Undefined;
 use MongoDB\Driver\BulkWrite;
 use MongoDB\Driver\Command;
 use MongoDB\Driver\Manager;
