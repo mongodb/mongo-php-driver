@@ -18,15 +18,15 @@ final class Manager
 
     final public function executeBulkWrite(string $namespace, BulkWrite $bulk, array|WriteConcern|null $options = null): WriteResult {}
 
-    final public function executeCommand(string $db, Command $command, array|ReadPreference|null $options = null): Cursor {}
+    final public function executeCommand(string $db, Command $command, array|ReadPreference|null $options = null): CursorInterface {}
 
-    final public function executeQuery(string $namespace, Query $query, array|ReadPreference|null $options = null): Cursor {}
+    final public function executeQuery(string $namespace, Query $query, array|ReadPreference|null $options = null): CursorInterface {}
 
-    final public function executeReadCommand(string $db, Command $command, ?array $options = null): Cursor {}
+    final public function executeReadCommand(string $db, Command $command, ?array $options = null): CursorInterface {}
 
-    final public function executeReadWriteCommand(string $db, Command $command, ?array $options = null): Cursor {}
+    final public function executeReadWriteCommand(string $db, Command $command, ?array $options = null): CursorInterface {}
 
-    final public function executeWriteCommand(string $db, Command $command, ?array $options = null): Cursor {}
+    final public function executeWriteCommand(string $db, Command $command, ?array $options = null): CursorInterface {}
 
     final public function getEncryptedFieldsMap(): array|object|null {}
 

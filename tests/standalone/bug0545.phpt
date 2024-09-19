@@ -11,8 +11,7 @@ require_once __DIR__ . "/../utils/basic.inc";
 #[\AllowDynamicProperties]
 class Book implements MongoDB\BSON\Persistable
 {
-    #[\ReturnTypeWillChange]
-    public function bsonSerialize()
+    public function bsonSerialize(): array
     {
         $data = get_object_vars($this);
         return $data;
@@ -29,8 +28,7 @@ class Book implements MongoDB\BSON\Persistable
 #[\AllowDynamicProperties]
 class Page implements MongoDB\BSON\Persistable
 {
-    #[\ReturnTypeWillChange]
-    public function bsonSerialize()
+    public function bsonSerialize(): array
     {
         $data = get_object_vars($this);
         return $data;
