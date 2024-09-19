@@ -153,9 +153,9 @@ failure:
 	return false;
 }
 
-static const char* php_phongo_readpreference_get_mode_string(mongoc_read_mode_t mode)
+static const char* php_phongo_readpreference_get_mode_string(const mongoc_read_prefs_t* read_prefs)
 {
-	switch (mode) {
+	switch (mongoc_read_prefs_get_mode(read_prefs)) {
 		case MONGOC_READ_PRIMARY:
 			return PHONGO_READ_PRIMARY;
 		case MONGOC_READ_PRIMARY_PREFERRED:
@@ -167,19 +167,15 @@ static const char* php_phongo_readpreference_get_mode_string(mongoc_read_mode_t 
 		case MONGOC_READ_NEAREST:
 			return PHONGO_READ_NEAREST;
 		default:
-			/* Should never happen, but if it does: exception */
-			phongo_throw_exception(PHONGO_ERROR_LOGIC, "Mode '%d' should never have been passed to php_phongo_readpreference_get_mode_string, please file a bug report", mode);
-			break;
+			return "";
 	}
-
-	return NULL;
 }
 
 /* Constructs a new ReadPreference */
 static PHP_METHOD(MongoDB_Driver_ReadPreference, __construct)
 {
 	php_phongo_readpreference_t* intern;
-	zval*                        mode;
+	zend_string*                 mode;
 	zval*                        tagSets = NULL;
 	zval*                        options = NULL;
 
@@ -188,44 +184,24 @@ static PHP_METHOD(MongoDB_Driver_ReadPreference, __construct)
 	/* Separate the tagSets zval, since we may end up modifying it in
 	 * php_phongo_read_preference_prep_tagsets() below. */
 	PHONGO_PARSE_PARAMETERS_START(1, 3)
-	Z_PARAM_ZVAL(mode)
+	Z_PARAM_STR(mode)
 	Z_PARAM_OPTIONAL
 	Z_PARAM_ARRAY_EX(tagSets, 1, 1)
 	Z_PARAM_ARRAY_OR_NULL(options)
 	PHONGO_PARSE_PARAMETERS_END();
 
-	if (Z_TYPE_P(mode) == IS_LONG) {
-		php_error_docref(NULL, E_DEPRECATED, "Passing an integer mode to \"MongoDB\\Driver\\ReadPreference::__construct\" is deprecated and will be removed in a future release.");
-
-		switch (Z_LVAL_P(mode)) {
-			case MONGOC_READ_PRIMARY:
-			case MONGOC_READ_SECONDARY:
-			case MONGOC_READ_PRIMARY_PREFERRED:
-			case MONGOC_READ_SECONDARY_PREFERRED:
-			case MONGOC_READ_NEAREST:
-				intern->read_preference = mongoc_read_prefs_new(Z_LVAL_P(mode));
-				break;
-			default:
-				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Invalid mode: %" PHONGO_LONG_FORMAT, Z_LVAL_P(mode));
-				return;
-		}
-	} else if (Z_TYPE_P(mode) == IS_STRING) {
-		if (strcasecmp(Z_STRVAL_P(mode), PHONGO_READ_PRIMARY) == 0) {
-			intern->read_preference = mongoc_read_prefs_new(MONGOC_READ_PRIMARY);
-		} else if (strcasecmp(Z_STRVAL_P(mode), PHONGO_READ_PRIMARY_PREFERRED) == 0) {
-			intern->read_preference = mongoc_read_prefs_new(MONGOC_READ_PRIMARY_PREFERRED);
-		} else if (strcasecmp(Z_STRVAL_P(mode), PHONGO_READ_SECONDARY) == 0) {
-			intern->read_preference = mongoc_read_prefs_new(MONGOC_READ_SECONDARY);
-		} else if (strcasecmp(Z_STRVAL_P(mode), PHONGO_READ_SECONDARY_PREFERRED) == 0) {
-			intern->read_preference = mongoc_read_prefs_new(MONGOC_READ_SECONDARY_PREFERRED);
-		} else if (strcasecmp(Z_STRVAL_P(mode), PHONGO_READ_NEAREST) == 0) {
-			intern->read_preference = mongoc_read_prefs_new(MONGOC_READ_NEAREST);
-		} else {
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Invalid mode: '%s'", Z_STRVAL_P(mode));
-			return;
-		}
+	if (zend_string_equals_literal_ci(mode, PHONGO_READ_PRIMARY)) {
+		intern->read_preference = mongoc_read_prefs_new(MONGOC_READ_PRIMARY);
+	} else if (zend_string_equals_literal_ci(mode, PHONGO_READ_PRIMARY_PREFERRED)) {
+		intern->read_preference = mongoc_read_prefs_new(MONGOC_READ_PRIMARY_PREFERRED);
+	} else if (zend_string_equals_literal_ci(mode, PHONGO_READ_SECONDARY)) {
+		intern->read_preference = mongoc_read_prefs_new(MONGOC_READ_SECONDARY);
+	} else if (zend_string_equals_literal_ci(mode, PHONGO_READ_SECONDARY_PREFERRED)) {
+		intern->read_preference = mongoc_read_prefs_new(MONGOC_READ_SECONDARY_PREFERRED);
+	} else if (zend_string_equals_literal_ci(mode, PHONGO_READ_NEAREST)) {
+		intern->read_preference = mongoc_read_prefs_new(MONGOC_READ_NEAREST);
 	} else {
-		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected mode to be integer or string, %s given", PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(mode));
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Invalid mode: '%s'", ZSTR_VAL(mode));
 		return;
 	}
 
@@ -366,35 +342,16 @@ static PHP_METHOD(MongoDB_Driver_ReadPreference, getMaxStalenessSeconds)
 	RETURN_LONG(mongoc_read_prefs_get_max_staleness_seconds(intern->read_preference));
 }
 
-/* Returns the ReadPreference mode */
-static PHP_METHOD(MongoDB_Driver_ReadPreference, getMode)
-{
-	php_phongo_readpreference_t* intern;
-
-	intern = Z_READPREFERENCE_OBJ_P(getThis());
-
-	PHONGO_PARSE_PARAMETERS_NONE();
-
-	RETURN_LONG(mongoc_read_prefs_get_mode(intern->read_preference));
-}
-
 /* Returns the ReadPreference mode as string */
 static PHP_METHOD(MongoDB_Driver_ReadPreference, getModeString)
 {
 	php_phongo_readpreference_t* intern;
-	const char*                  mode_string;
 
 	intern = Z_READPREFERENCE_OBJ_P(getThis());
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
-	mode_string = php_phongo_readpreference_get_mode_string(mongoc_read_prefs_get_mode(intern->read_preference));
-	if (!mode_string) {
-		/* Exception already thrown */
-		return;
-	}
-
-	RETURN_STRING(mode_string);
+	RETURN_STRING(php_phongo_readpreference_get_mode_string(intern->read_preference));
 }
 
 /* Returns the ReadPreference tag sets */
@@ -429,10 +386,8 @@ static HashTable* php_phongo_readpreference_get_properties_hash(zend_object* obj
 {
 	php_phongo_readpreference_t* intern;
 	HashTable*                   props;
-	const char*                  modeString = NULL;
 	const bson_t*                tags;
 	const bson_t*                hedge;
-	mongoc_read_mode_t           mode;
 
 	intern = Z_OBJ_READPREFERENCE(object);
 
@@ -442,15 +397,13 @@ static HashTable* php_phongo_readpreference_get_properties_hash(zend_object* obj
 		return props;
 	}
 
-	tags       = mongoc_read_prefs_get_tags(intern->read_preference);
-	mode       = mongoc_read_prefs_get_mode(intern->read_preference);
-	modeString = php_phongo_readpreference_get_mode_string(mode);
-	hedge      = mongoc_read_prefs_get_hedge(intern->read_preference);
+	tags  = mongoc_read_prefs_get_tags(intern->read_preference);
+	hedge = mongoc_read_prefs_get_hedge(intern->read_preference);
 
-	if (modeString) {
+	{
 		zval z_mode;
 
-		ZVAL_STRING(&z_mode, modeString);
+		ZVAL_STRING(&z_mode, php_phongo_readpreference_get_mode_string(intern->read_preference));
 		zend_hash_str_update(props, "mode", sizeof("mode") - 1, &z_mode);
 	}
 
@@ -510,12 +463,10 @@ static PHP_METHOD(MongoDB_Driver_ReadPreference, serialize)
 	php_phongo_readpreference_t* intern;
 	zval                         retval;
 	php_serialize_data_t         var_hash;
-	smart_str                    buf        = { 0 };
-	const char*                  modeString = NULL;
+	smart_str                    buf = { 0 };
 	const bson_t*                tags;
 	const bson_t*                hedge;
 	int64_t                      maxStalenessSeconds;
-	mongoc_read_mode_t           mode;
 
 	intern = Z_READPREFERENCE_OBJ_P(getThis());
 
@@ -526,16 +477,12 @@ static PHP_METHOD(MongoDB_Driver_ReadPreference, serialize)
 	}
 
 	tags                = mongoc_read_prefs_get_tags(intern->read_preference);
-	mode                = mongoc_read_prefs_get_mode(intern->read_preference);
-	modeString          = php_phongo_readpreference_get_mode_string(mode);
 	maxStalenessSeconds = mongoc_read_prefs_get_max_staleness_seconds(intern->read_preference);
 	hedge               = mongoc_read_prefs_get_hedge(intern->read_preference);
 
 	array_init_size(&retval, 4);
 
-	if (modeString) {
-		ADD_ASSOC_STRING(&retval, "mode", modeString);
-	}
+	ADD_ASSOC_STRING(&retval, "mode", php_phongo_readpreference_get_mode_string(intern->read_preference));
 
 	if (!bson_empty0(tags)) {
 		php_phongo_bson_state state;
