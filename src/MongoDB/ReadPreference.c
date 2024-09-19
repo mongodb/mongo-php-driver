@@ -18,8 +18,6 @@
 #include "mongoc/mongoc.h"
 
 #include <php.h>
-#include <zend_smart_str.h>
-#include <ext/standard/php_var.h>
 #include <Zend/zend_interfaces.h>
 
 #include "php_array_api.h"

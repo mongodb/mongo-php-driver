@@ -15,9 +15,7 @@
  */
 
 #include <php.h>
-#include <zend_smart_str.h>
 #include <ext/standard/base64.h>
-#include <ext/standard/php_var.h>
 #include <Zend/zend_interfaces.h>
 
 #include "php_phongo.h"

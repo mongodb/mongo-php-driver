@@ -19,8 +19,6 @@
 #include <Zend/zend_interfaces.h>
 #include <Zend/zend_exceptions.h>
 #include <Zend/zend_operators.h>
-#include <ext/standard/php_var.h>
-#include <zend_smart_str.h>
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
