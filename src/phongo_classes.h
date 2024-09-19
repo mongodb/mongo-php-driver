@@ -38,10 +38,6 @@ static inline php_phongo_cursor_t* php_cursor_fetch_object(zend_object* obj)
 {
 	return (php_phongo_cursor_t*) ((char*) obj - XtOffsetOf(php_phongo_cursor_t, std));
 }
-static inline php_phongo_cursorid_t* php_cursorid_fetch_object(zend_object* obj)
-{
-	return (php_phongo_cursorid_t*) ((char*) obj - XtOffsetOf(php_phongo_cursorid_t, std));
-}
 static inline php_phongo_manager_t* php_manager_fetch_object(zend_object* obj)
 {
 	return (php_phongo_manager_t*) ((char*) obj - XtOffsetOf(php_phongo_manager_t, std));
@@ -210,7 +206,6 @@ static inline php_phongo_topologyopeningevent_t* php_topologyopeningevent_fetch_
 #define Z_CLIENTENCRYPTION_OBJ_P(zv) (php_clientencryption_fetch_object(Z_OBJ_P(zv)))
 #define Z_COMMAND_OBJ_P(zv) (php_command_fetch_object(Z_OBJ_P(zv)))
 #define Z_CURSOR_OBJ_P(zv) (php_cursor_fetch_object(Z_OBJ_P(zv)))
-#define Z_CURSORID_OBJ_P(zv) (php_cursorid_fetch_object(Z_OBJ_P(zv)))
 #define Z_MANAGER_OBJ_P(zv) (php_manager_fetch_object(Z_OBJ_P(zv)))
 #define Z_QUERY_OBJ_P(zv) (php_query_fetch_object(Z_OBJ_P(zv)))
 #define Z_READCONCERN_OBJ_P(zv) (php_readconcern_fetch_object(Z_OBJ_P(zv)))
@@ -257,7 +252,6 @@ static inline php_phongo_topologyopeningevent_t* php_topologyopeningevent_fetch_
 #define Z_OBJ_CLIENTENCRYPTION(zo) (php_clientencryption_fetch_object(zo))
 #define Z_OBJ_COMMAND(zo) (php_command_fetch_object(zo))
 #define Z_OBJ_CURSOR(zo) (php_cursor_fetch_object(zo))
-#define Z_OBJ_CURSORID(zo) (php_cursorid_fetch_object(zo))
 #define Z_OBJ_MANAGER(zo) (php_manager_fetch_object(zo))
 #define Z_OBJ_QUERY(zo) (php_query_fetch_object(zo))
 #define Z_OBJ_READCONCERN(zo) (php_readconcern_fetch_object(zo))
@@ -304,7 +298,6 @@ static inline php_phongo_topologyopeningevent_t* php_topologyopeningevent_fetch_
 extern zend_class_entry* php_phongo_clientencryption_ce;
 extern zend_class_entry* php_phongo_command_ce;
 extern zend_class_entry* php_phongo_cursor_ce;
-extern zend_class_entry* php_phongo_cursorid_ce;
 extern zend_class_entry* php_phongo_manager_ce;
 extern zend_class_entry* php_phongo_query_ce;
 extern zend_class_entry* php_phongo_readconcern_ce;
@@ -421,7 +414,6 @@ extern void php_phongo_bulkwrite_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_clientencryption_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_command_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_cursor_init_ce(INIT_FUNC_ARGS);
-extern void php_phongo_cursorid_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_manager_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_query_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_readconcern_init_ce(INIT_FUNC_ARGS);

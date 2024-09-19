@@ -11,7 +11,7 @@ interface CursorInterface extends \Iterator
 {
     public function current(): array|object|null {}
 
-    public function getId(): CursorId|\MongoDB\BSON\Int64;
+    public function getId(): \MongoDB\BSON\Int64;
 
     public function getServer(): Server;
 
