@@ -218,15 +218,9 @@ static PHP_METHOD(MongoDB_BSON_UTCDateTime, __construct)
 		case IS_DOUBLE:
 			php_phongo_utcdatetime_init_from_double(intern, Z_DVAL_P(milliseconds));
 			return;
-
-		case IS_STRING:
-			php_error_docref(NULL, E_DEPRECATED, "Creating a %s instance with a string is deprecated and will be removed in ext-mongodb 2.0", ZSTR_VAL(php_phongo_utcdatetime_ce->name));
-
-			php_phongo_utcdatetime_init_from_string(intern, Z_STRVAL_P(milliseconds), Z_STRLEN_P(milliseconds));
-			return;
 	}
 
-	phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected integer or string, %s given", PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(milliseconds));
+	phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected integer or object, %s given", PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(milliseconds));
 }
 
 static PHP_METHOD(MongoDB_BSON_UTCDateTime, __set_state)

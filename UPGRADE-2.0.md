@@ -27,3 +27,6 @@ UPGRADE FROM 1.x to 2.0
    removed. Use `--with-mongodb-system-libs` instead.
  * All classes that previously implemented the `Serializable` interface no
    longer implement this interface.
+ * The constructor of `MongoDB\BSON\UTCDateTime` no longer accepts a `string`
+   argument. To pass 64-bit integers on 32-bit platforms, use the
+   `MongoDB\BSON\Int64` class instead.
