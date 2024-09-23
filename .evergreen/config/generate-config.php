@@ -3,6 +3,7 @@
 
 // Supported PHP versions. Add new versions to the beginning of the list
 $modernPhpVersions = [
+    '8.4',
     '8.3',
     '8.2',
     '8.1',
@@ -26,7 +27,9 @@ $supportedMongoDBVersions = [
     '4.0',
 ];
 
-$latestPhpVersion = max($supportedPhpVersions);
+// TODO: Change when PHP 8.4 is stable
+// $latestPhpVersion = max($supportedPhpVersions);
+$latestPhpVersion = '8.3';
 
 // Only test the latest PHP version for libmongoc
 $libmongocBuildPhpVersions = [ $latestPhpVersion ];
@@ -112,4 +115,3 @@ HEADER;
 
     return '.evergreen/config' . $filename;
 }
-
