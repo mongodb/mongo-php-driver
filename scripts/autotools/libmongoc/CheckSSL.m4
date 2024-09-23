@@ -26,6 +26,10 @@ PHP_ARG_WITH([openssl-dir],
              [auto],
              [no])
 
+if test "$PHP_OPENSSL_DIR" != "auto"; then
+    AC_MSG_WARN([Using --with-openssl-dir is deprecated and will be removed in a future version.])
+fi
+
 AS_IF([test "$PHP_MONGODB_SSL" = "openssl" -o "$PHP_MONGODB_SSL" = "auto"],[
   found_openssl="no"
 
