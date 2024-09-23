@@ -19,17 +19,6 @@ fi
 
 PHP_MONGODB_VALIDATE_ARG([PHP_MONGODB_SSL], [auto openssl libressl darwin no])
 
-PHP_ARG_WITH([openssl-dir],
-             [deprecated option for OpenSSL library path],
-             [AS_HELP_STRING([--with-openssl-dir=@<:@auto/DIR@:>@],
-                             [MongoDB: OpenSSL library path (deprecated for pkg-config) [default=auto]])],
-             [auto],
-             [no])
-
-if test "$PHP_OPENSSL_DIR" != "auto"; then
-    AC_MSG_WARN([Using --with-openssl-dir is deprecated and will be removed in a future version.])
-fi
-
 AS_IF([test "$PHP_MONGODB_SSL" = "openssl" -o "$PHP_MONGODB_SSL" = "auto"],[
   found_openssl="no"
 
@@ -54,13 +43,10 @@ AS_IF([test "$PHP_MONGODB_SSL" = "openssl" -o "$PHP_MONGODB_SSL" = "auto"],[
     unset OPENSSL_INCDIR
     unset OPENSSL_LIBDIR
 
-    dnl Use a list of directories from PHP_SETUP_OPENSSL by default.
-    dnl Support documented "auto" and older, undocumented "yes" options
-    if test "$PHP_OPENSSL_DIR" = "auto" -o "$PHP_OPENSSL_DIR" = "yes"; then
-      PHP_OPENSSL_DIR="/usr/local/ssl /usr/local /usr /usr/local/openssl"
-    fi
+    dnl Use a list of directories from PHP_SETUP_OPENSSL by default. 
+    OPENSSL_SEARCH_PATHS="/usr/local/ssl /usr/local /usr /usr/local/openssl"
 
-    for i in $PHP_OPENSSL_DIR; do
+    for i in $OPENSSL_SEARCH_PATHS; do
       if test -r $i/include/openssl/evp.h; then
         OPENSSL_INCDIR="$i/include"
       fi
@@ -79,7 +65,6 @@ AS_IF([test "$PHP_MONGODB_SSL" = "openssl" -o "$PHP_MONGODB_SSL" = "auto"],[
                       [have_crypto_lib="yes"],
                       [have_crypto_lib="no"],
                       [$OPENSSL_LIBDIR_LDFLAG])
-
 
     dnl Check whether OpenSSL >= 1.1.0 is available
     PHP_CHECK_LIBRARY([ssl],

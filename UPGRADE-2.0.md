@@ -30,3 +30,5 @@ UPGRADE FROM 1.x to 2.0
  * The constructor of `MongoDB\BSON\UTCDateTime` no longer accepts a `string`
    argument. To pass 64-bit integers on 32-bit platforms, use the
    `MongoDB\BSON\Int64` class instead.
+ * The `--with-openssl-dir` configure option has been removed. If using OpenSSL,
+   ensure that it is detected by `pkg-config`.
