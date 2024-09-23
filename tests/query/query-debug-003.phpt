@@ -32,6 +32,8 @@ object(MongoDB\Driver\Query)#%d (%d) {
   ["readConcern"]=>
   NULL
 }
+
+Deprecated: MongoDB\Driver\Query::__construct(): The "modifiers" option is deprecated and will be removed in a future release in %s on line %d
 object(MongoDB\Driver\Query)#%d (%d) {
   ["filter"]=>
   object(stdClass)#%d (0) {

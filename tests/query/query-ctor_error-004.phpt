@@ -31,7 +31,7 @@ foreach ($tests as $test) {
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECT--
+--EXPECTF--
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Cannot use empty keys in filter document
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
@@ -48,12 +48,20 @@ OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Cannot use empty keys in "projection" option
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Cannot use empty keys in "sort" option
+
+Deprecated: MongoDB\Driver\Query::__construct(): The "modifiers" option is deprecated and will be removed in a future release in %s on line %d
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Cannot use empty keys in "$hint" modifier
+
+Deprecated: MongoDB\Driver\Query::__construct(): The "modifiers" option is deprecated and will be removed in a future release in %s on line %d
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Cannot use empty keys in "$max" modifier
+
+Deprecated: MongoDB\Driver\Query::__construct(): The "modifiers" option is deprecated and will be removed in a future release in %s on line %d
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Cannot use empty keys in "$min" modifier
+
+Deprecated: MongoDB\Driver\Query::__construct(): The "modifiers" option is deprecated and will be removed in a future release in %s on line %d
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Cannot use empty keys in "$orderby" modifier
 ===DONE===

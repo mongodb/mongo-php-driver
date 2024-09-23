@@ -49,6 +49,8 @@ var_dump(new MongoDB\Driver\Query(
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
+Deprecated: MongoDB\Driver\Query::__construct(): The "modifiers" option is deprecated and will be removed in a future release in %s on line %d
+
 Deprecated: MongoDB\Driver\Query::__construct(): The "maxScan" option is deprecated and will be removed in a future release in %s on line %d
 
 Deprecated: MongoDB\Driver\Query::__construct(): The "snapshot" option is deprecated and will be removed in a future release in %s on line %d
@@ -91,6 +93,8 @@ object(MongoDB\Driver\Query)#%d (%d) {
   ["readConcern"]=>
   NULL
 }
+
+Deprecated: MongoDB\Driver\Query::__construct(): The "modifiers" option is deprecated and will be removed in a future release in %s on line %d
 object(MongoDB\Driver\Query)#%d (%d) {
   ["filter"]=>
   object(stdClass)#%d (%d) {
@@ -105,6 +109,8 @@ object(MongoDB\Driver\Query)#%d (%d) {
   ["readConcern"]=>
   NULL
 }
+
+Deprecated: MongoDB\Driver\Query::__construct(): The "modifiers" option is deprecated and will be removed in a future release in %s on line %d
 object(MongoDB\Driver\Query)#%d (%d) {
   ["filter"]=>
   object(stdClass)#%d (%d) {
