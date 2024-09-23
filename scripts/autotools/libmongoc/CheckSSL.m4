@@ -229,25 +229,7 @@ PHP_ARG_ENABLE([mongodb-crypto-system-profile],
                [no])
 PHP_MONGODB_VALIDATE_ARG([PHP_MONGODB_CRYPTO_SYSTEM_PROFILE], [yes no])
 
-PHP_ARG_WITH([system-ciphers],
-             [deprecated option for whether to use system crypto profile],
-             AS_HELP_STRING([--enable-system-ciphers],
-                            [MongoDB: whether to use system crypto profile (deprecated for --enable-mongodb-crypto-system-profile) [default=no]]),
-             [no],
-             [no])
-
-dnl Do not validate PHP_SYSTEM_CIPHERS for static builds, since it is also used
-dnl by the OpenSSL extension, which checks for values other than "no".
-if test "$ext_shared" = "yes"; then
-  PHP_MONGODB_VALIDATE_ARG([PHP_SYSTEM_CIPHERS], [yes no])
-
-  if test "$PHP_SYSTEM_CIPHERS" != "no"; then
-    AC_MSG_WARN([Using --enable-system-ciphers is deprecated and will be removed in a future version. Please use --enable-mongodb-crypto-system-profile instead])
-  fi
-fi
-
-dnl Also consider the deprecated --enable-system-ciphers option
-if test "$PHP_MONGODB_CRYPTO_SYSTEM_PROFILE" = "yes" -o "$PHP_SYSTEM_CIPHERS" = "yes"; then
+if test "$PHP_MONGODB_CRYPTO_SYSTEM_PROFILE" = "yes"; then
   if test "$PHP_MONGODB_SSL" = "openssl"; then
     AC_SUBST(MONGOC_ENABLE_CRYPTO_SYSTEM_PROFILE, 1)
   else

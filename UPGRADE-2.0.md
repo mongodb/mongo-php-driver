@@ -32,3 +32,5 @@ UPGRADE FROM 1.x to 2.0
    `MongoDB\BSON\Int64` class instead.
  * The `--with-openssl-dir` configure option has been removed. If using OpenSSL,
    ensure that it is detected by `pkg-config`.
+ * The `--with-system-ciphers` configure option has been removed. Use
+   `--enable-mongodb-crypto-system-profile` instead.
