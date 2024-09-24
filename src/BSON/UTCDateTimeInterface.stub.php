@@ -11,5 +11,7 @@ interface UTCDateTimeInterface
 {
     public function toDateTime(): \DateTime;
 
+    public function toDateTimeImmutable(): \DateTimeImmutable;
+
     public function __toString(): string;
 }
