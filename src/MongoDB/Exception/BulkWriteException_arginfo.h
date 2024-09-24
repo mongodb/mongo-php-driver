@@ -23,7 +23,7 @@ static zend_class_entry *register_class_MongoDB_Driver_Exception_BulkWriteExcept
 	zval property_writeResult_default_value;
 	ZVAL_NULL(&property_writeResult_default_value);
 	zend_string *property_writeResult_name = zend_string_init("writeResult", sizeof("writeResult") - 1, 1);
-	zend_declare_typed_property(class_entry, property_writeResult_name, &property_writeResult_default_value, ZEND_ACC_PROTECTED, NULL, (zend_type) ZEND_TYPE_INIT_NONE(0));
+	zend_declare_property_ex(class_entry, property_writeResult_name, &property_writeResult_default_value, ZEND_ACC_PROTECTED, NULL);
 	zend_string_release(property_writeResult_name);
 
 	return class_entry;
