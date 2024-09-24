@@ -19,12 +19,13 @@ $bulk->delete(['x' => 1]);
 
 $result = $manager->executeBulkWrite(NS, $bulk, new MongoDB\Driver\WriteConcern(0));
 
-var_dump($result->getModifiedCount());
+throws(function() use ($result) {
+    $result->getModifiedCount();
+}, MongoDB\Driver\Exception\LogicException::class, 'getModifiedCount');
 
 ?>
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-Deprecated: MongoDB\Driver\WriteResult::getModifiedCount(): Calling MongoDB\Driver\WriteResult::getModifiedCount() for an unacknowledged write is deprecated and will throw an exception in ext-mongodb 2.0 in %s
-NULL
+OK: Got MongoDB\Driver\Exception\LogicException thrown from getModifiedCount
 ===DONE===
