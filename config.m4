@@ -197,7 +197,6 @@ if test "$PHP_MONGODB" != "no"; then
     src/MongoDB/Exception/ServerException.c \
     src/MongoDB/Exception/SSLConnectionException.c \
     src/MongoDB/Exception/UnexpectedValueException.c \
-    src/MongoDB/Exception/WriteException.c \
     src/MongoDB/Monitoring/CommandFailedEvent.c \
     src/MongoDB/Monitoring/CommandStartedEvent.c \
     src/MongoDB/Monitoring/CommandSubscriber.c \
