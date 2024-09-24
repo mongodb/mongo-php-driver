@@ -30,7 +30,7 @@ foreach ($tests as $options) {
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECT--
+--EXPECTF--
 OK: Got MongoDB\Driver\Exception\UnexpectedValueException
 MongoDB\BSON\PackedArray cannot be serialized as a root document
 OK: Got MongoDB\Driver\Exception\UnexpectedValueException
@@ -45,10 +45,16 @@ OK: Got MongoDB\Driver\Exception\UnexpectedValueException
 MongoDB\BSON\PackedArray cannot be serialized as a root document
 OK: Got MongoDB\Driver\Exception\UnexpectedValueException
 MongoDB\BSON\PackedArray cannot be serialized as a root document
+
+Deprecated: MongoDB\Driver\Query::__construct(): The "modifiers" option is deprecated and will be removed in a future release in %s on line %d
 OK: Got MongoDB\Driver\Exception\UnexpectedValueException
 MongoDB\BSON\PackedArray cannot be serialized as a root document
+
+Deprecated: MongoDB\Driver\Query::__construct(): The "modifiers" option is deprecated and will be removed in a future release in %s on line %d
 OK: Got MongoDB\Driver\Exception\UnexpectedValueException
 MongoDB\BSON\PackedArray cannot be serialized as a root document
+
+Deprecated: MongoDB\Driver\Query::__construct(): The "modifiers" option is deprecated and will be removed in a future release in %s on line %d
 OK: Got MongoDB\Driver\Exception\UnexpectedValueException
 MongoDB\BSON\PackedArray cannot be serialized as a root document
 ===DONE===

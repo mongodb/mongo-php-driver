@@ -337,6 +337,8 @@ bool phongo_query_init(zval* return_value, zval* filter, zval* options)
 			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"modifiers\" option to be array, %s given", PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(modifiers));
 			return false;
 		}
+
+		php_error_docref(NULL, E_DEPRECATED, "The \"modifiers\" option is deprecated and will be removed in a future release");
 	}
 
 	PHONGO_QUERY_OPT_BOOL("allowDiskUse", options, "allowDiskUse")
