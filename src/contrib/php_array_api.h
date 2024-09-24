@@ -420,7 +420,9 @@ try_again:
  * zval *php_array_fetchz_array(zval *zarr, zval *key)
  */
 static inline zval *php_array_zval_to_array(zval *zarr) {
-	return (zarr && (Z_TYPE_P(zarr) == IS_ARRAY)) ? zarr : NULL;
+	if (!zarr) { return NULL; }
+	ZVAL_DEREF(zarr);
+	return Z_TYPE_P(zarr) == IS_ARRAY ? zarr : NULL;
 }
 PHP_ARRAY_FETCH_TYPE_MAP(zval*, array)
 #define php_array_fetchc_array(zarr, litstr) \
@@ -493,8 +495,10 @@ void *php_array_zval_to_resource(zval *z, int le) {
  */
 static inline
 zval *php_array_zval_to_object(zval *z, zend_class_entry *ce) {
-	return (z && (Z_TYPE_P(z) == IS_OBJECT) &&
-	        ((!ce) || instanceof_function(Z_OBJCE_P(z), ce))) ? z : NULL;
+	if (!z) { return NULL; }
+	ZVAL_DEREF(z);
+	if (Z_TYPE_P(z) != IS_OBJECT) { return NULL; }
+	return (!ce) || instanceof_function(Z_OBJCE_P(z), ce) ? z : NULL;
 }
 #define php_array_fetch_object(zarr, key, ce) \
 	php_array_zval_to_object(php_array_fetch(zarr, key), ce)
