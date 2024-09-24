@@ -19,13 +19,14 @@ $bulk->delete(['x' => 1]);
 
 $result = $manager->executeBulkWrite(NS, $bulk, new MongoDB\Driver\WriteConcern(0));
 
-throws(function() use ($result) {
+echo throws(function() use ($result) {
     $result->getUpsertedCount();
-}, MongoDB\Driver\Exception\LogicException::class, 'getUpsertedCount');
+}, MongoDB\Driver\Exception\LogicException::class), "\n";
 
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECTF--
-OK: Got MongoDB\Driver\Exception\LogicException thrown from getUpsertedCount
+--EXPECT--
+OK: Got MongoDB\Driver\Exception\LogicException
+MongoDB\Driver\WriteResult::getUpsertedCount() should not be called for an unacknowledged write result
 ===DONE===
