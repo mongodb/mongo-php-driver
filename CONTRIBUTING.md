@@ -31,7 +31,7 @@ $ php --ri mongodb
 ## Generating arginfo from stub files
 
 Arginfo structures are generated from stub files using the `gen_stub.php`
-file. Note that this requires `phpize` to be run for PHP 8.2 to make use
+file. Note that this requires `phpize` to be run for **PHP 8.2** to make use
 of all features. After changing a stub file, run `./build/gen_stub.php`
 to regenerate the corresponding arginfo files and commit the results.
 
@@ -43,6 +43,15 @@ when using this extension. To generate the function map, run the
 `scripts/functionMap.php`.
 
 ## Testing
+
+The driver includes a test suite that can be run with `make test`. To run a single
+test file, define the `TESTS` variable with the file path:
+
+```
+make test TESTS=tests/<path-to-test-file>.phpt
+```
+
+### File format
 
 The extension's test use the PHPT format from PHP internals. This format is
 documented in the following links:
