@@ -58,7 +58,6 @@ static bool php_phongo_query_opts_append_document(bson_t* opts, const char* opts
 	zval*  value = php_array_fetch(zarr, zarr_key);
 	bson_t b     = BSON_INITIALIZER;
 
-	ZVAL_DEREF(value);
 	if (Z_TYPE_P(value) != IS_OBJECT && Z_TYPE_P(value) != IS_ARRAY) {
 		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"%s\" %s to be array or object, %s given", zarr_key, zarr_key[0] == '$' ? "modifier" : "option", PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(value));
 		return false;

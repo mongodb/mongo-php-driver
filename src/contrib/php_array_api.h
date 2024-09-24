@@ -188,7 +188,12 @@ zval *php_array_fetchl(zval *zarr, const char *key, int key_len) {
 }
 static inline
 zval *php_array_fetch(zval *zarr, const char *key) {
-	return php_array_fetchl(zarr, key, strlen(key));
+	zval *ret = php_array_fetchl(zarr, key, strlen(key));
+	if (ret) {
+		ZVAL_DEREF(ret);
+	}
+
+	return ret;
 }
 #define php_array_fetchc(zarr, litstr) php_array_fetchl(zarr, litstr, sizeof(litstr)-1)
 static inline
