@@ -16,9 +16,7 @@ $server = $manager->selectServer(new \MongoDB\Driver\ReadPreference('primary'));
 $query = new MongoDB\Driver\Query(array("company" => "Smith, Carter and Buckridge"), array(
     'projection' => array('_id' => 0, 'username' => 1),
     'sort' => array('phoneNumber' => 1),
-    'modifiers' => array(
-        '$maxTimeMS' => 1,
-    ),
+    'maxTimeMS' => 1,
 ));
 
 failMaxTimeMS($server);

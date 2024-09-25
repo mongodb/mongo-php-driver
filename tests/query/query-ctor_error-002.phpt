@@ -28,7 +28,7 @@ foreach ($tests as $options) {
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECT--
+--EXPECTF--
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Expected "modifiers" option to be array, int given
 
@@ -50,15 +50,23 @@ Expected "projection" option to be array or object, int given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Expected "sort" option to be array or object, int given
 
+
+Deprecated: MongoDB\Driver\Query::__construct(): The "modifiers" option is deprecated and will be removed in a future release in %s on line %d
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Expected "$hint" modifier to be string, array, or object, int given
 
+
+Deprecated: MongoDB\Driver\Query::__construct(): The "modifiers" option is deprecated and will be removed in a future release in %s on line %d
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Expected "$max" modifier to be array or object, int given
 
+
+Deprecated: MongoDB\Driver\Query::__construct(): The "modifiers" option is deprecated and will be removed in a future release in %s on line %d
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Expected "$min" modifier to be array or object, int given
 
+
+Deprecated: MongoDB\Driver\Query::__construct(): The "modifiers" option is deprecated and will be removed in a future release in %s on line %d
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Expected "$orderby" modifier to be array or object, int given
 
