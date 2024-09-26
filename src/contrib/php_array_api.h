@@ -187,17 +187,53 @@ zval *php_array_fetchz(zval *zarr, zval *key) {
 	}
 }
 
+static inline zval* zval_deref_safe(zval* z) {
+	if (z) { ZVAL_DEREF(z); }
+	return z;
+}
+
+/* Fetch zval*, resolving references
+ *
+ * zval *php_array_fetch_deref(zval *zarr, const char *key)
+ * zval *php_array_fetchl_deref(zval *zarr, const char *key, int key_len)
+ * zval *php_array_fetchl_safe_deref(zval *zarr, const char *key, int key_len)
+ * zval *php_array_fetchn_deref(zval *zarr, unsigned long idx)
+ * zval *php_array_fetchc_deref(zval *zarr, const char *litstr)
+ * zval *php_array_fetchz_deref(zval *zarr, zval *key)
+ */
+static inline
+	zval *php_array_fetchl_deref(zval *zarr, const char *key, int key_len) {
+	return zval_deref_safe(php_array_fetchl(zarr, key, key_len));
+}
+static inline
+	zval *php_array_fetch_deref(zval *zarr, const char *key) {
+	return zval_deref_safe(php_array_fetch(zarr, key));
+}
+#define php_array_fetchc_deref(zarr, litstr) zval_deref_safe(php_array_fetchl(zarr, litstr, sizeof(litstr)-1))
+static inline
+	zval *php_array_fetchl_safe_deref(zval *zarr, const char *key, int key_len) {
+	return zval_deref_safe(php_array_fetchl_safe(zarr, key, key_len));
+}
+static inline
+	zval *php_array_fetchn_deref(zval *zarr, zend_ulong idx) {
+	return zval_deref_safe(php_array_fetchn(zarr, idx));
+}
+static inline
+	zval *php_array_fetchz_deref(zval *zarr, zval *key) {
+	return zval_deref_safe(php_array_fetchz(zarr, key));
+}
+
 #define PHP_ARRAY_FETCH_TYPE_MAP(ctype, ztype) \
 static inline ctype php_array_fetch_##ztype(zval *zarr, const char *key) \
-  	{ return php_array_zval_to_##ztype(php_array_fetch(zarr, key)); } \
+	{ return php_array_zval_to_##ztype(php_array_fetch_deref(zarr, key)); } \
 static inline ctype php_array_fetchl_##ztype(zval *zarr, const char *key, int key_len) \
-	{ return php_array_zval_to_##ztype(php_array_fetchl(zarr, key, key_len)); } \
+	{ return php_array_zval_to_##ztype(php_array_fetchl_deref(zarr, key, key_len)); } \
 static inline ctype php_array_fetchl_safe_##ztype(zval *zarr, const char *key, int key_len) \
-	{ return php_array_zval_to_##ztype(php_array_fetchl_safe(zarr, key, key_len)); } \
+	{ return php_array_zval_to_##ztype(php_array_fetchl_safe_deref(zarr, key, key_len)); } \
 static inline ctype php_array_fetchn_##ztype(zval *zarr, zend_ulong idx) \
-	{ return php_array_zval_to_##ztype(php_array_fetchn(zarr, idx)); } \
+	{ return php_array_zval_to_##ztype(php_array_fetchn_deref(zarr, idx)); } \
 static inline ctype php_array_fetchz_##ztype(zval *zarr, zval *key) \
-	{ return php_array_zval_to_##ztype(php_array_fetchz(zarr, key)); }
+	{ return php_array_zval_to_##ztype(php_array_fetchz_deref(zarr, key)); }
 
 /* Fetch zend_bool
  *
@@ -214,7 +250,7 @@ zend_bool php_array_zval_to_bool(zval *z) {
 }
 PHP_ARRAY_FETCH_TYPE_MAP(zend_bool, bool)
 #define php_array_fetchc_bool(zarr, litstr) \
-	php_array_zval_to_bool(php_array_fetchc(zarr, litstr))
+	php_array_zval_to_bool(php_array_fetchc_deref(zarr, litstr))
 
 /* Fetch long
  *
@@ -227,16 +263,15 @@ PHP_ARRAY_FETCH_TYPE_MAP(zend_bool, bool)
  */
 static inline
 zend_long php_array_zval_to_long(zval *z) {
-try_again:
 	if (!z) { return 0; }
 	switch(Z_TYPE_P(z)) {
-		case IS_REFERENCE:
-			ZVAL_DEREF(z);
-			goto try_again;
-		case IS_NULL: return 0;
-		case IS_FALSE: return 0;
-		case IS_TRUE: return 1;
-		case IS_LONG: return Z_LVAL_P(z);
+		case IS_NULL:
+		case IS_FALSE:
+			return 0;
+		case IS_TRUE:
+			return 1;
+		case IS_LONG:
+			return Z_LVAL_P(z);
 		default:
 		{
 			zval c = *z;
@@ -248,7 +283,7 @@ try_again:
 }
 PHP_ARRAY_FETCH_TYPE_MAP(zend_long, long)
 #define php_array_fetchc_long(zarr, litstr) \
-	php_array_zval_to_long(php_array_fetchc(zarr, litstr))
+	php_array_zval_to_long(php_array_fetchc_deref(zarr, litstr))
 
 /* Fetch double
  *
@@ -261,17 +296,17 @@ PHP_ARRAY_FETCH_TYPE_MAP(zend_long, long)
  */
 static inline
 double php_array_zval_to_double(zval *z) {
-try_again:
 	if (!z) { return 0.0; }
 	switch (Z_TYPE_P(z)) {
-		case IS_REFERENCE:
-			ZVAL_DEREF(z);
-			goto try_again;
-		case IS_NULL: return 0.0;
-		case IS_FALSE: return 0.0;
-		case IS_TRUE: return 1.0;
-		case IS_LONG: return (double)Z_LVAL_P(z);
-		case IS_DOUBLE: return Z_DVAL_P(z);
+		case IS_NULL:
+		case IS_FALSE:
+			return 0.0;
+		case IS_TRUE:
+			return 1.0;
+		case IS_LONG:
+			return (double) Z_LVAL_P(z);
+		case IS_DOUBLE:
+			return Z_DVAL_P(z);
 		default:
 		{
 			zval c = *z;
@@ -283,7 +318,7 @@ try_again:
 }
 PHP_ARRAY_FETCH_TYPE_MAP(double, double)
 #define php_array_fetchc_double(zarr, litstr) \
-	php_array_zval_to_double(php_array_fetchc(zarr, litstr))
+	php_array_zval_to_double(php_array_fetchc_deref(zarr, litstr))
 
 /* Fetch string
  *
@@ -303,14 +338,10 @@ static inline
 char *php_array_zval_to_string(zval *z, int *plen, zend_bool *pfree) {
 	*plen = 0;
 	*pfree = 0;
-try_again:
 	if (!z) { return NULL; }
 	switch (Z_TYPE_P(z)) {
 		case IS_NULL:
-			return (char *)"";
-		case IS_REFERENCE:
-			ZVAL_DEREF(z);
-			goto try_again;
+			return (char *) "";
 		case IS_STRING:
 			*plen = Z_STRLEN_P(z);
 			return Z_STRVAL_P(z);
@@ -326,17 +357,17 @@ try_again:
 	}
 }
 #define php_array_fetch_string(zarr, key, plen, pfree) \
-	php_array_zval_to_string(php_array_fetch(zarr, key), plen, pfree)
+	php_array_zval_to_string(php_array_fetch_deref(zarr, key), plen, pfree)
 #define php_array_fetchl_string(zarr, key, key_len, plen, pfree) \
-	php_array_zval_to_string(php_array_fetchl(zarr, key, key_len), plen, pfree)
+	php_array_zval_to_string(php_array_fetchl_deref(zarr, key, key_len), plen, pfree)
 #define php_array_fetchl_safe_string(zarr, key, key_len, plen, pfree) \
-	php_array_zval_to_string(php_array_fetchl_safe(zarr, key, key_len), plen, pfree)
+	php_array_zval_to_string(php_array_fetchl_safe_deref(zarr, key, key_le), plen, pfree)
 #define php_array_fetchn_string(zarr, idx, plen, pfree) \
-	php_array_zval_to_string(php_array_fetchn(zarr, idx), plen, pfree)
+	php_array_zval_to_string(php_array_fetchn_deref(zarr, idx), plen, pfree)
 #define php_array_fetchc_string(zarr, litstr, plen, pfree) \
-	php_array_zval_to_string(php_array_fetchc(zarr, litstr), plen, pfree)
+	php_array_zval_to_string(php_array_fetchc_deref(zarr, litstr), plen, pfree)
 #define php_array_fetchz_string(zarr, key, plen, pfree) \
-	php_array_zval_to_string(php_array_fetchz(zarr, key), plen, pfree)
+	php_array_zval_to_string(php_array_fetchz_deref(zarr, key), plen, pfree)
 
 
 /* Fetch array
@@ -354,13 +385,11 @@ try_again:
  * zval *php_array_fetchz_array(zval *zarr, zval *key)
  */
 static inline zval *php_array_zval_to_array(zval *zarr) {
-	if (!zarr) { return NULL; }
-	ZVAL_DEREF(zarr);
-	return Z_TYPE_P(zarr) == IS_ARRAY ? zarr : NULL;
+	return zarr && Z_TYPE_P(zarr) == IS_ARRAY ? zarr : NULL;
 }
 PHP_ARRAY_FETCH_TYPE_MAP(zval*, array)
 #define php_array_fetchc_array(zarr, litstr) \
-	php_array_zval_to_array(php_array_fetchc(zarr, litstr))
+	php_array_zval_to_array(php_array_fetchc_deref(zarr, litstr))
 
 /* count($arr) - Count number of elements in the array
  *
@@ -391,17 +420,17 @@ void *php_array_zval_to_resource(zval *z, int le) {
 	return zend_fetch_resource_ex(z, NULL, le);
 }
 #define php_array_fetch_resource(zarr, key, le) \
-	php_array_zval_to_resource(php_array_fetch(zarr, key), le)
+	php_array_zval_to_resource(php_array_fetch_deref(zarr, key), le)
 #define php_array_fetchl_resource(zarr, key, key_len, le) \
-	php_array_zval_to_resource(php_array_fetchl(zarr, key, key_len), le)
+	php_array_zval_to_resource(php_array_fetchl_deref(zarr, key, key_len), le)
 #define php_array_fetchl_safe_resource(zarr, key, key_len, le) \
-	php_array_zval_to_resource(php_array_fetchl_safe(zarr, key, key_len), le)
+	php_array_zval_to_resource(php_array_fetchl_safe_deref(zarr, key, key_len), le)
 #define php_array_fetchn_resource(zarr, idx, le) \
-	php_array_zval_to_resource(php_array_fetchn(zarr, idx), le)
+	php_array_zval_to_resource(php_array_fetchn_deref(zarr, idx), le)
 #define php_array_fetchc_resource(zarr, litstr, le) \
-	php_array_zval_to_resource(php_array_fetchc(zarr, litstr), le)
+	php_array_zval_to_resource(php_array_fetchc_deref(zarr, litstr), le)
 #define php_array_fetchz_resource(zarr, key, le) \
-        php_array_zval_to_resource(php_array_fetchz(zarr, key), le)
+	php_array_zval_to_resource(php_array_fetchz_deref(zarr, key), le)
 
 /* Fetch Object
  *
@@ -418,23 +447,21 @@ void *php_array_zval_to_resource(zval *z, int le) {
  */
 static inline
 zval *php_array_zval_to_object(zval *z, zend_class_entry *ce) {
-	if (!z) { return NULL; }
-	ZVAL_DEREF(z);
-	if (Z_TYPE_P(z) != IS_OBJECT) { return NULL; }
+	if (!z || Z_TYPE_P(z) != IS_OBJECT) { return NULL; }
 	return (!ce) || instanceof_function(Z_OBJCE_P(z), ce) ? z : NULL;
 }
 #define php_array_fetch_object(zarr, key, ce) \
-	php_array_zval_to_object(php_array_fetch(zarr, key), ce)
+	php_array_zval_to_object(php_array_fetch_deref(zarr, key), ce)
 #define php_array_fetchl_object(zarr, key, len, ce) \
-	php_array_zval_to_object(php_array_fetchl(zarr, key, len), ce)
+	php_array_zval_to_object(php_array_fetchl_deref(zarr, key, len), ce)
 #define php_array_fetchl_safe_object(zarr, key, len, ce) \
-	php_array_zval_to_object(php_array_fetchl_safe(zarr, key, len), ce)
+	php_array_zval_to_object(php_array_fetchl_safe_deref(zarr, key, len), ce)
 #define php_array_fetchn_object(zarr, idx, ce) \
-	php_array_zval_to_object(php_array_fetchn(zarr, idx), ce)
+	php_array_zval_to_object(php_array_fetchn_deref(zarr, idx), ce)
 #define php_array_fetchc_object(zarr, litstr, ce) \
-	php_array_zval_to_object(php_array_fetchc(zarr, litstr), ce)
+	php_array_zval_to_object(php_array_fetchc_deref(zarr, litstr), ce)
 #define php_array_fetchz_object(zarr, key, ce) \
-        php_array_zval_to_object(php_array_fetchz(zarr, key), ce)
+	php_array_zval_to_object(php_array_fetchz_deref(zarr, key), ce)
 
 /* unset($zarr[$key]) - Erase a key from an array
  *
