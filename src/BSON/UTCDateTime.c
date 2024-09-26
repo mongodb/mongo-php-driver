@@ -18,9 +18,7 @@
 #include <inttypes.h>
 
 #include <php.h>
-#include <zend_smart_str.h>
 #include <ext/date/php_date.h>
-#include <ext/standard/php_var.h>
 #include <Zend/zend_interfaces.h>
 
 #include "php_phongo.h"
@@ -222,15 +220,9 @@ static PHP_METHOD(MongoDB_BSON_UTCDateTime, __construct)
 
 			php_phongo_utcdatetime_init_from_double(intern, Z_DVAL_P(milliseconds));
 			return;
-
-		case IS_STRING:
-			php_error_docref(NULL, E_DEPRECATED, "Creating a %s instance with a string is deprecated and will be removed in ext-mongodb 2.0", ZSTR_VAL(php_phongo_utcdatetime_ce->name));
-
-			php_phongo_utcdatetime_init_from_string(intern, Z_STRVAL_P(milliseconds), Z_STRLEN_P(milliseconds));
-			return;
 	}
 
-	phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected integer or string, %s given", PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(milliseconds));
+	phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected integer or object, %s given", PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(milliseconds));
 }
 
 static PHP_METHOD(MongoDB_BSON_UTCDateTime, __set_state)
@@ -296,59 +288,6 @@ static PHP_METHOD(MongoDB_BSON_UTCDateTime, jsonSerialize)
 		ADD_ASSOC_INT64_AS_STRING(&udt, "$numberLong", intern->milliseconds);
 		ADD_ASSOC_ZVAL_EX(return_value, "$date", &udt);
 	}
-}
-
-static PHP_METHOD(MongoDB_BSON_UTCDateTime, serialize)
-{
-	php_phongo_utcdatetime_t* intern;
-	zval                      retval;
-	php_serialize_data_t      var_hash;
-	smart_str                 buf = { 0 };
-
-	intern = Z_UTCDATETIME_OBJ_P(getThis());
-
-	PHONGO_PARSE_PARAMETERS_NONE();
-
-	array_init_size(&retval, 1);
-	ADD_ASSOC_INT64_AS_STRING(&retval, "milliseconds", intern->milliseconds);
-
-	PHP_VAR_SERIALIZE_INIT(var_hash);
-	php_var_serialize(&buf, &retval, &var_hash);
-	smart_str_0(&buf);
-	PHP_VAR_SERIALIZE_DESTROY(var_hash);
-
-	PHONGO_RETVAL_SMART_STR(buf);
-
-	smart_str_free(&buf);
-	zval_ptr_dtor(&retval);
-}
-
-static PHP_METHOD(MongoDB_BSON_UTCDateTime, unserialize)
-{
-	php_phongo_utcdatetime_t* intern;
-	char*                     serialized;
-	size_t                    serialized_len;
-	zval                      props;
-	php_unserialize_data_t    var_hash;
-
-	intern = Z_UTCDATETIME_OBJ_P(getThis());
-
-	PHONGO_PARSE_PARAMETERS_START(1, 1)
-	Z_PARAM_STRING(serialized, serialized_len)
-	PHONGO_PARSE_PARAMETERS_END();
-
-	PHP_VAR_UNSERIALIZE_INIT(var_hash);
-	if (!php_var_unserialize(&props, (const unsigned char**) &serialized, (unsigned char*) serialized + serialized_len, &var_hash)) {
-		zval_ptr_dtor(&props);
-		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "%s unserialization failed", ZSTR_VAL(php_phongo_utcdatetime_ce->name));
-
-		PHP_VAR_UNSERIALIZE_DESTROY(var_hash);
-		return;
-	}
-	PHP_VAR_UNSERIALIZE_DESTROY(var_hash);
-
-	php_phongo_utcdatetime_init_from_hash(intern, HASH_OF(&props));
-	zval_ptr_dtor(&props);
 }
 
 static PHP_METHOD(MongoDB_BSON_UTCDateTime, __serialize)
@@ -442,7 +381,7 @@ static HashTable* php_phongo_utcdatetime_get_properties(zend_object* object)
 
 void php_phongo_utcdatetime_init_ce(INIT_FUNC_ARGS)
 {
-	php_phongo_utcdatetime_ce                = register_class_MongoDB_BSON_UTCDateTime(php_phongo_utcdatetime_interface_ce, php_phongo_json_serializable_ce, php_phongo_type_ce, zend_ce_serializable, zend_ce_stringable);
+	php_phongo_utcdatetime_ce                = register_class_MongoDB_BSON_UTCDateTime(php_phongo_utcdatetime_interface_ce, php_phongo_json_serializable_ce, php_phongo_type_ce, zend_ce_stringable);
 	php_phongo_utcdatetime_ce->create_object = php_phongo_utcdatetime_create_object;
 
 	memcpy(&php_phongo_handler_utcdatetime, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));

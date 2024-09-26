@@ -31,10 +31,9 @@
 #include "MongoDB/WriteError.h"
 #include "WriteResult_arginfo.h"
 
-#define PHONGO_WRITERESULT_CHECK_ACKNOWLEDGED(method)                                                                                                                                        \
-	if (!mongoc_write_concern_is_acknowledged(intern->write_concern)) {                                                                                                                      \
-		php_error_docref(NULL, E_DEPRECATED, "Calling MongoDB\\Driver\\WriteResult::" method "() for an unacknowledged write is deprecated and will throw an exception in ext-mongodb 2.0"); \
-		RETURN_NULL();                                                                                                                                                                       \
+#define PHONGO_WRITERESULT_CHECK_ACKNOWLEDGED(method)                                                                                                     \
+	if (!mongoc_write_concern_is_acknowledged(intern->write_concern)) {                                                                                   \
+		phongo_throw_exception(PHONGO_ERROR_LOGIC, "MongoDB\\Driver\\WriteResult::" method "() should not be called for an unacknowledged write result"); \
 	}
 
 #define PHONGO_WRITERESULT_RETURN_LONG_FROM_BSON_INT32(iter, bson, key)                \

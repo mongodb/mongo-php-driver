@@ -165,12 +165,10 @@ if test "$PHP_MONGODB" != "no"; then
     src/BSON/Unserializable.c \
     src/BSON/UTCDateTime.c \
     src/BSON/UTCDateTimeInterface.c \
-    src/BSON/functions.c \
     src/MongoDB/BulkWrite.c \
     src/MongoDB/ClientEncryption.c \
     src/MongoDB/Command.c \
     src/MongoDB/Cursor.c \
-    src/MongoDB/CursorId.c \
     src/MongoDB/CursorInterface.c \
     src/MongoDB/Manager.c \
     src/MongoDB/Query.c \
@@ -197,9 +195,7 @@ if test "$PHP_MONGODB" != "no"; then
     src/MongoDB/Exception/LogicException.c \
     src/MongoDB/Exception/RuntimeException.c \
     src/MongoDB/Exception/ServerException.c \
-    src/MongoDB/Exception/SSLConnectionException.c \
     src/MongoDB/Exception/UnexpectedValueException.c \
-    src/MongoDB/Exception/WriteException.c \
     src/MongoDB/Monitoring/CommandFailedEvent.c \
     src/MongoDB/Monitoring/CommandStartedEvent.c \
     src/MongoDB/Monitoring/CommandSubscriber.c \
@@ -227,22 +223,6 @@ if test "$PHP_MONGODB" != "no"; then
                [no])
   PHP_MONGODB_VALIDATE_ARG([PHP_MONGODB_SYSTEM_LIBS], [yes no])
 
-  PHP_ARG_WITH([libbson],
-               [whether to use system libbson],
-               [AS_HELP_STRING([--with-libbson=@<:@yes/no@:>@],
-                               [MongoDB: Use system libbson (deprecated for --with-mongodb-system-libs) [default=no]])],
-               [no],
-               [no])
-  PHP_MONGODB_VALIDATE_ARG([PHP_LIBBSON], [yes no])
-
-  PHP_ARG_WITH([libmongoc],
-               [whether to use system libmongoc],
-               [AS_HELP_STRING([--with-libmongoc=@<:@yes/no@:>@],
-                               [MongoDB: Use system libmongoc (deprecated for --with-mongodb-system-libs) [default=no]])],
-               [no],
-               [no])
-  PHP_MONGODB_VALIDATE_ARG([PHP_LIBMONGOC], [yes no])
-
   PHP_ARG_WITH([mongodb-client-side-encryption],
                [whether to enable client-side encryption],
                [AS_HELP_STRING([--with-mongodb-client-side-encryption=@<:@auto/yes/no@:>@],
@@ -250,26 +230,6 @@ if test "$PHP_MONGODB" != "no"; then
                [auto],
                [no])
   PHP_MONGODB_VALIDATE_ARG([PHP_MONGODB_CLIENT_SIDE_ENCRYPTION], [auto yes no])
-
-  if test "$PHP_LIBBSON" != "no"; then
-    AC_MSG_WARN(Using --with-libbson is deprecated and will be removed in a future version. Please use --with-system-libs instead)
-
-    if test "$PHP_LIBMONGOC" = "no"; then
-      AC_MSG_ERROR(Cannot use system libbson and bundled libmongoc)
-    fi
-
-    PHP_MONGODB_SYSTEM_LIBS="yes"
-  fi
-
-  if test "$PHP_LIBMONGOC" != "no"; then
-    AC_MSG_WARN(Using --with-libmongoc is deprecated and will be removed in a future version. Please use --with-system-libs instead)
-
-    if test "$PHP_LIBBSON" = "no"; then
-      AC_MSG_ERROR(Cannot use system libmongoc and bundled libbson)
-    fi
-
-    PHP_MONGODB_SYSTEM_LIBS="yes"
-  fi
 
   PHP_MONGODB_BSON_VERSION_STRING="None"
   PHP_MONGODB_MONGOC_VERSION_STRING="None"

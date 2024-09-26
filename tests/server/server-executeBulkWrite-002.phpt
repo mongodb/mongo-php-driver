@@ -19,17 +19,16 @@ foreach ($writeConcerns as $writeConcern) {
 
     $result = $primary->executeBulkWrite(NS, $bulk, new MongoDB\Driver\WriteConcern($writeConcern));
     var_dump($result->isAcknowledged());
-    var_dump($result->getInsertedCount());
+    if ($result->isAcknowledged()) {
+        var_dump($result->getInsertedCount());
+    }
 }
 
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECTF--
+--EXPECT--
 bool(false)
-
-Deprecated: MongoDB\Driver\WriteResult::getInsertedCount(): Calling MongoDB\Driver\WriteResult::getInsertedCount() for an unacknowledged write is deprecated and will throw an exception in ext-mongodb 2.0 in %s
-NULL
 bool(true)
 int(1)
 ===DONE===
