@@ -8,7 +8,7 @@ require_once __DIR__ . '/../utils/basic.inc';
 $tests = [
     [ '_id' => new MongoDB\BSON\ObjectId('56315a7c6118fd1b920270b1') ],
     [ 'binary' => new MongoDB\BSON\Binary('foo', MongoDB\BSON\Binary::TYPE_GENERIC) ],
-    [ 'date' => new MongoDB\BSON\UTCDateTime(1445990400000) ],
+    [ 'date' => new MongoDB\BSON\UTCDateTime(new MongoDB\BSON\Int64('1445990400000')) ],
     [ 'timestamp' => new MongoDB\BSON\Timestamp(1234, 5678) ],
     [ 'regex' => new MongoDB\BSON\Regex('pattern', 'i') ],
     [ 'code' => new MongoDB\BSON\Javascript('function() { return 1; }') ],
