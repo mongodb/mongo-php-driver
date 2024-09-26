@@ -216,6 +216,8 @@ static PHP_METHOD(MongoDB_BSON_UTCDateTime, __construct)
 			return;
 
 		case IS_DOUBLE:
+			php_error_docref(NULL, E_DEPRECATED, "Creating a %s instance with a float is deprecated and will be removed in ext-mongodb 2.0", ZSTR_VAL(php_phongo_utcdatetime_ce->name));
+
 			php_phongo_utcdatetime_init_from_double(intern, Z_DVAL_P(milliseconds));
 			return;
 	}
