@@ -282,7 +282,6 @@ PHP_MINIT_FUNCTION(mongodb) /* {{{ */
 	php_phongo_executiontimeoutexception_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 	php_phongo_invalidargumentexception_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 	php_phongo_logicexception_init_ce(INIT_FUNC_ARGS_PASSTHRU);
-	php_phongo_sslconnectionexception_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 	php_phongo_unexpectedvalueexception_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 
 	/* Register base APM classes first */
