@@ -25,12 +25,6 @@
 #include "zend_hash.h"
 #include "zend_list.h"
 
-# define PAA_LENGTH_ADJ(l) (l)
-# define PAA_SYM_EXISTS zend_symtable_str_exists
-# define PAA_SYM_DEL    zend_symtable_str_del
-# define PAA_LONG       zend_long
-# define PAA_ULONG      zend_ulong
-
 /**
  * All APIs in this file follow a general format:
  *
@@ -73,12 +67,12 @@
  */
 static inline
 zend_bool php_array_exists(zval *zarr, const char *key) {
-	return PAA_SYM_EXISTS(Z_ARRVAL_P(zarr), key, PAA_LENGTH_ADJ(strlen(key)));
+	return zend_symtable_str_exists(Z_ARRVAL_P(zarr), key, strlen(key));
 }
 #define php_array_existsc(zarr, litstr) \
-	PAA_SYM_EXISTS(Z_ARRVAL_P(zarr), litstr, PAA_LENGTH_ADJ(sizeof(litstr) - 1))
+	zend_symtable_str_exists(Z_ARRVAL_P(zarr), litstr, sizeof(litstr) - 1)
 #define php_array_existsl(zarr, key, len) \
-	PAA_SYM_EXISTS(Z_ARRVAL_P(zarr), key, PAA_LENGTH_ADJ(len))
+	zend_symtable_str_exists(Z_ARRVAL_P(zarr), key, len)
 static inline
 zend_bool php_array_existsl_safe(zval *zarr, const char *key, int key_len) {
 	zend_string *keystr = zend_string_init(key, key_len, 0);
@@ -171,7 +165,7 @@ zval *php_array_fetchl_safe(zval *zarr, const char *key, int key_len) {
 	return ret;
 }
 static inline
-zval *php_array_fetchn(zval *zarr, PAA_ULONG idx) {
+zval *php_array_fetchn(zval *zarr, zend_ulong idx) {
 	return zend_hash_index_find(Z_ARRVAL_P(zarr), idx);
 }
 static inline
@@ -201,7 +195,7 @@ static inline ctype php_array_fetchl_##ztype(zval *zarr, const char *key, int ke
 	{ return php_array_zval_to_##ztype(php_array_fetchl(zarr, key, key_len)); } \
 static inline ctype php_array_fetchl_safe_##ztype(zval *zarr, const char *key, int key_len) \
 	{ return php_array_zval_to_##ztype(php_array_fetchl_safe(zarr, key, key_len)); } \
-static inline ctype php_array_fetchn_##ztype(zval *zarr, PAA_ULONG idx) \
+static inline ctype php_array_fetchn_##ztype(zval *zarr, zend_ulong idx) \
 	{ return php_array_zval_to_##ztype(php_array_fetchn(zarr, idx)); } \
 static inline ctype php_array_fetchz_##ztype(zval *zarr, zval *key) \
 	{ return php_array_zval_to_##ztype(php_array_fetchz(zarr, key)); }
@@ -233,7 +227,7 @@ PHP_ARRAY_FETCH_TYPE_MAP(zend_bool, bool)
  * long php_array_fetchz_long(zval *zarr, zval *key)
  */
 static inline
-PAA_LONG php_array_zval_to_long(zval *z) {
+zend_long php_array_zval_to_long(zval *z) {
 try_again:
 	if (!z) { return 0; }
 	switch(Z_TYPE_P(z)) {
@@ -253,7 +247,7 @@ try_again:
 		}
 	}
 }
-PHP_ARRAY_FETCH_TYPE_MAP(PAA_LONG, long)
+PHP_ARRAY_FETCH_TYPE_MAP(zend_long, long)
 #define php_array_fetchc_long(zarr, litstr) \
 	php_array_zval_to_long(php_array_fetchc(zarr, litstr))
 
@@ -454,20 +448,20 @@ zval *php_array_zval_to_object(zval *z, zend_class_entry *ce) {
  */
 static inline
 void php_array_unset(zval *zarr, const char *key) {
-	PAA_SYM_DEL(Z_ARRVAL_P(zarr), key, PAA_LENGTH_ADJ(strlen(key)));
+	zend_symtable_str_del(Z_ARRVAL_P(zarr), key, strlen(key));
 }
 #define php_array_unsetl(zarr, key, len) \
-	PAA_SYM_DEL(Z_ARRVAL_P(zarr), key, PAA_LENGTH_ADJ(len))
+	zend_symtable_str_del(Z_ARRVAL_P(zarr), key, len)
 static inline
 void php_array_unsetl_safe(zval *zarr, const char *key, int key_len) {
 	char *k = estrndup(key, key_len);
-	PAA_SYM_DEL(Z_ARRVAL_P(zarr), k, PAA_LENGTH_ADJ(key_len));
+	zend_symtable_str_del(Z_ARRVAL_P(zarr), k, key_len);
 	efree(k);
 }
 #define php_array_unsetn(zarr, idx) \
 	zend_symtable_index_del(Z_ARRVAL_P(zarr), idx)
 #define php_array_unsetc(zarr, litstr) \
-	PAA_SYM_DEL(Z_ARRVAL_P(zarr), litstr, PAA_LENGTH_ADJ(sizeof(litstr) - 1))
+	zend_symtable_str_del(Z_ARRVAL_P(zarr), litstr, sizeof(litstr) - 1)
 static inline void php_array_unsetz(zval *zarr, zval *key) {
 	switch (Z_TYPE_P(key)) {
 		case IS_NULL:
