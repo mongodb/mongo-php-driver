@@ -324,7 +324,6 @@ extern zend_class_entry* php_phongo_unexpectedvalueexception_ce;
 extern zend_class_entry* php_phongo_invalidargumentexception_ce;
 extern zend_class_entry* php_phongo_connectionexception_ce;
 extern zend_class_entry* php_phongo_authenticationexception_ce;
-extern zend_class_entry* php_phongo_sslconnectionexception_ce;
 extern zend_class_entry* php_phongo_encryptionexception_ce;
 extern zend_class_entry* php_phongo_executiontimeoutexception_ce;
 extern zend_class_entry* php_phongo_connectiontimeoutexception_ce;
