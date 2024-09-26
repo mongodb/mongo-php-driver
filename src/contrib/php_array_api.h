@@ -172,7 +172,6 @@ static inline
 zval *php_array_fetchz(zval *zarr, zval *key) {
 	switch (Z_TYPE_P(key)) {
 		case IS_NULL:
-			return php_array_fetchn(zarr, 0);
 		case IS_FALSE:
 			return php_array_fetchn(zarr, 0);
 		case IS_TRUE:
@@ -180,7 +179,7 @@ zval *php_array_fetchz(zval *zarr, zval *key) {
 		case IS_LONG:
 			return php_array_fetchn(zarr, Z_LVAL_P(key));
 		case IS_DOUBLE:
-			return php_array_fetchn(zarr, (long)Z_DVAL_P(key));
+			return php_array_fetchn(zarr, (zend_ulong) Z_DVAL_P(key));
 		case IS_STRING:
 			return php_array_fetchl(zarr, Z_STRVAL_P(key), Z_STRLEN_P(key));
 		default:
@@ -465,8 +464,6 @@ void php_array_unsetl_safe(zval *zarr, const char *key, int key_len) {
 static inline void php_array_unsetz(zval *zarr, zval *key) {
 	switch (Z_TYPE_P(key)) {
 		case IS_NULL:
-			zend_hash_index_del(Z_ARRVAL_P(zarr), 0);
-			return;
 		case IS_FALSE:
 			zend_hash_index_del(Z_ARRVAL_P(zarr), 0);
 			return;
@@ -477,7 +474,7 @@ static inline void php_array_unsetz(zval *zarr, zval *key) {
 			zend_hash_index_del(Z_ARRVAL_P(zarr), Z_LVAL_P(key));
 			return;
 		case IS_DOUBLE:
-			zend_hash_index_del(Z_ARRVAL_P(zarr), (long)Z_DVAL_P(key));
+			zend_hash_index_del(Z_ARRVAL_P(zarr), (zend_ulong) Z_DVAL_P(key));
 			break;
 		case IS_STRING:
 			php_array_unsetl(zarr, Z_STRVAL_P(key), Z_STRLEN_P(key));
