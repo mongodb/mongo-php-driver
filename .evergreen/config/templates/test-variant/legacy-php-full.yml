@@ -36,15 +36,15 @@
           - ".ocsp .5.0"
 
   # Test versions < 5.0
-  - name: test-debian92-php-%phpVersion%
-    tags: ["test", "debian", "x64", "php%phpVersion%", "pr", "tag"]
-    display_name: "Test: Debian 9.2, PHP %phpVersion%"
-    run_on: debian92-small
+  - name: test-rhel80-php-%phpVersion%
+    tags: ["test", "rhel", "x64", "php%phpVersion%", "pr", "tag"]
+    display_name: "Test: RHEL 8.0, PHP %phpVersion%"
+    run_on: rhel80-small
     expansions:
-      FETCH_BUILD_VARIANT: "build-debian92"
+      FETCH_BUILD_VARIANT: "build-rhel8"
       FETCH_BUILD_TASK: "build-php-%phpVersion%"
     depends_on:
-      - variant: "build-debian92"
+      - variant: "build-rhel8"
         name: "build-php-%phpVersion%"
     tasks:
       # Remember to add new major versions here as they are released

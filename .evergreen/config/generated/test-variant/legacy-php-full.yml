@@ -38,15 +38,15 @@ buildvariants:
           - ".ocsp .5.0"
 
   # Test versions < 5.0
-  - name: test-debian92-php-8.0
-    tags: ["test", "debian", "x64", "php8.0", "pr", "tag"]
-    display_name: "Test: Debian 9.2, PHP 8.0"
-    run_on: debian92-small
+  - name: test-rhel80-php-8.0
+    tags: ["test", "rhel", "x64", "php8.0", "pr", "tag"]
+    display_name: "Test: RHEL 8.0, PHP 8.0"
+    run_on: rhel80-small
     expansions:
-      FETCH_BUILD_VARIANT: "build-debian92"
+      FETCH_BUILD_VARIANT: "build-rhel8"
       FETCH_BUILD_TASK: "build-php-8.0"
     depends_on:
-      - variant: "build-debian92"
+      - variant: "build-rhel8"
         name: "build-php-8.0"
     tasks:
       # Remember to add new major versions here as they are released
@@ -97,15 +97,15 @@ buildvariants:
           - ".ocsp .5.0"
 
   # Test versions < 5.0
-  - name: test-debian92-php-7.4
-    tags: ["test", "debian", "x64", "php7.4", "pr", "tag"]
-    display_name: "Test: Debian 9.2, PHP 7.4"
-    run_on: debian92-small
+  - name: test-rhel80-php-7.4
+    tags: ["test", "rhel", "x64", "php7.4", "pr", "tag"]
+    display_name: "Test: RHEL 8.0, PHP 7.4"
+    run_on: rhel80-small
     expansions:
-      FETCH_BUILD_VARIANT: "build-debian92"
+      FETCH_BUILD_VARIANT: "build-rhel8"
       FETCH_BUILD_TASK: "build-php-7.4"
     depends_on:
-      - variant: "build-debian92"
+      - variant: "build-rhel8"
         name: "build-php-7.4"
     tasks:
       # Remember to add new major versions here as they are released
