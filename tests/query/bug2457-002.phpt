@@ -1,16 +1,12 @@
 --TEST--
-PHPC-2457: Query options can be passed reference
+PHPC-2457: Query modifiers can be passed reference
 --FILE--
 <?php
 
-$collation = ['locale' => 'fr_FR', 'strength' => 2];
-$let = ['x' => 1];
-$sort = ['_id' => 1];
+$modifiers = ['$orderby' => ['x' => 1]];
 
 $query = new MongoDB\Driver\Query([], [
-    'collation' => &$collation,
-    'let' => &$let,
-    'sort' => &$sort,
+    'modifiers' => &$modifiers,
 ]);
 
 var_dump($query);
@@ -18,28 +14,17 @@ var_dump($query);
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECT--
+--EXPECTF--
+Deprecated: MongoDB\Driver\Query::__construct(): The "modifiers" option is deprecated and will be removed in a future release in %s
 object(MongoDB\Driver\Query)#1 (3) {
   ["filter"]=>
   object(stdClass)#2 (0) {
   }
   ["options"]=>
-  object(stdClass)#6 (3) {
-    ["collation"]=>
-    object(stdClass)#3 (2) {
-      ["locale"]=>
-      string(5) "fr_FR"
-      ["strength"]=>
-      int(2)
-    }
-    ["let"]=>
-    object(stdClass)#4 (1) {
-      ["x"]=>
-      int(1)
-    }
+  object(stdClass)#4 (1) {
     ["sort"]=>
-    object(stdClass)#5 (1) {
-      ["_id"]=>
+    object(stdClass)#3 (1) {
+      ["x"]=>
       int(1)
     }
   }
