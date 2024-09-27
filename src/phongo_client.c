@@ -1001,7 +1001,7 @@ static bool php_phongo_extract_handshake_data(zval* driver, const char* key, cha
 		return true;
 	}
 
-	zvalue = php_array_fetch(driver, key);
+	zvalue = php_array_fetch_deref(driver, key);
 
 	if (Z_TYPE_P(zvalue) != IS_STRING) {
 		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"%s\" handshake option to be a string, %s given", key, PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(zvalue));
@@ -1076,7 +1076,7 @@ static void php_phongo_set_handshake_data(zval* driverOptions)
 	size_t platform_len = 0;
 
 	if (driverOptions && php_array_existsc(driverOptions, "driver")) {
-		zval* driver = php_array_fetchc(driverOptions, "driver");
+		zval* driver = php_array_fetchc_deref(driverOptions, "driver");
 
 		if (Z_TYPE_P(driver) != IS_ARRAY) {
 			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"driver\" driver option to be an array, %s given", PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(driver));
@@ -1229,7 +1229,7 @@ static bool phongo_manager_set_serverapi_opts(php_phongo_manager_t* manager, zva
 		return true;
 	}
 
-	zServerApi = php_array_fetch(driverOptions, "serverApi");
+	zServerApi = php_array_fetchc_deref(driverOptions, "serverApi");
 
 	if (Z_TYPE_P(zServerApi) != IS_OBJECT || !instanceof_function(Z_OBJCE_P(zServerApi), php_phongo_serverapi_ce)) {
 		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"serverApi\" driver option to be %s, %s given", ZSTR_VAL(php_phongo_serverapi_ce->name), PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(zServerApi));
@@ -1258,7 +1258,7 @@ static bool phongo_manager_set_auto_encryption_opts(php_phongo_manager_t* manage
 		return true;
 	}
 
-	zAutoEncryptionOpts = php_array_fetch(driverOptions, "autoEncryption");
+	zAutoEncryptionOpts = php_array_fetchc_deref(driverOptions, "autoEncryption");
 
 	if (Z_TYPE_P(zAutoEncryptionOpts) != IS_ARRAY) {
 		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"autoEncryption\" driver option to be array, %s given", PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(zAutoEncryptionOpts));
@@ -1268,15 +1268,15 @@ static bool phongo_manager_set_auto_encryption_opts(php_phongo_manager_t* manage
 	auto_encryption_opts = mongoc_auto_encryption_opts_new();
 
 	if (php_array_existsc(zAutoEncryptionOpts, "bypassAutoEncryption")) {
-		mongoc_auto_encryption_opts_set_bypass_auto_encryption(auto_encryption_opts, php_array_fetch_bool(zAutoEncryptionOpts, "bypassAutoEncryption"));
+		mongoc_auto_encryption_opts_set_bypass_auto_encryption(auto_encryption_opts, php_array_fetchc_bool(zAutoEncryptionOpts, "bypassAutoEncryption"));
 	}
 
 	if (php_array_existsc(zAutoEncryptionOpts, "bypassQueryAnalysis")) {
-		mongoc_auto_encryption_opts_set_bypass_query_analysis(auto_encryption_opts, php_array_fetch_bool(zAutoEncryptionOpts, "bypassQueryAnalysis"));
+		mongoc_auto_encryption_opts_set_bypass_query_analysis(auto_encryption_opts, php_array_fetchc_bool(zAutoEncryptionOpts, "bypassQueryAnalysis"));
 	}
 
 	if (php_array_existsc(zAutoEncryptionOpts, "encryptedFieldsMap")) {
-		zval*  enc_fields_map = php_array_fetch(zAutoEncryptionOpts, "encryptedFieldsMap");
+		zval*  enc_fields_map = php_array_fetchc_deref(zAutoEncryptionOpts, "encryptedFieldsMap");
 		bson_t bson_map       = BSON_INITIALIZER;
 
 		if (Z_TYPE_P(enc_fields_map) != IS_OBJECT && Z_TYPE_P(enc_fields_map) != IS_ARRAY) {
@@ -1299,7 +1299,7 @@ static bool phongo_manager_set_auto_encryption_opts(php_phongo_manager_t* manage
 	}
 
 	if (php_array_existsc(zAutoEncryptionOpts, "keyVaultClient")) {
-		zval* key_vault_client = php_array_fetch(zAutoEncryptionOpts, "keyVaultClient");
+		zval* key_vault_client = php_array_fetchc_deref(zAutoEncryptionOpts, "keyVaultClient");
 
 		if (Z_TYPE_P(key_vault_client) != IS_OBJECT || !instanceof_function(Z_OBJCE_P(key_vault_client), php_phongo_manager_ce)) {
 			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"keyVaultClient\" autoEncryption option to be %s, %s given", ZSTR_VAL(php_phongo_manager_ce->name), PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(key_vault_client));
@@ -1329,7 +1329,7 @@ static bool phongo_manager_set_auto_encryption_opts(php_phongo_manager_t* manage
 		int       plen;
 		zend_bool pfree;
 
-		key_vault_ns = php_array_fetch_string(zAutoEncryptionOpts, "keyVaultNamespace", &plen, &pfree);
+		key_vault_ns = php_array_fetchc_string(zAutoEncryptionOpts, "keyVaultNamespace", &plen, &pfree);
 
 		if (!phongo_split_namespace(key_vault_ns, &db_name, &coll_name)) {
 			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"keyVaultNamespace\" autoEncryption option to contain a full collection namespace");
@@ -1352,7 +1352,7 @@ static bool phongo_manager_set_auto_encryption_opts(php_phongo_manager_t* manage
 	}
 
 	if (php_array_existsc(zAutoEncryptionOpts, "kmsProviders")) {
-		zval*  kms_providers  = php_array_fetch(zAutoEncryptionOpts, "kmsProviders");
+		zval*  kms_providers  = php_array_fetchc_deref(zAutoEncryptionOpts, "kmsProviders");
 		bson_t bson_providers = BSON_INITIALIZER;
 
 		if (Z_TYPE_P(kms_providers) != IS_OBJECT && Z_TYPE_P(kms_providers) != IS_ARRAY) {
@@ -1371,7 +1371,7 @@ static bool phongo_manager_set_auto_encryption_opts(php_phongo_manager_t* manage
 	}
 
 	if (php_array_existsc(zAutoEncryptionOpts, "schemaMap")) {
-		zval*  schema_map = php_array_fetch(zAutoEncryptionOpts, "schemaMap");
+		zval*  schema_map = php_array_fetchc_deref(zAutoEncryptionOpts, "schemaMap");
 		bson_t bson_map   = BSON_INITIALIZER;
 
 		if (Z_TYPE_P(schema_map) != IS_OBJECT && Z_TYPE_P(schema_map) != IS_ARRAY) {
@@ -1390,7 +1390,7 @@ static bool phongo_manager_set_auto_encryption_opts(php_phongo_manager_t* manage
 	}
 
 	if (php_array_existsc(zAutoEncryptionOpts, "tlsOptions")) {
-		zval*  tls_options  = php_array_fetch(zAutoEncryptionOpts, "tlsOptions");
+		zval*  tls_options  = php_array_fetchc_deref(zAutoEncryptionOpts, "tlsOptions");
 		bson_t bson_options = BSON_INITIALIZER;
 
 		if (Z_TYPE_P(tls_options) != IS_OBJECT && Z_TYPE_P(tls_options) != IS_ARRAY) {
@@ -1409,7 +1409,7 @@ static bool phongo_manager_set_auto_encryption_opts(php_phongo_manager_t* manage
 	}
 
 	if (php_array_existsc(zAutoEncryptionOpts, "extraOptions")) {
-		zval*  extra_options = php_array_fetch(zAutoEncryptionOpts, "extraOptions");
+		zval*  extra_options = php_array_fetchc_deref(zAutoEncryptionOpts, "extraOptions");
 		bson_t bson_options  = BSON_INITIALIZER;
 
 		if (Z_TYPE_P(extra_options) != IS_OBJECT && Z_TYPE_P(extra_options) != IS_ARRAY) {

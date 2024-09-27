@@ -149,7 +149,7 @@ static inline bool php_phongo_bulkwrite_bson_array_has_valid_keys(bson_t* array)
  * success; otherwise, false is returned and an exception is thrown. */
 static bool php_phongo_bulkwrite_opts_append_array(bson_t* opts, const char* key, zval* zarr)
 {
-	zval*  value = php_array_fetch(zarr, key);
+	zval*  value = php_array_fetch_deref(zarr, key);
 	bson_t b     = BSON_INITIALIZER;
 
 	if (Z_TYPE_P(value) != IS_OBJECT && Z_TYPE_P(value) != IS_ARRAY) {
@@ -185,7 +185,7 @@ static bool php_phongo_bulkwrite_opts_append_array(bson_t* opts, const char* key
  * success; otherwise, false is returned and an exception is thrown. */
 static bool php_phongo_bulkwrite_opts_append_document(bson_t* opts, const char* key, zval* zarr)
 {
-	zval*  value = php_array_fetch(zarr, key);
+	zval*  value = php_array_fetch_deref(zarr, key);
 	bson_t b     = BSON_INITIALIZER;
 
 	if (Z_TYPE_P(value) != IS_OBJECT && Z_TYPE_P(value) != IS_ARRAY) {
@@ -246,10 +246,10 @@ static bool php_phongo_bulkwrite_opt_hint(bson_t* boptions, zval* zoptions)
 	/* The "hint" option (or "$hint" modifier) must be a string or document.
 	 * Check for both types and merge into BSON options accordingly. */
 	if (zoptions && php_array_existsc(zoptions, "hint")) {
-		zend_uchar type = Z_TYPE_P(php_array_fetchc(zoptions, "hint"));
+		zend_uchar type = Z_TYPE_P(php_array_fetchc_deref(zoptions, "hint"));
 
 		if (type == IS_STRING) {
-			zval* value = php_array_fetchc(zoptions, "hint");
+			zval* value = php_array_fetchc_deref(zoptions, "hint");
 
 			if (!bson_append_utf8(boptions, "hint", 4, Z_STRVAL_P(value), Z_STRLEN_P(value))) {
 				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Error appending \"hint\" option");
@@ -343,7 +343,7 @@ static PHP_METHOD(MongoDB_Driver_BulkWrite, __construct)
 	}
 
 	if (options && php_array_existsc(options, "let")) {
-		zval* value = php_array_fetch(options, "let");
+		zval* value = php_array_fetchc_deref(options, "let");
 
 		if (Z_TYPE_P(value) != IS_OBJECT && Z_TYPE_P(value) != IS_ARRAY) {
 			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"let\" option to be array or object, %s given", zend_get_type_by_const(Z_TYPE_P(value)));
@@ -361,7 +361,7 @@ static PHP_METHOD(MongoDB_Driver_BulkWrite, __construct)
 	}
 
 	if (options && php_array_existsc(options, "comment")) {
-		zval* value = php_array_fetch(options, "comment");
+		zval* value = php_array_fetchc_deref(options, "comment");
 
 		intern->comment = ecalloc(1, sizeof(bson_value_t));
 		phongo_zval_to_bson_value(value, intern->comment);

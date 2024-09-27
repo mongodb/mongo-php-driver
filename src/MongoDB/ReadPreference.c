@@ -273,7 +273,7 @@ static PHP_METHOD(MongoDB_Driver_ReadPreference, __construct)
 	}
 
 	if (options && php_array_exists(options, "hedge")) {
-		zval* hedge = php_array_fetchc(options, "hedge");
+		zval* hedge = php_array_fetchc_deref(options, "hedge");
 
 		if (Z_TYPE_P(hedge) == IS_ARRAY || Z_TYPE_P(hedge) == IS_OBJECT) {
 			bson_t* hedge_doc = bson_new();
