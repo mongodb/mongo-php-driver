@@ -378,7 +378,7 @@ mongoc_transaction_opt_t* php_mongodb_session_parse_transaction_options(zval* op
 	}
 
 	if (php_array_existsc(options, "readConcern")) {
-		zval* read_concern = php_array_fetchc(options, "readConcern");
+		zval* read_concern = php_array_fetchc_deref(options, "readConcern");
 
 		if (Z_TYPE_P(read_concern) != IS_OBJECT || !instanceof_function(Z_OBJCE_P(read_concern), php_phongo_readconcern_ce)) {
 			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"readConcern\" option to be %s, %s given", ZSTR_VAL(php_phongo_readconcern_ce->name), PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(read_concern));
@@ -396,7 +396,7 @@ mongoc_transaction_opt_t* php_mongodb_session_parse_transaction_options(zval* op
 	}
 
 	if (php_array_existsc(options, "readPreference")) {
-		zval* read_preference = php_array_fetchc(options, "readPreference");
+		zval* read_preference = php_array_fetchc_deref(options, "readPreference");
 
 		if (Z_TYPE_P(read_preference) != IS_OBJECT || !instanceof_function(Z_OBJCE_P(read_preference), php_phongo_readpreference_ce)) {
 			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"readPreference\" option to be %s, %s given", ZSTR_VAL(php_phongo_readpreference_ce->name), PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(read_preference));
@@ -414,7 +414,7 @@ mongoc_transaction_opt_t* php_mongodb_session_parse_transaction_options(zval* op
 	}
 
 	if (php_array_existsc(options, "writeConcern")) {
-		zval* write_concern = php_array_fetchc(options, "writeConcern");
+		zval* write_concern = php_array_fetchc_deref(options, "writeConcern");
 
 		if (Z_TYPE_P(write_concern) != IS_OBJECT || !instanceof_function(Z_OBJCE_P(write_concern), php_phongo_writeconcern_ce)) {
 			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"writeConcern\" option to be %s, %s given", ZSTR_VAL(php_phongo_writeconcern_ce->name), PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(write_concern));

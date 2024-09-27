@@ -36,7 +36,7 @@ zend_class_entry* php_phongo_query_ce;
  * otherwise, false is returned and an exception is thrown. */
 static bool php_phongo_query_opts_append_string(bson_t* opts, const char* opts_key, zval* zarr, const char* zarr_key)
 {
-	zval* value = php_array_fetch(zarr, zarr_key);
+	zval* value = php_array_fetch_deref(zarr, zarr_key);
 
 	if (Z_TYPE_P(value) != IS_STRING) {
 		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"%s\" %s to be string, %s given", zarr_key, zarr_key[0] == '$' ? "modifier" : "option", PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(value));
@@ -55,7 +55,7 @@ static bool php_phongo_query_opts_append_string(bson_t* opts, const char* opts_k
  * success; otherwise, false is returned and an exception is thrown. */
 static bool php_phongo_query_opts_append_document(bson_t* opts, const char* opts_key, zval* zarr, const char* zarr_key)
 {
-	zval*  value = php_array_fetch(zarr, zarr_key);
+	zval*  value = php_array_fetch_deref(zarr, zarr_key);
 	bson_t b     = BSON_INITIALIZER;
 
 	if (Z_TYPE_P(value) != IS_OBJECT && Z_TYPE_P(value) != IS_ARRAY) {
@@ -172,7 +172,7 @@ static bool php_phongo_query_init_hint(php_phongo_query_t* intern, zval* options
 	/* The "hint" option (or "$hint" modifier) must be a string or document.
 	 * Check for both types and merge into BSON options accordingly. */
 	if (php_array_existsc(options, "hint")) {
-		zend_uchar type = Z_TYPE_P(php_array_fetchc(options, "hint"));
+		zend_uchar type = Z_TYPE_P(php_array_fetchc_deref(options, "hint"));
 
 		if (type == IS_STRING) {
 			PHONGO_QUERY_OPT_STRING("hint", options, "hint");
@@ -183,7 +183,7 @@ static bool php_phongo_query_init_hint(php_phongo_query_t* intern, zval* options
 			return false;
 		}
 	} else if (modifiers && php_array_existsc(modifiers, "$hint")) {
-		zend_uchar type = Z_TYPE_P(php_array_fetchc(modifiers, "$hint"));
+		zend_uchar type = Z_TYPE_P(php_array_fetchc_deref(modifiers, "$hint"));
 
 		if (type == IS_STRING) {
 			PHONGO_QUERY_OPT_STRING("hint", modifiers, "$hint");
@@ -244,7 +244,7 @@ static bool php_phongo_query_init_readconcern(php_phongo_query_t* intern, zval* 
 		return true;
 	}
 
-	read_concern = php_array_fetchc(options, "readConcern");
+	read_concern = php_array_fetchc_deref(options, "readConcern");
 
 	if (Z_TYPE_P(read_concern) != IS_OBJECT || !instanceof_function(Z_OBJCE_P(read_concern), php_phongo_readconcern_ce)) {
 		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"readConcern\" option to be %s, %s given", ZSTR_VAL(php_phongo_readconcern_ce->name), PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(read_concern));
@@ -331,7 +331,7 @@ bool phongo_query_init(zval* return_value, zval* filter, zval* options)
 	}
 
 	if (php_array_existsc(options, "modifiers")) {
-		modifiers = php_array_fetchc(options, "modifiers");
+		modifiers = php_array_fetchc_deref(options, "modifiers");
 
 		if (Z_TYPE_P(modifiers) != IS_ARRAY) {
 			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"modifiers\" option to be array, %s given", PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(modifiers));

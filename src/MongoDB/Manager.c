@@ -70,7 +70,7 @@ static bool php_phongo_manager_merge_context_options(zval* zdriverOptions)
 		return true;
 	}
 
-	zcontext = php_array_fetchc(zdriverOptions, "context");
+	zcontext = php_array_fetchc_deref(zdriverOptions, "context");
 	context  = php_stream_context_from_zval(zcontext, 1);
 
 	if (!context) {
@@ -734,7 +734,7 @@ static PHP_METHOD(MongoDB_Driver_Manager, startSession)
 	}
 
 	if (options && php_array_existsc(options, "defaultTransactionOptions")) {
-		zval* txn_options = php_array_fetchc(options, "defaultTransactionOptions");
+		zval* txn_options = php_array_fetchc_deref(options, "defaultTransactionOptions");
 
 		/* Thrown exception and return if the defaultTransactionOptions is not an array */
 		if (Z_TYPE_P(txn_options) != IS_ARRAY) {
