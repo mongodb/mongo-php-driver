@@ -202,24 +202,24 @@ static inline zval* zval_deref_safe(zval* z) {
  * zval *php_array_fetchz_deref(zval *zarr, zval *key)
  */
 static inline
-	zval *php_array_fetchl_deref(zval *zarr, const char *key, int key_len) {
+zval *php_array_fetchl_deref(zval *zarr, const char *key, int key_len) {
 	return zval_deref_safe(php_array_fetchl(zarr, key, key_len));
 }
 static inline
-	zval *php_array_fetch_deref(zval *zarr, const char *key) {
+zval *php_array_fetch_deref(zval *zarr, const char *key) {
 	return zval_deref_safe(php_array_fetch(zarr, key));
 }
 #define php_array_fetchc_deref(zarr, litstr) zval_deref_safe(php_array_fetchl(zarr, litstr, sizeof(litstr)-1))
 static inline
-	zval *php_array_fetchl_safe_deref(zval *zarr, const char *key, int key_len) {
+zval *php_array_fetchl_safe_deref(zval *zarr, const char *key, int key_len) {
 	return zval_deref_safe(php_array_fetchl_safe(zarr, key, key_len));
 }
 static inline
-	zval *php_array_fetchn_deref(zval *zarr, zend_ulong idx) {
+zval *php_array_fetchn_deref(zval *zarr, zend_ulong idx) {
 	return zval_deref_safe(php_array_fetchn(zarr, idx));
 }
 static inline
-	zval *php_array_fetchz_deref(zval *zarr, zval *key) {
+zval *php_array_fetchz_deref(zval *zarr, zval *key) {
 	return zval_deref_safe(php_array_fetchz(zarr, key));
 }
 
