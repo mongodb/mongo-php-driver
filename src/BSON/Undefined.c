@@ -111,12 +111,8 @@ static zend_object* php_phongo_undefined_create_object(zend_class_entry* class_t
 
 void php_phongo_undefined_init_ce(INIT_FUNC_ARGS)
 {
-	php_phongo_undefined_ce                = register_class_MongoDB_BSON_Undefined(php_phongo_json_serializable_ce, php_phongo_type_ce, zend_ce_serializable);
+	php_phongo_undefined_ce                = register_class_MongoDB_BSON_Undefined(php_phongo_json_serializable_ce, php_phongo_type_ce, zend_ce_serializable, zend_ce_stringable);
 	php_phongo_undefined_ce->create_object = php_phongo_undefined_create_object;
-
-#if PHP_VERSION_ID >= 80000
-	zend_class_implements(php_phongo_undefined_ce, 1, zend_ce_stringable);
-#endif
 
 	memcpy(&php_phongo_handler_undefined, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	/* Re-assign default handler previously removed in php_phongo.c */

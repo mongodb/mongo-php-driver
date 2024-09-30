@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 85cce1e6824dec5cb0d659b841d893a849948eeb */
+ * Stub hash: 482425509937fc9119cf140099b41af3c4a20fde */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_Driver_ServerDescription___construct, 0, 0, 0)
 ZEND_END_ARG_INFO()
@@ -47,7 +47,7 @@ static zend_class_entry *register_class_MongoDB_Driver_ServerDescription(void)
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver", "ServerDescription", class_MongoDB_Driver_ServerDescription_methods);
 	class_entry = zend_register_internal_class_ex(&ce, NULL);
-	class_entry->ce_flags |= ZEND_ACC_FINAL;
+	class_entry->ce_flags |= ZEND_ACC_FINAL|ZEND_ACC_NOT_SERIALIZABLE;
 
 	zval const_TYPE_UNKNOWN_value;
 	zend_string *const_TYPE_UNKNOWN_value_str = zend_string_init(PHONGO_SERVER_TYPE_UNKNOWN, strlen(PHONGO_SERVER_TYPE_UNKNOWN), 1);

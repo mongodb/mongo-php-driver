@@ -15,8 +15,7 @@ initialisation. If a build step fails, test tasks are skipped for that platform 
 
 Build tasks are generated automatically and included in the main config file. The `build-variants.yml` file contains
 the list of supported platforms that the extension is built for. `build-task-groups.yml` defines the task groups that
-contain the build tasks. Note there is a separate task that skips PHP 7.4 and 8.0, as these versions do not support
-OpenSSL 3 (currently used on RHEL 9+ and Ubuntu 22.04+).
+contain the build tasks.
 
 ## Build Step 2: Run Tests
 

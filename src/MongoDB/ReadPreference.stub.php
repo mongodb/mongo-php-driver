@@ -86,12 +86,7 @@ final class ReadPreference implements \MongoDB\BSON\Serializable, \Serializable
      */
     public const SMALLEST_MAX_STALENESS_SECONDS = UNKNOWN;
 
-#if PHP_VERSION_ID >= 80000
     final public function __construct(string|int $mode, ?array $tagSets = null, ?array $options = null) {}
-#else
-    /** @param string|int $mode */
-    final public function __construct($mode, ?array $tagSets = null, ?array $options = null) {}
-#endif
 
     final public function getHedge(): ?object {}
 
@@ -110,12 +105,7 @@ final class ReadPreference implements \MongoDB\BSON\Serializable, \Serializable
 
     final public function serialize(): string {}
 
-#if PHP_VERSION_ID >= 80000
     final public function unserialize(string $data): void {}
-#else
-    /** @param string $serialized */
-    final public function unserialize($serialized): void {}
-#endif
 
     final public function __unserialize(array $data): void {}
 

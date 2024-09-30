@@ -180,12 +180,12 @@ static zend_object* php_phongo_serverdescription_create_object(zend_class_entry*
 	return &intern->std;
 }
 
-HashTable* php_phongo_serverdescription_get_properties_hash(phongo_compat_object_handler_type* object, bool is_debug)
+HashTable* php_phongo_serverdescription_get_properties_hash(zend_object* object, bool is_debug)
 {
 	php_phongo_serverdescription_t* intern = NULL;
 	HashTable*                      props;
 
-	intern = Z_OBJ_SERVERDESCRIPTION(PHONGO_COMPAT_GET_OBJ(object));
+	intern = Z_OBJ_SERVERDESCRIPTION(object);
 
 	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_debug, intern, props, 6);
 
@@ -256,13 +256,13 @@ done:
 	return props;
 }
 
-static HashTable* php_phongo_serverdescription_get_debug_info(phongo_compat_object_handler_type* object, int* is_temp)
+static HashTable* php_phongo_serverdescription_get_debug_info(zend_object* object, int* is_temp)
 {
 	*is_temp = 1;
 	return php_phongo_serverdescription_get_properties_hash(object, true);
 }
 
-static HashTable* php_phongo_serverdescription_get_properties(phongo_compat_object_handler_type* object)
+static HashTable* php_phongo_serverdescription_get_properties(zend_object* object)
 {
 	return php_phongo_serverdescription_get_properties_hash(object, false);
 }
@@ -271,7 +271,6 @@ void php_phongo_serverdescription_init_ce(INIT_FUNC_ARGS)
 {
 	php_phongo_serverdescription_ce                = register_class_MongoDB_Driver_ServerDescription();
 	php_phongo_serverdescription_ce->create_object = php_phongo_serverdescription_create_object;
-	PHONGO_CE_DISABLE_SERIALIZATION(php_phongo_serverdescription_ce);
 
 	memcpy(&php_phongo_handler_serverdescription, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	php_phongo_handler_serverdescription.get_debug_info = php_phongo_serverdescription_get_debug_info;

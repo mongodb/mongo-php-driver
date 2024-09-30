@@ -509,13 +509,13 @@ static zend_object* php_phongo_clientencryption_create_object(zend_class_entry* 
 	return &intern->std;
 }
 
-static HashTable* php_phongo_clientencryption_get_debug_info(phongo_compat_object_handler_type* object, int* is_temp)
+static HashTable* php_phongo_clientencryption_get_debug_info(zend_object* object, int* is_temp)
 {
 	php_phongo_clientencryption_t* intern = NULL;
 	zval                           retval = ZVAL_STATIC_INIT;
 
 	*is_temp = 1;
-	intern   = Z_OBJ_CLIENTENCRYPTION(PHONGO_COMPAT_GET_OBJ(object));
+	intern   = Z_OBJ_CLIENTENCRYPTION(object);
 
 	array_init(&retval);
 
@@ -526,7 +526,6 @@ void php_phongo_clientencryption_init_ce(INIT_FUNC_ARGS)
 {
 	php_phongo_clientencryption_ce                = register_class_MongoDB_Driver_ClientEncryption();
 	php_phongo_clientencryption_ce->create_object = php_phongo_clientencryption_create_object;
-	PHONGO_CE_DISABLE_SERIALIZATION(php_phongo_clientencryption_ce);
 
 	memcpy(&php_phongo_handler_clientencryption, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	php_phongo_handler_clientencryption.get_debug_info = php_phongo_clientencryption_get_debug_info;

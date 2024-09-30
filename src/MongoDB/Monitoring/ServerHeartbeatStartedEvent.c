@@ -77,12 +77,12 @@ static zend_object* php_phongo_serverheartbeatstartedevent_create_object(zend_cl
 	return &intern->std;
 }
 
-static HashTable* php_phongo_serverheartbeatstartedevent_get_debug_info(phongo_compat_object_handler_type* object, int* is_temp)
+static HashTable* php_phongo_serverheartbeatstartedevent_get_debug_info(zend_object* object, int* is_temp)
 {
 	php_phongo_serverheartbeatstartedevent_t* intern;
 	zval                                      retval = ZVAL_STATIC_INIT;
 
-	intern   = Z_OBJ_SERVERHEARTBEATSTARTEDEVENT(PHONGO_COMPAT_GET_OBJ(object));
+	intern   = Z_OBJ_SERVERHEARTBEATSTARTEDEVENT(object);
 	*is_temp = 1;
 	array_init_size(&retval, 4);
 
@@ -97,7 +97,6 @@ void php_phongo_serverheartbeatstartedevent_init_ce(INIT_FUNC_ARGS)
 {
 	php_phongo_serverheartbeatstartedevent_ce                = register_class_MongoDB_Driver_Monitoring_ServerHeartbeatStartedEvent();
 	php_phongo_serverheartbeatstartedevent_ce->create_object = php_phongo_serverheartbeatstartedevent_create_object;
-	PHONGO_CE_DISABLE_SERIALIZATION(php_phongo_serverheartbeatstartedevent_ce);
 
 	memcpy(&php_phongo_handler_serverheartbeatstartedevent, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	php_phongo_handler_serverheartbeatstartedevent.get_debug_info = php_phongo_serverheartbeatstartedevent_get_debug_info;

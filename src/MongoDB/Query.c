@@ -456,13 +456,13 @@ static zend_object* php_phongo_query_create_object(zend_class_entry* class_type)
 	return &intern->std;
 }
 
-static HashTable* php_phongo_query_get_debug_info(phongo_compat_object_handler_type* object, int* is_temp)
+static HashTable* php_phongo_query_get_debug_info(zend_object* object, int* is_temp)
 {
 	php_phongo_query_t* intern;
 	zval                retval = ZVAL_STATIC_INIT;
 
 	*is_temp = 1;
-	intern   = Z_OBJ_QUERY(PHONGO_COMPAT_GET_OBJ(object));
+	intern   = Z_OBJ_QUERY(object);
 
 	array_init_size(&retval, 3);
 
@@ -511,7 +511,6 @@ void php_phongo_query_init_ce(INIT_FUNC_ARGS)
 {
 	php_phongo_query_ce                = register_class_MongoDB_Driver_Query();
 	php_phongo_query_ce->create_object = php_phongo_query_create_object;
-	PHONGO_CE_DISABLE_SERIALIZATION(php_phongo_query_ce);
 
 	memcpy(&php_phongo_handler_query, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	php_phongo_handler_query.get_debug_info = php_phongo_query_get_debug_info;
