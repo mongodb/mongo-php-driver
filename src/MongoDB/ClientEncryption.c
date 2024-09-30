@@ -426,7 +426,7 @@ static PHP_METHOD(MongoDB_Driver_ClientEncryption, rewrapManyDataKey)
 	}
 
 	if (options && php_array_existsc(options, "masterKey")) {
-		zval* zmasterkey = php_array_fetchc(options, "masterKey");
+		zval* zmasterkey = php_array_fetchc_deref(options, "masterKey");
 
 		if (Z_TYPE_P(zmasterkey) != IS_OBJECT && Z_TYPE_P(zmasterkey) != IS_ARRAY) {
 			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"masterKey\" option to be array or object, %s given", PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(zmasterkey));
@@ -549,7 +549,7 @@ static mongoc_client_encryption_opts_t* phongo_clientencryption_opts_from_zval(z
 	}
 
 	if (php_array_existsc(options, "keyVaultClient")) {
-		zval* key_vault_client = php_array_fetch(options, "keyVaultClient");
+		zval* key_vault_client = php_array_fetchc_deref(options, "keyVaultClient");
 
 		if (Z_TYPE_P(key_vault_client) != IS_OBJECT || !instanceof_function(Z_OBJCE_P(key_vault_client), php_phongo_manager_ce)) {
 			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"keyVaultClient\" option to be %s, %s given", ZSTR_VAL(php_phongo_manager_ce->name), PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(key_vault_client));
@@ -597,7 +597,7 @@ static mongoc_client_encryption_opts_t* phongo_clientencryption_opts_from_zval(z
 	}
 
 	if (php_array_existsc(options, "kmsProviders")) {
-		zval*  kms_providers  = php_array_fetchc(options, "kmsProviders");
+		zval*  kms_providers  = php_array_fetchc_deref(options, "kmsProviders");
 		bson_t bson_providers = BSON_INITIALIZER;
 
 		if (Z_TYPE_P(kms_providers) != IS_ARRAY && Z_TYPE_P(kms_providers) != IS_OBJECT) {
@@ -615,7 +615,7 @@ static mongoc_client_encryption_opts_t* phongo_clientencryption_opts_from_zval(z
 	}
 
 	if (php_array_existsc(options, "tlsOptions")) {
-		zval*  tls_options  = php_array_fetchc(options, "tlsOptions");
+		zval*  tls_options  = php_array_fetchc_deref(options, "tlsOptions");
 		bson_t bson_options = BSON_INITIALIZER;
 
 		if (Z_TYPE_P(tls_options) != IS_ARRAY && Z_TYPE_P(tls_options) != IS_OBJECT) {
@@ -706,7 +706,7 @@ static mongoc_client_encryption_datakey_opts_t* phongo_clientencryption_datakey_
 	}
 
 	if (php_array_existsc(options, "keyAltNames")) {
-		zval*      zkeyaltnames = php_array_fetchc(options, "keyAltNames");
+		zval*      zkeyaltnames = php_array_fetchc_deref(options, "keyAltNames");
 		HashTable* ht_data;
 		uint32_t   keyaltnames_count;
 		char**     keyaltnames;
@@ -768,7 +768,7 @@ static mongoc_client_encryption_datakey_opts_t* phongo_clientencryption_datakey_
 	}
 
 	if (php_array_existsc(options, "keyMaterial")) {
-		zval* keyMaterial = php_array_fetchc(options, "keyMaterial");
+		zval* keyMaterial = php_array_fetchc_deref(options, "keyMaterial");
 
 		if (Z_TYPE_P(keyMaterial) != IS_OBJECT || !instanceof_function(Z_OBJCE_P(keyMaterial), php_phongo_binary_ce)) {
 			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"keyMaterial\" option to be %s, %s given", ZSTR_VAL(php_phongo_binary_ce->name), PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(keyMaterial));
@@ -779,7 +779,7 @@ static mongoc_client_encryption_datakey_opts_t* phongo_clientencryption_datakey_
 	}
 
 	if (php_array_existsc(options, "masterKey")) {
-		zval*  zmasterkey = php_array_fetchc(options, "masterKey");
+		zval*  zmasterkey = php_array_fetchc_deref(options, "masterKey");
 		bson_t masterkey  = BSON_INITIALIZER;
 
 		if (Z_TYPE_P(zmasterkey) != IS_OBJECT && Z_TYPE_P(zmasterkey) != IS_ARRAY) {
@@ -931,7 +931,7 @@ static mongoc_client_encryption_encrypt_opts_t* phongo_clientencryption_encrypt_
 	}
 
 	if (php_array_existsc(options, "contentionFactor")) {
-		mongoc_client_encryption_encrypt_opts_set_contention_factor(opts, php_array_fetch_long(options, "contentionFactor"));
+		mongoc_client_encryption_encrypt_opts_set_contention_factor(opts, php_array_fetchc_long(options, "contentionFactor"));
 	}
 
 	if (php_array_existsc(options, "keyId")) {
@@ -953,7 +953,7 @@ static mongoc_client_encryption_encrypt_opts_t* phongo_clientencryption_encrypt_
 		int       plen;
 		zend_bool pfree;
 
-		keyaltname = php_array_fetch_string(options, "keyAltName", &plen, &pfree);
+		keyaltname = php_array_fetchc_string(options, "keyAltName", &plen, &pfree);
 		mongoc_client_encryption_encrypt_opts_set_keyaltname(opts, keyaltname);
 
 		if (pfree) {
@@ -966,7 +966,7 @@ static mongoc_client_encryption_encrypt_opts_t* phongo_clientencryption_encrypt_
 		int       plen;
 		zend_bool pfree;
 
-		algorithm = php_array_fetch_string(options, "algorithm", &plen, &pfree);
+		algorithm = php_array_fetchc_string(options, "algorithm", &plen, &pfree);
 		mongoc_client_encryption_encrypt_opts_set_algorithm(opts, algorithm);
 
 		if (pfree) {
@@ -979,7 +979,7 @@ static mongoc_client_encryption_encrypt_opts_t* phongo_clientencryption_encrypt_
 		int       plen;
 		zend_bool pfree;
 
-		querytype = php_array_fetch_string(options, "queryType", &plen, &pfree);
+		querytype = php_array_fetchc_string(options, "queryType", &plen, &pfree);
 		mongoc_client_encryption_encrypt_opts_set_query_type(opts, querytype);
 
 		if (pfree) {
@@ -990,7 +990,7 @@ static mongoc_client_encryption_encrypt_opts_t* phongo_clientencryption_encrypt_
 	if (php_array_existsc(options, "rangeOpts")) {
 		mongoc_client_encryption_encrypt_range_opts_t* range_opts;
 
-		range_opts = phongo_clientencryption_encrypt_range_opts_from_zval(php_array_fetchc(options, "rangeOpts"));
+		range_opts = phongo_clientencryption_encrypt_range_opts_from_zval(php_array_fetchc_deref(options, "rangeOpts"));
 
 		if (!range_opts) {
 			/* Exception already thrown */

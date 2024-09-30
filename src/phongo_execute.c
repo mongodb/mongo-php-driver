@@ -80,7 +80,7 @@ static bool phongo_parse_read_concern(zval* options, bson_t* mongoc_opts)
 		return false;
 	}
 
-	option = php_array_fetchc(options, "readConcern");
+	option = php_array_fetchc_deref(options, "readConcern");
 
 	if (!option) {
 		return true;
@@ -117,7 +117,7 @@ bool phongo_parse_read_preference(zval* options, zval** zreadPreference)
 		return false;
 	}
 
-	option = php_array_fetchc(options, "readPreference");
+	option = php_array_fetchc_deref(options, "readPreference");
 
 	if (!option) {
 		return true;
@@ -155,7 +155,7 @@ bool phongo_parse_session(zval* options, mongoc_client_t* client, bson_t* mongoc
 		return false;
 	}
 
-	option = php_array_fetchc(options, "session");
+	option = php_array_fetchc_deref(options, "session");
 
 	if (!option) {
 		return true;
@@ -203,7 +203,7 @@ static bool phongo_parse_write_concern(zval* options, bson_t* mongoc_opts, zval*
 		return false;
 	}
 
-	option = php_array_fetchc(options, "writeConcern");
+	option = php_array_fetchc_deref(options, "writeConcern");
 
 	if (!option) {
 		return true;
