@@ -121,16 +121,6 @@ static bool php_phongo_utcdatetime_init_from_object(php_phongo_utcdatetime_t* in
 	return false;
 }
 
-static bool php_phongo_utcdatetime_init_from_double(php_phongo_utcdatetime_t* intern, double milliseconds)
-{
-	char tmp[24];
-	int  tmp_len;
-
-	tmp_len = snprintf(tmp, sizeof(tmp), "%.0f", milliseconds > 0 ? floor(milliseconds) : ceil(milliseconds));
-
-	return php_phongo_utcdatetime_init_from_string(intern, tmp, tmp_len);
-}
-
 static HashTable* php_phongo_utcdatetime_get_properties_hash(zend_object* object, bool is_temp)
 {
 	php_phongo_utcdatetime_t* intern;
@@ -213,12 +203,6 @@ static PHP_METHOD(MongoDB_BSON_UTCDateTime, __construct)
 
 		case IS_LONG:
 			php_phongo_utcdatetime_init(intern, Z_LVAL_P(milliseconds));
-			return;
-
-		case IS_DOUBLE:
-			php_error_docref(NULL, E_DEPRECATED, "Creating a %s instance with a float is deprecated and will be removed in ext-mongodb 2.0", ZSTR_VAL(php_phongo_utcdatetime_ce->name));
-
-			php_phongo_utcdatetime_init_from_double(intern, Z_DVAL_P(milliseconds));
 			return;
 	}
 
