@@ -17,9 +17,24 @@
 #include <php.h>
 
 #include "php_phongo.h"
+#include "phongo_error.h"
 #include "ConnectionTimeoutException_arginfo.h"
 
 zend_class_entry* php_phongo_connectiontimeoutexception_ce;
+
+/* Returns the WriteResult from the failed write operation. */
+static PHP_METHOD(MongoDB_Driver_Exception_ConnectionTimeoutException, getWriteResult)
+{
+	zval* writeresult;
+	zval  rv;
+
+	PHONGO_PARSE_PARAMETERS_NONE();
+
+	writeresult = zend_read_property(php_phongo_bulkwriteexception_ce, Z_OBJ_P(getThis()), ZEND_STRL("writeResult"), 0, &rv);
+
+	RETURN_ZVAL(writeresult, 1, 0);
+}
+
 
 void php_phongo_connectiontimeoutexception_init_ce(INIT_FUNC_ARGS)
 {
