@@ -310,7 +310,7 @@ bool phongo_execute_bulk_write(zval* manager, const char* namespace, php_phongo_
 		}
 
 		if (EG(exception)) {
-			zend_throw_exception(phongo_exception_from_phongo_domain(error.domain), error.message, error.code);
+			phongo_throw_exception_from_bson_error_t_and_reply(&error, &reply);
 		} else {
 			zend_throw_exception(php_phongo_bulkwriteexception_ce, error.message, error.code);
 		}
