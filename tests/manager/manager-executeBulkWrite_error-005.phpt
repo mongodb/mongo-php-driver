@@ -24,45 +24,14 @@ $bulk->insert(['x' => 1]);
 $bulk->update(['x' => 1], ['$set' => ['y' => 1]]);
 $bulk->delete(['x' => 1]);
 
-try {
+echo throws(function() use ($server, $bulk) {
     $server->executeBulkWrite(NS, $bulk);
-} catch (MongoDB\Driver\Exception\BulkWriteException $e) {
-    printf("%s(%d): %s\n", get_class($e), $e->getCode(), $e->getMessage());
-    $prev = $e->getPrevious();
-    printf("%s(%d): %s\n", get_class($prev), $prev->getCode(), $prev->getMessage());
-    var_dump($e->getWriteResult());
-}
+}, MongoDB\Driver\Exception\ConnectionTimeoutException::class), "\n";
 
 ?>
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-MongoDB\Driver\Exception\BulkWriteException(0): Bulk write failed due to previous MongoDB\Driver\Exception\ConnectionTimeoutException: Failed to send "delete" command with database "%s": Failed to read 4 bytes: socket error or timeout
-MongoDB\Driver\Exception\ConnectionTimeoutException(%d): Failed to send "delete" command with database "%s": Failed to read 4 bytes: socket error or timeout
-object(MongoDB\Driver\WriteResult)#%d (%d) {
-  ["nInserted"]=>
-  int(1)
-  ["nMatched"]=>
-  int(1)
-  ["nModified"]=>
-  int(1)
-  ["nRemoved"]=>
-  int(0)
-  ["nUpserted"]=>
-  int(0)
-  ["upsertedIds"]=>
-  array(0) {
-  }
-  ["writeErrors"]=>
-  array(0) {
-  }
-  ["writeConcernError"]=>
-  NULL
-  ["writeConcern"]=>
-  object(MongoDB\Driver\WriteConcern)#%d (%d) {
-  }
-  ["errorReplies"]=>
-  array(0) {
-  }
-}
+OK: Got MongoDB\Driver\Exception\ConnectionTimeoutException
+Failed to send "delete" command with database "%s": Failed to read 4 bytes: socket error or timeout
 ===DONE===

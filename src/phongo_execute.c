@@ -296,8 +296,7 @@ bool phongo_execute_bulk_write(zval* manager, const char* namespace, php_phongo_
 	/* A BulkWriteException is always thrown if mongoc_bulk_operation_execute()
 	 * fails to ensure that the write result is accessible. If the error does
 	 * not originate from the server (e.g. socket error), throw the appropriate
-	 * exception first. It will be included in BulkWriteException's message and
-	 * will also be accessible via Exception::getPrevious(). */
+	 * exception first. It will be thrown directly */
 	if (!success) {
 		if (error.domain != MONGOC_ERROR_SERVER && error.domain != MONGOC_ERROR_WRITE_CONCERN) {
 			phongo_throw_exception_from_bson_error_t_and_reply(&error, &reply);
@@ -311,11 +310,7 @@ bool phongo_execute_bulk_write(zval* manager, const char* namespace, php_phongo_
 		}
 
 		if (EG(exception)) {
-			char* message;
-
-			(void) spprintf(&message, 0, "Bulk write failed due to previous %s: %s", PHONGO_ZVAL_EXCEPTION_NAME(EG(exception)), error.message);
-			zend_throw_exception(php_phongo_bulkwriteexception_ce, message, 0);
-			efree(message);
+			zend_throw_exception(phongo_exception_from_phongo_domain(error.domain), error.message, error.code);
 		} else {
 			zend_throw_exception(php_phongo_bulkwriteexception_ce, error.message, error.code);
 		}
