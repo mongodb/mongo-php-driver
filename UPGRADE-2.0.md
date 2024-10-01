@@ -34,3 +34,7 @@ UPGRADE FROM 1.x to 2.0
    ensure that it is detected by `pkg-config`.
  * The `--with-system-ciphers` configure option has been removed. Use
    `--enable-mongodb-crypto-system-profile` instead.
+ * `MongoDB\Driver\Query` removes the following options: `partial` (use
+   `allowPartialResults` instead), `maxScan`, `modifiers` (use alternative
+   top-level options instead), `oplogReplay`, and `snapshot`. Support for
+   negative `limit` values has been removed (use `singleBatch` instead).
