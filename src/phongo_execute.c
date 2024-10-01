@@ -300,20 +300,10 @@ bool phongo_execute_bulk_write(zval* manager, const char* namespace, php_phongo_
 	if (!success) {
 		if (error.domain != MONGOC_ERROR_SERVER && error.domain != MONGOC_ERROR_WRITE_CONCERN) {
 			phongo_throw_exception_from_bson_error_t_and_reply(&error, &reply);
-		}
-
-		/* Argument errors occur before command execution, so there is no need
-		 * to layer this InvalidArgumentException behind a BulkWriteException.
-		 * In practice, this will be a "Cannot do an empty bulk write" error. */
-		if (error.domain == MONGOC_ERROR_COMMAND && error.code == MONGOC_ERROR_COMMAND_INVALID_ARG) {
 			goto cleanup;
 		}
 
-		if (EG(exception)) {
-			phongo_throw_exception_from_bson_error_t_and_reply(&error, &reply);
-		} else {
-			zend_throw_exception(php_phongo_bulkwriteexception_ce, error.message, error.code);
-		}
+		zend_throw_exception(php_phongo_bulkwriteexception_ce, error.message, error.code);
 
 		/* Ensure error labels are added to the final BulkWriteException. If a
 		 * previous exception was also thrown, error labels will already have
