@@ -12,7 +12,7 @@ echo throws(function() {
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECT--
+--EXPECTF--
 Deprecated: MongoDB\Driver\Query::__construct(): Support for negative "limit" values is deprecated and will be removed in ext-mongodb 2.0 in %s on line %d
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Negative "limit" option conflicts with false "singleBatch" option
