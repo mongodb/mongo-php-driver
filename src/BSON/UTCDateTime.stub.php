@@ -9,7 +9,7 @@ namespace MongoDB\BSON;
 
 final class UTCDateTime implements UTCDateTimeInterface, \JsonSerializable, Type, \Stringable
 {
-    final public function __construct(int|float|\DateTimeInterface|Int64|null $milliseconds = null) {}
+    final public function __construct(int|\DateTimeInterface|Int64|null $milliseconds = null) {}
 
     final public function toDateTime(): \DateTime {}
 
