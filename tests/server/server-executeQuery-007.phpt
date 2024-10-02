@@ -29,6 +29,7 @@ var_dump(iterator_to_array($cursor));
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
+Deprecated: MongoDB\Driver\Query::__construct(): Support for negative "limit" values is deprecated and will be removed in ext-mongodb 2.0 in %s on line %d
 bool(true)
 bool(true)
 array(2) {

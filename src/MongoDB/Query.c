@@ -209,6 +209,8 @@ static bool php_phongo_query_init_limit_and_singlebatch(php_phongo_query_t* inte
 	if (php_array_fetchc_long(options, "limit") < 0) {
 		zend_long limit = php_array_fetchc_long(options, "limit");
 
+		php_error_docref(NULL, E_DEPRECATED, "Support for negative \"limit\" values is deprecated and will be removed in ext-mongodb 2.0");
+
 		if (!BSON_APPEND_INT64(intern->opts, "limit", -limit)) {
 			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Error appending \"limit\" option");
 			return false;
