@@ -19,13 +19,12 @@ $tests = [
 ];
 
 foreach ($tests as $test) {
-    $bson = MongoDB\BSON\fromPHP($test);
+    $bson = MongoDB\BSON\Document::fromPHP($test);
     /* Note: Although libbson can parse the extended JSON representation for
      * 64-bit integers (i.e. "$numberLong"), it currently prints them as
      * doubles (see: https://jira.mongodb.org/browse/CDRIVER-375). */
-    printf("Test %s\n", MongoDB\BSON\toJSON($bson));
-    hex_dump($bson);
-    var_dump(MongoDB\BSON\toPHP($bson));
+    printf("Test %s\n", json_encode($test));
+    var_dump($bson);
     echo "\n";
 }
 
@@ -33,107 +32,92 @@ foreach ($tests as $test) {
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-Deprecated: Function MongoDB\BSON\fromPHP() is deprecated in %s
-
-Deprecated: Function MongoDB\BSON\toJSON() is deprecated in %s
-Test { "x" : -2147483648 }
-     0 : 0c 00 00 00 10 78 00 00 00 00 80 00              [.....x......]
-
-Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
-object(stdClass)#%d (%d) {
-  ["x"]=>
-  int(-2147483648)
+Test {"x":-2147483648}
+object(MongoDB\BSON\Document)#%d (%d) {
+  ["data"]=>
+  string(16) "DAAAABB4AAAAAIAA"
+  ["value"]=>
+  object(stdClass)#%d (%d) {
+    ["x"]=>
+    int(-2147483648)
+  }
 }
 
-
-Deprecated: Function MongoDB\BSON\fromPHP() is deprecated in %s
-
-Deprecated: Function MongoDB\BSON\toJSON() is deprecated in %s
-Test { "x" : 2147483647 }
-     0 : 0c 00 00 00 10 78 00 ff ff ff 7f 00              [.....x......]
-
-Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
-object(stdClass)#%d (%d) {
-  ["x"]=>
-  int(2147483647)
+Test {"x":2147483647}
+object(MongoDB\BSON\Document)#%d (%d) {
+  ["data"]=>
+  string(16) "DAAAABB4AP///38A"
+  ["value"]=>
+  object(stdClass)#%d (%d) {
+    ["x"]=>
+    int(2147483647)
+  }
 }
 
-
-Deprecated: Function MongoDB\BSON\fromPHP() is deprecated in %s
-
-Deprecated: Function MongoDB\BSON\toJSON() is deprecated in %s
-Test { "x" : -4294967294 }
-     0 : 10 00 00 00 12 78 00 02 00 00 00 ff ff ff ff 00  [.....x..........]
-
-Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
-object(stdClass)#%d (%d) {
-  ["x"]=>
-  int(-4294967294)
+Test {"x":-4294967294}
+object(MongoDB\BSON\Document)#%d (%d) {
+  ["data"]=>
+  string(24) "EAAAABJ4AAIAAAD/////AA=="
+  ["value"]=>
+  object(stdClass)#%d (%d) {
+    ["x"]=>
+    int(-4294967294)
+  }
 }
 
-
-Deprecated: Function MongoDB\BSON\fromPHP() is deprecated in %s
-
-Deprecated: Function MongoDB\BSON\toJSON() is deprecated in %s
-Test { "x" : 4294967294 }
-     0 : 10 00 00 00 12 78 00 fe ff ff ff 00 00 00 00 00  [.....x..........]
-
-Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
-object(stdClass)#%d (%d) {
-  ["x"]=>
-  int(4294967294)
+Test {"x":4294967294}
+object(MongoDB\BSON\Document)#%d (%d) {
+  ["data"]=>
+  string(24) "EAAAABJ4AP7///8AAAAAAA=="
+  ["value"]=>
+  object(stdClass)#%d (%d) {
+    ["x"]=>
+    int(4294967294)
+  }
 }
 
-
-Deprecated: Function MongoDB\BSON\fromPHP() is deprecated in %s
-
-Deprecated: Function MongoDB\BSON\toJSON() is deprecated in %s
-Test { "x" : -4294967295 }
-     0 : 10 00 00 00 12 78 00 01 00 00 00 ff ff ff ff 00  [.....x..........]
-
-Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
-object(stdClass)#%d (%d) {
-  ["x"]=>
-  int(-4294967295)
+Test {"x":-4294967295}
+object(MongoDB\BSON\Document)#%d (%d) {
+  ["data"]=>
+  string(24) "EAAAABJ4AAEAAAD/////AA=="
+  ["value"]=>
+  object(stdClass)#%d (%d) {
+    ["x"]=>
+    int(-4294967295)
+  }
 }
 
-
-Deprecated: Function MongoDB\BSON\fromPHP() is deprecated in %s
-
-Deprecated: Function MongoDB\BSON\toJSON() is deprecated in %s
-Test { "x" : 4294967295 }
-     0 : 10 00 00 00 12 78 00 ff ff ff ff 00 00 00 00 00  [.....x..........]
-
-Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
-object(stdClass)#%d (%d) {
-  ["x"]=>
-  int(4294967295)
+Test {"x":4294967295}
+object(MongoDB\BSON\Document)#%d (%d) {
+  ["data"]=>
+  string(24) "EAAAABJ4AP////8AAAAAAA=="
+  ["value"]=>
+  object(stdClass)#%d (%d) {
+    ["x"]=>
+    int(4294967295)
+  }
 }
 
-
-Deprecated: Function MongoDB\BSON\fromPHP() is deprecated in %s
-
-Deprecated: Function MongoDB\BSON\toJSON() is deprecated in %s
-Test { "x" : -9223372036854775807 }
-     0 : 10 00 00 00 12 78 00 01 00 00 00 00 00 00 80 00  [.....x..........]
-
-Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
-object(stdClass)#%d (%d) {
-  ["x"]=>
-  int(-9223372036854775807)
+Test {"x":-9223372036854775807}
+object(MongoDB\BSON\Document)#%d (%d) {
+  ["data"]=>
+  string(24) "EAAAABJ4AAEAAAAAAACAAA=="
+  ["value"]=>
+  object(stdClass)#%d (%d) {
+    ["x"]=>
+    int(-9223372036854775807)
+  }
 }
 
-
-Deprecated: Function MongoDB\BSON\fromPHP() is deprecated in %s
-
-Deprecated: Function MongoDB\BSON\toJSON() is deprecated in %s
-Test { "x" : 9223372036854775807 }
-     0 : 10 00 00 00 12 78 00 ff ff ff ff ff ff ff 7f 00  [.....x..........]
-
-Deprecated: Function MongoDB\BSON\toPHP() is deprecated in %s
-object(stdClass)#%d (%d) {
-  ["x"]=>
-  int(9223372036854775807)
+Test {"x":9223372036854775807}
+object(MongoDB\BSON\Document)#%d (%d) {
+  ["data"]=>
+  string(24) "EAAAABJ4AP////////9/AA=="
+  ["value"]=>
+  object(stdClass)#%d (%d) {
+    ["x"]=>
+    int(9223372036854775807)
+  }
 }
 
 ===DONE===

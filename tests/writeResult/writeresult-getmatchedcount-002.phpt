@@ -19,12 +19,14 @@ $bulk->delete(['x' => 1]);
 
 $result = $manager->executeBulkWrite(NS, $bulk, new MongoDB\Driver\WriteConcern(0));
 
-var_dump($result->getMatchedCount());
+echo throws(function() use ($result) {
+    $result->getMatchedCount();
+}, MongoDB\Driver\Exception\LogicException::class), "\n";
 
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECTF--
-Deprecated: MongoDB\Driver\WriteResult::getMatchedCount(): Calling MongoDB\Driver\WriteResult::getMatchedCount() for an unacknowledged write is deprecated and will throw an exception in %s
-NULL
+--EXPECT--
+OK: Got MongoDB\Driver\Exception\LogicException
+MongoDB\Driver\WriteResult::getMatchedCount() should not be called for an unacknowledged write result
 ===DONE===
