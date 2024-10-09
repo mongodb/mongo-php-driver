@@ -225,7 +225,7 @@ static PHP_METHOD(MongoDB_Driver_ReadPreference, __construct)
 			return;
 		}
 	} else {
-		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected mode to be integer or string, %s given", PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(mode));
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected mode to be integer or string, %s given", zend_zval_type_name(mode));
 		return;
 	}
 

@@ -82,9 +82,6 @@ zend_object_handlers* phongo_get_std_object_handlers(void);
 		}                                                   \
 	} while (0)
 
-#define PHONGO_ZVAL_CLASS_OR_TYPE_NAME(zv) (Z_TYPE(zv) == IS_OBJECT ? ZSTR_VAL(Z_OBJCE(zv)->name) : zend_get_type_by_const(Z_TYPE(zv)))
-#define PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(zvp) PHONGO_ZVAL_CLASS_OR_TYPE_NAME(*(zvp))
-
 #define PHONGO_ZVAL_EXCEPTION_NAME(e) (ZSTR_VAL(e->ce->name))
 
 #define PHONGO_SET_CREATED_BY_PID(intern)          \

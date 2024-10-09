@@ -230,7 +230,7 @@ static PHP_METHOD(MongoDB_BSON_UTCDateTime, __construct)
 			return;
 	}
 
-	phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected integer or string, %s given", PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(milliseconds));
+	phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected integer or string, %s given", zend_zval_type_name(milliseconds));
 }
 
 static PHP_METHOD(MongoDB_BSON_UTCDateTime, __set_state)

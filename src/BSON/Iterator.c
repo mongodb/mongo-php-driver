@@ -54,13 +54,13 @@ static bool php_phongo_iterator_init_with_zval(php_phongo_iterator_t* iterator, 
 	bson = php_phongo_iterator_get_bson_from_zval(zbson);
 	if (!bson) {
 		/* Should never happen, but if it does: exception */
-		phongo_throw_exception(PHONGO_ERROR_LOGIC, "Could not create iterator for %s instance", PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(zbson));
+		phongo_throw_exception(PHONGO_ERROR_LOGIC, "Could not create iterator for %s instance", zend_zval_type_name(zbson));
 
 		return false;
 	}
 
 	if (!bson_iter_init(&iterator->iter, bson)) {
-		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Could not create iterator for %s instance", PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(zbson));
+		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Could not create iterator for %s instance", zend_zval_type_name(zbson));
 
 		return false;
 	}
