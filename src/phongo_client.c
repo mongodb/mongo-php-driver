@@ -1010,7 +1010,7 @@ static bool php_phongo_extract_handshake_data(zval* driver, const char* key, cha
 	zvalue = php_array_fetch_deref(driver, key);
 
 	if (Z_TYPE_P(zvalue) != IS_STRING) {
-		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"%s\" handshake option to be a string, %s given", key, PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(zvalue));
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"%s\" handshake option to be a string, %s given", key, zend_zval_type_name(zvalue));
 		return false;
 	}
 
@@ -1085,7 +1085,7 @@ static void php_phongo_set_handshake_data(zval* driverOptions)
 		zval* driver = php_array_fetchc_deref(driverOptions, "driver");
 
 		if (Z_TYPE_P(driver) != IS_ARRAY) {
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"driver\" driver option to be an array, %s given", PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(driver));
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"driver\" driver option to be an array, %s given", zend_zval_type_name(driver));
 			return;
 		}
 
@@ -1238,7 +1238,7 @@ static bool phongo_manager_set_serverapi_opts(php_phongo_manager_t* manager, zva
 	zServerApi = php_array_fetchc_deref(driverOptions, "serverApi");
 
 	if (Z_TYPE_P(zServerApi) != IS_OBJECT || !instanceof_function(Z_OBJCE_P(zServerApi), php_phongo_serverapi_ce)) {
-		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"serverApi\" driver option to be %s, %s given", ZSTR_VAL(php_phongo_serverapi_ce->name), PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(zServerApi));
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"serverApi\" driver option to be %s, %s given", ZSTR_VAL(php_phongo_serverapi_ce->name), zend_zval_type_name(zServerApi));
 		return false;
 	}
 
@@ -1267,7 +1267,7 @@ static bool phongo_manager_set_auto_encryption_opts(php_phongo_manager_t* manage
 	zAutoEncryptionOpts = php_array_fetchc_deref(driverOptions, "autoEncryption");
 
 	if (Z_TYPE_P(zAutoEncryptionOpts) != IS_ARRAY) {
-		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"autoEncryption\" driver option to be array, %s given", PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(zAutoEncryptionOpts));
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"autoEncryption\" driver option to be array, %s given", zend_zval_type_name(zAutoEncryptionOpts));
 		return false;
 	}
 
@@ -1286,7 +1286,7 @@ static bool phongo_manager_set_auto_encryption_opts(php_phongo_manager_t* manage
 		bson_t bson_map       = BSON_INITIALIZER;
 
 		if (Z_TYPE_P(enc_fields_map) != IS_OBJECT && Z_TYPE_P(enc_fields_map) != IS_ARRAY) {
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"encryptedFieldsMap\" autoEncryption option to be an array or object, %s given", PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(enc_fields_map));
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"encryptedFieldsMap\" autoEncryption option to be an array or object, %s given", zend_zval_type_name(enc_fields_map));
 			goto cleanup;
 		}
 
@@ -1308,7 +1308,7 @@ static bool phongo_manager_set_auto_encryption_opts(php_phongo_manager_t* manage
 		zval* key_vault_client = php_array_fetchc_deref(zAutoEncryptionOpts, "keyVaultClient");
 
 		if (Z_TYPE_P(key_vault_client) != IS_OBJECT || !instanceof_function(Z_OBJCE_P(key_vault_client), php_phongo_manager_ce)) {
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"keyVaultClient\" autoEncryption option to be %s, %s given", ZSTR_VAL(php_phongo_manager_ce->name), PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(key_vault_client));
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"keyVaultClient\" autoEncryption option to be %s, %s given", ZSTR_VAL(php_phongo_manager_ce->name), zend_zval_type_name(key_vault_client));
 			goto cleanup;
 		}
 
@@ -1362,7 +1362,7 @@ static bool phongo_manager_set_auto_encryption_opts(php_phongo_manager_t* manage
 		bson_t bson_providers = BSON_INITIALIZER;
 
 		if (Z_TYPE_P(kms_providers) != IS_OBJECT && Z_TYPE_P(kms_providers) != IS_ARRAY) {
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"kmsProviders\" autoEncryption option to be an array or object, %s given", PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(kms_providers));
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"kmsProviders\" autoEncryption option to be an array or object, %s given", zend_zval_type_name(kms_providers));
 			goto cleanup;
 		}
 
@@ -1381,7 +1381,7 @@ static bool phongo_manager_set_auto_encryption_opts(php_phongo_manager_t* manage
 		bson_t bson_map   = BSON_INITIALIZER;
 
 		if (Z_TYPE_P(schema_map) != IS_OBJECT && Z_TYPE_P(schema_map) != IS_ARRAY) {
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"schemaMap\" autoEncryption option to be an array or object, %s given", PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(schema_map));
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"schemaMap\" autoEncryption option to be an array or object, %s given", zend_zval_type_name(schema_map));
 			goto cleanup;
 		}
 
@@ -1400,7 +1400,7 @@ static bool phongo_manager_set_auto_encryption_opts(php_phongo_manager_t* manage
 		bson_t bson_options = BSON_INITIALIZER;
 
 		if (Z_TYPE_P(tls_options) != IS_OBJECT && Z_TYPE_P(tls_options) != IS_ARRAY) {
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"tlsOptions\" autoEncryption option to be an array or object, %s given", PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(tls_options));
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"tlsOptions\" autoEncryption option to be an array or object, %s given", zend_zval_type_name(tls_options));
 			goto cleanup;
 		}
 
@@ -1419,7 +1419,7 @@ static bool phongo_manager_set_auto_encryption_opts(php_phongo_manager_t* manage
 		bson_t bson_options  = BSON_INITIALIZER;
 
 		if (Z_TYPE_P(extra_options) != IS_OBJECT && Z_TYPE_P(extra_options) != IS_ARRAY) {
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"extraOptions\" autoEncryption option to be an array or object, %s given", PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(extra_options));
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"extraOptions\" autoEncryption option to be an array or object, %s given", zend_zval_type_name(extra_options));
 			goto cleanup;
 		}
 

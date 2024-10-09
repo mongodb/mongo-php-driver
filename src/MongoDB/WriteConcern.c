@@ -136,7 +136,7 @@ static PHP_METHOD(MongoDB_Driver_WriteConcern, __construct)
 			mongoc_write_concern_set_wtag(intern->write_concern, Z_STRVAL_P(w));
 		}
 	} else {
-		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected w to be integer or string, %s given", PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(w));
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected w to be integer or string, %s given", zend_zval_type_name(w));
 		return;
 	}
 
