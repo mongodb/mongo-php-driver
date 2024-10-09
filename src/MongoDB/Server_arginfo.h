@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 5edd7242100364c5e4beddc89b4d92dda70c09f6 */
+ * Stub hash: 63542fe1821e8a9016e8514924f6aec30e4ea20e */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_Driver_Server___construct, 0, 0, 0)
 ZEND_END_ARG_INFO()
@@ -10,19 +10,19 @@ ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_MongoDB_Driver_Server_execu
 	ZEND_ARG_OBJ_TYPE_MASK(0, options, MongoDB\\Driver\\WriteConcern, MAY_BE_ARRAY|MAY_BE_NULL, "null")
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_MongoDB_Driver_Server_executeCommand, 0, 2, MongoDB\\Driver\\Cursor, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_MongoDB_Driver_Server_executeCommand, 0, 2, MongoDB\\Driver\\CursorInterface, 0)
 	ZEND_ARG_TYPE_INFO(0, db, IS_STRING, 0)
 	ZEND_ARG_OBJ_INFO(0, command, MongoDB\\Driver\\Command, 0)
 	ZEND_ARG_OBJ_TYPE_MASK(0, options, MongoDB\\Driver\\ReadPreference, MAY_BE_ARRAY|MAY_BE_NULL, "null")
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_MongoDB_Driver_Server_executeQuery, 0, 2, MongoDB\\Driver\\Cursor, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_MongoDB_Driver_Server_executeQuery, 0, 2, MongoDB\\Driver\\CursorInterface, 0)
 	ZEND_ARG_TYPE_INFO(0, namespace, IS_STRING, 0)
 	ZEND_ARG_OBJ_INFO(0, query, MongoDB\\Driver\\Query, 0)
 	ZEND_ARG_OBJ_TYPE_MASK(0, options, MongoDB\\Driver\\ReadPreference, MAY_BE_ARRAY|MAY_BE_NULL, "null")
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_MongoDB_Driver_Server_executeReadCommand, 0, 2, MongoDB\\Driver\\Cursor, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_MongoDB_Driver_Server_executeReadCommand, 0, 2, MongoDB\\Driver\\CursorInterface, 0)
 	ZEND_ARG_TYPE_INFO(0, db, IS_STRING, 0)
 	ZEND_ARG_OBJ_INFO(0, command, MongoDB\\Driver\\Command, 0)
 	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, options, IS_ARRAY, 1, "null")

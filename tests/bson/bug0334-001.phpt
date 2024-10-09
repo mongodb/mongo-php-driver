@@ -6,8 +6,7 @@ PHPC-334: Injected __pclass should override a __pclass key in bsonSerialize() re
 require_once __DIR__ . '/../utils/basic.inc';
 
 class MyClass implements MongoDB\BSON\Persistable {
-    #[\ReturnTypeWillChange]
-    public function bsonSerialize() {
+    public function bsonSerialize(): array {
         return array(
             "__pclass" => "baz",
             "foo" => "bar",

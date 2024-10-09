@@ -254,7 +254,6 @@ PHP_MINIT_FUNCTION(mongodb) /* {{{ */
 	php_phongo_clientencryption_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 	php_phongo_command_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 	php_phongo_cursor_init_ce(INIT_FUNC_ARGS_PASSTHRU);
-	php_phongo_cursorid_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 	php_phongo_manager_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 	php_phongo_query_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 	php_phongo_readconcern_init_ce(INIT_FUNC_ARGS_PASSTHRU);
@@ -274,7 +273,6 @@ PHP_MINIT_FUNCTION(mongodb) /* {{{ */
 	php_phongo_runtimeexception_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 	php_phongo_serverexception_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 	php_phongo_connectionexception_init_ce(INIT_FUNC_ARGS_PASSTHRU);
-	php_phongo_writeexception_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 
 	php_phongo_authenticationexception_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 	php_phongo_bulkwriteexception_init_ce(INIT_FUNC_ARGS_PASSTHRU);
@@ -284,7 +282,6 @@ PHP_MINIT_FUNCTION(mongodb) /* {{{ */
 	php_phongo_executiontimeoutexception_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 	php_phongo_invalidargumentexception_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 	php_phongo_logicexception_init_ce(INIT_FUNC_ARGS_PASSTHRU);
-	php_phongo_sslconnectionexception_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 	php_phongo_unexpectedvalueexception_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 
 	/* Register base APM classes first */

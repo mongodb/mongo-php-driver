@@ -70,13 +70,6 @@ typedef struct {
 } php_phongo_cursor_t;
 
 typedef struct {
-	bool        initialized;
-	int64_t     id;
-	HashTable*  properties;
-	zend_object std;
-} php_phongo_cursorid_t;
-
-typedef struct {
 	mongoc_client_t* client;
 	int              created_by_pid;
 	char*            client_hash;
@@ -281,7 +274,6 @@ typedef struct {
 } php_phongo_utcdatetime_t;
 
 typedef struct {
-	zval               manager;
 	char*              command_name;
 	char*              database_name;
 	uint32_t           server_id;
@@ -298,7 +290,6 @@ typedef struct {
 } php_phongo_commandfailedevent_t;
 
 typedef struct {
-	zval               manager;
 	char*              command_name;
 	char*              database_name;
 	uint32_t           server_id;
@@ -313,7 +304,6 @@ typedef struct {
 } php_phongo_commandstartedevent_t;
 
 typedef struct {
-	zval               manager;
 	char*              command_name;
 	char*              database_name;
 	uint32_t           server_id;

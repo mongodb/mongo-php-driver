@@ -7,7 +7,7 @@
 
 namespace MongoDB\Driver;
 
-final class ReadConcern implements \MongoDB\BSON\Serializable, \Serializable
+final class ReadConcern implements \MongoDB\BSON\Serializable
 {
     /**
      * @var string
@@ -48,10 +48,6 @@ final class ReadConcern implements \MongoDB\BSON\Serializable, \Serializable
     final public static function __set_state(array $properties): ReadConcern {}
 
     final public function bsonSerialize(): \stdClass {}
-
-    final public function serialize(): string {}
-
-    final public function unserialize(string $data): void {}
 
     final public function __unserialize(array $data): void {}
 
