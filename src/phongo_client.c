@@ -143,10 +143,12 @@ static bool php_phongo_apply_options_to_uri(mongoc_uri_t* uri, bson_t* options)
 		}
 
 		if (mongoc_uri_option_is_bool(key)) {
-			/* The option's type is not validated because bson_iter_as_bool() is
-			 * used to cast the value to a boolean. Validation may be introduced
-			 * in PHPC-990. */
-			if (!mongoc_uri_set_option_as_bool(uri, key, bson_iter_as_bool(&iter))) {
+			if (!BSON_ITER_HOLDS_BOOL(&iter)) {
+				PHONGO_URI_INVALID_TYPE(iter, "boolean");
+				return false;
+			}
+
+			if (!mongoc_uri_set_option_as_bool(uri, key, bson_iter_bool(&iter))) {
 				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Failed to parse \"%s\" URI option", key);
 				return false;
 			}
