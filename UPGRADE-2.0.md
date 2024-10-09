@@ -38,3 +38,6 @@ UPGRADE FROM 1.x to 2.0
    `allowPartialResults` instead), `maxScan`, `modifiers` (use alternative
    top-level options instead), `oplogReplay`, and `snapshot`. Support for
    negative `limit` values has been removed (use `singleBatch` instead).
+ * The `MongoDB\Driver\Manager` constructor now throws if the URI options array
+   includes a non-boolean value for an option expecting a boolean. This behavior
+   is now consistent with validation for other option types.
