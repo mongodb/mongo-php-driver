@@ -741,7 +741,7 @@ static PHP_METHOD(MongoDB_Driver_Manager, startSession)
 			phongo_throw_exception(
 				PHONGO_ERROR_INVALID_ARGUMENT,
 				"Expected \"defaultTransactionOptions\" option to be an array, %s given",
-				PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(txn_options));
+				zend_zval_type_name(txn_options));
 			goto cleanup;
 		}
 

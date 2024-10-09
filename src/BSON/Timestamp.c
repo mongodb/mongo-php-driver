@@ -144,7 +144,7 @@ static PHP_METHOD(MongoDB_BSON_Timestamp, __construct)
 	}
 
 	if (Z_TYPE_P(increment) != IS_STRING) {
-		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected increment to be an unsigned 32-bit integer or string, %s given", PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(increment));
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected increment to be an unsigned 32-bit integer or string, %s given", zend_zval_type_name(increment));
 		return;
 	}
 
@@ -153,7 +153,7 @@ static PHP_METHOD(MongoDB_BSON_Timestamp, __construct)
 	}
 
 	if (Z_TYPE_P(timestamp) != IS_STRING) {
-		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected timestamp to be an unsigned 32-bit integer or string, %s given", PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(timestamp));
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected timestamp to be an unsigned 32-bit integer or string, %s given", zend_zval_type_name(timestamp));
 		return;
 	}
 
