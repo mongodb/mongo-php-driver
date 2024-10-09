@@ -156,6 +156,10 @@ static bool php_phongo_apply_options_to_uri(mongoc_uri_t* uri, bson_t* options)
 			continue;
 		}
 
+		/* Note: mongoc_uri_option_is_int32 also accepts int64 options, but
+		 * BSON_ITER_HOLDS_INT32 would reject a 64-bit value. This is not a
+		 * problem as MONGOC_URI_WTIMEOUTMS is the only 64-bit option and it is
+		 * handled explicitly in php_phongo_apply_wc_options_to_uri. */
 		if (mongoc_uri_option_is_int32(key)) {
 			if (!BSON_ITER_HOLDS_INT32(&iter)) {
 				PHONGO_URI_INVALID_TYPE(iter, "32-bit integer");
