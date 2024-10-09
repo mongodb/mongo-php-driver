@@ -544,6 +544,8 @@ static bool php_phongo_apply_wc_options_to_uri(mongoc_uri_t* uri, bson_t* option
 	while (bson_iter_next(&iter)) {
 		const char* key = bson_iter_key(&iter);
 
+		/* Note: although "safe" is deprecated and undocumented, we still handle
+		 * it here for consistency with _mongoc_uri_build_write_concern() */
 		if (!ignore_safe && !strcasecmp(key, MONGOC_URI_SAFE)) {
 			if (!BSON_ITER_HOLDS_BOOL(&iter)) {
 				PHONGO_URI_INVALID_TYPE(iter, "boolean");
@@ -678,80 +680,63 @@ static void php_phongo_mongoc_ssl_opts_from_uri(mongoc_ssl_opt_t* ssl_opt, mongo
 	}
 }
 
-static inline char* php_phongo_fetch_ssl_opt_string(zval* zoptions, const char* key)
+/* This function abstracts php_array_fetch_string() and always returns a string
+ * that must be freed by the caller. */
+static inline char* php_phongo_fetch_string(zval* zarr, const char* key)
 {
 	int       plen;
 	zend_bool pfree;
-	char*     pval;
 	char*     value;
 
-	pval  = php_array_fetch_string(zoptions, key, &plen, &pfree);
-	value = pfree ? pval : estrndup(pval, plen);
-
-	return value;
+	value = php_array_fetch_string(zarr, key, &plen, &pfree);
+	
+	return pfree ? value : estrndup(value, plen);
 }
 
-static mongoc_ssl_opt_t* php_phongo_make_ssl_opt(mongoc_uri_t* uri, zval* zoptions)
+static mongoc_ssl_opt_t* php_phongo_make_ssl_opt(mongoc_uri_t* uri, zval* driverOptions)
 {
 	mongoc_ssl_opt_t* ssl_opt;
 	bool              any_ssl_option_set = false;
 
-	if (!zoptions) {
+	if (!driverOptions) {
 		return NULL;
 	}
 
 #if defined(MONGOC_ENABLE_SSL_SECURE_CHANNEL) || defined(MONGOC_ENABLE_SSL_SECURE_TRANSPORT)
-	if (php_array_existsc(zoptions, "ca_dir")) {
+	if (php_array_existsc(driverOptions, "ca_dir")) {
 		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "\"ca_dir\" option is not supported by Secure Channel and Secure Transport");
-		return NULL;
-	}
-
-	if (php_array_existsc(zoptions, "capath")) {
-		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "\"capath\" option is not supported by Secure Channel and Secure Transport");
 		return NULL;
 	}
 #endif
 
 #if defined(MONGOC_ENABLE_SSL_LIBRESSL) || defined(MONGOC_ENABLE_SSL_SECURE_TRANSPORT)
-	if (php_array_existsc(zoptions, "crl_file")) {
+	if (php_array_existsc(driverOptions, "crl_file")) {
 		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "\"crl_file\" option is not supported by LibreSSL and Secure Transport");
 		return NULL;
 	}
 #endif
 
+	/* Note: consider copying from mongoc_ssl_opt_get_default() if
+	 * MONGOC_SSL_DEFAULT_TRUST_FILE and MONGOC_SSL_DEFAULT_TRUST_DIR are ever
+	 * used, but libmongoc currently defines them as null. */
 	ssl_opt = ecalloc(1, sizeof(mongoc_ssl_opt_t));
 
-	/* If SSL options are set in the URL, we need to read them and set them on
-	 * the options struct so we can merge potential options from passed in
-	 * driverOptions (zoptions) */
+	/* Apply TLS options to the ssl_opt struct before driver options */
 	if (mongoc_uri_get_tls(uri)) {
 		php_phongo_mongoc_ssl_opts_from_uri(ssl_opt, uri, &any_ssl_option_set);
 	}
 
-#define PHONGO_SSL_OPTION_SWAP_STRING(o, n) \
-	if ((o)) {                              \
-		efree((char*) (o));                 \
-	}                                       \
-	(o) = php_phongo_fetch_ssl_opt_string(zoptions, n);
-
 	/* Apply driver options that don't have a corresponding URI option. These
 	 * are set directly on the SSL options struct. */
-	if (php_array_existsc(zoptions, "ca_dir")) {
-		PHONGO_SSL_OPTION_SWAP_STRING(ssl_opt->ca_dir, "ca_dir");
-		any_ssl_option_set = true;
-	} else if (php_array_existsc(zoptions, "capath")) {
-		PHONGO_SSL_OPTION_SWAP_STRING(ssl_opt->ca_dir, "capath");
-		any_ssl_option_set = true;
-
-		php_error_docref(NULL, E_DEPRECATED, "The \"capath\" context driver option is deprecated. Please use the \"ca_dir\" driver option instead.");
-	}
-
-	if (php_array_existsc(zoptions, "crl_file")) {
-		PHONGO_SSL_OPTION_SWAP_STRING(ssl_opt->crl_file, "crl_file");
+	if (php_array_existsc(driverOptions, "ca_dir")) {
+		ssl_opt->ca_dir = php_phongo_fetch_string(driverOptions, "ca_dir");
 		any_ssl_option_set = true;
 	}
 
-#undef PHONGO_SSL_OPTION_SWAP_STRING
+	if (php_array_existsc(driverOptions, "crl_file")) {
+		ssl_opt->crl_file = php_phongo_fetch_string(driverOptions, "crl_file");
+		any_ssl_option_set = true;
+	}
 
 	if (!any_ssl_option_set) {
 		efree(ssl_opt);
@@ -785,110 +770,6 @@ static void php_phongo_free_ssl_opt(mongoc_ssl_opt_t* ssl_opt)
 
 	efree(ssl_opt);
 }
-
-static inline bool php_phongo_apply_driver_option_to_uri(mongoc_uri_t* uri, zval* zoptions, const char* driverOptionKey, const char* optionKey)
-{
-	bool  ret;
-	char* value;
-
-	value = php_phongo_fetch_ssl_opt_string(zoptions, driverOptionKey);
-	ret   = mongoc_uri_set_option_as_utf8(uri, optionKey, value);
-	efree(value);
-
-	return ret;
-}
-
-static bool php_phongo_apply_driver_options_to_uri(mongoc_uri_t* uri, zval* zoptions)
-{
-	if (!zoptions) {
-		return true;
-	}
-
-	/* Map TLS driver options to the canonical tls options in the URI. */
-	if (php_array_existsc(zoptions, "allow_invalid_hostname")) {
-		if (!mongoc_uri_set_option_as_bool(uri, MONGOC_URI_TLSALLOWINVALIDHOSTNAMES, php_array_fetchc_bool(zoptions, "allow_invalid_hostname"))) {
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Failed to parse \"%s\" driver option", "allow_invalid_hostname");
-
-			return false;
-		}
-
-		php_error_docref(NULL, E_DEPRECATED, "The \"allow_invalid_hostname\" driver option is deprecated. Please use the \"tlsAllowInvalidHostnames\" URI option instead.");
-	}
-
-	if (php_array_existsc(zoptions, "weak_cert_validation")) {
-		if (!mongoc_uri_set_option_as_bool(uri, MONGOC_URI_TLSALLOWINVALIDCERTIFICATES, php_array_fetchc_bool(zoptions, "weak_cert_validation"))) {
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Failed to parse \"%s\" driver option", "weak_cert_validation");
-
-			return false;
-		}
-
-		php_error_docref(NULL, E_DEPRECATED, "The \"weak_cert_validation\" driver option is deprecated. Please use the \"tlsAllowInvalidCertificates\" URI option instead.");
-	} else if (php_array_existsc(zoptions, "allow_self_signed")) {
-		if (!mongoc_uri_set_option_as_bool(uri, MONGOC_URI_TLSALLOWINVALIDCERTIFICATES, php_array_fetchc_bool(zoptions, "allow_self_signed"))) {
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Failed to parse \"%s\" driver option", "allow_self_signed");
-
-			return false;
-		}
-
-		php_error_docref(NULL, E_DEPRECATED, "The \"allow_self_signed\" context driver option is deprecated. Please use the \"tlsAllowInvalidCertificates\" URI option instead.");
-	}
-
-	if (php_array_existsc(zoptions, "pem_file")) {
-		if (!php_phongo_apply_driver_option_to_uri(uri, zoptions, "pem_file", MONGOC_URI_TLSCERTIFICATEKEYFILE)) {
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Failed to parse \"%s\" driver option", "pem_file");
-
-			return false;
-		}
-
-		php_error_docref(NULL, E_DEPRECATED, "The \"pem_file\" driver option is deprecated. Please use the \"tlsCertificateKeyFile\" URI option instead.");
-	} else if (php_array_existsc(zoptions, "local_cert")) {
-		if (!php_phongo_apply_driver_option_to_uri(uri, zoptions, "local_cert", MONGOC_URI_TLSCERTIFICATEKEYFILE)) {
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Failed to parse \"%s\" driver option", "local_cert");
-
-			return false;
-		}
-
-		php_error_docref(NULL, E_DEPRECATED, "The \"local_cert\" context driver option is deprecated. Please use the \"tlsCertificateKeyFile\" URI option instead.");
-	}
-
-	if (php_array_existsc(zoptions, "pem_pwd")) {
-		if (!php_phongo_apply_driver_option_to_uri(uri, zoptions, "pem_pwd", MONGOC_URI_TLSCERTIFICATEKEYFILEPASSWORD)) {
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Failed to parse \"%s\" driver option", "pem_pwd");
-
-			return false;
-		}
-
-		php_error_docref(NULL, E_DEPRECATED, "The \"pem_pwd\" driver option is deprecated. Please use the \"tlsCertificateKeyFilePassword\" URI option instead.");
-	} else if (php_array_existsc(zoptions, "passphrase")) {
-		if (!php_phongo_apply_driver_option_to_uri(uri, zoptions, "passphrase", MONGOC_URI_TLSCERTIFICATEKEYFILEPASSWORD)) {
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Failed to parse \"%s\" driver option", "passphrase");
-
-			return false;
-		}
-
-		php_error_docref(NULL, E_DEPRECATED, "The \"passphrase\" context driver option is deprecated. Please use the \"tlsCertificateKeyFilePassword\" URI option instead.");
-	}
-
-	if (php_array_existsc(zoptions, "ca_file")) {
-		if (!php_phongo_apply_driver_option_to_uri(uri, zoptions, "ca_file", MONGOC_URI_TLSCAFILE)) {
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Failed to parse \"%s\" driver option", "ca_file");
-
-			return false;
-		}
-
-		php_error_docref(NULL, E_DEPRECATED, "The \"ca_file\" driver option is deprecated. Please use the \"tlsCAFile\" URI option instead.");
-	} else if (php_array_existsc(zoptions, "cafile")) {
-		if (!php_phongo_apply_driver_option_to_uri(uri, zoptions, "cafile", MONGOC_URI_TLSCAFILE)) {
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Failed to parse \"%s\" driver option", "cafile");
-
-			return false;
-		}
-
-		php_error_docref(NULL, E_DEPRECATED, "The \"cafile\" context driver option is deprecated. Please use the \"tlsCAFile\" URI option instead.");
-	}
-
-	return true;
-}
 #endif /* MONGOC_ENABLE_SSL */
 
 static zval* php_phongo_manager_prepare_manager_for_hash(zval* driverOptions, bool* free)
@@ -907,21 +788,21 @@ static zval* php_phongo_manager_prepare_manager_for_hash(zval* driverOptions, bo
 	}
 
 	if (!php_array_existsc(driverOptions, "autoEncryption")) {
-		goto ref;
+		return driverOptions;
 	}
 
 	autoEncryptionOpts = php_array_fetchc(driverOptions, "autoEncryption");
 	if (Z_TYPE_P(autoEncryptionOpts) != IS_ARRAY) {
-		goto ref;
+		return driverOptions;
 	}
 
 	if (!php_array_existsc(autoEncryptionOpts, "keyVaultClient")) {
-		goto ref;
+		return driverOptions;
 	}
 
 	keyVaultClient = php_array_fetchc(autoEncryptionOpts, "keyVaultClient");
 	if (Z_TYPE_P(keyVaultClient) != IS_OBJECT || !instanceof_function(Z_OBJCE_P(keyVaultClient), php_phongo_manager_ce)) {
-		goto ref;
+		return driverOptions;
 	}
 
 	*free = true;
@@ -938,10 +819,6 @@ static zval* php_phongo_manager_prepare_manager_for_hash(zval* driverOptions, bo
 	ADD_ASSOC_ZVAL_EX(driverOptionsClone, "autoEncryption", autoEncryptionOptsClone);
 
 	return driverOptionsClone;
-
-ref:
-	Z_ADDREF_P(driverOptions);
-	return driverOptions;
 }
 
 /* Creates a hash for a client by concatenating the URI string with serialized
@@ -972,6 +849,10 @@ static char* php_phongo_manager_make_client_hash(const char* uri_string, zval* o
 	if (driverOptions) {
 		serializable_driver_options = php_phongo_manager_prepare_manager_for_hash(driverOptions, &free_driver_options);
 		ADD_ASSOC_ZVAL_EX(&args, "driverOptions", serializable_driver_options);
+		/* Add a reference to driverOptions unless a new copy was returned */
+		if (!free_driver_options) {
+			Z_ADDREF_P(serializable_driver_options);
+		}
 	} else {
 		ADD_ASSOC_NULL_EX(&args, "driverOptions");
 	}
@@ -1504,11 +1385,6 @@ void phongo_manager_init(php_phongo_manager_t* manager, const char* uri_string, 
 	}
 
 #ifdef MONGOC_ENABLE_SSL
-	if (!php_phongo_apply_driver_options_to_uri(uri, driverOptions)) {
-		/* Exception should already have been thrown */
-		goto cleanup;
-	}
-
 	ssl_opt = php_phongo_make_ssl_opt(uri, driverOptions);
 
 	/* An exception may be thrown during SSL option creation */
