@@ -54,6 +54,8 @@ $integerOptions = [
     'serverSelectionTimeoutMS',
     'socketCheckIntervalMS',
     'socketTimeoutMS',
+    'srvMaxHosts',
+    'zlibCompressionLevel',
 ];
 
 $invalidIntegerValues = [
@@ -69,7 +71,7 @@ foreach ($integerOptions as $option) {
     foreach ($invalidIntegerValues as $value) {
         echo throws(function() use ($option, $value) {
             create_test_manager(null, [$option => $value]);
-        }, "MongoDB\Driver\Exception\InvalidArgumentException"), "\n";
+        }, MongoDB\Driver\Exception\InvalidArgumentException::class), "\n";
     }
 }
 
@@ -79,9 +81,14 @@ $stringOptions = [
     'appname',
     'authMechanism',
     'authSource',
+    'compressors',
     'gssapiServiceName',
     'password',
     'replicaSet',
+    'srvServiceName',
+    'tlsCAFile',
+    'tlsCertificateKeyFile',
+    'tlsCertificateKeyFilePassword',
     'username',
 ];
 
@@ -98,7 +105,7 @@ foreach ($stringOptions as $option) {
     foreach ($invalidStringValues as $value) {
         echo throws(function() use ($option, $value) {
             create_test_manager(null, [$option => $value]);
-        }, "MongoDB\Driver\Exception\InvalidArgumentException"), "\n";
+        }, MongoDB\Driver\Exception\InvalidArgumentException::class), "\n";
     }
 }
 
@@ -378,6 +385,30 @@ OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Expected 32-bit integer for "socketTimeoutMS" URI option, array given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Expected 32-bit integer for "socketTimeoutMS" URI option, document given
+OK: Got MongoDB\Driver\Exception\InvalidArgumentException
+Expected 32-bit integer for "srvMaxHosts" URI option, boolean given
+OK: Got MongoDB\Driver\Exception\InvalidArgumentException
+Expected 32-bit integer for "srvMaxHosts" URI option, double given
+OK: Got MongoDB\Driver\Exception\InvalidArgumentException
+Expected 32-bit integer for "srvMaxHosts" URI option, string given
+OK: Got MongoDB\Driver\Exception\InvalidArgumentException
+Expected 32-bit integer for "srvMaxHosts" URI option, ObjectId given
+OK: Got MongoDB\Driver\Exception\InvalidArgumentException
+Expected 32-bit integer for "srvMaxHosts" URI option, array given
+OK: Got MongoDB\Driver\Exception\InvalidArgumentException
+Expected 32-bit integer for "srvMaxHosts" URI option, document given
+OK: Got MongoDB\Driver\Exception\InvalidArgumentException
+Expected 32-bit integer for "zlibCompressionLevel" URI option, boolean given
+OK: Got MongoDB\Driver\Exception\InvalidArgumentException
+Expected 32-bit integer for "zlibCompressionLevel" URI option, double given
+OK: Got MongoDB\Driver\Exception\InvalidArgumentException
+Expected 32-bit integer for "zlibCompressionLevel" URI option, string given
+OK: Got MongoDB\Driver\Exception\InvalidArgumentException
+Expected 32-bit integer for "zlibCompressionLevel" URI option, ObjectId given
+OK: Got MongoDB\Driver\Exception\InvalidArgumentException
+Expected 32-bit integer for "zlibCompressionLevel" URI option, array given
+OK: Got MongoDB\Driver\Exception\InvalidArgumentException
+Expected 32-bit integer for "zlibCompressionLevel" URI option, document given
 
 Testing string options:
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
@@ -417,6 +448,18 @@ Expected string for "authSource" URI option, array given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Expected string for "authSource" URI option, document given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
+Expected string for "compressors" URI option, boolean given
+OK: Got MongoDB\Driver\Exception\InvalidArgumentException
+Expected string for "compressors" URI option, double given
+OK: Got MongoDB\Driver\Exception\InvalidArgumentException
+Expected string for "compressors" URI option, 32-bit integer given
+OK: Got MongoDB\Driver\Exception\InvalidArgumentException
+Expected string for "compressors" URI option, ObjectId given
+OK: Got MongoDB\Driver\Exception\InvalidArgumentException
+Expected string for "compressors" URI option, array given
+OK: Got MongoDB\Driver\Exception\InvalidArgumentException
+Expected string for "compressors" URI option, document given
+OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Expected string for "gssapiServiceName" URI option, boolean given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Expected string for "gssapiServiceName" URI option, double given
@@ -452,6 +495,54 @@ OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Expected string for "replicaSet" URI option, array given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Expected string for "replicaSet" URI option, document given
+OK: Got MongoDB\Driver\Exception\InvalidArgumentException
+Expected string for "srvServiceName" URI option, boolean given
+OK: Got MongoDB\Driver\Exception\InvalidArgumentException
+Expected string for "srvServiceName" URI option, double given
+OK: Got MongoDB\Driver\Exception\InvalidArgumentException
+Expected string for "srvServiceName" URI option, 32-bit integer given
+OK: Got MongoDB\Driver\Exception\InvalidArgumentException
+Expected string for "srvServiceName" URI option, ObjectId given
+OK: Got MongoDB\Driver\Exception\InvalidArgumentException
+Expected string for "srvServiceName" URI option, array given
+OK: Got MongoDB\Driver\Exception\InvalidArgumentException
+Expected string for "srvServiceName" URI option, document given
+OK: Got MongoDB\Driver\Exception\InvalidArgumentException
+Expected string for "tlsCAFile" URI option, boolean given
+OK: Got MongoDB\Driver\Exception\InvalidArgumentException
+Expected string for "tlsCAFile" URI option, double given
+OK: Got MongoDB\Driver\Exception\InvalidArgumentException
+Expected string for "tlsCAFile" URI option, 32-bit integer given
+OK: Got MongoDB\Driver\Exception\InvalidArgumentException
+Expected string for "tlsCAFile" URI option, ObjectId given
+OK: Got MongoDB\Driver\Exception\InvalidArgumentException
+Expected string for "tlsCAFile" URI option, array given
+OK: Got MongoDB\Driver\Exception\InvalidArgumentException
+Expected string for "tlsCAFile" URI option, document given
+OK: Got MongoDB\Driver\Exception\InvalidArgumentException
+Expected string for "tlsCertificateKeyFile" URI option, boolean given
+OK: Got MongoDB\Driver\Exception\InvalidArgumentException
+Expected string for "tlsCertificateKeyFile" URI option, double given
+OK: Got MongoDB\Driver\Exception\InvalidArgumentException
+Expected string for "tlsCertificateKeyFile" URI option, 32-bit integer given
+OK: Got MongoDB\Driver\Exception\InvalidArgumentException
+Expected string for "tlsCertificateKeyFile" URI option, ObjectId given
+OK: Got MongoDB\Driver\Exception\InvalidArgumentException
+Expected string for "tlsCertificateKeyFile" URI option, array given
+OK: Got MongoDB\Driver\Exception\InvalidArgumentException
+Expected string for "tlsCertificateKeyFile" URI option, document given
+OK: Got MongoDB\Driver\Exception\InvalidArgumentException
+Expected string for "tlsCertificateKeyFilePassword" URI option, boolean given
+OK: Got MongoDB\Driver\Exception\InvalidArgumentException
+Expected string for "tlsCertificateKeyFilePassword" URI option, double given
+OK: Got MongoDB\Driver\Exception\InvalidArgumentException
+Expected string for "tlsCertificateKeyFilePassword" URI option, 32-bit integer given
+OK: Got MongoDB\Driver\Exception\InvalidArgumentException
+Expected string for "tlsCertificateKeyFilePassword" URI option, ObjectId given
+OK: Got MongoDB\Driver\Exception\InvalidArgumentException
+Expected string for "tlsCertificateKeyFilePassword" URI option, array given
+OK: Got MongoDB\Driver\Exception\InvalidArgumentException
+Expected string for "tlsCertificateKeyFilePassword" URI option, document given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Expected string for "username" URI option, boolean given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
