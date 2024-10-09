@@ -101,7 +101,7 @@ static PHP_METHOD(MongoDB_BSON_Int64, __construct)
 	} else if (Z_TYPE_P(value) == IS_LONG) {
 		php_phongo_int64_init(intern, Z_LVAL_P(value));
 	} else {
-		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected value to be integer or string, %s given", PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(value));
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected value to be integer or string, %s given", zend_zval_type_name(value));
 	}
 }
 

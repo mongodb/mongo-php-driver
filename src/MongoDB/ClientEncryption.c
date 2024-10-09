@@ -429,7 +429,7 @@ static PHP_METHOD(MongoDB_Driver_ClientEncryption, rewrapManyDataKey)
 		zval* zmasterkey = php_array_fetchc_deref(options, "masterKey");
 
 		if (Z_TYPE_P(zmasterkey) != IS_OBJECT && Z_TYPE_P(zmasterkey) != IS_ARRAY) {
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"masterKey\" option to be array or object, %s given", PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(zmasterkey));
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"masterKey\" option to be array or object, %s given", zend_zval_type_name(zmasterkey));
 			goto cleanup;
 		}
 
@@ -552,7 +552,7 @@ static mongoc_client_encryption_opts_t* phongo_clientencryption_opts_from_zval(z
 		zval* key_vault_client = php_array_fetchc_deref(options, "keyVaultClient");
 
 		if (Z_TYPE_P(key_vault_client) != IS_OBJECT || !instanceof_function(Z_OBJCE_P(key_vault_client), php_phongo_manager_ce)) {
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"keyVaultClient\" option to be %s, %s given", ZSTR_VAL(php_phongo_manager_ce->name), PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(key_vault_client));
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"keyVaultClient\" option to be %s, %s given", ZSTR_VAL(php_phongo_manager_ce->name), zend_zval_type_name(key_vault_client));
 			goto cleanup;
 		}
 
@@ -601,7 +601,7 @@ static mongoc_client_encryption_opts_t* phongo_clientencryption_opts_from_zval(z
 		bson_t bson_providers = BSON_INITIALIZER;
 
 		if (Z_TYPE_P(kms_providers) != IS_ARRAY && Z_TYPE_P(kms_providers) != IS_OBJECT) {
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"kmsProviders\" option to be an array or object, %s given", PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(kms_providers));
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"kmsProviders\" option to be an array or object, %s given", zend_zval_type_name(kms_providers));
 			goto cleanup;
 		}
 
@@ -619,7 +619,7 @@ static mongoc_client_encryption_opts_t* phongo_clientencryption_opts_from_zval(z
 		bson_t bson_options = BSON_INITIALIZER;
 
 		if (Z_TYPE_P(tls_options) != IS_ARRAY && Z_TYPE_P(tls_options) != IS_OBJECT) {
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"tlsOptions\" option to be an array or object, %s given", PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(tls_options));
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"tlsOptions\" option to be an array or object, %s given", zend_zval_type_name(tls_options));
 			goto cleanup;
 		}
 
@@ -715,7 +715,7 @@ static mongoc_client_encryption_datakey_opts_t* phongo_clientencryption_datakey_
 		bool       failed = false;
 
 		if (!zkeyaltnames || Z_TYPE_P(zkeyaltnames) != IS_ARRAY) {
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected keyAltNames to be array, %s given", PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(zkeyaltnames));
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected keyAltNames to be array, %s given", zend_zval_type_name(zkeyaltnames));
 			goto cleanup;
 		}
 
@@ -738,9 +738,9 @@ static mongoc_client_encryption_datakey_opts_t* phongo_clientencryption_datakey_
 
 				if (Z_TYPE_P(keyaltname) != IS_STRING) {
 					if (string_key) {
-						phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected keyAltName with index \"%s\" to be string, %s given", ZSTR_VAL(string_key), PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(keyaltname));
+						phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected keyAltName with index \"%s\" to be string, %s given", ZSTR_VAL(string_key), zend_zval_type_name(keyaltname));
 					} else {
-						phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected keyAltName with index \"%lu\" to be string, %s given", num_key, PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(keyaltname));
+						phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected keyAltName with index \"%lu\" to be string, %s given", num_key, zend_zval_type_name(keyaltname));
 					}
 
 					failed = true;
@@ -771,7 +771,7 @@ static mongoc_client_encryption_datakey_opts_t* phongo_clientencryption_datakey_
 		zval* keyMaterial = php_array_fetchc_deref(options, "keyMaterial");
 
 		if (Z_TYPE_P(keyMaterial) != IS_OBJECT || !instanceof_function(Z_OBJCE_P(keyMaterial), php_phongo_binary_ce)) {
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"keyMaterial\" option to be %s, %s given", ZSTR_VAL(php_phongo_binary_ce->name), PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(keyMaterial));
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"keyMaterial\" option to be %s, %s given", ZSTR_VAL(php_phongo_binary_ce->name), zend_zval_type_name(keyMaterial));
 			goto cleanup;
 		}
 
@@ -783,7 +783,7 @@ static mongoc_client_encryption_datakey_opts_t* phongo_clientencryption_datakey_
 		bson_t masterkey  = BSON_INITIALIZER;
 
 		if (Z_TYPE_P(zmasterkey) != IS_OBJECT && Z_TYPE_P(zmasterkey) != IS_ARRAY) {
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"masterKey\" option to be array or object, %s given", PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(zmasterkey));
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"masterKey\" option to be array or object, %s given", zend_zval_type_name(zmasterkey));
 			goto cleanup;
 		}
 

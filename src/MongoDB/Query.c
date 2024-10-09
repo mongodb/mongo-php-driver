@@ -39,7 +39,7 @@ static bool php_phongo_query_opts_append_string(bson_t* opts, const char* opts_k
 	zval* value = php_array_fetch_deref(zarr, zarr_key);
 
 	if (Z_TYPE_P(value) != IS_STRING) {
-		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"%s\" option to be string, %s given", zarr_key, PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(value));
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"%s\" option to be string, %s given", zarr_key, zend_zval_type_name(value));
 		return false;
 	}
 
@@ -59,7 +59,7 @@ static bool php_phongo_query_opts_append_document(bson_t* opts, const char* opts
 	bson_t b     = BSON_INITIALIZER;
 
 	if (Z_TYPE_P(value) != IS_OBJECT && Z_TYPE_P(value) != IS_ARRAY) {
-		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"%s\" option to be array or object, %s given", zarr_key, PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(value));
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"%s\" option to be array or object, %s given", zarr_key, zend_zval_type_name(value));
 		return false;
 	}
 
@@ -188,7 +188,7 @@ static bool php_phongo_query_init_readconcern(php_phongo_query_t* intern, zval* 
 	read_concern = php_array_fetchc_deref(options, "readConcern");
 
 	if (Z_TYPE_P(read_concern) != IS_OBJECT || !instanceof_function(Z_OBJCE_P(read_concern), php_phongo_readconcern_ce)) {
-		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"readConcern\" option to be %s, %s given", ZSTR_VAL(php_phongo_readconcern_ce->name), PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(read_concern));
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"readConcern\" option to be %s, %s given", ZSTR_VAL(php_phongo_readconcern_ce->name), zend_zval_type_name(read_concern));
 		return false;
 	}
 
@@ -238,7 +238,7 @@ bool phongo_query_init(zval* return_value, zval* filter, zval* options)
 	}
 
 	if (Z_TYPE_P(return_value) != IS_OBJECT || !instanceof_function(Z_OBJCE_P(return_value), php_phongo_query_ce)) {
-		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Expected initialization object to be %s, %s given", ZSTR_VAL(php_phongo_query_ce->name), PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(return_value));
+		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Expected initialization object to be %s, %s given", ZSTR_VAL(php_phongo_query_ce->name), zend_zval_type_name(return_value));
 		return false;
 	}
 

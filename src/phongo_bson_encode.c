@@ -104,7 +104,7 @@ static inline bool phongo_check_bson_serialize_return_type(zval* retval, zend_cl
 								   ZSTR_VAL(ce->name),
 								   BSON_SERIALIZE_FUNC_NAME,
 								   ZSTR_VAL(php_phongo_document_ce->name),
-								   PHONGO_ZVAL_CLASS_OR_TYPE_NAME(*retval));
+								   zend_zval_type_name(retval));
 			return false;
 		}
 
@@ -121,7 +121,7 @@ static inline bool phongo_check_bson_serialize_return_type(zval* retval, zend_cl
 								   BSON_SERIALIZE_FUNC_NAME,
 								   ZSTR_VAL(php_phongo_document_ce->name),
 								   ZSTR_VAL(php_phongo_packedarray_ce->name),
-								   PHONGO_ZVAL_CLASS_OR_TYPE_NAME(*retval));
+								   zend_zval_type_name(retval));
 			return false;
 		}
 

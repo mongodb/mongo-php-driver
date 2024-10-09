@@ -325,7 +325,7 @@ static PHP_METHOD(MongoDB_BSON_Document, offsetGet)
 	intern = Z_DOCUMENT_OBJ_P(getThis());
 
 	if (Z_TYPE_P(offset) != IS_STRING) {
-		phongo_throw_exception(PHONGO_ERROR_RUNTIME, "Could not find key of type \"%s\" in BSON document", PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(offset));
+		phongo_throw_exception(PHONGO_ERROR_RUNTIME, "Could not find key of type \"%s\" in BSON document", zend_zval_type_name(offset));
 		return;
 	}
 
@@ -539,7 +539,7 @@ zval* php_phongo_document_read_dimension(zend_object* object, zval* offset, int 
 			return rv;
 		}
 
-		phongo_throw_exception(PHONGO_ERROR_RUNTIME, "Could not find key of type \"%s\" in BSON document", PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(offset));
+		phongo_throw_exception(PHONGO_ERROR_RUNTIME, "Could not find key of type \"%s\" in BSON document", zend_zval_type_name(offset));
 		return &EG(uninitialized_zval);
 	}
 
