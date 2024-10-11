@@ -8,14 +8,13 @@ MongoDB\Driver\Manager: SSL options in URI and 'options' don't leak
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
 
-$options = array(
-    "pem_pwd" => "does-not-matter",
+$manager = create_test_manager(
+    URI . '&tlsCertificateKeyFilePassword=does-not-matter',
+    ['tlsCertificateKeyFilePassword' => 'also-does-not-matter'],
 );
 
-$manager = create_test_manager(URI . '&sslclientcertificatekeypassword=does-also-not-matter', [], $options);
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECTF--
-Deprecated: MongoDB\Driver\Manager::__construct(): The "pem_pwd" driver option is deprecated. Please use the "tlsCertificateKeyFilePassword" URI option instead.%s
+--EXPECT-
 ===DONE===
