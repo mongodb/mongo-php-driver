@@ -19,6 +19,17 @@ task_groups:
     tasks:
       - ".build"
 
+  # TODO: Remove task group once PHP 8.4 is available on PPC and Zseries
+  - name: "build-all-php-except-8.4"
+    # Keep this number in sync with the number of PHP versions to allow for parallel builds
+    max_hosts: 4
+    setup_task: *build_setup
+    setup_task_can_fail_task: true
+    setup_task_timeout_secs: 1800
+    teardown_task: *build_teardown
+    tasks:
+      - ".build !.php8.4"
+
   # Builds all versions of PHP that support OpenSSL 3 (PHP 8.1+)
   - name: "build-php-openssl3"
     # Keep this number in sync with the number of PHP versions to allow for parallel builds
