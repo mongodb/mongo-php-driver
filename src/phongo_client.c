@@ -689,7 +689,7 @@ static inline char* php_phongo_fetch_string(zval* zarr, const char* key)
 	char*     value;
 
 	value = php_array_fetch_string(zarr, key, &plen, &pfree);
-	
+
 	return pfree ? value : estrndup(value, plen);
 }
 
@@ -729,12 +729,12 @@ static mongoc_ssl_opt_t* php_phongo_make_ssl_opt(mongoc_uri_t* uri, zval* driver
 	/* Apply driver options that don't have a corresponding URI option. These
 	 * are set directly on the SSL options struct. */
 	if (php_array_existsc(driverOptions, "ca_dir")) {
-		ssl_opt->ca_dir = php_phongo_fetch_string(driverOptions, "ca_dir");
+		ssl_opt->ca_dir    = php_phongo_fetch_string(driverOptions, "ca_dir");
 		any_ssl_option_set = true;
 	}
 
 	if (php_array_existsc(driverOptions, "crl_file")) {
-		ssl_opt->crl_file = php_phongo_fetch_string(driverOptions, "crl_file");
+		ssl_opt->crl_file  = php_phongo_fetch_string(driverOptions, "crl_file");
 		any_ssl_option_set = true;
 	}
 
