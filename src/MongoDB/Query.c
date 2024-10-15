@@ -39,7 +39,7 @@ static bool php_phongo_query_opts_append_string(bson_t* opts, const char* opts_k
 	zval* value = php_array_fetch_deref(zarr, zarr_key);
 
 	if (Z_TYPE_P(value) != IS_STRING) {
-		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"%s\" %s to be string, %s given", zarr_key, zarr_key[0] == '$' ? "modifier" : "option", PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(value));
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"%s\" %s to be string, %s given", zarr_key, zarr_key[0] == '$' ? "modifier" : "option", zend_zval_type_name(value));
 		return false;
 	}
 
@@ -59,7 +59,7 @@ static bool php_phongo_query_opts_append_document(bson_t* opts, const char* opts
 	bson_t b     = BSON_INITIALIZER;
 
 	if (Z_TYPE_P(value) != IS_OBJECT && Z_TYPE_P(value) != IS_ARRAY) {
-		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"%s\" %s to be array or object, %s given", zarr_key, zarr_key[0] == '$' ? "modifier" : "option", PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(value));
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"%s\" %s to be array or object, %s given", zarr_key, zarr_key[0] == '$' ? "modifier" : "option", zend_zval_type_name(value));
 		return false;
 	}
 
@@ -209,6 +209,8 @@ static bool php_phongo_query_init_limit_and_singlebatch(php_phongo_query_t* inte
 	if (php_array_fetchc_long(options, "limit") < 0) {
 		zend_long limit = php_array_fetchc_long(options, "limit");
 
+		php_error_docref(NULL, E_DEPRECATED, "Support for negative \"limit\" values is deprecated and will be removed in ext-mongodb 2.0");
+
 		if (!BSON_APPEND_INT64(intern->opts, "limit", -limit)) {
 			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Error appending \"limit\" option");
 			return false;
@@ -247,7 +249,7 @@ static bool php_phongo_query_init_readconcern(php_phongo_query_t* intern, zval* 
 	read_concern = php_array_fetchc_deref(options, "readConcern");
 
 	if (Z_TYPE_P(read_concern) != IS_OBJECT || !instanceof_function(Z_OBJCE_P(read_concern), php_phongo_readconcern_ce)) {
-		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"readConcern\" option to be %s, %s given", ZSTR_VAL(php_phongo_readconcern_ce->name), PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(read_concern));
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"readConcern\" option to be %s, %s given", ZSTR_VAL(php_phongo_readconcern_ce->name), zend_zval_type_name(read_concern));
 		return false;
 	}
 
@@ -301,7 +303,7 @@ bool phongo_query_init(zval* return_value, zval* filter, zval* options)
 	}
 
 	if (Z_TYPE_P(return_value) != IS_OBJECT || !instanceof_function(Z_OBJCE_P(return_value), php_phongo_query_ce)) {
-		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Expected initialization object to be %s, %s given", ZSTR_VAL(php_phongo_query_ce->name), PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(return_value));
+		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Expected initialization object to be %s, %s given", ZSTR_VAL(php_phongo_query_ce->name), zend_zval_type_name(return_value));
 		return false;
 	}
 
@@ -334,7 +336,7 @@ bool phongo_query_init(zval* return_value, zval* filter, zval* options)
 		modifiers = php_array_fetchc_deref(options, "modifiers");
 
 		if (Z_TYPE_P(modifiers) != IS_ARRAY) {
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"modifiers\" option to be array, %s given", PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(modifiers));
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"modifiers\" option to be array, %s given", zend_zval_type_name(modifiers));
 			return false;
 		}
 
@@ -456,13 +458,13 @@ static zend_object* php_phongo_query_create_object(zend_class_entry* class_type)
 	return &intern->std;
 }
 
-static HashTable* php_phongo_query_get_debug_info(phongo_compat_object_handler_type* object, int* is_temp)
+static HashTable* php_phongo_query_get_debug_info(zend_object* object, int* is_temp)
 {
 	php_phongo_query_t* intern;
 	zval                retval = ZVAL_STATIC_INIT;
 
 	*is_temp = 1;
-	intern   = Z_OBJ_QUERY(PHONGO_COMPAT_GET_OBJ(object));
+	intern   = Z_OBJ_QUERY(object);
 
 	array_init_size(&retval, 3);
 
@@ -511,7 +513,6 @@ void php_phongo_query_init_ce(INIT_FUNC_ARGS)
 {
 	php_phongo_query_ce                = register_class_MongoDB_Driver_Query();
 	php_phongo_query_ce->create_object = php_phongo_query_create_object;
-	PHONGO_CE_DISABLE_SERIALIZATION(php_phongo_query_ce);
 
 	memcpy(&php_phongo_handler_query, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	php_phongo_handler_query.get_debug_info = php_phongo_query_get_debug_info;

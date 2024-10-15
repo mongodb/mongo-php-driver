@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: ff0ed638bd5aa4f82216a9af2fc22743c39d2a2b */
+ * Stub hash: 017f3508070fe14083d8839f97ad0d6788470639 */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_Driver_Monitoring_ServerOpeningEvent___construct, 0, 0, 0)
 ZEND_END_ARG_INFO()
@@ -34,7 +34,7 @@ static zend_class_entry *register_class_MongoDB_Driver_Monitoring_ServerOpeningE
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver\\Monitoring", "ServerOpeningEvent", class_MongoDB_Driver_Monitoring_ServerOpeningEvent_methods);
 	class_entry = zend_register_internal_class_ex(&ce, NULL);
-	class_entry->ce_flags |= ZEND_ACC_FINAL;
+	class_entry->ce_flags |= ZEND_ACC_FINAL|ZEND_ACC_NOT_SERIALIZABLE;
 
 	return class_entry;
 }

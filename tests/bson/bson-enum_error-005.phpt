@@ -1,8 +1,5 @@
 --TEST--
 Enums cannot be serialized as a root element
---SKIPIF--
-<?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
-<?php skip_if_php_version('<', '8.1.0'); ?>
 --FILE--
 <?php
 

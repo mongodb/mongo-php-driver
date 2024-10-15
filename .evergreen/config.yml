@@ -74,6 +74,5 @@ include:
   - filename: .evergreen/config/generated/test/ocsp.yml
   - filename: .evergreen/config/generated/test/require-api-version.yml
   - filename: .evergreen/config/generated/test/skip-crypt-shared.yml
-  - filename: .evergreen/config/generated/test-variant/modern-php-full.yml
-  - filename: .evergreen/config/generated/test-variant/legacy-php-full.yml
+  - filename: .evergreen/config/generated/test-variant/php-full.yml
   - filename: .evergreen/config/generated/test-variant/libmongoc.yml

@@ -129,12 +129,12 @@ static zend_object* php_phongo_topologydescription_create_object(zend_class_entr
 	return &intern->std;
 }
 
-HashTable* php_phongo_topologydescription_get_properties_hash(phongo_compat_object_handler_type* object, bool is_debug)
+HashTable* php_phongo_topologydescription_get_properties_hash(zend_object* object, bool is_debug)
 {
 	php_phongo_topologydescription_t* intern = NULL;
 	HashTable*                        props;
 
-	intern = Z_OBJ_TOPOLOGYDESCRIPTION(PHONGO_COMPAT_GET_OBJ(object));
+	intern = Z_OBJ_TOPOLOGYDESCRIPTION(object);
 
 	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_debug, intern, props, 2);
 
@@ -169,13 +169,13 @@ HashTable* php_phongo_topologydescription_get_properties_hash(phongo_compat_obje
 	return props;
 }
 
-static HashTable* php_phongo_topologydescription_get_debug_info(phongo_compat_object_handler_type* object, int* is_temp)
+static HashTable* php_phongo_topologydescription_get_debug_info(zend_object* object, int* is_temp)
 {
 	*is_temp = 1;
 	return php_phongo_topologydescription_get_properties_hash(object, true);
 }
 
-static HashTable* php_phongo_topologydescription_get_properties(phongo_compat_object_handler_type* object)
+static HashTable* php_phongo_topologydescription_get_properties(zend_object* object)
 {
 	return php_phongo_topologydescription_get_properties_hash(object, false);
 }
@@ -184,7 +184,6 @@ void php_phongo_topologydescription_init_ce(INIT_FUNC_ARGS)
 {
 	php_phongo_topologydescription_ce                = register_class_MongoDB_Driver_TopologyDescription();
 	php_phongo_topologydescription_ce->create_object = php_phongo_topologydescription_create_object;
-	PHONGO_CE_DISABLE_SERIALIZATION(php_phongo_topologydescription_ce);
 
 	memcpy(&php_phongo_handler_topologydescription, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	php_phongo_handler_topologydescription.get_debug_info = php_phongo_topologydescription_get_debug_info;

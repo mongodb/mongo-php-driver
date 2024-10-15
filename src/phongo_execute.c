@@ -76,7 +76,7 @@ static bool phongo_parse_read_concern(zval* options, bson_t* mongoc_opts)
 	}
 
 	if (Z_TYPE_P(options) != IS_ARRAY) {
-		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected options to be array, %s given", PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(options));
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected options to be array, %s given", zend_zval_type_name(options));
 		return false;
 	}
 
@@ -87,7 +87,7 @@ static bool phongo_parse_read_concern(zval* options, bson_t* mongoc_opts)
 	}
 
 	if (Z_TYPE_P(option) != IS_OBJECT || !instanceof_function(Z_OBJCE_P(option), php_phongo_readconcern_ce)) {
-		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"readConcern\" option to be %s, %s given", ZSTR_VAL(php_phongo_readconcern_ce->name), PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(option));
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"readConcern\" option to be %s, %s given", ZSTR_VAL(php_phongo_readconcern_ce->name), zend_zval_type_name(option));
 		return false;
 	}
 
@@ -113,7 +113,7 @@ bool phongo_parse_read_preference(zval* options, zval** zreadPreference)
 	}
 
 	if (Z_TYPE_P(options) != IS_ARRAY) {
-		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected options to be array, %s given", PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(options));
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected options to be array, %s given", zend_zval_type_name(options));
 		return false;
 	}
 
@@ -124,7 +124,7 @@ bool phongo_parse_read_preference(zval* options, zval** zreadPreference)
 	}
 
 	if (Z_TYPE_P(option) != IS_OBJECT || !instanceof_function(Z_OBJCE_P(option), php_phongo_readpreference_ce)) {
-		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"readPreference\" option to be %s, %s given", ZSTR_VAL(php_phongo_readpreference_ce->name), PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(option));
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"readPreference\" option to be %s, %s given", ZSTR_VAL(php_phongo_readpreference_ce->name), zend_zval_type_name(option));
 		return false;
 	}
 
@@ -151,7 +151,7 @@ bool phongo_parse_session(zval* options, mongoc_client_t* client, bson_t* mongoc
 	}
 
 	if (Z_TYPE_P(options) != IS_ARRAY) {
-		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected options to be array, %s given", PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(options));
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected options to be array, %s given", zend_zval_type_name(options));
 		return false;
 	}
 
@@ -162,7 +162,7 @@ bool phongo_parse_session(zval* options, mongoc_client_t* client, bson_t* mongoc
 	}
 
 	if (Z_TYPE_P(option) != IS_OBJECT || !instanceof_function(Z_OBJCE_P(option), php_phongo_session_ce)) {
-		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"session\" option to be %s, %s given", ZSTR_VAL(php_phongo_session_ce->name), PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(option));
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"session\" option to be %s, %s given", ZSTR_VAL(php_phongo_session_ce->name), zend_zval_type_name(option));
 		return false;
 	}
 
@@ -199,7 +199,7 @@ static bool phongo_parse_write_concern(zval* options, bson_t* mongoc_opts, zval*
 	}
 
 	if (Z_TYPE_P(options) != IS_ARRAY) {
-		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected options to be array, %s given", PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(options));
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected options to be array, %s given", zend_zval_type_name(options));
 		return false;
 	}
 
@@ -210,7 +210,7 @@ static bool phongo_parse_write_concern(zval* options, bson_t* mongoc_opts, zval*
 	}
 
 	if (Z_TYPE_P(option) != IS_OBJECT || !instanceof_function(Z_OBJCE_P(option), php_phongo_writeconcern_ce)) {
-		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"writeConcern\" option to be %s, %s given", ZSTR_VAL(php_phongo_writeconcern_ce->name), PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(option));
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"writeConcern\" option to be %s, %s given", ZSTR_VAL(php_phongo_writeconcern_ce->name), zend_zval_type_name(option));
 		return false;
 	}
 

@@ -60,24 +60,6 @@ ZEND_TSRMLS_CACHE_EXTERN()
 
 zend_object_handlers* phongo_get_std_object_handlers(void);
 
-#define PHONGO_CE_FINAL(ce)             \
-	do {                                \
-		ce->ce_flags |= ZEND_ACC_FINAL; \
-	} while (0)
-
-#if PHP_VERSION_ID < 80100
-#define PHONGO_CE_DISABLE_SERIALIZATION(ce)            \
-	do {                                               \
-		ce->serialize   = zend_class_serialize_deny;   \
-		ce->unserialize = zend_class_unserialize_deny; \
-	} while (0)
-#else
-#define PHONGO_CE_DISABLE_SERIALIZATION(ce)        \
-	do {                                           \
-		ce->ce_flags |= ZEND_ACC_NOT_SERIALIZABLE; \
-	} while (0)
-#endif
-
 #define PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_temp, intern, props, size) \
 	do {                                                                  \
 		if (is_temp) {                                                    \
@@ -99,9 +81,6 @@ zend_object_handlers* phongo_get_std_object_handlers(void);
 			FREE_HASHTABLE(props);                          \
 		}                                                   \
 	} while (0)
-
-#define PHONGO_ZVAL_CLASS_OR_TYPE_NAME(zv) (Z_TYPE(zv) == IS_OBJECT ? ZSTR_VAL(Z_OBJCE(zv)->name) : zend_get_type_by_const(Z_TYPE(zv)))
-#define PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(zvp) PHONGO_ZVAL_CLASS_OR_TYPE_NAME(*(zvp))
 
 #define PHONGO_ZVAL_EXCEPTION_NAME(e) (ZSTR_VAL(e->ce->name))
 

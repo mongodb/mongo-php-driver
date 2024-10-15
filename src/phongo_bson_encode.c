@@ -17,9 +17,7 @@
 #include "bson/bson.h"
 
 #include <php.h>
-#if PHP_VERSION_ID >= 80100
 #include <Zend/zend_enum.h>
-#endif
 #include <Zend/zend_interfaces.h>
 
 #include "php_phongo.h"
@@ -93,7 +91,7 @@ static int php_phongo_is_array_or_document(zval* val)
 /* Checks the return type of a bsonSerialize() method. Returns true on
  * success; otherwise, throws an exception and returns false.
  *
- * TODO: obsolete once PHP 8.0+ is required and tentative return type is enforced.
+ * TODO: obsolete once the tentative return type in Serializable::bsonSerialize is enforced.
  */
 static inline bool phongo_check_bson_serialize_return_type(zval* retval, zend_class_entry* ce)
 {
@@ -106,7 +104,7 @@ static inline bool phongo_check_bson_serialize_return_type(zval* retval, zend_cl
 								   ZSTR_VAL(ce->name),
 								   BSON_SERIALIZE_FUNC_NAME,
 								   ZSTR_VAL(php_phongo_document_ce->name),
-								   PHONGO_ZVAL_CLASS_OR_TYPE_NAME(*retval));
+								   zend_zval_type_name(retval));
 			return false;
 		}
 
@@ -123,7 +121,7 @@ static inline bool phongo_check_bson_serialize_return_type(zval* retval, zend_cl
 								   BSON_SERIALIZE_FUNC_NAME,
 								   ZSTR_VAL(php_phongo_document_ce->name),
 								   ZSTR_VAL(php_phongo_packedarray_ce->name),
-								   PHONGO_ZVAL_CLASS_OR_TYPE_NAME(*retval));
+								   zend_zval_type_name(retval));
 			return false;
 		}
 
@@ -173,7 +171,7 @@ static void php_phongo_bson_append_object(bson_t* bson, php_phongo_field_path* f
 			zval   obj_data;
 			bson_t child;
 
-			zend_call_method_with_0_params(PHONGO_COMPAT_OBJ_P(object), NULL, NULL, BSON_SERIALIZE_FUNC_NAME, &obj_data);
+			zend_call_method_with_0_params(Z_OBJ_P(object), NULL, NULL, BSON_SERIALIZE_FUNC_NAME, &obj_data);
 
 			if (Z_ISUNDEF(obj_data)) {
 				/* zend_call_method() failed or bsonSerialize() threw an
@@ -293,7 +291,6 @@ static void php_phongo_bson_append_object(bson_t* bson, php_phongo_field_path* f
 		return;
 	}
 
-#if PHP_VERSION_ID >= 80100
 	if (Z_TYPE_P(object) == IS_OBJECT && Z_OBJCE_P(object)->ce_flags & ZEND_ACC_ENUM) {
 		if (Z_OBJCE_P(object)->enum_backing_type == IS_UNDEF) {
 			char* path_string = php_phongo_field_path_as_string(field_path);
@@ -305,7 +302,6 @@ static void php_phongo_bson_append_object(bson_t* bson, php_phongo_field_path* f
 		php_phongo_bson_append(bson, field_path, flags, key, key_len, zend_enum_fetch_case_value(Z_OBJ_P(object)));
 		return;
 	}
-#endif /* PHP_VERSION_ID >= 80100 */
 
 	{
 		bson_t child;
@@ -485,7 +481,7 @@ static void php_phongo_zval_to_bson_internal(zval* data, php_phongo_field_path* 
 			/* For any MongoDB\BSON\Serializable, invoke the bsonSerialize method
 			 * and work with the result. */
 			if (instanceof_function(Z_OBJCE_P(data), php_phongo_serializable_ce)) {
-				zend_call_method_with_0_params(PHONGO_COMPAT_OBJ_P(data), NULL, NULL, BSON_SERIALIZE_FUNC_NAME, &obj_data);
+				zend_call_method_with_0_params(Z_OBJ_P(data), NULL, NULL, BSON_SERIALIZE_FUNC_NAME, &obj_data);
 
 				if (Z_ISUNDEF(obj_data)) {
 					/* zend_call_method() failed or bsonSerialize() threw an
@@ -520,19 +516,17 @@ static void php_phongo_zval_to_bson_internal(zval* data, php_phongo_field_path* 
 			/* For the error handling that follows, we can safely assume that we
 			 * are at the root level, since php_phongo_bson_append_object would
 			 * have already been called for a non-root level. */
-#if PHP_VERSION_ID >= 80100
 			if (Z_OBJCE_P(data)->ce_flags & ZEND_ACC_ENUM) {
 				phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Enum %s cannot be serialized as a root element", ZSTR_VAL(Z_OBJCE_P(data)->name));
 				return;
 			}
-#endif /* PHP_VERSION_ID >= 80100 */
 
 			if (instanceof_function(Z_OBJCE_P(data), php_phongo_type_ce)) {
 				phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "%s instance %s cannot be serialized as a root element", ZSTR_VAL(php_phongo_type_ce->name), ZSTR_VAL(Z_OBJCE_P(data)->name));
 				return;
 			}
 
-			ht_data                 = Z_OBJ_HT_P(data)->get_properties(PHONGO_COMPAT_OBJ_P(data));
+			ht_data                 = Z_OBJ_HT_P(data)->get_properties(Z_OBJ_P(data));
 			ht_data_from_properties = true;
 			break;
 

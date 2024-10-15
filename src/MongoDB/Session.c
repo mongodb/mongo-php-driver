@@ -52,13 +52,13 @@ static bool php_phongo_session_get_timestamp_parts(zval* obj, uint32_t* timestam
 	zval ztimestamp = ZVAL_STATIC_INIT;
 	zval zincrement = ZVAL_STATIC_INIT;
 
-	zend_call_method_with_0_params(PHONGO_COMPAT_OBJ_P(obj), NULL, NULL, "getTimestamp", &ztimestamp);
+	zend_call_method_with_0_params(Z_OBJ_P(obj), NULL, NULL, "getTimestamp", &ztimestamp);
 
 	if (Z_ISUNDEF(ztimestamp) || EG(exception)) {
 		goto cleanup;
 	}
 
-	zend_call_method_with_0_params(PHONGO_COMPAT_OBJ_P(obj), NULL, NULL, "getIncrement", &zincrement);
+	zend_call_method_with_0_params(Z_OBJ_P(obj), NULL, NULL, "getIncrement", &zincrement);
 
 	if (Z_ISUNDEF(zincrement) || EG(exception)) {
 		goto cleanup;
@@ -381,7 +381,7 @@ mongoc_transaction_opt_t* php_mongodb_session_parse_transaction_options(zval* op
 		zval* read_concern = php_array_fetchc_deref(options, "readConcern");
 
 		if (Z_TYPE_P(read_concern) != IS_OBJECT || !instanceof_function(Z_OBJCE_P(read_concern), php_phongo_readconcern_ce)) {
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"readConcern\" option to be %s, %s given", ZSTR_VAL(php_phongo_readconcern_ce->name), PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(read_concern));
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"readConcern\" option to be %s, %s given", ZSTR_VAL(php_phongo_readconcern_ce->name), zend_zval_type_name(read_concern));
 			if (opts) {
 				mongoc_transaction_opts_destroy(opts);
 			}
@@ -399,7 +399,7 @@ mongoc_transaction_opt_t* php_mongodb_session_parse_transaction_options(zval* op
 		zval* read_preference = php_array_fetchc_deref(options, "readPreference");
 
 		if (Z_TYPE_P(read_preference) != IS_OBJECT || !instanceof_function(Z_OBJCE_P(read_preference), php_phongo_readpreference_ce)) {
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"readPreference\" option to be %s, %s given", ZSTR_VAL(php_phongo_readpreference_ce->name), PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(read_preference));
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"readPreference\" option to be %s, %s given", ZSTR_VAL(php_phongo_readpreference_ce->name), zend_zval_type_name(read_preference));
 			if (opts) {
 				mongoc_transaction_opts_destroy(opts);
 			}
@@ -417,7 +417,7 @@ mongoc_transaction_opt_t* php_mongodb_session_parse_transaction_options(zval* op
 		zval* write_concern = php_array_fetchc_deref(options, "writeConcern");
 
 		if (Z_TYPE_P(write_concern) != IS_OBJECT || !instanceof_function(Z_OBJCE_P(write_concern), php_phongo_writeconcern_ce)) {
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"writeConcern\" option to be %s, %s given", ZSTR_VAL(php_phongo_writeconcern_ce->name), PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(write_concern));
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"writeConcern\" option to be %s, %s given", ZSTR_VAL(php_phongo_writeconcern_ce->name), zend_zval_type_name(write_concern));
 			if (opts) {
 				mongoc_transaction_opts_destroy(opts);
 			}
@@ -580,13 +580,13 @@ static zend_object* php_phongo_session_create_object(zend_class_entry* class_typ
 	return &intern->std;
 }
 
-static HashTable* php_phongo_session_get_debug_info(phongo_compat_object_handler_type* object, int* is_temp)
+static HashTable* php_phongo_session_get_debug_info(zend_object* object, int* is_temp)
 {
 	php_phongo_session_t* intern = NULL;
 	zval                  retval = ZVAL_STATIC_INIT;
 
 	*is_temp = 1;
-	intern   = Z_OBJ_SESSION(PHONGO_COMPAT_GET_OBJ(object));
+	intern   = Z_OBJ_SESSION(object);
 
 	array_init(&retval);
 
@@ -696,7 +696,6 @@ void php_phongo_session_init_ce(INIT_FUNC_ARGS)
 {
 	php_phongo_session_ce                = register_class_MongoDB_Driver_Session();
 	php_phongo_session_ce->create_object = php_phongo_session_create_object;
-	PHONGO_CE_DISABLE_SERIALIZATION(php_phongo_session_ce);
 
 	memcpy(&php_phongo_handler_session, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	php_phongo_handler_session.get_debug_info = php_phongo_session_get_debug_info;
