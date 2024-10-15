@@ -16,5 +16,5 @@ $manager = create_test_manager(
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECT-
+--EXPECT--
 ===DONE===

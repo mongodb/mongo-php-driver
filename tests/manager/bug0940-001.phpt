@@ -6,7 +6,9 @@ PHPC-940: php_phongo_free_ssl_opt() attempts to free interned strings
 --FILE--
 <?php
 
-var_dump(new MongoDB\Driver\Manager(null, ['tlsCAFile' => false]));
+/* Note: an empty string is interned, but php_phongo_fetch_string() calls
+ * estrndup() for pfree=false so php_phongo_free_ssl_opt() will still efree() */
+var_dump(new MongoDB\Driver\Manager(null, [], ['ca_dir' => '']));
 
 ?>
 ===DONE===

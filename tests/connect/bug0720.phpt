@@ -22,7 +22,7 @@ printf("ping: %d\n", $cursor->toArray()[0]->ok);
 
 unset($manager, $cursor);
 
-$manager = create_test_manager(URI, [], $driverOptions);
+$manager = create_test_manager(URI, $uriOptions);
 $cursor = $manager->executeCommand(DATABASE_NAME, new MongoDB\Driver\Command(['ping' => 1]));
 printf("ping: %d\n", $cursor->toArray()[0]->ok);
 
