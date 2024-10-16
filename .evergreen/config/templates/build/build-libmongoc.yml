@@ -10,7 +10,7 @@
       - func: "compile driver"
         vars:
           PHP_VERSION: "%phpVersion%"
-          LIBMONGOC_VERSION: "1.28.0"
+          LIBMONGOC_VERSION: "1.28.1"
       - func: "upload build"
 
   - name: "build-php-%phpVersion%-libmongoc-next-stable"
