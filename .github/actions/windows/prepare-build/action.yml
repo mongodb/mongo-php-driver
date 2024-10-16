@@ -31,12 +31,13 @@ runs:
 
     - name: Setup PHP SDK
       id: setup-php
-      uses: php/setup-php-sdk@v0.9
+      uses: php/setup-php-sdk@v0.10
       with:
         version: ${{ inputs.version }}
         arch: ${{ inputs.arch }}
         ts: ${{ inputs.ts }}
         deps: openssl
+        cache: true
 
     - name: Enable Developer Command Prompt
       uses: ilammy/msvc-dev-cmd@v1
