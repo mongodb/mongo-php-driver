@@ -54,53 +54,6 @@
  */
 zend_class_entry* php_phongo_manager_ce;
 
-/* Checks if driverOptions contains a stream context resource in the "context"
- * key and incorporates any of its SSL options into the base array that did not
- * already exist (i.e. array union). The "context" key is then unset from the
- * base array.
- *
- * This handles the merging of any legacy SSL context options and also makes
- * driverOptions suitable for serialization by removing the resource zval. */
-static bool php_phongo_manager_merge_context_options(zval* zdriverOptions)
-{
-	php_stream_context* context;
-	zval *              zcontext, *zcontextOptions;
-
-	if (!php_array_existsc(zdriverOptions, "context")) {
-		return true;
-	}
-
-	zcontext = php_array_fetchc_deref(zdriverOptions, "context");
-	context  = php_stream_context_from_zval(zcontext, 1);
-
-	if (!context) {
-		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "\"context\" driver option is not a valid Stream-Context resource");
-		return false;
-	}
-
-	zcontextOptions = php_array_fetchc_array(&context->options, "ssl");
-
-	if (!zcontextOptions) {
-		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Stream-Context resource does not contain \"ssl\" options array");
-		return false;
-	}
-
-	/* When running PHP in debug mode, php_error_docref duplicates the current
-	 * scope, leading to a COW violation in zend_hash_merge and
-	 * zend_symtable_str_del (called by php_array_unsetc). This macro allows
-	 * that violation in debug mode and is a NOOP when in non-debug. */
-	HT_ALLOW_COW_VIOLATION(Z_ARRVAL_P(zdriverOptions));
-
-	php_error_docref(NULL, E_DEPRECATED, "The \"context\" driver option is deprecated.");
-
-	/* Perform array union (see: add_function() in zend_operators.c) */
-	zend_hash_merge(Z_ARRVAL_P(zdriverOptions), Z_ARRVAL_P(zcontextOptions), zval_add_ref, 0);
-
-	php_array_unsetc(zdriverOptions, "context");
-
-	return true;
-}
-
 /* Prepare authMechanismProperties for BSON encoding by converting a boolean
  * value for the "CANONICALIZE_HOST_NAME" option to a string.
  *
@@ -253,9 +206,9 @@ static PHP_METHOD(MongoDB_Driver_Manager, __construct)
 
 	intern = Z_MANAGER_OBJ_P(getThis());
 
-	/* Separate the options and driverOptions zvals, since we may end up
-	 * modifying them in php_phongo_manager_prep_uri_options() and
-	 * php_phongo_manager_merge_context_options() below, respectively. */
+	/* Separate the options zval, since it may be modified in
+	 * php_phongo_manager_prep_uri_options(). Also separate driverOptions, since
+	 * it may be modified in php_phongo_manager_prepare_manager_for_hash(). */
 	PHONGO_PARSE_PARAMETERS_START(0, 3)
 	Z_PARAM_OPTIONAL
 	Z_PARAM_STRING_OR_NULL(uri_string, uri_string_len)
@@ -265,11 +218,6 @@ static PHP_METHOD(MongoDB_Driver_Manager, __construct)
 
 	if (options) {
 		php_phongo_manager_prep_uri_options(options);
-	}
-
-	if (driverOptions && !php_phongo_manager_merge_context_options(driverOptions)) {
-		/* Exception should already have been thrown */
-		return;
 	}
 
 	phongo_manager_init(intern, uri_string ? uri_string : PHONGO_MANAGER_URI_DEFAULT, options, driverOptions);

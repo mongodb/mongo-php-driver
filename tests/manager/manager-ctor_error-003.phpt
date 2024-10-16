@@ -11,15 +11,12 @@ require_once __DIR__ . '/../utils/basic.inc';
 echo "Testing boolean options:\n";
 
 $booleanOptions = [
-    'canonicalizeHostname',
     'directConnection',
     'journal',
     'loadBalanced',
     'retryReads',
     'retryWrites',
-    'safe',
     'serverSelectionTryOnce',
-    'ssl',
     'tls',
     'tlsAllowInvalidCertificates',
     'tlsAllowInvalidHostnames',
@@ -82,7 +79,6 @@ $stringOptions = [
     'authMechanism',
     'authSource',
     'compressors',
-    'gssapiServiceName',
     'password',
     'replicaSet',
     'srvServiceName',
@@ -131,18 +127,6 @@ foreach ($invalidDocumentValues as $value) {
 <?php exit(0); ?>
 --EXPECT--
 Testing boolean options:
-OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected boolean for "canonicalizeHostname" URI option, double given
-OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected boolean for "canonicalizeHostname" URI option, 32-bit integer given
-OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected boolean for "canonicalizeHostname" URI option, string given
-OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected boolean for "canonicalizeHostname" URI option, ObjectId given
-OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected boolean for "canonicalizeHostname" URI option, array given
-OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected boolean for "canonicalizeHostname" URI option, document given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Expected boolean for "directConnection" URI option, double given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
@@ -204,18 +188,6 @@ Expected boolean for "retryWrites" URI option, array given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Expected boolean for "retryWrites" URI option, document given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected boolean for "safe" URI option, double given
-OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected boolean for "safe" URI option, 32-bit integer given
-OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected boolean for "safe" URI option, string given
-OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected boolean for "safe" URI option, ObjectId given
-OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected boolean for "safe" URI option, array given
-OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected boolean for "safe" URI option, document given
-OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Expected boolean for "serverSelectionTryOnce" URI option, double given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Expected boolean for "serverSelectionTryOnce" URI option, 32-bit integer given
@@ -227,18 +199,6 @@ OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Expected boolean for "serverSelectionTryOnce" URI option, array given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Expected boolean for "serverSelectionTryOnce" URI option, document given
-OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected boolean for "ssl" URI option, double given
-OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected boolean for "ssl" URI option, 32-bit integer given
-OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected boolean for "ssl" URI option, string given
-OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected boolean for "ssl" URI option, ObjectId given
-OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected boolean for "ssl" URI option, array given
-OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected boolean for "ssl" URI option, document given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Expected boolean for "tls" URI option, double given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
@@ -459,18 +419,6 @@ OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Expected string for "compressors" URI option, array given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Expected string for "compressors" URI option, document given
-OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected string for "gssapiServiceName" URI option, boolean given
-OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected string for "gssapiServiceName" URI option, double given
-OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected string for "gssapiServiceName" URI option, 32-bit integer given
-OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected string for "gssapiServiceName" URI option, ObjectId given
-OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected string for "gssapiServiceName" URI option, array given
-OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected string for "gssapiServiceName" URI option, document given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Expected string for "password" URI option, boolean given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException

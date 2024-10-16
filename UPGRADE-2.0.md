@@ -41,3 +41,9 @@ UPGRADE FROM 1.x to 2.0
  * The `MongoDB\Driver\Manager` constructor now throws if the URI options array
    includes a non-boolean value for an option expecting a boolean. This behavior
    is now consistent with validation for other option types.
+ * Removed the following driver options from `MongoDB\Driver\Manager`:
+   `allow_invalid_hostname` (use `tlsAllowInvalidHostnames` URI option instead),
+   `ca_file` (use `tlsCAFile`), `context`,
+   `pem_file` (use `tlsCertificateKeyFile`),
+   `pem_pwd` (use `tlsCertificateKeyFilePassword`), and
+   `weak_cert_validation` (use `tlsAllowInvalidCertificates`).
