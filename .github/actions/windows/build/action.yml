@@ -11,6 +11,9 @@ inputs:
     description: "Thread-safety (nts or ts)"
     required: true
 outputs:
+  vs:
+    description: "The Visual Studio version"
+    value: ${{ steps.prepare-build-env.outputs.vs }}
   build-dir:
     description: "The build directory to be used"
     value: ${{ steps.prepare-build-env.outputs.build-dir }}
