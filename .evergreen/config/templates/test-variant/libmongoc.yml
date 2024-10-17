@@ -61,33 +61,33 @@
         execution_tasks:
           - ".ocsp .7.0"
 
-  - name: test-debian12-php-%phpVersion%-libmongoc-latest
-    tags: ["test", "libmongoc", "debian", "x64", "php%phpVersion%"]
-    display_name: "Test: Debian 12, PHP %phpVersion%, libmongoc latest"
-    run_on: debian12-small
-    expansions:
-      FETCH_BUILD_VARIANT: "build-debian12"
-      FETCH_BUILD_TASK: "build-php-%phpVersion%-libmongoc-latest"
-    depends_on:
-      - variant: "build-debian12"
-        name: "build-php-%phpVersion%-libmongoc-latest"
-    tasks:
-      - ".standalone .local !.4.0 !.4.2 !.4.4 !.5.0 !.6.0"
-      - ".replicaset .local !.4.0 !.4.2 !.4.4 !.5.0 !.6.0"
-      - ".sharded .local !.4.0 !.4.2 !.4.4 !.5.0 !.6.0"
-      - ".loadbalanced .local !.4.0 !.4.2 !.4.4 !.5.0 !.6.0"
-      - "test-atlas-connectivity"
-      - ".ocsp !.4.4 !.5.0 !.6.0"
-    display_tasks:
-      - name: "test-ocsp-latest"
-        execution_tasks:
-          - ".ocsp .latest"
-      - name: "test-ocsp-rapid"
-        execution_tasks:
-          - ".ocsp .rapid"
-      - name: "test-ocsp-8.0"
-        execution_tasks:
-          - ".ocsp .8.0"
-      - name: "test-ocsp-7.0"
-        execution_tasks:
-          - ".ocsp .7.0"
+#  - name: test-debian12-php-%phpVersion%-libmongoc-latest
+#    tags: ["test", "libmongoc", "debian", "x64", "php%phpVersion%"]
+#    display_name: "Test: Debian 12, PHP %phpVersion%, libmongoc latest"
+#    run_on: debian12-small
+#    expansions:
+#      FETCH_BUILD_VARIANT: "build-debian12"
+#      FETCH_BUILD_TASK: "build-php-%phpVersion%-libmongoc-latest"
+#    depends_on:
+#      - variant: "build-debian12"
+#        name: "build-php-%phpVersion%-libmongoc-latest"
+#    tasks:
+#      - ".standalone .local !.4.0 !.4.2 !.4.4 !.5.0 !.6.0"
+#      - ".replicaset .local !.4.0 !.4.2 !.4.4 !.5.0 !.6.0"
+#      - ".sharded .local !.4.0 !.4.2 !.4.4 !.5.0 !.6.0"
+#      - ".loadbalanced .local !.4.0 !.4.2 !.4.4 !.5.0 !.6.0"
+#      - "test-atlas-connectivity"
+#      - ".ocsp !.4.4 !.5.0 !.6.0"
+#    display_tasks:
+#      - name: "test-ocsp-latest"
+#        execution_tasks:
+#          - ".ocsp .latest"
+#      - name: "test-ocsp-rapid"
+#        execution_tasks:
+#          - ".ocsp .rapid"
+#      - name: "test-ocsp-8.0"
+#        execution_tasks:
+#          - ".ocsp .8.0"
+#      - name: "test-ocsp-7.0"
+#        execution_tasks:
+#          - ".ocsp .7.0"

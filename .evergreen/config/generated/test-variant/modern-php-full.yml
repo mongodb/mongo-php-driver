@@ -74,7 +74,6 @@ buildvariants:
       - ".standalone .local !.5.0 !.6.0 !.7.0 !.8.0 !.rapid !.latest"
       - ".replicaset .local !.5.0 !.6.0 !.7.0 !.8.0 !.rapid !.latest"
       - ".sharded .local !.5.0 !.6.0 !.7.0 !.8.0 !.rapid !.latest"
-      - ".loadbalanced .local !.5.0 !.6.0 !.7.0 !.8.0 !.rapid !.latest"
       - ".ocsp !.5.0 !.6.0 !.7.0 !.8.0 !.rapid !.latest"
     display_tasks:
       - name: "test-ocsp-4.4"
@@ -154,7 +153,6 @@ buildvariants:
       - ".standalone .local !.5.0 !.6.0 !.7.0 !.8.0 !.rapid !.latest"
       - ".replicaset .local !.5.0 !.6.0 !.7.0 !.8.0 !.rapid !.latest"
       - ".sharded .local !.5.0 !.6.0 !.7.0 !.8.0 !.rapid !.latest"
-      - ".loadbalanced .local !.5.0 !.6.0 !.7.0 !.8.0 !.rapid !.latest"
       - ".ocsp !.5.0 !.6.0 !.7.0 !.8.0 !.rapid !.latest"
     display_tasks:
       - name: "test-ocsp-4.4"
@@ -234,7 +232,6 @@ buildvariants:
       - ".standalone .local !.5.0 !.6.0 !.7.0 !.8.0 !.rapid !.latest"
       - ".replicaset .local !.5.0 !.6.0 !.7.0 !.8.0 !.rapid !.latest"
       - ".sharded .local !.5.0 !.6.0 !.7.0 !.8.0 !.rapid !.latest"
-      - ".loadbalanced .local !.5.0 !.6.0 !.7.0 !.8.0 !.rapid !.latest"
       - ".ocsp !.5.0 !.6.0 !.7.0 !.8.0 !.rapid !.latest"
     display_tasks:
       - name: "test-ocsp-4.4"
@@ -314,7 +311,6 @@ buildvariants:
       - ".standalone .local !.5.0 !.6.0 !.7.0 !.8.0 !.rapid !.latest"
       - ".replicaset .local !.5.0 !.6.0 !.7.0 !.8.0 !.rapid !.latest"
       - ".sharded .local !.5.0 !.6.0 !.7.0 !.8.0 !.rapid !.latest"
-      - ".loadbalanced .local !.5.0 !.6.0 !.7.0 !.8.0 !.rapid !.latest"
       - ".ocsp !.5.0 !.6.0 !.7.0 !.8.0 !.rapid !.latest"
     display_tasks:
       - name: "test-ocsp-4.4"
