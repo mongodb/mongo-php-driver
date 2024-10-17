@@ -2,17 +2,12 @@
 <?php
 
 // Supported PHP versions. Add new versions to the beginning of the list
-$modernPhpVersions = [
+$phpVersions = [
     '8.4',
     '8.3',
     '8.2',
     '8.1',
 ];
-$legacyPhpVersions = [
-    '8.0',
-    '7.4',
-];
-$supportedPhpVersions = array_merge($modernPhpVersions, $legacyPhpVersions);
 
 // Supported MongoDB versions. Add new versions after "rapid"
 $supportedMongoDBVersions = [
@@ -28,7 +23,7 @@ $supportedMongoDBVersions = [
 ];
 
 // TODO: Change when PHP 8.4 is stable
-// $latestPhpVersion = max($supportedPhpVersions);
+// $latestPhpVersion = max($phpVersions);
 $latestPhpVersion = '8.3';
 
 // Only test the latest PHP version for libmongoc
@@ -60,7 +55,7 @@ $skipCryptSharedServerVersions = array_filter(
 $allFiles = [];
 
 // Build tasks
-$allFiles[] = generateConfigs('tasks', 'build', 'phpVersion', 'build-php.yml', $supportedPhpVersions);
+$allFiles[] = generateConfigs('tasks', 'build', 'phpVersion', 'build-php.yml', $phpVersions);
 $allFiles[] = generateConfigs('tasks', 'build', 'phpVersion', 'build-libmongoc.yml', $libmongocBuildPhpVersions);
 
 // Test tasks
@@ -71,8 +66,7 @@ $allFiles[] = generateConfigs('tasks', 'test', 'mongodbVersion', 'require-api-ve
 $allFiles[] = generateConfigs('tasks', 'test', 'mongodbVersion', 'skip-crypt-shared.yml', $skipCryptSharedServerVersions);
 
 // Test variants
-$allFiles[] = generateConfigs('buildvariants', 'test-variant', 'phpVersion', 'modern-php-full.yml', $modernPhpVersions);
-$allFiles[] = generateConfigs('buildvariants', 'test-variant', 'phpVersion', 'legacy-php-full.yml', $legacyPhpVersions);
+$allFiles[] = generateConfigs('buildvariants', 'test-variant', 'phpVersion', 'php-full.yml', $phpVersions);
 $allFiles[] = generateConfigs('buildvariants', 'test-variant', 'phpVersion', 'libmongoc.yml', [$latestPhpVersion]);
 
 echo "Generated config. Use the following list to import files:\n";

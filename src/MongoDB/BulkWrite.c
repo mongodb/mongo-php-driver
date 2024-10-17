@@ -589,13 +589,13 @@ static zend_object* php_phongo_bulkwrite_create_object(zend_class_entry* class_t
 	return &intern->std;
 }
 
-static HashTable* php_phongo_bulkwrite_get_debug_info(phongo_compat_object_handler_type* object, int* is_temp)
+static HashTable* php_phongo_bulkwrite_get_debug_info(zend_object* object, int* is_temp)
 {
 	zval                    retval = ZVAL_STATIC_INIT;
 	php_phongo_bulkwrite_t* intern = NULL;
 
 	*is_temp = 1;
-	intern   = Z_OBJ_BULKWRITE(PHONGO_COMPAT_GET_OBJ(object));
+	intern   = Z_OBJ_BULKWRITE(object);
 	array_init(&retval);
 
 	if (intern->database) {
@@ -667,7 +667,6 @@ void php_phongo_bulkwrite_init_ce(INIT_FUNC_ARGS)
 {
 	php_phongo_bulkwrite_ce                = register_class_MongoDB_Driver_BulkWrite(zend_ce_countable);
 	php_phongo_bulkwrite_ce->create_object = php_phongo_bulkwrite_create_object;
-	PHONGO_CE_DISABLE_SERIALIZATION(php_phongo_bulkwrite_ce);
 
 	memcpy(&php_phongo_handler_bulkwrite, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	php_phongo_handler_bulkwrite.get_debug_info = php_phongo_bulkwrite_get_debug_info;

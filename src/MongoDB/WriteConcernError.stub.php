@@ -7,6 +7,7 @@
 
 namespace MongoDB\Driver;
 
+/** @not-serializable */
 final class WriteConcernError
 {
     final private function __construct() {}

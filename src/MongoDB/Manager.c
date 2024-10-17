@@ -741,7 +741,7 @@ static PHP_METHOD(MongoDB_Driver_Manager, startSession)
 			phongo_throw_exception(
 				PHONGO_ERROR_INVALID_ARGUMENT,
 				"Expected \"defaultTransactionOptions\" option to be an array, %s given",
-				PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(txn_options));
+				zend_zval_type_name(txn_options));
 			goto cleanup;
 		}
 
@@ -857,7 +857,7 @@ static zend_object* php_phongo_manager_create_object(zend_class_entry* class_typ
 	return &intern->std;
 }
 
-static HashTable* php_phongo_manager_get_debug_info(phongo_compat_object_handler_type* object, int* is_temp)
+static HashTable* php_phongo_manager_get_debug_info(zend_object* object, int* is_temp)
 {
 	php_phongo_manager_t*         intern;
 	mongoc_server_description_t** sds;
@@ -866,7 +866,7 @@ static HashTable* php_phongo_manager_get_debug_info(phongo_compat_object_handler
 	zval                          cluster;
 
 	*is_temp = 1;
-	intern   = Z_OBJ_MANAGER(PHONGO_COMPAT_GET_OBJ(object));
+	intern   = Z_OBJ_MANAGER(object);
 
 	array_init_size(&retval, 2);
 
@@ -901,7 +901,6 @@ void php_phongo_manager_init_ce(INIT_FUNC_ARGS)
 {
 	php_phongo_manager_ce                = register_class_MongoDB_Driver_Manager();
 	php_phongo_manager_ce->create_object = php_phongo_manager_create_object;
-	PHONGO_CE_DISABLE_SERIALIZATION(php_phongo_manager_ce);
 
 	memcpy(&php_phongo_handler_manager, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	php_phongo_handler_manager.get_debug_info = php_phongo_manager_get_debug_info;

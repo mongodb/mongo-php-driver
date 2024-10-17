@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 7c61addf17e525496c8755d437b4db423f6be59d */
+ * Stub hash: 2cd175f4e81e332cd83adb867d51db77907ee8c7 */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_Driver_TopologyDescription___construct, 0, 0, 0)
 ZEND_END_ARG_INFO()
@@ -40,7 +40,7 @@ static zend_class_entry *register_class_MongoDB_Driver_TopologyDescription(void)
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver", "TopologyDescription", class_MongoDB_Driver_TopologyDescription_methods);
 	class_entry = zend_register_internal_class_ex(&ce, NULL);
-	class_entry->ce_flags |= ZEND_ACC_FINAL;
+	class_entry->ce_flags |= ZEND_ACC_FINAL|ZEND_ACC_NOT_SERIALIZABLE;
 
 	zval const_TYPE_UNKNOWN_value;
 	zend_string *const_TYPE_UNKNOWN_value_str = zend_string_init(PHONGO_TOPOLOGY_UNKNOWN, strlen(PHONGO_TOPOLOGY_UNKNOWN), 1);
