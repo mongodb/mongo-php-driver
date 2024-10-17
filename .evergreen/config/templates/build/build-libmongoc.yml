@@ -22,11 +22,13 @@
           LIBMONGOC_VERSION: "r1.28"
       - func: "upload build"
 
-  - name: "build-php-%phpVersion%-libmongoc-latest"
-    tags: ["build-libmongoc", "php%phpVersion%"]
-    commands:
-      - func: "compile driver"
-        vars:
-          PHP_VERSION: "%phpVersion%"
-          LIBMONGOC_VERSION: "master"
-      - func: "upload build"
+# TODO: this currently fails as libmongoc master needs changes to build directories
+# We can re-enable this after switching to 1.29-dev
+#  - name: "build-php-%phpVersion%-libmongoc-latest"
+#    tags: ["build-libmongoc", "php%phpVersion%"]
+#    commands:
+#      - func: "compile driver"
+#        vars:
+#          PHP_VERSION: "%phpVersion%"
+#          LIBMONGOC_VERSION: "master"
+#      - func: "upload build"
