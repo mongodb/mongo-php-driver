@@ -19,7 +19,7 @@ languages.
 
 ## Documentation
 
- - https://php.net/mongodb
+ - https://www.php.net/mongodb
  - https://www.mongodb.com/docs/drivers/php-drivers/
 
 ## Installation
