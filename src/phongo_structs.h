@@ -39,6 +39,19 @@ typedef struct {
 } php_phongo_bulkwrite_t;
 
 typedef struct {
+	mongoc_bulkwrite_t*     bw;
+	int                     bypass;
+	bson_value_t*           comment;
+	bson_t*                 let;
+	size_t                  num_ops;
+	bool                    ordered;
+	zval                    session;
+	bool                    verbose;
+	mongoc_write_concern_t* write_concern;
+	zend_object             std;
+} php_phongo_bulkwritecommand_t;
+
+typedef struct {
 	mongoc_client_encryption_t* client_encryption;
 	zval                        key_vault_client_manager;
 	char*                       key_vault_namespace;

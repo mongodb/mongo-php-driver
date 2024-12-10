@@ -252,6 +252,7 @@ PHP_MINIT_FUNCTION(mongodb) /* {{{ */
 	php_phongo_cursor_interface_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 
 	php_phongo_bulkwrite_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	php_phongo_bulkwritecommand_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 	php_phongo_clientencryption_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 	php_phongo_command_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 	php_phongo_cursor_init_ce(INIT_FUNC_ARGS_PASSTHRU);
