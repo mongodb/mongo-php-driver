@@ -253,6 +253,7 @@ PHP_MINIT_FUNCTION(mongodb) /* {{{ */
 
 	php_phongo_bulkwrite_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 	php_phongo_bulkwritecommand_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	php_phongo_bulkwritecommandresult_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 	php_phongo_clientencryption_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 	php_phongo_command_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 	php_phongo_cursor_init_ce(INIT_FUNC_ARGS_PASSTHRU);
@@ -278,6 +279,7 @@ PHP_MINIT_FUNCTION(mongodb) /* {{{ */
 
 	php_phongo_authenticationexception_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 	php_phongo_bulkwriteexception_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	php_phongo_bulkwritecommandexception_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 	php_phongo_commandexception_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 	php_phongo_connectiontimeoutexception_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 	php_phongo_encryptionexception_init_ce(INIT_FUNC_ARGS_PASSTHRU);

@@ -52,6 +52,24 @@ typedef struct {
 } php_phongo_bulkwritecommand_t;
 
 typedef struct {
+	bool        is_acknowledged;
+	int64_t     inserted_count;
+	int64_t     matched_count;
+	int64_t     modified_count;
+	int64_t     upserted_count;
+	int64_t     deleted_count;
+	bson_t*     insert_results;
+	bson_t*     update_results;
+	bson_t*     delete_results;
+	bson_t*     write_errors;
+	bson_t*     write_concern_errors;
+	bson_t*     error_reply;
+	zval        manager;
+	uint32_t    server_id;
+	zend_object std;
+} php_phongo_bulkwritecommandresult_t;
+
+typedef struct {
 	mongoc_client_encryption_t* client_encryption;
 	zval                        key_vault_client_manager;
 	char*                       key_vault_namespace;

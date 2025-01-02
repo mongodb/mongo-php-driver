@@ -147,14 +147,18 @@ zend_bool phongo_writeconcernerror_init(zval* return_value, bson_t* bson)
 		intern->code = bson_iter_int32(&iter);
 	}
 
-	if (bson_iter_init_find(&iter, bson, "errmsg") && BSON_ITER_HOLDS_UTF8(&iter)) {
+	// Additionally check for field name used by mongoc_bulkwriteexception_t
+	if ((bson_iter_init_find(&iter, bson, "errmsg") && BSON_ITER_HOLDS_UTF8(&iter)) ||
+	    (bson_iter_init_find(&iter, bson, "message") && BSON_ITER_HOLDS_UTF8(&iter))) {
 		uint32_t    errmsg_len;
 		const char* err_msg = bson_iter_utf8(&iter, &errmsg_len);
 
 		intern->message = estrndup(err_msg, errmsg_len);
 	}
 
-	if (bson_iter_init_find(&iter, bson, "errInfo") && BSON_ITER_HOLDS_DOCUMENT(&iter)) {
+	// Additionally check for field name used by mongoc_bulkwriteexception_t
+	if ((bson_iter_init_find(&iter, bson, "errInfo") && BSON_ITER_HOLDS_DOCUMENT(&iter)) ||
+	    (bson_iter_init_find(&iter, bson, "details") && BSON_ITER_HOLDS_DOCUMENT(&iter))) {
 		uint32_t       len;
 		const uint8_t* data = NULL;
 

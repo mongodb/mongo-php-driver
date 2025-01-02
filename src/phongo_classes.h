@@ -30,6 +30,10 @@ static inline php_phongo_bulkwritecommand_t* php_bulkwritecommand_fetch_object(z
 {
 	return (php_phongo_bulkwritecommand_t*) ((char*) obj - XtOffsetOf(php_phongo_bulkwritecommand_t, std));
 }
+static inline php_phongo_bulkwritecommandresult_t* php_bulkwritecommandresult_fetch_object(zend_object* obj)
+{
+	return (php_phongo_bulkwritecommandresult_t*) ((char*) obj - XtOffsetOf(php_phongo_bulkwritecommandresult_t, std));
+}
 static inline php_phongo_clientencryption_t* php_clientencryption_fetch_object(zend_object* obj)
 {
 	return (php_phongo_clientencryption_t*) ((char*) obj - XtOffsetOf(php_phongo_clientencryption_t, std));
@@ -221,6 +225,7 @@ static inline php_phongo_topologyopeningevent_t* php_topologyopeningevent_fetch_
 #define Z_TOPOLOGYDESCRIPTION_OBJ_P(zv) (php_topologydescription_fetch_object(Z_OBJ_P(zv)))
 #define Z_BULKWRITE_OBJ_P(zv) (php_bulkwrite_fetch_object(Z_OBJ_P(zv)))
 #define Z_BULKWRITECOMMAND_OBJ_P(zv) (php_bulkwritecommand_fetch_object(Z_OBJ_P(zv)))
+#define Z_BULKWRITECOMMANDRESULT_OBJ_P(zv) (php_bulkwritecommandresult_fetch_object(Z_OBJ_P(zv)))
 #define Z_WRITECONCERN_OBJ_P(zv) (php_writeconcern_fetch_object(Z_OBJ_P(zv)))
 #define Z_WRITECONCERNERROR_OBJ_P(zv) (php_writeconcernerror_fetch_object(Z_OBJ_P(zv)))
 #define Z_WRITEERROR_OBJ_P(zv) (php_writeerror_fetch_object(Z_OBJ_P(zv)))
@@ -268,6 +273,7 @@ static inline php_phongo_topologyopeningevent_t* php_topologyopeningevent_fetch_
 #define Z_OBJ_TOPOLOGYDESCRIPTION(zo) (php_topologydescription_fetch_object(zo))
 #define Z_OBJ_BULKWRITE(zo) (php_bulkwrite_fetch_object(zo))
 #define Z_OBJ_BULKWRITECOMMAND(zo) (php_bulkwritecommand_fetch_object(zo))
+#define Z_OBJ_BULKWRITECOMMANDRESULT(zo) (php_bulkwritecommandresult_fetch_object(zo))
 #define Z_OBJ_WRITECONCERN(zo) (php_writeconcern_fetch_object(zo))
 #define Z_OBJ_WRITECONCERNERROR(zo) (php_writeconcernerror_fetch_object(zo))
 #define Z_OBJ_WRITEERROR(zo) (php_writeerror_fetch_object(zo))
@@ -315,6 +321,7 @@ extern zend_class_entry* php_phongo_session_ce;
 extern zend_class_entry* php_phongo_topologydescription_ce;
 extern zend_class_entry* php_phongo_bulkwrite_ce;
 extern zend_class_entry* php_phongo_bulkwritecommand_ce;
+extern zend_class_entry* php_phongo_bulkwritecommandresult_ce;
 extern zend_class_entry* php_phongo_writeconcern_ce;
 extern zend_class_entry* php_phongo_writeconcernerror_ce;
 extern zend_class_entry* php_phongo_writeerror_ce;
@@ -335,6 +342,7 @@ extern zend_class_entry* php_phongo_encryptionexception_ce;
 extern zend_class_entry* php_phongo_executiontimeoutexception_ce;
 extern zend_class_entry* php_phongo_connectiontimeoutexception_ce;
 extern zend_class_entry* php_phongo_bulkwriteexception_ce;
+extern zend_class_entry* php_phongo_bulkwritecommandexception_ce;
 
 extern zend_class_entry* php_phongo_type_ce;
 extern zend_class_entry* php_phongo_persistable_ce;
@@ -417,6 +425,7 @@ extern void php_phongo_utcdatetime_interface_init_ce(INIT_FUNC_ARGS);
 
 extern void php_phongo_bulkwrite_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_bulkwritecommand_init_ce(INIT_FUNC_ARGS);
+extern void php_phongo_bulkwritecommandresult_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_clientencryption_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_command_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_cursor_init_ce(INIT_FUNC_ARGS);
@@ -438,6 +447,7 @@ extern void php_phongo_cursor_interface_init_ce(INIT_FUNC_ARGS);
 
 extern void php_phongo_authenticationexception_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_bulkwriteexception_init_ce(INIT_FUNC_ARGS);
+extern void php_phongo_bulkwritecommandexception_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_commandexception_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_connectionexception_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_connectiontimeoutexception_init_ce(INIT_FUNC_ARGS);
