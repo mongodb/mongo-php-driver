@@ -519,6 +519,42 @@ static PHP_METHOD(MongoDB_Driver_Manager, executeBulkWrite)
 	phongo_execute_bulk_write(getThis(), namespace, bulk, options, server_id, return_value);
 }
 
+/* Executes a BulkWriteCommand (i.e. bulkWrite command for MongoDB 8.0+) */
+static PHP_METHOD(MongoDB_Driver_Manager, executeBulkWriteCommand)
+{
+	php_phongo_manager_t* intern;
+	zval*                   zbwc;
+	php_phongo_bulkwritecommand_t* bwc;
+	zval*                   zoptions      = NULL;
+	uint32_t                server_id    = 0;
+	zval*                   zsession     = NULL;
+
+	PHONGO_PARSE_PARAMETERS_START(1, 2)
+	Z_PARAM_OBJECT_OF_CLASS(zbwc, php_phongo_bulkwritecommand_ce)
+	Z_PARAM_OPTIONAL
+	Z_PARAM_ZVAL_OR_NULL(zoptions)
+	PHONGO_PARSE_PARAMETERS_END();
+
+	intern = Z_MANAGER_OBJ_P(getThis());
+	bwc   = Z_BULKWRITECOMMAND_OBJ_P(zbwc);
+
+	if (!phongo_parse_session(zoptions, intern->client, NULL, &zsession)) {
+		/* Exception should already have been thrown */
+		return;
+	}
+
+	if (!php_phongo_manager_select_server(true, false, NULL, zsession, intern->client, &server_id)) {
+		/* Exception should already have been thrown */
+		return;
+	}
+
+	/* If the Server was created in a different process, reset the client so
+	 * that its session pool is cleared. */
+	PHONGO_RESET_CLIENT_IF_PID_DIFFERS(intern, intern);
+
+	phongo_execute_bulkwritecommand(getThis(), bwc, zoptions, server_id, return_value);
+}
+
 /* Returns the autoEncryption.encryptedFieldsMap driver option */
 static PHP_METHOD(MongoDB_Driver_Manager, getEncryptedFieldsMap)
 {

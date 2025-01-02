@@ -194,6 +194,30 @@ static PHP_METHOD(MongoDB_Driver_Server, executeBulkWrite)
 	phongo_execute_bulk_write(&intern->manager, namespace, bulk, options, intern->server_id, return_value);
 }
 
+/* Executes a BulkWriteCommand (i.e. bulkWrite command for MongoDB 8.0+) */
+static PHP_METHOD(MongoDB_Driver_Server, executeBulkWriteCommand)
+{
+	php_phongo_server_t* intern;
+	zval*                   zbwc;
+	php_phongo_bulkwritecommand_t* bwc;
+	zval*                   zoptions      = NULL;
+
+	PHONGO_PARSE_PARAMETERS_START(1, 2)
+	Z_PARAM_OBJECT_OF_CLASS(zbwc, php_phongo_bulkwritecommand_ce)
+	Z_PARAM_OPTIONAL
+	Z_PARAM_ZVAL_OR_NULL(zoptions)
+	PHONGO_PARSE_PARAMETERS_END();
+
+	intern = Z_SERVER_OBJ_P(getThis());
+	bwc   = Z_BULKWRITECOMMAND_OBJ_P(zbwc);
+
+	/* If the Server was created in a different process, reset the client so
+	 * that its session pool is cleared. */
+	PHONGO_RESET_CLIENT_IF_PID_DIFFERS(intern, Z_MANAGER_OBJ_P(&intern->manager));
+
+	phongo_execute_bulkwritecommand(&intern->manager, bwc, zoptions, intern->server_id, return_value);
+}
+
 /* Returns the hostname for this Server */
 static PHP_METHOD(MongoDB_Driver_Server, getHost)
 {

@@ -25,6 +25,4 @@ final class BulkWriteCommand implements \Countable
     final public function updateOne(string $namespace, array|object $filter, array|object $update, ?array $options = null): void {}
 
     final public function updateMany(string $namespace, array|object $filter, array|object $update, ?array $options = null): void {}
-
-    final public function execute(Manager|Server $managerOrServer): mixed {}
 }

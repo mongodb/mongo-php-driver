@@ -34,6 +34,34 @@
 
 zend_class_entry* php_phongo_bulkwritecommand_ce;
 
+/* Creates a mongoc_bulkwriteopts_t from internal options, which should be freed
+ * by the caller. */
+mongoc_bulkwriteopts_t* phongo_bwc_assemble_opts(php_phongo_bulkwritecommand_t* intern)
+{
+	mongoc_bulkwriteopts_t* opts = mongoc_bulkwriteopts_new();
+
+	if (intern->bypass != PHONGO_BULKWRITECOMMAND_BYPASS_UNSET) {
+		mongoc_bulkwriteopts_set_bypassdocumentvalidation(opts, intern->bypass);
+	}
+
+	if (intern->comment) {
+		mongoc_bulkwriteopts_set_comment(opts, intern->comment);
+	}
+
+	if (intern->let) {
+		mongoc_bulkwriteopts_set_let(opts, intern->let);
+	}
+
+	mongoc_bulkwriteopts_set_ordered(opts, intern->ordered);
+	mongoc_bulkwriteopts_set_verboseresults(opts, intern->verbose);
+
+	if (intern->write_concern) {
+		mongoc_bulkwriteopts_set_writeconcern(opts, intern->write_concern);
+	}
+
+	return opts;
+}
+
 // TODO: Make this a common utility function to share with BulkWrite.c
 /* Extracts the "_id" field of a BSON document into a return value. */
 static void phongo_bwc_extract_id(bson_t* doc, zval** return_value)
@@ -379,17 +407,6 @@ static PHP_METHOD(MongoDB_Driver_BulkWriteCommand, deleteOne)
 cleanup:
 	bson_destroy(&bfilter);
 	mongoc_bulkwrite_deleteoneopts_destroy(opts);
-}
-
-static PHP_METHOD(MongoDB_Driver_BulkWriteCommand, execute)
-{
-	php_phongo_bulkwritecommand_t* intern;
-
-	intern = Z_BULKWRITECOMMAND_OBJ_P(getThis());
-
-	PHONGO_PARSE_PARAMETERS_NONE();
-
-	RETURN_LONG(intern->num_ops);
 }
 
 static PHP_METHOD(MongoDB_Driver_BulkWriteCommand, insertOne)

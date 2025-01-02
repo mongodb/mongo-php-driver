@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: e2198c12dd76c9056a16ee6cb86b8af059fdcd6f */
+ * Stub hash: 2af15e87d1d8095137d315218e688221ac2b5983 */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_Driver_BulkWriteCommand___construct, 0, 0, 0)
 	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, options, IS_ARRAY, 1, "null")
@@ -37,10 +37,6 @@ ZEND_END_ARG_INFO()
 
 #define arginfo_class_MongoDB_Driver_BulkWriteCommand_updateMany arginfo_class_MongoDB_Driver_BulkWriteCommand_updateOne
 
-ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_Driver_BulkWriteCommand_execute, 0, 1, IS_MIXED, 0)
-	ZEND_ARG_OBJ_TYPE_MASK(0, managerOrServer, MongoDB\\Driver\\Manager|MongoDB\\Driver\\Server, 0, NULL)
-ZEND_END_ARG_INFO()
-
 
 static ZEND_METHOD(MongoDB_Driver_BulkWriteCommand, __construct);
 static ZEND_METHOD(MongoDB_Driver_BulkWriteCommand, count);
@@ -50,7 +46,6 @@ static ZEND_METHOD(MongoDB_Driver_BulkWriteCommand, insertOne);
 static ZEND_METHOD(MongoDB_Driver_BulkWriteCommand, replaceOne);
 static ZEND_METHOD(MongoDB_Driver_BulkWriteCommand, updateOne);
 static ZEND_METHOD(MongoDB_Driver_BulkWriteCommand, updateMany);
-static ZEND_METHOD(MongoDB_Driver_BulkWriteCommand, execute);
 
 
 static const zend_function_entry class_MongoDB_Driver_BulkWriteCommand_methods[] = {
@@ -62,7 +57,6 @@ static const zend_function_entry class_MongoDB_Driver_BulkWriteCommand_methods[]
 	ZEND_ME(MongoDB_Driver_BulkWriteCommand, replaceOne, arginfo_class_MongoDB_Driver_BulkWriteCommand_replaceOne, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_Driver_BulkWriteCommand, updateOne, arginfo_class_MongoDB_Driver_BulkWriteCommand_updateOne, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_Driver_BulkWriteCommand, updateMany, arginfo_class_MongoDB_Driver_BulkWriteCommand_updateMany, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	ZEND_ME(MongoDB_Driver_BulkWriteCommand, execute, arginfo_class_MongoDB_Driver_BulkWriteCommand_execute, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_FE_END
 };
 

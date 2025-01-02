@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 0e0470a95648b0188bcb59270f976b298596c1a4 */
+ * Stub hash: ae0c35849b6ad73edf96a3ecdbe42b6940af0e6a */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_Driver_Manager___construct, 0, 0, 0)
 	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, uri, IS_STRING, 1, "null")
@@ -18,6 +18,11 @@ ZEND_END_ARG_INFO()
 ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_MongoDB_Driver_Manager_executeBulkWrite, 0, 2, MongoDB\\Driver\\WriteResult, 0)
 	ZEND_ARG_TYPE_INFO(0, namespace, IS_STRING, 0)
 	ZEND_ARG_OBJ_INFO(0, bulk, MongoDB\\Driver\\BulkWrite, 0)
+	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, options, IS_ARRAY, 1, "null")
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_MongoDB_Driver_Manager_executeBulkWriteCommand, 0, 1, MongoDB\\Driver\\BulkWriteCommandResult, 1)
+	ZEND_ARG_OBJ_INFO(0, bulkWriteCommand, MongoDB\\Driver\\BulkWriteCommand, 0)
 	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, options, IS_ARRAY, 1, "null")
 ZEND_END_ARG_INFO()
 
@@ -69,6 +74,7 @@ static ZEND_METHOD(MongoDB_Driver_Manager, __construct);
 static ZEND_METHOD(MongoDB_Driver_Manager, addSubscriber);
 static ZEND_METHOD(MongoDB_Driver_Manager, createClientEncryption);
 static ZEND_METHOD(MongoDB_Driver_Manager, executeBulkWrite);
+static ZEND_METHOD(MongoDB_Driver_Manager, executeBulkWriteCommand);
 static ZEND_METHOD(MongoDB_Driver_Manager, executeCommand);
 static ZEND_METHOD(MongoDB_Driver_Manager, executeQuery);
 static ZEND_METHOD(MongoDB_Driver_Manager, executeReadCommand);
@@ -89,6 +95,7 @@ static const zend_function_entry class_MongoDB_Driver_Manager_methods[] = {
 	ZEND_ME(MongoDB_Driver_Manager, addSubscriber, arginfo_class_MongoDB_Driver_Manager_addSubscriber, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_Driver_Manager, createClientEncryption, arginfo_class_MongoDB_Driver_Manager_createClientEncryption, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_Driver_Manager, executeBulkWrite, arginfo_class_MongoDB_Driver_Manager_executeBulkWrite, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	ZEND_ME(MongoDB_Driver_Manager, executeBulkWriteCommand, arginfo_class_MongoDB_Driver_Manager_executeBulkWriteCommand, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_Driver_Manager, executeCommand, arginfo_class_MongoDB_Driver_Manager_executeCommand, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_Driver_Manager, executeQuery, arginfo_class_MongoDB_Driver_Manager_executeQuery, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_Driver_Manager, executeReadCommand, arginfo_class_MongoDB_Driver_Manager_executeReadCommand, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)

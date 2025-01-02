@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 4b3c108555c3548cf604852b1f0f334ada52a276 */
+ * Stub hash: 36c3e152527ee774d3dfbae26d24fea7bfa3c6f3 */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_Driver_Server___construct, 0, 0, 0)
 ZEND_END_ARG_INFO()
@@ -7,6 +7,11 @@ ZEND_END_ARG_INFO()
 ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_MongoDB_Driver_Server_executeBulkWrite, 0, 2, MongoDB\\Driver\\WriteResult, 0)
 	ZEND_ARG_TYPE_INFO(0, namespace, IS_STRING, 0)
 	ZEND_ARG_OBJ_INFO(0, bulkWrite, MongoDB\\Driver\\BulkWrite, 0)
+	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, options, IS_ARRAY, 1, "null")
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_MongoDB_Driver_Server_executeBulkWriteCommand, 0, 1, MongoDB\\Driver\\BulkWriteCommandResult, 1)
+	ZEND_ARG_OBJ_INFO(0, bulkWriteCommand, MongoDB\\Driver\\BulkWriteCommand, 0)
 	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, options, IS_ARRAY, 1, "null")
 ZEND_END_ARG_INFO()
 
@@ -61,6 +66,7 @@ ZEND_END_ARG_INFO()
 
 static ZEND_METHOD(MongoDB_Driver_Server, __construct);
 static ZEND_METHOD(MongoDB_Driver_Server, executeBulkWrite);
+static ZEND_METHOD(MongoDB_Driver_Server, executeBulkWriteCommand);
 static ZEND_METHOD(MongoDB_Driver_Server, executeCommand);
 static ZEND_METHOD(MongoDB_Driver_Server, executeQuery);
 static ZEND_METHOD(MongoDB_Driver_Server, executeReadCommand);
@@ -83,6 +89,7 @@ static ZEND_METHOD(MongoDB_Driver_Server, isSecondary);
 static const zend_function_entry class_MongoDB_Driver_Server_methods[] = {
 	ZEND_ME(MongoDB_Driver_Server, __construct, arginfo_class_MongoDB_Driver_Server___construct, ZEND_ACC_PRIVATE|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_Driver_Server, executeBulkWrite, arginfo_class_MongoDB_Driver_Server_executeBulkWrite, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	ZEND_ME(MongoDB_Driver_Server, executeBulkWriteCommand, arginfo_class_MongoDB_Driver_Server_executeBulkWriteCommand, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_Driver_Server, executeCommand, arginfo_class_MongoDB_Driver_Server_executeCommand, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_Driver_Server, executeQuery, arginfo_class_MongoDB_Driver_Server_executeQuery, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_Driver_Server, executeReadCommand, arginfo_class_MongoDB_Driver_Server_executeReadCommand, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
