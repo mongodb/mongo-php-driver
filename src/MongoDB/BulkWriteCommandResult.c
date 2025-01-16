@@ -19,6 +19,7 @@
 
 #include <php.h>
 #include <Zend/zend_interfaces.h>
+#include <Zend/zend_long.h>
 
 #include "php_array_api.h"
 
@@ -91,6 +92,7 @@ static bool php_phongo_bulkwritecommandresult_get_writeerrors(php_phongo_bulkwri
 		uint32_t       len;
 		const uint8_t* data;
 		zval           write_error;
+		zend_ulong     index;
 
 		if (!BSON_ITER_HOLDS_DOCUMENT(&iter)) {
 			continue;
@@ -102,12 +104,14 @@ static bool php_phongo_bulkwritecommandresult_get_writeerrors(php_phongo_bulkwri
 			continue;
 		}
 
-		if (!phongo_writeerror_init_ex(&write_error, &bson, atoi(bson_iter_key(&iter)))) {
+		index = (zend_ulong) ZEND_STRTOUL(bson_iter_key(&iter), NULL, 10);
+
+		if (!phongo_writeerror_init_ex(&write_error, &bson, (int32_t) index)) {
 			zval_ptr_dtor(&write_error);
 			continue;
 		}
 
-		add_next_index_zval(return_value, &write_error);
+		add_index_zval(return_value, index, &write_error);
 	}
 
 	return true;
