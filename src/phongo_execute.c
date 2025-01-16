@@ -368,21 +368,42 @@ bool phongo_execute_bulkwritecommand(zval* manager, php_phongo_bulkwritecommand_
 
 	bwcr = phongo_bulkwritecommandresult_init(return_value, &bw_ret, manager);
 
+	/* Error handling for mongoc_bulkwrite_execute differs significantly from
+	 * mongoc_bulk_operation_execute.
+	 *
+	 * - There may or may not be a top-level error. Top-level errors include
+	 *   both logical errors (invalid arguments) and runtime errors (e.g. server
+	 *   selection failure). A bulk write fails due to write or write concern
+	 *   errors will typically not have a top-level error.
+	 *
+	 * - There may or may not be an error reply document. This document could be
+	 *   the response of a failed bulkWrite command, but it may also originate
+	 *   from libmongoc (e.g. server selection, appending a session, iterating
+	 *   BSON). This function only uses it to extrapolate error labels and it is
+	 *   otherwise accessible to the user through BulkWriteCommandResult.
+	 *
+	 * - InvalidArgumentException may be thrown directly for a basic top-level
+	 *   error (assuming BulkWriteCommandResult would also be irrelevant).
+	 *   Otherwise, BulkWriteCommandException is thrown with an attached
+	 *   BulkWriteCommandResult that collects any error reply, write errors, and
+	 *   write concern errors, along with a possible partial write result.
+	 */
 	if (bw_ret.exc) {
 		success = false;
 		bson_error_t error = { 0 };
+		const bson_t *error_reply = mongoc_bulkwriteexception_errorreply(bw_ret.exc);
 
-		// Check if there is a top-level error
+		// Consult any top-level error to throw the first exception
 		if (mongoc_bulkwriteexception_error(bw_ret.exc, &error)) {
-			phongo_throw_exception_from_bson_error_t_and_reply(&error, mongoc_bulkwriteexception_errorreply(bw_ret.exc));
+			phongo_throw_exception_from_bson_error_t_and_reply(&error, error_reply);
 		}
 
 		/* Unlike mongoc_bulk_operation_execute, mongoc_bulkwrite_execute may
-		 * report COMMAND_INVALID_ARG alongside a partial result (CDRIVER-5842).
-		 * If there is no result, we can throw InvalidArgumentException without
-		 * proxying it behind a BulkWriteException. */
-		if (!bw_ret.res && error.domain == MONGOC_ERROR_COMMAND && error.code == MONGOC_ERROR_COMMAND_INVALID_ARG) {
-			// TODO: Do we care about other mongoc_bulkwriteexception_t fields?
+		 * report MONGOC_ERROR_COMMAND_INVALID_ARG alongside a partial result
+		 * (CDRIVER-5842). Throw InvalidArgumentException directly iff there is
+		 * neither a partial write result nor an error reply (we can assume
+		 * there are no write or write concern errors for this case). */
+		if (EG(exception) && EG(exception)->ce == php_phongo_invalidargumentexception_ce && !bw_ret.res && !error_reply) {
 			goto cleanup;
 		}
 
@@ -393,14 +414,14 @@ bool phongo_execute_bulkwritecommand(zval* manager, php_phongo_bulkwritecommand_
 			zend_throw_exception(php_phongo_bulkwritecommandexception_ce, message, 0);
 			efree(message);
 		} else {
-			// TODO: Determine appropriate message w/o top-level error
 			zend_throw_exception(php_phongo_bulkwritecommandexception_ce, "Bulk write failed", 0);
 		}
 
-		/* Ensure error labels are added to the final BulkWriteCommandException. If a
-		 * previous exception was also thrown, error labels will already have
-		 * been added by phongo_throw_exception_from_bson_error_t_and_reply. */
-		phongo_exception_add_error_labels(mongoc_bulkwriteexception_errorreply(bw_ret.exc));
+		/* Ensure error labels are added to the final BulkWriteCommandException.
+		 * If RuntimeException was previously thrown, labels may also have been
+		 * added to it by phongo_throw_exception_from_bson_error_t_and_reply. */
+		phongo_exception_add_error_labels(error_reply);
+
 		phongo_add_exception_prop(ZEND_STRL("bulkWriteCommandResult"), return_value);
 	}
 
