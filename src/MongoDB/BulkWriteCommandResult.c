@@ -45,6 +45,10 @@ static bool php_phongo_bulkwritecommandresult_get_writeconcernerrors(php_phongo_
 
 	array_init(return_value);
 
+	if (!intern->write_concern_errors) {
+		return true;
+	}
+
 	for (bson_iter_init(&iter, intern->write_concern_errors); bson_iter_next(&iter);) {
 		bson_t         bson;
 		uint32_t       len;
@@ -77,6 +81,10 @@ static bool php_phongo_bulkwritecommandresult_get_writeerrors(php_phongo_bulkwri
 	bson_iter_t iter;
 
 	array_init(return_value);
+
+	if (!intern->write_errors) {
+		return true;
+	}
 
 	for (bson_iter_init(&iter, intern->write_errors); bson_iter_next(&iter);) {
 		bson_t         bson;
@@ -246,7 +254,6 @@ static PHP_METHOD(MongoDB_Driver_BulkWriteCommandResult, getWriteConcernErrors)
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
-	// TODO: null handling
 	php_phongo_bulkwritecommandresult_get_writeconcernerrors(intern, return_value);
 }
 
@@ -259,7 +266,6 @@ static PHP_METHOD(MongoDB_Driver_BulkWriteCommandResult, getWriteErrors)
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
-	// TODO: null handling
 	php_phongo_bulkwritecommandresult_get_writeerrors(intern, return_value);
 }
 
@@ -271,8 +277,9 @@ static PHP_METHOD(MongoDB_Driver_BulkWriteCommandResult, getErrorReply)
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
-	// TODO: null handling
-	phongo_document_new(return_value, intern->error_reply, true);
+	if (intern->error_reply) {
+		phongo_document_new(return_value, intern->error_reply, true);
+	}
 }
 
 /* Returns whether the write operation was acknowledged (based on the write
@@ -364,22 +371,18 @@ static HashTable* php_phongo_bulkwritecommandresult_get_debug_info(zend_object* 
 		ADD_ASSOC_NULL_EX(&retval, "deleteResults");
 	}
 
-	if (intern->write_errors) {
+	{
 		zval writeerrors;
 
 		php_phongo_bulkwritecommandresult_get_writeerrors(intern, &writeerrors);
 		ADD_ASSOC_ZVAL_EX(&retval, "writeErrors", &writeerrors);
-	} else {
-		ADD_ASSOC_NULL_EX(&retval, "writeErrors");
 	}
 
-	if (intern->write_concern_errors) {
+	{
 		zval writeconcernerrors;
 
 		php_phongo_bulkwritecommandresult_get_writeconcernerrors(intern, &writeconcernerrors);
 		ADD_ASSOC_ZVAL_EX(&retval, "writeConcernErrors", &writeconcernerrors);
-	} else {
-		ADD_ASSOC_NULL_EX(&retval, "writeConcernErrors");
 	}
 
 	if (intern->error_reply) {
@@ -416,6 +419,11 @@ void php_phongo_bulkwritecommandresult_init_ce(INIT_FUNC_ARGS)
 	php_phongo_handler_bulkwritecommandresult.offset         = XtOffsetOf(php_phongo_bulkwritecommandresult_t, std);
 }
 
+static inline bson_t* _bson_copy_or_null (const bson_t* bson)
+{
+	return bson_empty0(bson) ? NULL : bson_copy(bson);
+}
+
 php_phongo_bulkwritecommandresult_t* phongo_bulkwritecommandresult_init(zval* return_value, mongoc_bulkwritereturn_t* bw_ret, zval* manager)
 {
 	php_phongo_bulkwritecommandresult_t* bwcr;
@@ -433,20 +441,18 @@ php_phongo_bulkwritecommandresult_t* phongo_bulkwritecommandresult_init(zval* re
 		bwcr->modified_count = mongoc_bulkwriteresult_modifiedcount(bw_ret->res);
 		bwcr->deleted_count = mongoc_bulkwriteresult_deletedcount(bw_ret->res);
 
-#define BSON_COPY_OR_NULL(bson) ((bson) ? bson_copy(bson) : NULL)
-		bwcr->insert_results = BSON_COPY_OR_NULL(mongoc_bulkwriteresult_insertresults(bw_ret->res));
-		bwcr->update_results = BSON_COPY_OR_NULL(mongoc_bulkwriteresult_updateresults(bw_ret->res));
-		bwcr->delete_results = BSON_COPY_OR_NULL(mongoc_bulkwriteresult_deleteresults(bw_ret->res));
-#undef BSON_COPY_OR_NULL
+		bwcr->insert_results = _bson_copy_or_null(mongoc_bulkwriteresult_insertresults(bw_ret->res));
+		bwcr->update_results = _bson_copy_or_null(mongoc_bulkwriteresult_updateresults(bw_ret->res));
+		bwcr->delete_results = _bson_copy_or_null(mongoc_bulkwriteresult_deleteresults(bw_ret->res));
 
 		bwcr->server_id = mongoc_bulkwriteresult_serverid(bw_ret->res);
 	}
 
 	// Copy mongoc_bulkwriteexception_t fields
 	if (bw_ret->exc) {
-		bwcr->error_reply = bson_copy(mongoc_bulkwriteexception_errorreply(bw_ret->exc));
-		bwcr->write_errors = bson_copy(mongoc_bulkwriteexception_writeerrors(bw_ret->exc));
-		bwcr->write_concern_errors = bson_copy(mongoc_bulkwriteexception_writeconcernerrors(bw_ret->exc));
+		bwcr->error_reply = _bson_copy_or_null(mongoc_bulkwriteexception_errorreply(bw_ret->exc));
+		bwcr->write_errors = _bson_copy_or_null(mongoc_bulkwriteexception_writeerrors(bw_ret->exc));
+		bwcr->write_concern_errors = _bson_copy_or_null(mongoc_bulkwriteexception_writeconcernerrors(bw_ret->exc));
 	}
 
 	ZVAL_ZVAL(&bwcr->manager, manager, 1, 0);

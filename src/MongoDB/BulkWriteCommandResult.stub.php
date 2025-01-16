@@ -30,9 +30,9 @@ final class BulkWriteCommandResult
     
     final public function getDeleteResults(): ?\MongoDB\BSON\Document {}
 
-    final public function getWriteErrors(): ?\MongoDB\BSON\Document {}
+    final public function getWriteErrors(): array {}
 
-    final public function getWriteConcernErrors(): ?\MongoDB\BSON\PackedArray {}
+    final public function getWriteConcernErrors(): array {}
 
     final public function getErrorReply(): ?\MongoDB\BSON\Document {}
 

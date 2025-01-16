@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: d69e0d25638cc7f95b04d3cf0e4749838c6ddca8 */
+ * Stub hash: d14704cc61cbe0ed62906e92a9036fbbd5e228d8 */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_Driver_BulkWriteCommandResult___construct, 0, 0, 0)
 ZEND_END_ARG_INFO()
@@ -25,10 +25,10 @@ ZEND_END_ARG_INFO()
 
 #define arginfo_class_MongoDB_Driver_BulkWriteCommandResult_getDeleteResults arginfo_class_MongoDB_Driver_BulkWriteCommandResult_getInsertResults
 
-#define arginfo_class_MongoDB_Driver_BulkWriteCommandResult_getWriteErrors arginfo_class_MongoDB_Driver_BulkWriteCommandResult_getInsertResults
-
-ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_MongoDB_Driver_BulkWriteCommandResult_getWriteConcernErrors, 0, 0, MongoDB\\BSON\\PackedArray, 1)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_Driver_BulkWriteCommandResult_getWriteErrors, 0, 0, IS_ARRAY, 0)
 ZEND_END_ARG_INFO()
+
+#define arginfo_class_MongoDB_Driver_BulkWriteCommandResult_getWriteConcernErrors arginfo_class_MongoDB_Driver_BulkWriteCommandResult_getWriteErrors
 
 #define arginfo_class_MongoDB_Driver_BulkWriteCommandResult_getErrorReply arginfo_class_MongoDB_Driver_BulkWriteCommandResult_getInsertResults
 
