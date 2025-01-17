@@ -133,7 +133,13 @@ void php_phongo_writeconcernerror_init_ce(INIT_FUNC_ARGS)
 	php_phongo_handler_writeconcernerror.offset         = XtOffsetOf(php_phongo_writeconcernerror_t, std);
 }
 
-zend_bool phongo_writeconcernerror_init(zval* return_value, bson_t* bson)
+/* Initializes a new WriteConcernError in return_value using the BSON document.
+ * Returns true on success; otherwise, false is returned and an exception is
+ * thrown.
+ *
+ * This function supports documents from both mongoc_bulk_operation_execute and
+ * mongoc_bulkwriteexception_t (returned by mongoc_bulkwrite_execute). */
+bool phongo_writeconcernerror_init(zval* return_value, const bson_t* bson)
 {
 	bson_iter_t                     iter;
 	php_phongo_writeconcernerror_t* intern;
@@ -150,10 +156,10 @@ zend_bool phongo_writeconcernerror_init(zval* return_value, bson_t* bson)
 	// Additionally check for field name used by mongoc_bulkwriteexception_t
 	if ((bson_iter_init_find(&iter, bson, "errmsg") && BSON_ITER_HOLDS_UTF8(&iter)) ||
 	    (bson_iter_init_find(&iter, bson, "message") && BSON_ITER_HOLDS_UTF8(&iter))) {
-		uint32_t    errmsg_len;
-		const char* err_msg = bson_iter_utf8(&iter, &errmsg_len);
+		uint32_t    len;
+		const char* message = bson_iter_utf8(&iter, &len);
 
-		intern->message = estrndup(err_msg, errmsg_len);
+		intern->message = estrndup(message, len);
 	}
 
 	// Additionally check for field name used by mongoc_bulkwriteexception_t

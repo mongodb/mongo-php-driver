@@ -143,12 +143,19 @@ void php_phongo_writeerror_init_ce(INIT_FUNC_ARGS)
 	php_phongo_handler_writeerror.offset         = XtOffsetOf(php_phongo_writeerror_t, std);
 }
 
-zend_bool phongo_writeerror_init(zval* return_value, bson_t* bson)
+bool phongo_writeerror_init(zval* return_value, const bson_t* bson)
 {
 	return phongo_writeerror_init_ex(return_value, bson, 0);
 }
 
-zend_bool phongo_writeerror_init_ex(zval* return_value, bson_t* bson, int32_t index)
+/* Initializes a new WriteError in return_value using the BSON document. Returns
+ * true on success; otherwise, false is returned and an exception is thrown.
+ *
+ * This function supports documents from both mongoc_bulk_operation_execute and
+ * mongoc_bulkwriteexception_t (returned by mongoc_bulkwrite_execute). When
+ * initializing from mongoc_bulkwriteexception_t, an index should be explicitly
+ * provided since the BSON document will not have an "index" field. */
+bool phongo_writeerror_init_ex(zval* return_value, const bson_t* bson, int32_t index)
 {
 	bson_iter_t              iter;
 	php_phongo_writeerror_t* intern;
@@ -181,6 +188,7 @@ zend_bool phongo_writeerror_init_ex(zval* return_value, bson_t* bson, int32_t in
 		bson_iter_document(&iter, &len, &data);
 
 		if (!php_phongo_bson_data_to_zval(data, len, &intern->info)) {
+			/* Exception already thrown */
 			zval_ptr_dtor(&intern->info);
 			ZVAL_UNDEF(&intern->info);
 
@@ -189,7 +197,7 @@ zend_bool phongo_writeerror_init_ex(zval* return_value, bson_t* bson, int32_t in
 	}
 
 	/* If the WriteError is initialized from mongoc_bulkwriteexception_t, an
-	 * index will already have been specified. */
+	 * index should already have been specified. */
 	if (!intern->index && bson_iter_init_find(&iter, bson, "index") && BSON_ITER_HOLDS_INT32(&iter)) {
 		intern->index = bson_iter_int32(&iter);
 	}

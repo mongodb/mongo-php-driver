@@ -40,78 +40,81 @@
 
 zend_class_entry* php_phongo_bulkwritecommandresult_ce;
 
-static bool php_phongo_bulkwritecommandresult_get_writeconcernerrors(php_phongo_bulkwritecommandresult_t* intern, zval* return_value)
+/* Populates return_value with a list of WriteConcernError objects. Returns true
+ * on success; otherwise, false is returned and an exception is thrown. */
+static bool phongo_bulkwritecommandresult_get_writeconcernerrors(php_phongo_bulkwritecommandresult_t* intern, zval* return_value)
 {
 	bson_iter_t iter;
 
 	array_init(return_value);
 
-	if (!intern->write_concern_errors) {
-		return true;
-	}
+	if (intern->write_concern_errors && bson_iter_init(&iter, intern->write_concern_errors)) {
+		while (bson_iter_next(&iter)) {
+			bson_t         bson;
+			uint32_t       len;
+			const uint8_t* data;
+			zval           write_concern_error;
 
-	for (bson_iter_init(&iter, intern->write_concern_errors); bson_iter_next(&iter);) {
-		bson_t         bson;
-		uint32_t       len;
-		const uint8_t* data;
-		zval           write_concern_error;
+			if (!BSON_ITER_HOLDS_DOCUMENT(&iter)) {
+				continue;
+			}
 
-		if (!BSON_ITER_HOLDS_DOCUMENT(&iter)) {
-			continue;
+			bson_iter_document(&iter, &len, &data);
+
+			if (!bson_init_static(&bson, data, len)) {
+				continue;
+			}
+
+			if (!phongo_writeconcernerror_init(&write_concern_error, &bson)) {
+				/* Exception already thrown */
+				zval_ptr_dtor(&write_concern_error);
+				return false;
+			}
+
+			add_next_index_zval(return_value, &write_concern_error);
 		}
-
-		bson_iter_document(&iter, &len, &data);
-
-		if (!bson_init_static(&bson, data, len)) {
-			continue;
-		}
-
-		if (!phongo_writeconcernerror_init(&write_concern_error, &bson)) {
-			zval_ptr_dtor(&write_concern_error);
-			continue;
-		}
-
-		add_next_index_zval(return_value, &write_concern_error);
 	}
 
 	return true;
 }
 
-static bool php_phongo_bulkwritecommandresult_get_writeerrors(php_phongo_bulkwritecommandresult_t* intern, zval* return_value)
+/* Populates return_value with a map of WriteError objects indexed by the offset
+ * of the corresponding operation. Returns true on success; otherwise, false is
+ * returned and an exception is thrown. */
+static bool phongo_bulkwritecommandresult_get_writeerrors(php_phongo_bulkwritecommandresult_t* intern, zval* return_value)
 {
 	bson_iter_t iter;
 
 	array_init(return_value);
 
-	if (!intern->write_errors) {
-		return true;
-	}
+	if (intern->write_errors && bson_iter_init(&iter, intern->write_errors)) {
+		while (bson_iter_next(&iter)) {
+			bson_t         bson;
+			uint32_t       len;
+			const uint8_t* data;
+			zval           write_error;
+			zend_ulong     index;
 
-	for (bson_iter_init(&iter, intern->write_errors); bson_iter_next(&iter);) {
-		bson_t         bson;
-		uint32_t       len;
-		const uint8_t* data;
-		zval           write_error;
-		zend_ulong     index;
+			if (!BSON_ITER_HOLDS_DOCUMENT(&iter)) {
+				continue;
+			}
 
-		if (!BSON_ITER_HOLDS_DOCUMENT(&iter)) {
-			continue;
+			bson_iter_document(&iter, &len, &data);
+
+			if (!bson_init_static(&bson, data, len)) {
+				continue;
+			}
+
+			index = (zend_ulong) ZEND_STRTOUL(bson_iter_key(&iter), NULL, 10);
+
+			if (!phongo_writeerror_init_ex(&write_error, &bson, (int32_t) index)) {
+				/* Exception already thrown */
+				zval_ptr_dtor(&write_error);
+				return false;
+			}
+
+			add_index_zval(return_value, index, &write_error);
 		}
-
-		bson_iter_document(&iter, &len, &data);
-
-		if (!bson_init_static(&bson, data, len)) {
-			continue;
-		}
-
-		index = (zend_ulong) ZEND_STRTOUL(bson_iter_key(&iter), NULL, 10);
-
-		if (!phongo_writeerror_init_ex(&write_error, &bson, (int32_t) index)) {
-			zval_ptr_dtor(&write_error);
-			continue;
-		}
-
-		add_index_zval(return_value, index, &write_error);
 	}
 
 	return true;
@@ -258,7 +261,7 @@ static PHP_METHOD(MongoDB_Driver_BulkWriteCommandResult, getWriteConcernErrors)
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
-	php_phongo_bulkwritecommandresult_get_writeconcernerrors(intern, return_value);
+	phongo_bulkwritecommandresult_get_writeconcernerrors(intern, return_value);
 }
 
 /* Returns any write errors that occurred */
@@ -270,7 +273,7 @@ static PHP_METHOD(MongoDB_Driver_BulkWriteCommandResult, getWriteErrors)
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
-	php_phongo_bulkwritecommandresult_get_writeerrors(intern, return_value);
+	phongo_bulkwritecommandresult_get_writeerrors(intern, return_value);
 }
 
 static PHP_METHOD(MongoDB_Driver_BulkWriteCommandResult, getErrorReply)
@@ -378,14 +381,14 @@ static HashTable* php_phongo_bulkwritecommandresult_get_debug_info(zend_object* 
 	{
 		zval writeerrors;
 
-		php_phongo_bulkwritecommandresult_get_writeerrors(intern, &writeerrors);
+		phongo_bulkwritecommandresult_get_writeerrors(intern, &writeerrors);
 		ADD_ASSOC_ZVAL_EX(&retval, "writeErrors", &writeerrors);
 	}
 
 	{
 		zval writeconcernerrors;
 
-		php_phongo_bulkwritecommandresult_get_writeconcernerrors(intern, &writeconcernerrors);
+		phongo_bulkwritecommandresult_get_writeconcernerrors(intern, &writeconcernerrors);
 		ADD_ASSOC_ZVAL_EX(&retval, "writeConcernErrors", &writeconcernerrors);
 	}
 
