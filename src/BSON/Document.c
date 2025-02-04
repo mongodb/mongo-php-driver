@@ -192,6 +192,36 @@ static bool php_phongo_document_get(php_phongo_document_t* intern, char* key, si
 	return true;
 }
 
+static bool php_phongo_document_get_by_zval(php_phongo_document_t* intern, zval* key, zval* return_value, bool null_if_missing)
+{
+	if (Z_TYPE_P(key) != IS_STRING && Z_TYPE_P(key) != IS_LONG) {
+		if (null_if_missing) {
+			ZVAL_NULL(return_value);
+			return true;
+		}
+
+		phongo_throw_exception(PHONGO_ERROR_RUNTIME, "Could not find key of type \"%s\" in BSON document", zend_zval_type_name(key));
+		return false;
+	}
+
+	zend_string* tmp_str;
+	zend_string* str = zval_try_get_tmp_string(key, &tmp_str);
+
+	if (!str) {
+		// Exception already thrown
+		return false;
+	}
+
+	if (!php_phongo_document_get(intern, ZSTR_VAL(str), ZSTR_LEN(str), return_value, null_if_missing)) {
+		// Exception already thrown
+		zend_tmp_string_release(tmp_str);
+		return false;
+	}
+
+	zend_tmp_string_release(tmp_str);
+	return true;
+}
+
 static PHP_METHOD(MongoDB_BSON_Document, get)
 {
 	php_phongo_document_t* intern;
@@ -227,6 +257,30 @@ static bool php_phongo_document_has(php_phongo_document_t* intern, char* key, si
 	}
 
 	return bson_iter_find_w_len(&iter, key, key_len);
+}
+
+static bool php_phongo_document_has_by_zval(php_phongo_document_t* intern, zval* key)
+{
+	if (Z_TYPE_P(key) != IS_STRING && Z_TYPE_P(key) != IS_LONG) {
+		return false;
+	}
+
+	zend_string* tmp_str;
+	zend_string* str = zval_try_get_tmp_string(key, &tmp_str);
+
+	if (!str) {
+		// Exception already thrown
+		return false;
+	}
+
+	if (!php_phongo_document_has(intern, ZSTR_VAL(str), ZSTR_LEN(str))) {
+		// Exception may be thrown if BSON iterator could not be initialized
+		zend_tmp_string_release(tmp_str);
+		return false;
+	}
+
+	zend_tmp_string_release(tmp_str);
+	return true;
 }
 
 static PHP_METHOD(MongoDB_BSON_Document, has)
@@ -309,11 +363,7 @@ static PHP_METHOD(MongoDB_BSON_Document, offsetExists)
 
 	intern = Z_DOCUMENT_OBJ_P(getThis());
 
-	if (Z_TYPE_P(offset) != IS_STRING) {
-		RETURN_FALSE;
-	}
-
-	RETURN_BOOL(php_phongo_document_has(intern, Z_STRVAL_P(offset), Z_STRLEN_P(offset)));
+	RETURN_BOOL(php_phongo_document_has_by_zval(intern, offset));
 }
 
 static PHP_METHOD(MongoDB_BSON_Document, offsetGet)
@@ -327,13 +377,8 @@ static PHP_METHOD(MongoDB_BSON_Document, offsetGet)
 
 	intern = Z_DOCUMENT_OBJ_P(getThis());
 
-	if (Z_TYPE_P(offset) != IS_STRING) {
-		phongo_throw_exception(PHONGO_ERROR_RUNTIME, "Could not find key of type \"%s\" in BSON document", zend_zval_type_name(offset));
-		return;
-	}
-
 	// May throw, in which case we do nothing
-	php_phongo_document_get(intern, Z_STRVAL_P(offset), Z_STRLEN_P(offset), return_value, false);
+	php_phongo_document_get_by_zval(intern, offset, return_value, false);
 }
 
 static PHP_METHOD(MongoDB_BSON_Document, offsetSet)
@@ -588,21 +633,9 @@ void php_phongo_document_unset_property(zend_object* object, zend_string* member
 
 zval* php_phongo_document_read_dimension(zend_object* object, zval* offset, int type, zval* rv)
 {
-	php_phongo_document_t* intern;
+	php_phongo_document_t* intern = Z_OBJ_DOCUMENT(object);
 
-	intern = Z_OBJ_DOCUMENT(object);
-
-	if (Z_TYPE_P(offset) != IS_STRING) {
-		if (type == BP_VAR_IS) {
-			ZVAL_NULL(rv);
-			return rv;
-		}
-
-		phongo_throw_exception(PHONGO_ERROR_RUNTIME, "Could not find key of type \"%s\" in BSON document", zend_zval_type_name(offset));
-		return &EG(uninitialized_zval);
-	}
-
-	if (!php_phongo_document_get(intern, Z_STRVAL_P(offset), Z_STRLEN_P(offset), rv, type == BP_VAR_IS)) {
+	if (!php_phongo_document_get_by_zval(intern, offset, rv, type == BP_VAR_IS)) {
 		// Exception already thrown
 		return &EG(uninitialized_zval);
 	}
@@ -617,15 +650,9 @@ void php_phongo_document_write_dimension(zend_object* object, zval* offset, zval
 
 int php_phongo_document_has_dimension(zend_object* object, zval* member, int check_empty)
 {
-	php_phongo_document_t* intern;
+	php_phongo_document_t* intern = Z_OBJ_DOCUMENT(object);
 
-	intern = Z_OBJ_DOCUMENT(object);
-
-	if (Z_TYPE_P(member) != IS_STRING) {
-		return false;
-	}
-
-	return php_phongo_document_has(intern, Z_STRVAL_P(member), Z_STRLEN_P(member));
+	return php_phongo_document_has_by_zval(intern, member);
 }
 
 void php_phongo_document_unset_dimension(zend_object* object, zval* offset)

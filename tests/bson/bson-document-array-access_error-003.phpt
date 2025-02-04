@@ -12,10 +12,6 @@ $document = MongoDB\BSON\Document::fromPHP([
 ]);
 
 echo throws(function() use ($document) {
-    $document[0];
-}, MongoDB\Driver\Exception\RuntimeException::class), "\n";
-
-echo throws(function() use ($document) {
     $document[0.1];
 }, MongoDB\Driver\Exception\RuntimeException::class), "\n";
 
@@ -27,8 +23,6 @@ echo throws(function() use ($document) {
 ===DONE===
 <?php exit(0); ?>
 --EXPECT--
-OK: Got MongoDB\Driver\Exception\RuntimeException
-Could not find key of type "int" in BSON document
 OK: Got MongoDB\Driver\Exception\RuntimeException
 Could not find key of type "float" in BSON document
 OK: Got MongoDB\Driver\Exception\RuntimeException
