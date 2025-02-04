@@ -234,10 +234,8 @@ static PHP_METHOD(MongoDB_BSON_Document, get)
 
 	intern = Z_DOCUMENT_OBJ_P(getThis());
 
-	if (!php_phongo_document_get(intern, key, key_len, return_value, false)) {
-		// Exception already thrown
-		RETURN_NULL();
-	}
+	// May throw, in which case we do nothing
+	php_phongo_document_get(intern, key, key_len, return_value, false);
 }
 
 static PHP_METHOD(MongoDB_BSON_Document, getIterator)
@@ -595,13 +593,9 @@ static HashTable* php_phongo_document_get_properties(zend_object* object)
 
 zval* php_phongo_document_read_property(zend_object* object, zend_string* member, int type, void** cache_slot, zval* rv)
 {
-	php_phongo_document_t* intern;
-	char*                  key     = ZSTR_VAL(member);
-	size_t                 key_len = ZSTR_LEN(member);
+	php_phongo_document_t* intern = Z_OBJ_DOCUMENT(object);
 
-	intern = Z_OBJ_DOCUMENT(object);
-
-	if (!php_phongo_document_get(intern, key, key_len, rv, type == BP_VAR_IS)) {
+	if (!php_phongo_document_get(intern, ZSTR_VAL(member), ZSTR_LEN(member), rv, type == BP_VAR_IS)) {
 		// Exception already thrown
 		return &EG(uninitialized_zval);
 	}
@@ -615,15 +609,11 @@ zval* php_phongo_document_write_property(zend_object* object, zend_string* membe
 	return value;
 }
 
-int php_phongo_document_has_property(zend_object* object, zend_string* name, int has_set_exists, void** cache_slot)
+int php_phongo_document_has_property(zend_object* object, zend_string* member, int has_set_exists, void** cache_slot)
 {
-	php_phongo_document_t* intern;
-	char*                  key     = ZSTR_VAL(name);
-	size_t                 key_len = ZSTR_LEN(name);
+	php_phongo_document_t* intern = Z_OBJ_DOCUMENT(object);
 
-	intern = Z_OBJ_DOCUMENT(object);
-
-	return php_phongo_document_has(intern, key, key_len);
+	return php_phongo_document_has(intern, ZSTR_VAL(member), ZSTR_LEN(member));
 }
 
 void php_phongo_document_unset_property(zend_object* object, zend_string* member, void** cache_slot)
