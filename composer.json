@@ -17,6 +17,8 @@
   },
   "php-ext": {
     "extension-name": "mongodb",
+    "download-url-method": "pre-packaged-source",
+    "build-path": "mongodb-{version}",
     "configure-options": [
       {
         "name": "enable-mongodb-developer-flags",
