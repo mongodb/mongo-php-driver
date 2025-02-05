@@ -337,13 +337,13 @@ cleanup:
 
 bool phongo_execute_bulkwritecommand(zval* manager, php_phongo_bulkwritecommand_t* bwc, zval* zoptions, uint32_t server_id, zval* return_value)
 {
-	mongoc_client_t*                     client = NULL;
-	mongoc_bulkwrite_t*                  bw = bwc->bw;
+	mongoc_client_t*                     client  = NULL;
+	mongoc_bulkwrite_t*                  bw      = bwc->bw;
 	mongoc_bulkwriteopts_t*              bw_opts = NULL;
-	mongoc_bulkwritereturn_t             bw_ret = { 0 };
+	mongoc_bulkwritereturn_t             bw_ret  = { 0 };
 	php_phongo_bulkwritecommandresult_t* bwcr;
 	zval*                                zsession = NULL;
-	bool                                 success = true;
+	bool                                 success  = true;
 
 	client = Z_MANAGER_OBJ_P(manager)->client;
 
@@ -389,9 +389,9 @@ bool phongo_execute_bulkwritecommand(zval* manager, php_phongo_bulkwritecommand_
 	 *   write concern errors, along with a possible partial write result.
 	 */
 	if (bw_ret.exc) {
-		success = false;
-		bson_error_t error = { 0 };
-		const bson_t *error_reply = mongoc_bulkwriteexception_errorreply(bw_ret.exc);
+		success                   = false;
+		bson_error_t  error       = { 0 };
+		const bson_t* error_reply = mongoc_bulkwriteexception_errorreply(bw_ret.exc);
 
 		// Consult any top-level error to throw the first exception
 		if (mongoc_bulkwriteexception_error(bw_ret.exc, &error)) {

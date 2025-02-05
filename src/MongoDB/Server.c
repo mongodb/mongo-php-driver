@@ -197,10 +197,10 @@ static PHP_METHOD(MongoDB_Driver_Server, executeBulkWrite)
 /* Executes a BulkWriteCommand (i.e. bulkWrite command for MongoDB 8.0+) */
 static PHP_METHOD(MongoDB_Driver_Server, executeBulkWriteCommand)
 {
-	php_phongo_server_t* intern;
-	zval*                   zbwc;
+	php_phongo_server_t*           intern;
+	zval*                          zbwc;
 	php_phongo_bulkwritecommand_t* bwc;
-	zval*                   zoptions      = NULL;
+	zval*                          zoptions = NULL;
 
 	PHONGO_PARSE_PARAMETERS_START(1, 2)
 	Z_PARAM_OBJECT_OF_CLASS(zbwc, php_phongo_bulkwritecommand_ce)
@@ -209,7 +209,7 @@ static PHP_METHOD(MongoDB_Driver_Server, executeBulkWriteCommand)
 	PHONGO_PARSE_PARAMETERS_END();
 
 	intern = Z_SERVER_OBJ_P(getThis());
-	bwc   = Z_BULKWRITECOMMAND_OBJ_P(zbwc);
+	bwc    = Z_BULKWRITECOMMAND_OBJ_P(zbwc);
 
 	/* If the Server was created in a different process, reset the client so
 	 * that its session pool is cleared. */

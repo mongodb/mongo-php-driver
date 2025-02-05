@@ -155,7 +155,7 @@ bool phongo_writeconcernerror_init(zval* return_value, const bson_t* bson)
 
 	// Additionally check for field name used by mongoc_bulkwriteexception_t
 	if ((bson_iter_init_find(&iter, bson, "errmsg") && BSON_ITER_HOLDS_UTF8(&iter)) ||
-	    (bson_iter_init_find(&iter, bson, "message") && BSON_ITER_HOLDS_UTF8(&iter))) {
+		(bson_iter_init_find(&iter, bson, "message") && BSON_ITER_HOLDS_UTF8(&iter))) {
 		uint32_t    len;
 		const char* message = bson_iter_utf8(&iter, &len);
 
@@ -164,7 +164,7 @@ bool phongo_writeconcernerror_init(zval* return_value, const bson_t* bson)
 
 	// Additionally check for field name used by mongoc_bulkwriteexception_t
 	if ((bson_iter_init_find(&iter, bson, "errInfo") && BSON_ITER_HOLDS_DOCUMENT(&iter)) ||
-	    (bson_iter_init_find(&iter, bson, "details") && BSON_ITER_HOLDS_DOCUMENT(&iter))) {
+		(bson_iter_init_find(&iter, bson, "details") && BSON_ITER_HOLDS_DOCUMENT(&iter))) {
 		uint32_t       len;
 		const uint8_t* data = NULL;
 

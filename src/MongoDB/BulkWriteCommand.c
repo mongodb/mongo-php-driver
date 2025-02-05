@@ -132,13 +132,13 @@ static PHP_METHOD(MongoDB_Driver_BulkWriteCommand, __construct)
 	PHONGO_PARSE_PARAMETERS_END();
 
 	// TODO: Consider removing initialization for zero values
-	intern->bw      = mongoc_bulkwrite_new();
-	intern->bypass  = PHONGO_BULKWRITECOMMAND_BYPASS_UNSET;
-	intern->comment = NULL;
-	intern->let     = NULL;
-	intern->num_ops = 0;
-	intern->ordered = true;
-	intern->verbose = false;
+	intern->bw            = mongoc_bulkwrite_new();
+	intern->bypass        = PHONGO_BULKWRITECOMMAND_BYPASS_UNSET;
+	intern->comment       = NULL;
+	intern->let           = NULL;
+	intern->num_ops       = 0;
+	intern->ordered       = true;
+	intern->verbose       = false;
 	intern->write_concern = NULL;
 
 	if (!zoptions) {

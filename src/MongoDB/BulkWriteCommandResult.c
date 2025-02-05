@@ -32,10 +32,10 @@
 #include "MongoDB/WriteError.h"
 #include "BulkWriteCommandResult_arginfo.h"
 
-#define PHONGO_BULKWRITECOMMANDRESULT_CHECK_ACKNOWLEDGED(method) \
-	if (!intern->is_acknowledged) { \
+#define PHONGO_BULKWRITECOMMANDRESULT_CHECK_ACKNOWLEDGED(method)                                                                                                     \
+	if (!intern->is_acknowledged) {                                                                                                                                  \
 		phongo_throw_exception(PHONGO_ERROR_LOGIC, "MongoDB\\Driver\\BulkWriteCommandResult::" method "() should not be called for an unacknowledged write result"); \
-		return; \
+		return;                                                                                                                                                      \
 	}
 
 zend_class_entry* php_phongo_bulkwritecommandresult_ce;
@@ -338,7 +338,7 @@ static zend_object* php_phongo_bulkwritecommandresult_create_object(zend_class_e
 static HashTable* php_phongo_bulkwritecommandresult_get_debug_info(zend_object* object, int* is_temp)
 {
 	php_phongo_bulkwritecommandresult_t* intern;
-	zval                      retval = ZVAL_STATIC_INIT;
+	zval                                 retval = ZVAL_STATIC_INIT;
 
 	intern   = Z_OBJ_BULKWRITECOMMANDRESULT(object);
 	*is_temp = 1;
@@ -426,7 +426,7 @@ void php_phongo_bulkwritecommandresult_init_ce(INIT_FUNC_ARGS)
 	php_phongo_handler_bulkwritecommandresult.offset         = XtOffsetOf(php_phongo_bulkwritecommandresult_t, std);
 }
 
-static inline bson_t* _bson_copy_or_null (const bson_t* bson)
+static inline bson_t* _bson_copy_or_null(const bson_t* bson)
 {
 	return bson_empty0(bson) ? NULL : bson_copy(bson);
 }
@@ -437,16 +437,16 @@ php_phongo_bulkwritecommandresult_t* phongo_bulkwritecommandresult_init(zval* re
 
 	object_init_ex(return_value, php_phongo_bulkwritecommandresult_ce);
 
-	bwcr            = Z_BULKWRITECOMMANDRESULT_OBJ_P(return_value);
+	bwcr                  = Z_BULKWRITECOMMANDRESULT_OBJ_P(return_value);
 	bwcr->is_acknowledged = !!bw_ret->res;
 
 	// Copy mongoc_bulkwriteresult_t fields
 	if (bw_ret->res) {
 		bwcr->inserted_count = mongoc_bulkwriteresult_insertedcount(bw_ret->res);
 		bwcr->upserted_count = mongoc_bulkwriteresult_upsertedcount(bw_ret->res);
-		bwcr->matched_count = mongoc_bulkwriteresult_matchedcount(bw_ret->res);
+		bwcr->matched_count  = mongoc_bulkwriteresult_matchedcount(bw_ret->res);
 		bwcr->modified_count = mongoc_bulkwriteresult_modifiedcount(bw_ret->res);
-		bwcr->deleted_count = mongoc_bulkwriteresult_deletedcount(bw_ret->res);
+		bwcr->deleted_count  = mongoc_bulkwriteresult_deletedcount(bw_ret->res);
 
 		bwcr->insert_results = _bson_copy_or_null(mongoc_bulkwriteresult_insertresults(bw_ret->res));
 		bwcr->update_results = _bson_copy_or_null(mongoc_bulkwriteresult_updateresults(bw_ret->res));
@@ -457,8 +457,8 @@ php_phongo_bulkwritecommandresult_t* phongo_bulkwritecommandresult_init(zval* re
 
 	// Copy mongoc_bulkwriteexception_t fields
 	if (bw_ret->exc) {
-		bwcr->error_reply = _bson_copy_or_null(mongoc_bulkwriteexception_errorreply(bw_ret->exc));
-		bwcr->write_errors = _bson_copy_or_null(mongoc_bulkwriteexception_writeerrors(bw_ret->exc));
+		bwcr->error_reply          = _bson_copy_or_null(mongoc_bulkwriteexception_errorreply(bw_ret->exc));
+		bwcr->write_errors         = _bson_copy_or_null(mongoc_bulkwriteexception_writeerrors(bw_ret->exc));
 		bwcr->write_concern_errors = _bson_copy_or_null(mongoc_bulkwriteexception_writeconcernerrors(bw_ret->exc));
 	}
 
