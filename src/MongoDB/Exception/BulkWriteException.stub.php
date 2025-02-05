@@ -7,7 +7,7 @@
 
 namespace MongoDB\Driver\Exception;
 
-class BulkWriteException extends RuntimeException
+class BulkWriteException extends ServerException
 {
     /** @var \MongoDB\Driver\WriteResult */
     protected $writeResult;

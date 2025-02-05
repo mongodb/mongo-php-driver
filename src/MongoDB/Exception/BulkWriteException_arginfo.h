@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 8d6c350124574a892c9bbe1c8fda8b0a55e09a8b */
+ * Stub hash: 3a09fcb79df6117de9924cfce65ba8762d9c8bc2 */
 
 ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_MongoDB_Driver_Exception_BulkWriteException_getWriteResult, 0, 0, MongoDB\\Driver\\WriteResult, 0)
 ZEND_END_ARG_INFO()
@@ -13,12 +13,12 @@ static const zend_function_entry class_MongoDB_Driver_Exception_BulkWriteExcepti
 	ZEND_FE_END
 };
 
-static zend_class_entry *register_class_MongoDB_Driver_Exception_BulkWriteException(zend_class_entry *class_entry_MongoDB_Driver_Exception_RuntimeException)
+static zend_class_entry *register_class_MongoDB_Driver_Exception_BulkWriteException(zend_class_entry *class_entry_MongoDB_Driver_Exception_ServerException)
 {
 	zend_class_entry ce, *class_entry;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver\\Exception", "BulkWriteException", class_MongoDB_Driver_Exception_BulkWriteException_methods);
-	class_entry = zend_register_internal_class_ex(&ce, class_entry_MongoDB_Driver_Exception_RuntimeException);
+	class_entry = zend_register_internal_class_ex(&ce, class_entry_MongoDB_Driver_Exception_ServerException);
 
 	zval property_writeResult_default_value;
 	ZVAL_NULL(&property_writeResult_default_value);
