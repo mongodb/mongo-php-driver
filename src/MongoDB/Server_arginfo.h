@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 63542fe1821e8a9016e8514924f6aec30e4ea20e */
+ * Stub hash: 4b3c108555c3548cf604852b1f0f334ada52a276 */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_Driver_Server___construct, 0, 0, 0)
 ZEND_END_ARG_INFO()
@@ -7,30 +7,26 @@ ZEND_END_ARG_INFO()
 ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_MongoDB_Driver_Server_executeBulkWrite, 0, 2, MongoDB\\Driver\\WriteResult, 0)
 	ZEND_ARG_TYPE_INFO(0, namespace, IS_STRING, 0)
 	ZEND_ARG_OBJ_INFO(0, bulkWrite, MongoDB\\Driver\\BulkWrite, 0)
-	ZEND_ARG_OBJ_TYPE_MASK(0, options, MongoDB\\Driver\\WriteConcern, MAY_BE_ARRAY|MAY_BE_NULL, "null")
+	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, options, IS_ARRAY, 1, "null")
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_MongoDB_Driver_Server_executeCommand, 0, 2, MongoDB\\Driver\\CursorInterface, 0)
 	ZEND_ARG_TYPE_INFO(0, db, IS_STRING, 0)
 	ZEND_ARG_OBJ_INFO(0, command, MongoDB\\Driver\\Command, 0)
-	ZEND_ARG_OBJ_TYPE_MASK(0, options, MongoDB\\Driver\\ReadPreference, MAY_BE_ARRAY|MAY_BE_NULL, "null")
+	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, options, IS_ARRAY, 1, "null")
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_MongoDB_Driver_Server_executeQuery, 0, 2, MongoDB\\Driver\\CursorInterface, 0)
 	ZEND_ARG_TYPE_INFO(0, namespace, IS_STRING, 0)
 	ZEND_ARG_OBJ_INFO(0, query, MongoDB\\Driver\\Query, 0)
-	ZEND_ARG_OBJ_TYPE_MASK(0, options, MongoDB\\Driver\\ReadPreference, MAY_BE_ARRAY|MAY_BE_NULL, "null")
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_MongoDB_Driver_Server_executeReadCommand, 0, 2, MongoDB\\Driver\\CursorInterface, 0)
-	ZEND_ARG_TYPE_INFO(0, db, IS_STRING, 0)
-	ZEND_ARG_OBJ_INFO(0, command, MongoDB\\Driver\\Command, 0)
 	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, options, IS_ARRAY, 1, "null")
 ZEND_END_ARG_INFO()
 
-#define arginfo_class_MongoDB_Driver_Server_executeReadWriteCommand arginfo_class_MongoDB_Driver_Server_executeReadCommand
+#define arginfo_class_MongoDB_Driver_Server_executeReadCommand arginfo_class_MongoDB_Driver_Server_executeCommand
 
-#define arginfo_class_MongoDB_Driver_Server_executeWriteCommand arginfo_class_MongoDB_Driver_Server_executeReadCommand
+#define arginfo_class_MongoDB_Driver_Server_executeReadWriteCommand arginfo_class_MongoDB_Driver_Server_executeCommand
+
+#define arginfo_class_MongoDB_Driver_Server_executeWriteCommand arginfo_class_MongoDB_Driver_Server_executeCommand
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_Driver_Server_getHost, 0, 0, IS_STRING, 0)
 ZEND_END_ARG_INFO()

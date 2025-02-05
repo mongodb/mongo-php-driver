@@ -280,7 +280,6 @@ static PHP_METHOD(MongoDB_Driver_Manager, executeCommand)
 	size_t                db_len;
 	zval*                 command;
 	zval*                 options         = NULL;
-	bool                  free_options    = false;
 	zval*                 zreadPreference = NULL;
 	zval*                 zsession        = NULL;
 	uint32_t              server_id       = 0;
@@ -294,21 +293,19 @@ static PHP_METHOD(MongoDB_Driver_Manager, executeCommand)
 
 	intern = Z_MANAGER_OBJ_P(getThis());
 
-	options = php_phongo_prep_legacy_option(options, "readPreference", &free_options);
-
 	if (!phongo_parse_session(options, intern->client, NULL, &zsession)) {
 		/* Exception should already have been thrown */
-		goto cleanup;
+		return;
 	}
 
 	if (!phongo_parse_read_preference(options, &zreadPreference)) {
 		/* Exception should already have been thrown */
-		goto cleanup;
+		return;
 	}
 
 	if (!php_phongo_manager_select_server(false, false, zreadPreference, zsession, intern->client, &server_id)) {
 		/* Exception should already have been thrown */
-		goto cleanup;
+		return;
 	}
 
 	/* If the Manager was created in a different process, reset the client so
@@ -317,11 +314,6 @@ static PHP_METHOD(MongoDB_Driver_Manager, executeCommand)
 	PHONGO_RESET_CLIENT_IF_PID_DIFFERS(intern, intern);
 
 	phongo_execute_command(getThis(), PHONGO_COMMAND_RAW, db, command, options, server_id, return_value);
-
-cleanup:
-	if (free_options) {
-		php_phongo_prep_legacy_option_free(options);
-	}
 }
 
 /* Execute a ReadCommand */
@@ -452,7 +444,6 @@ static PHP_METHOD(MongoDB_Driver_Manager, executeQuery)
 	size_t   namespace_len;
 	zval*    query;
 	zval*    options         = NULL;
-	bool     free_options    = false;
 	zval*    zreadPreference = NULL;
 	uint32_t server_id       = 0;
 	zval*    zsession        = NULL;
@@ -466,21 +457,19 @@ static PHP_METHOD(MongoDB_Driver_Manager, executeQuery)
 
 	intern = Z_MANAGER_OBJ_P(getThis());
 
-	options = php_phongo_prep_legacy_option(options, "readPreference", &free_options);
-
 	if (!phongo_parse_session(options, intern->client, NULL, &zsession)) {
 		/* Exception should already have been thrown */
-		goto cleanup;
+		return;
 	}
 
 	if (!phongo_parse_read_preference(options, &zreadPreference)) {
 		/* Exception should already have been thrown */
-		goto cleanup;
+		return;
 	}
 
 	if (!php_phongo_manager_select_server(false, true, zreadPreference, zsession, intern->client, &server_id)) {
 		/* Exception should already have been thrown */
-		goto cleanup;
+		return;
 	}
 
 	/* If the Manager was created in a different process, reset the client so
@@ -489,11 +478,6 @@ static PHP_METHOD(MongoDB_Driver_Manager, executeQuery)
 	PHONGO_RESET_CLIENT_IF_PID_DIFFERS(intern, intern);
 
 	phongo_execute_query(getThis(), namespace, query, options, server_id, return_value);
-
-cleanup:
-	if (free_options) {
-		php_phongo_prep_legacy_option_free(options);
-	}
 }
 
 /* Executes a BulkWrite (i.e. any number of insert, update, and delete ops) */
@@ -504,10 +488,9 @@ static PHP_METHOD(MongoDB_Driver_Manager, executeBulkWrite)
 	size_t                  namespace_len;
 	zval*                   zbulk;
 	php_phongo_bulkwrite_t* bulk;
-	zval*                   options      = NULL;
-	bool                    free_options = false;
-	uint32_t                server_id    = 0;
-	zval*                   zsession     = NULL;
+	zval*                   options   = NULL;
+	uint32_t                server_id = 0;
+	zval*                   zsession  = NULL;
 
 	PHONGO_PARSE_PARAMETERS_START(2, 3)
 	Z_PARAM_STRING_OR_NULL(namespace, namespace_len)
@@ -519,8 +502,6 @@ static PHP_METHOD(MongoDB_Driver_Manager, executeBulkWrite)
 	intern = Z_MANAGER_OBJ_P(getThis());
 	bulk   = Z_BULKWRITE_OBJ_P(zbulk);
 
-	options = php_phongo_prep_legacy_option(options, "writeConcern", &free_options);
-
 	if (!phongo_parse_session(options, intern->client, NULL, &zsession)) {
 		/* Exception should already have been thrown */
 		return;
@@ -528,7 +509,7 @@ static PHP_METHOD(MongoDB_Driver_Manager, executeBulkWrite)
 
 	if (!php_phongo_manager_select_server(true, false, NULL, zsession, intern->client, &server_id)) {
 		/* Exception should already have been thrown */
-		goto cleanup;
+		return;
 	}
 
 	/* If the Server was created in a different process, reset the client so
@@ -536,11 +517,6 @@ static PHP_METHOD(MongoDB_Driver_Manager, executeBulkWrite)
 	PHONGO_RESET_CLIENT_IF_PID_DIFFERS(intern, intern);
 
 	phongo_execute_bulk_write(getThis(), namespace, bulk, options, server_id, return_value);
-
-cleanup:
-	if (free_options) {
-		php_phongo_prep_legacy_option_free(options);
-	}
 }
 
 /* Returns the autoEncryption.encryptedFieldsMap driver option */

@@ -72,11 +72,11 @@ final class Server
 
     final private function __construct() {}
 
-    final public function executeBulkWrite(string $namespace, BulkWrite $bulkWrite, array|WriteConcern|null $options = null): WriteResult {}
+    final public function executeBulkWrite(string $namespace, BulkWrite $bulkWrite, array|null $options = null): WriteResult {}
 
-    final public function executeCommand(string $db, Command $command, array|ReadPreference|null $options = null): CursorInterface {}
+    final public function executeCommand(string $db, Command $command, array|null $options = null): CursorInterface {}
 
-    final public function executeQuery(string $namespace, Query $query, array|ReadPreference|null $options = null): CursorInterface {}
+    final public function executeQuery(string $namespace, Query $query, array|null $options = null): CursorInterface {}
 
     final public function executeReadCommand(string $db, Command $command, ?array $options = null): CursorInterface {}
 

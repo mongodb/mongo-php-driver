@@ -42,8 +42,7 @@ static PHP_METHOD(MongoDB_Driver_Server, executeCommand)
 	char*                db;
 	size_t               db_len;
 	zval*                command;
-	zval*                options      = NULL;
-	bool                 free_options = false;
+	zval*                options = NULL;
 
 	intern = Z_SERVER_OBJ_P(getThis());
 
@@ -54,18 +53,12 @@ static PHP_METHOD(MongoDB_Driver_Server, executeCommand)
 	Z_PARAM_ZVAL_OR_NULL(options)
 	PHONGO_PARSE_PARAMETERS_END();
 
-	options = php_phongo_prep_legacy_option(options, "readPreference", &free_options);
-
 	/* If the Server was created in a different process, reset the client so
 	 * that cursors created by this process can be differentiated and its
 	 * session pool is cleared. */
 	PHONGO_RESET_CLIENT_IF_PID_DIFFERS(intern, Z_MANAGER_OBJ_P(&intern->manager));
 
 	phongo_execute_command(&intern->manager, PHONGO_COMMAND_RAW, db, command, options, intern->server_id, return_value);
-
-	if (free_options) {
-		php_phongo_prep_legacy_option_free(options);
-	}
 }
 
 /* Executes a ReadCommand on this Server */
@@ -153,8 +146,7 @@ static PHP_METHOD(MongoDB_Driver_Server, executeQuery)
 	char* namespace;
 	size_t namespace_len;
 	zval*  query;
-	zval*  options      = NULL;
-	bool   free_options = false;
+	zval*  options = NULL;
 
 	intern = Z_SERVER_OBJ_P(getThis());
 
@@ -165,18 +157,12 @@ static PHP_METHOD(MongoDB_Driver_Server, executeQuery)
 	Z_PARAM_ZVAL_OR_NULL(options)
 	PHONGO_PARSE_PARAMETERS_END();
 
-	options = php_phongo_prep_legacy_option(options, "readPreference", &free_options);
-
 	/* If the Server was created in a different process, reset the client so
 	 * that cursors created by this process can be differentiated and its
 	 * session pool is cleared. */
 	PHONGO_RESET_CLIENT_IF_PID_DIFFERS(intern, Z_MANAGER_OBJ_P(&intern->manager));
 
 	phongo_execute_query(&intern->manager, namespace, query, options, intern->server_id, return_value);
-
-	if (free_options) {
-		php_phongo_prep_legacy_option_free(options);
-	}
 }
 
 /* Executes a BulkWrite (i.e. any number of insert, update, and delete ops) on
@@ -188,8 +174,7 @@ static PHP_METHOD(MongoDB_Driver_Server, executeBulkWrite)
 	size_t                  namespace_len;
 	zval*                   zbulk;
 	php_phongo_bulkwrite_t* bulk;
-	zval*                   options      = NULL;
-	bool                    free_options = false;
+	zval*                   options = NULL;
 
 	intern = Z_SERVER_OBJ_P(getThis());
 
@@ -202,17 +187,11 @@ static PHP_METHOD(MongoDB_Driver_Server, executeBulkWrite)
 
 	bulk = Z_BULKWRITE_OBJ_P(zbulk);
 
-	options = php_phongo_prep_legacy_option(options, "writeConcern", &free_options);
-
 	/* If the Server was created in a different process, reset the client so
 	 * that its session pool is cleared. */
 	PHONGO_RESET_CLIENT_IF_PID_DIFFERS(intern, Z_MANAGER_OBJ_P(&intern->manager));
 
 	phongo_execute_bulk_write(&intern->manager, namespace, bulk, options, intern->server_id, return_value);
-
-	if (free_options) {
-		php_phongo_prep_legacy_option_free(options);
-	}
 }
 
 /* Returns the hostname for this Server */

@@ -73,39 +73,6 @@ const char* php_phongo_bson_type_to_string(bson_type_t type)
 	}
 }
 
-/* If options is not an array, insert it as a field in a newly allocated array.
- * This may be used to convert legacy options (e.g. ReadPreference option for
- * an executeQuery method) into an options array.
- *
- * A pointer to the array zval will always be returned. If allocated is set to
- * true, php_phongo_prep_legacy_option_free() should be used to free the array
- * zval later. */
-zval* php_phongo_prep_legacy_option(zval* options, const char* key, bool* allocated)
-{
-	*allocated = false;
-
-	if (options && Z_TYPE_P(options) != IS_ARRAY) {
-		zval* new_options = ecalloc(1, sizeof(zval));
-
-		array_init_size(new_options, 1);
-		add_assoc_zval(new_options, key, options);
-		Z_ADDREF_P(options);
-		*allocated = true;
-
-		php_error_docref(NULL, E_DEPRECATED, "Passing the \"%s\" option directly is deprecated and will be removed in ext-mongodb 2.0", key);
-
-		return new_options;
-	}
-
-	return options;
-}
-
-void php_phongo_prep_legacy_option_free(zval* options)
-{
-	zval_ptr_dtor(options);
-	efree(options);
-}
-
 bool php_phongo_parse_int64(int64_t* retval, const char* data, size_t data_len)
 {
 	int64_t value;
