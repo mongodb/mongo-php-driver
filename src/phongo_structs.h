@@ -65,7 +65,6 @@ typedef struct {
 	bson_t*     write_concern_errors;
 	bson_t*     error_reply;
 	zval        manager;
-	uint32_t    server_id;
 	zend_object std;
 } php_phongo_bulkwritecommandresult_t;
 

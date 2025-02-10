@@ -52,8 +52,5 @@ object(MongoDB\Driver\BulkWriteCommandResult)#%d (%d) {
   }
   ["errorReply"]=>
   NULL
-  ["server"]=>
-  object(MongoDB\Driver\Server)#%d (%d) {%A
-  }
 }
 ===DONE===

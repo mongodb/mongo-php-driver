@@ -27,7 +27,6 @@
 #include "phongo_error.h"
 
 #include "BSON/Document.h"
-#include "MongoDB/Server.h"
 #include "MongoDB/WriteConcernError.h"
 #include "MongoDB/WriteError.h"
 #include "BulkWriteCommandResult_arginfo.h"
@@ -190,21 +189,6 @@ static PHP_METHOD(MongoDB_Driver_BulkWriteCommandResult, getUpsertedCount)
 	PHONGO_BULKWRITECOMMANDRESULT_CHECK_ACKNOWLEDGED("getUpsertedCount");
 
 	RETURN_LONG(intern->upserted_count);
-}
-
-/* Returns the last Server used to execute a command for the bulk write */
-static PHP_METHOD(MongoDB_Driver_BulkWriteCommandResult, getServer)
-{
-	php_phongo_bulkwritecommandresult_t* intern;
-
-	intern = Z_BULKWRITECOMMANDRESULT_OBJ_P(getThis());
-
-	PHONGO_PARSE_PARAMETERS_NONE();
-
-	PHONGO_BULKWRITECOMMANDRESULT_CHECK_ACKNOWLEDGED("getServer");
-
-	// TODO: null handling
-	phongo_server_init(return_value, &intern->manager, intern->server_id);
 }
 
 static PHP_METHOD(MongoDB_Driver_BulkWriteCommandResult, getInsertResults)
@@ -401,17 +385,6 @@ static HashTable* php_phongo_bulkwritecommandresult_get_debug_info(zend_object* 
 		ADD_ASSOC_NULL_EX(&retval, "errorReply");
 	}
 
-	if (intern->server_id) {
-		zval server;
-
-		phongo_server_init(&server, &intern->manager, intern->server_id);
-		ADD_ASSOC_ZVAL_EX(&retval, "server", &server);
-	} else {
-		/* TODO: Determine if this path is only reached when a partial result is
-		 * attached to a BulkWriteCommandException on an unacknowledged write. */
-		ADD_ASSOC_NULL_EX(&retval, "server");
-	}
-
 	return Z_ARRVAL(retval);
 }
 
@@ -451,8 +424,6 @@ php_phongo_bulkwritecommandresult_t* phongo_bulkwritecommandresult_init(zval* re
 		bwcr->insert_results = _bson_copy_or_null(mongoc_bulkwriteresult_insertresults(bw_ret->res));
 		bwcr->update_results = _bson_copy_or_null(mongoc_bulkwriteresult_updateresults(bw_ret->res));
 		bwcr->delete_results = _bson_copy_or_null(mongoc_bulkwriteresult_deleteresults(bw_ret->res));
-
-		bwcr->server_id = mongoc_bulkwriteresult_serverid(bw_ret->res);
 	}
 
 	// Copy mongoc_bulkwriteexception_t fields

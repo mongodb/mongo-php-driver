@@ -22,8 +22,6 @@ final class BulkWriteCommandResult
 
     final public function getDeletedCount(): int {}
 
-    final public function getServer(): Server {}
-
     final public function getInsertResults(): ?\MongoDB\BSON\Document {}
     
     final public function getUpdateResults(): ?\MongoDB\BSON\Document {}
