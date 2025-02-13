@@ -381,9 +381,8 @@ static PHP_METHOD(MongoDB_Driver_BulkWrite, insert)
 	php_phongo_bulkwrite_t* intern;
 	zval*                   zdocument;
 	bson_t                  bdocument = BSON_INITIALIZER, boptions = BSON_INITIALIZER;
-	bson_t*                 bson_out   = NULL;
-	int                     bson_flags = PHONGO_BSON_ADD_ID;
-	bson_error_t            error      = { 0 };
+	bson_t*                 bson_out = NULL;
+	bson_error_t            error    = { 0 };
 
 	intern = Z_BULKWRITE_OBJ_P(getThis());
 
@@ -391,11 +390,14 @@ static PHP_METHOD(MongoDB_Driver_BulkWrite, insert)
 	Z_PARAM_ARRAY_OR_OBJECT(zdocument)
 	PHONGO_PARSE_PARAMETERS_END();
 
-	bson_flags |= PHONGO_BSON_RETURN_ID;
-
-	php_phongo_zval_to_bson(zdocument, bson_flags, &bdocument, &bson_out);
+	php_phongo_zval_to_bson(zdocument, (PHONGO_BSON_ADD_ID | PHONGO_BSON_RETURN_ID), &bdocument, &bson_out);
 
 	if (EG(exception)) {
+		goto cleanup;
+	}
+
+	if (!bson_out) {
+		phongo_throw_exception(PHONGO_ERROR_LOGIC, "php_phongo_zval_to_bson() did not return an _id. Please file a bug report.");
 		goto cleanup;
 	}
 
@@ -405,11 +407,6 @@ static PHP_METHOD(MongoDB_Driver_BulkWrite, insert)
 	}
 
 	intern->num_ops++;
-
-	if (!bson_out) {
-		phongo_throw_exception(PHONGO_ERROR_LOGIC, "Did not receive result from bulk write. Please file a bug report.");
-		goto cleanup;
-	}
 
 	php_phongo_bulkwrite_extract_id(bson_out, &return_value);
 
