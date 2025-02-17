@@ -64,8 +64,9 @@ jobs:
         with:
           submodules: true
 
-      - id: setup-mongodb
-        uses: mongodb-labs/drivers-evergreen-tools@master
+      - name: Setup MongoDB
+        id: setup-mongodb
+        uses: ./tests/drivers-evergreen-tools
         with:
           version: "7.0"
           topology: "server"
