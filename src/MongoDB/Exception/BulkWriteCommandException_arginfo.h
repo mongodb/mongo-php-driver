@@ -20,10 +20,10 @@ static zend_class_entry *register_class_MongoDB_Driver_Exception_BulkWriteComman
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver\\Exception", "BulkWriteCommandException", class_MongoDB_Driver_Exception_BulkWriteCommandException_methods);
 	class_entry = zend_register_internal_class_ex(&ce, class_entry_MongoDB_Driver_Exception_ServerException);
 
+	zend_string *property_bulkWriteCommandResult_class_MongoDB_Driver_BulkWriteCommandResult = zend_string_init("MongoDB\\Driver\\BulkWriteCommandResult", sizeof("MongoDB\\Driver\\BulkWriteCommandResult")-1, 1);
 	zval property_bulkWriteCommandResult_default_value;
 	ZVAL_UNDEF(&property_bulkWriteCommandResult_default_value);
 	zend_string *property_bulkWriteCommandResult_name = zend_string_init("bulkWriteCommandResult", sizeof("bulkWriteCommandResult") - 1, 1);
-	zend_string *property_bulkWriteCommandResult_class_MongoDB_Driver_BulkWriteCommandResult = zend_string_init("MongoDB\\Driver\\BulkWriteCommandResult", sizeof("MongoDB\\Driver\\BulkWriteCommandResult")-1, 1);
 	zend_declare_typed_property(class_entry, property_bulkWriteCommandResult_name, &property_bulkWriteCommandResult_default_value, ZEND_ACC_PROTECTED, NULL, (zend_type) ZEND_TYPE_INIT_CLASS(property_bulkWriteCommandResult_class_MongoDB_Driver_BulkWriteCommandResult, 0, 0));
 	zend_string_release(property_bulkWriteCommandResult_name);
 
