@@ -437,17 +437,17 @@ static PHP_METHOD(MongoDB_Driver_BulkWriteCommand, insertOne)
 		goto cleanup;
 	}
 
+	if (!bson_out) {
+		phongo_throw_exception(PHONGO_ERROR_LOGIC, "php_phongo_zval_to_bson() did not return an _id. Please file a bug report.");
+		goto cleanup;
+	}
+
 	if (!mongoc_bulkwrite_append_insertone(intern->bw, ns, &bdocument, NULL, &error)) {
 		phongo_throw_exception_from_bson_error_t(&error);
 		goto cleanup;
 	}
 
 	intern->num_ops++;
-
-	if (!bson_out) {
-		phongo_throw_exception(PHONGO_ERROR_LOGIC, "php_phongo_zval_to_bson() did not return document identifier. Please file a bug report.");
-		goto cleanup;
-	}
 
 	phongo_bwc_extract_id(bson_out, &return_value);
 
