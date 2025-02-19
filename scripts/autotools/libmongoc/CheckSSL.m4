@@ -57,7 +57,7 @@ AS_IF([test "$PHP_MONGODB_SSL" = "openssl" -o "$PHP_MONGODB_SSL" = "auto"],[
     dnl Use a list of directories from PHP_SETUP_OPENSSL by default.
     dnl Support documented "auto" and older, undocumented "yes" options
     if test "$PHP_OPENSSL_DIR" = "auto" -o "$PHP_OPENSSL_DIR" = "yes"; then
-      PHP_OPENSSL_DIR="/usr/local/ssl /usr/local /usr /usr/local/openssl"
+      PHP_OPENSSL_DIR="/usr/local/ssl /usr/local /usr /usr/local/openssl /opt/homebrew/opt/openssl"
     fi
 
     for i in $PHP_OPENSSL_DIR; do

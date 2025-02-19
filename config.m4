@@ -536,6 +536,7 @@ Build configuration:
   libmongoc                                        : $PHP_MONGODB_BSON_VERSION_STRING
   libbson                                          : $PHP_MONGODB_MONGOC_VERSION_STRING
   libmongocrypt                                    : $PHP_MONGODB_MONGOCRYPT_VERSION_STRING
+  SSL                                              : $PHP_MONGODB_SSL
   LDFLAGS                                          : $LDFLAGS
   EXTRA_LDFLAGS                                    : $EXTRA_LDFLAGS
   MONGODB_SHARED_LIBADD                            : $MONGODB_SHARED_LIBADD
