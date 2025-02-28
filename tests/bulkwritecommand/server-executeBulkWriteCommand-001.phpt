@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\Driver\Manager::executeBulkWriteCommand()
+MongoDB\Driver\Server::executeBulkWriteCommand()
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_live(); ?>
@@ -11,6 +11,7 @@ MongoDB\Driver\Manager::executeBulkWriteCommand()
 require_once __DIR__ . "/../utils/basic.inc";
 
 $manager = create_test_manager();
+$server = $manager->selectServer();
 
 $bulk = new MongoDB\Driver\BulkWriteCommand(['verboseResults' => true]);
 $bulk->insertOne(NS, ['_id' => 1]);
@@ -24,7 +25,7 @@ $bulk->updateMany(NS, ['x' => ['$exists' => true]], ['$inc' => ['x' => 1]]);
 $bulk->deleteOne(NS, ['_id' => ['$gt' => 4]]);
 $bulk->deleteMany(NS, ['_id' => ['$gt' => 2]]);
 
-$result = $manager->executeBulkWriteCommand($bulk);
+$result = $server->executeBulkWriteCommand($bulk);
 
 var_dump($result);
 

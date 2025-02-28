@@ -55,10 +55,6 @@ mongoc_bulkwriteopts_t* phongo_bwc_assemble_opts(php_phongo_bulkwritecommand_t* 
 	mongoc_bulkwriteopts_set_ordered(opts, intern->ordered);
 	mongoc_bulkwriteopts_set_verboseresults(opts, intern->verbose);
 
-	if (intern->write_concern) {
-		mongoc_bulkwriteopts_set_writeconcern(opts, intern->write_concern);
-	}
-
 	return opts;
 }
 
@@ -131,15 +127,13 @@ static PHP_METHOD(MongoDB_Driver_BulkWriteCommand, __construct)
 	Z_PARAM_ARRAY_OR_NULL(zoptions)
 	PHONGO_PARSE_PARAMETERS_END();
 
-	// TODO: Consider removing initialization for zero values
-	intern->bw            = mongoc_bulkwrite_new();
-	intern->bypass        = PHONGO_BULKWRITECOMMAND_BYPASS_UNSET;
-	intern->comment       = NULL;
-	intern->let           = NULL;
-	intern->num_ops       = 0;
-	intern->ordered       = true;
-	intern->verbose       = false;
-	intern->write_concern = NULL;
+	intern->bw      = mongoc_bulkwrite_new();
+	intern->bypass  = PHONGO_BULKWRITECOMMAND_BYPASS_UNSET;
+	intern->comment = NULL;
+	intern->let     = NULL;
+	intern->num_ops = 0;
+	intern->ordered = true;
+	intern->verbose = false;
 
 	if (!zoptions) {
 		return;
@@ -182,17 +176,6 @@ static PHP_METHOD(MongoDB_Driver_BulkWriteCommand, __construct)
 
 	if (php_array_existsc(zoptions, "verboseResults")) {
 		intern->verbose = php_array_fetchc_bool(zoptions, "verboseResults");
-	}
-
-	if (php_array_existsc(zoptions, "writeConcern")) {
-		zval* value = php_array_fetchc_deref(zoptions, "writeConcern");
-
-		if (Z_TYPE_P(value) != IS_OBJECT || !instanceof_function(Z_OBJCE_P(value), php_phongo_writeconcern_ce)) {
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"writeConcern\" option to be %s, %s given", ZSTR_VAL(php_phongo_writeconcern_ce->name), zend_zval_type_name(value));
-			return;
-		}
-
-		intern->write_concern = mongoc_write_concern_copy(phongo_write_concern_from_zval(value));
 	}
 }
 
@@ -763,10 +746,6 @@ static void php_phongo_bulkwritecommand_free_object(zend_object* object)
 	if (!Z_ISUNDEF(intern->session)) {
 		zval_ptr_dtor(&intern->session);
 	}
-
-	if (intern->write_concern) {
-		mongoc_write_concern_destroy(intern->write_concern);
-	}
 }
 
 static zend_object* php_phongo_bulkwritecommand_create_object(zend_class_entry* class_type)
@@ -826,15 +805,6 @@ static HashTable* php_phongo_bulkwritecommand_get_debug_info(zend_object* object
 		Z_ADDREF(intern->session);
 	} else {
 		ADD_ASSOC_NULL_EX(&retval, "session");
-	}
-
-	if (intern->write_concern) {
-		zval write_concern;
-
-		php_phongo_write_concern_to_zval(&write_concern, intern->write_concern);
-		ADD_ASSOC_ZVAL_EX(&retval, "write_concern", &write_concern);
-	} else {
-		ADD_ASSOC_NULL_EX(&retval, "write_concern");
 	}
 
 done:

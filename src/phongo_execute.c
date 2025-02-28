@@ -342,13 +342,30 @@ bool phongo_execute_bulkwritecommand(zval* manager, php_phongo_bulkwritecommand_
 	mongoc_bulkwriteopts_t*              bw_opts = NULL;
 	mongoc_bulkwritereturn_t             bw_ret  = { 0 };
 	php_phongo_bulkwritecommandresult_t* bwcr;
-	zval*                                zsession = NULL;
-	bool                                 success  = true;
+	zval*                                zsession      = NULL;
+	zval*                                zwriteConcern = NULL;
+	const mongoc_write_concern_t*        write_concern = NULL;
+	bool                                 success       = true;
 
 	client = Z_MANAGER_OBJ_P(manager)->client;
 
 	if (!phongo_parse_session(zoptions, client, NULL, &zsession)) {
 		/* Exception should already have been thrown */
+		return false;
+	}
+
+	if (!phongo_parse_write_concern(zoptions, NULL, &zwriteConcern)) {
+		/* Exception should already have been thrown */
+		return false;
+	}
+
+	/* If a write concern was not specified, libmongoc will use the client's
+	 * write concern. Check if an unacknowledged write concern would conflict
+	 * with an explicit session. */
+	write_concern = zwriteConcern ? Z_WRITECONCERN_OBJ_P(zwriteConcern)->write_concern : mongoc_client_get_write_concern(client);
+
+	if (zsession && !mongoc_write_concern_is_acknowledged(write_concern)) {
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Cannot combine \"session\" option with an unacknowledged write concern");
 		return false;
 	}
 
@@ -358,10 +375,14 @@ bool phongo_execute_bulkwritecommand(zval* manager, php_phongo_bulkwritecommand_
 	mongoc_bulkwriteopts_set_serverid(bw_opts, server_id);
 
 	if (zsession) {
-		mongoc_bulkwrite_set_session(bw, Z_SESSION_OBJ_P(zsession)->client_session);
 		/* Save a reference to the session on the class struct to avoid leaving
 		 * a dangling pointer within mongoc_bulkwrite_t. */
 		ZVAL_ZVAL(&bwc->session, zsession, 1, 0);
+		mongoc_bulkwrite_set_session(bw, Z_SESSION_OBJ_P(zsession)->client_session);
+	}
+
+	if (zwriteConcern) {
+		mongoc_bulkwriteopts_set_writeconcern(bw_opts, Z_WRITECONCERN_OBJ_P(zwriteConcern)->write_concern);
 	}
 
 	bw_ret = mongoc_bulkwrite_execute(bw, bw_opts);
