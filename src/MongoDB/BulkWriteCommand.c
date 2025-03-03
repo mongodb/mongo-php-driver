@@ -507,6 +507,18 @@ static PHP_METHOD(MongoDB_Driver_BulkWriteCommand, replaceOne)
 			bson_value_destroy(&bhint);
 		}
 
+		if (php_array_existsc(zoptions, "sort")) {
+			bson_t bsort = BSON_INITIALIZER;
+
+			if (!phongo_bwc_parse_document(php_array_fetchc_deref(zoptions, "sort"), &bsort, "sort")) {
+				bson_destroy(&bsort);
+				goto cleanup;
+			}
+
+			mongoc_bulkwrite_replaceoneopts_set_sort(opts, &bsort);
+			bson_destroy(&bsort);
+		}
+
 		if (php_array_existsc(zoptions, "upsert")) {
 			mongoc_bulkwrite_replaceoneopts_set_upsert(opts, php_array_fetchc_bool(zoptions, "upsert"));
 		}
@@ -701,6 +713,18 @@ static PHP_METHOD(MongoDB_Driver_BulkWriteCommand, updateOne)
 
 			mongoc_bulkwrite_updateoneopts_set_hint(opts, &bhint);
 			bson_value_destroy(&bhint);
+		}
+
+		if (php_array_existsc(zoptions, "sort")) {
+			bson_t bsort = BSON_INITIALIZER;
+
+			if (!phongo_bwc_parse_document(php_array_fetchc_deref(zoptions, "sort"), &bsort, "sort")) {
+				bson_destroy(&bsort);
+				goto cleanup;
+			}
+
+			mongoc_bulkwrite_updateoneopts_set_sort(opts, &bsort);
+			bson_destroy(&bsort);
 		}
 
 		if (php_array_existsc(zoptions, "upsert")) {
