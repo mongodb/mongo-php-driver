@@ -445,19 +445,19 @@ static PHP_METHOD(MongoDB_Driver_BulkWriteCommand, replaceOne)
 	char*                              ns;
 	size_t                             ns_len;
 	zval*                              zfilter;
-	zval*                              zupdate;
-	zval*                              zoptions = NULL;
-	bson_t                             bfilter  = BSON_INITIALIZER;
-	bson_t                             bupdate  = BSON_INITIALIZER;
-	mongoc_bulkwrite_replaceoneopts_t* opts     = NULL;
-	bson_error_t                       error    = { 0 };
+	zval*                              zreplacement;
+	zval*                              zoptions     = NULL;
+	bson_t                             bfilter      = BSON_INITIALIZER;
+	bson_t                             breplacement = BSON_INITIALIZER;
+	mongoc_bulkwrite_replaceoneopts_t* opts         = NULL;
+	bson_error_t                       error        = { 0 };
 
 	intern = Z_BULKWRITECOMMAND_OBJ_P(getThis());
 
 	PHONGO_PARSE_PARAMETERS_START(3, 4)
 	Z_PARAM_STRING(ns, ns_len)
 	Z_PARAM_ARRAY_OR_OBJECT(zfilter)
-	Z_PARAM_ARRAY_OR_OBJECT(zupdate)
+	Z_PARAM_ARRAY_OR_OBJECT(zreplacement)
 	Z_PARAM_OPTIONAL
 	Z_PARAM_ARRAY_OR_NULL(zoptions)
 	PHONGO_PARSE_PARAMETERS_END();
@@ -473,8 +473,7 @@ static PHP_METHOD(MongoDB_Driver_BulkWriteCommand, replaceOne)
 		goto cleanup;
 	}
 
-	// Explicitly allow MongoDB\BSON\PackedArray for update pipelines
-	php_phongo_zval_to_bson(zupdate, PHONGO_BSON_ALLOW_ROOT_ARRAY, &bupdate, NULL);
+	php_phongo_zval_to_bson(zreplacement, PHONGO_BSON_NONE, &breplacement, NULL);
 
 	if (EG(exception)) {
 		goto cleanup;
@@ -524,7 +523,7 @@ static PHP_METHOD(MongoDB_Driver_BulkWriteCommand, replaceOne)
 		}
 	}
 
-	if (!mongoc_bulkwrite_append_replaceone(intern->bw, ns, &bfilter, &bupdate, opts, &error)) {
+	if (!mongoc_bulkwrite_append_replaceone(intern->bw, ns, &bfilter, &breplacement, opts, &error)) {
 		phongo_throw_exception_from_bson_error_t(&error);
 		goto cleanup;
 	}
@@ -533,7 +532,7 @@ static PHP_METHOD(MongoDB_Driver_BulkWriteCommand, replaceOne)
 
 cleanup:
 	bson_destroy(&bfilter);
-	bson_destroy(&bupdate);
+	bson_destroy(&breplacement);
 	mongoc_bulkwrite_replaceoneopts_destroy(opts);
 }
 
