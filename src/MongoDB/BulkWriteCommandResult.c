@@ -401,7 +401,7 @@ void php_phongo_bulkwritecommandresult_init_ce(INIT_FUNC_ARGS)
 
 static inline bson_t* _bson_copy_or_null(const bson_t* bson)
 {
-	return bson_empty0(bson) ? NULL : bson_copy(bson);
+	return bson ? bson_copy(bson) : NULL;
 }
 
 php_phongo_bulkwritecommandresult_t* phongo_bulkwritecommandresult_init(zval* return_value, mongoc_bulkwritereturn_t* bw_ret, zval* manager)
@@ -421,16 +421,18 @@ php_phongo_bulkwritecommandresult_t* phongo_bulkwritecommandresult_init(zval* re
 		bwcr->modified_count = mongoc_bulkwriteresult_modifiedcount(bw_ret->res);
 		bwcr->deleted_count  = mongoc_bulkwriteresult_deletedcount(bw_ret->res);
 
+		// Result documents will null if verboseResults=false
 		bwcr->insert_results = _bson_copy_or_null(mongoc_bulkwriteresult_insertresults(bw_ret->res));
 		bwcr->update_results = _bson_copy_or_null(mongoc_bulkwriteresult_updateresults(bw_ret->res));
 		bwcr->delete_results = _bson_copy_or_null(mongoc_bulkwriteresult_deleteresults(bw_ret->res));
 	}
 
-	// Copy mongoc_bulkwriteexception_t fields
+	/* If any error(s) occurred, mongoc_bulkwriteexception_t will be non-null.
+	 * Copy its fields into the result object. */
 	if (bw_ret->exc) {
-		bwcr->error_reply          = _bson_copy_or_null(mongoc_bulkwriteexception_errorreply(bw_ret->exc));
-		bwcr->write_errors         = _bson_copy_or_null(mongoc_bulkwriteexception_writeerrors(bw_ret->exc));
-		bwcr->write_concern_errors = _bson_copy_or_null(mongoc_bulkwriteexception_writeconcernerrors(bw_ret->exc));
+		bwcr->error_reply          = bson_copy(mongoc_bulkwriteexception_errorreply(bw_ret->exc));
+		bwcr->write_errors         = bson_copy(mongoc_bulkwriteexception_writeerrors(bw_ret->exc));
+		bwcr->write_concern_errors = bson_copy(mongoc_bulkwriteexception_writeconcernerrors(bw_ret->exc));
 	}
 
 	ZVAL_ZVAL(&bwcr->manager, manager, 1, 0);
