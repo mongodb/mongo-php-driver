@@ -32,7 +32,8 @@ try {
     $manager->executeBulkWriteCommand($bulk);
 } catch (MongoDB\Driver\Exception\BulkWriteCommandException $e) {
     printf("%s(%d): %s\n", get_class($e), $e->getCode(), $e->getMessage());
-    var_dump($e->getBulkWriteCommandResult());
+    var_dump($e->getPartialResult());
+    var_dump($e->getWriteErrors());
 }
 
 ?>
@@ -59,58 +60,46 @@ object(MongoDB\Driver\BulkWriteCommandResult)#%d (%d) {
   NULL
   ["deleteResults"]=>
   NULL
-  ["writeErrors"]=>
-  array(1) {
-    [1]=>
-    object(MongoDB\Driver\WriteError)#%d (%d) {
-      ["message"]=>
-      string(26) "Document failed validation"
-      ["code"]=>
-      int(121)
-      ["index"]=>
-      int(1)
-      ["info"]=>
+}
+array(1) {
+  [1]=>
+  object(MongoDB\Driver\WriteError)#%d (%d) {
+    ["message"]=>
+    string(26) "Document failed validation"
+    ["code"]=>
+    int(121)
+    ["index"]=>
+    int(1)
+    ["info"]=>
+    object(stdClass)#%d (%d) {
+      ["failingDocumentId"]=>
+      int(2)
+      ["details"]=>
       object(stdClass)#%d (%d) {
-        ["failingDocumentId"]=>
-        int(2)
-        ["details"]=>
-        object(stdClass)#%d (%d) {
-          ["operatorName"]=>
-          string(11) "$jsonSchema"
-          ["schemaRulesNotSatisfied"]=>
-          array(1) {
-            [0]=>
+        ["operatorName"]=>
+        string(11) "$jsonSchema"
+        ["schemaRulesNotSatisfied"]=>
+        array(1) {
+          [0]=>
+          object(stdClass)#%d (%d) {
+            ["operatorName"]=>
+            string(8) "required"
+            ["specifiedAs"]=>
             object(stdClass)#%d (%d) {
-              ["operatorName"]=>
-              string(8) "required"
-              ["specifiedAs"]=>
-              object(stdClass)#%d (%d) {
-                ["required"]=>
-                array(1) {
-                  [0]=>
-                  string(1) "x"
-                }
-              }
-              ["missingProperties"]=>
+              ["required"]=>
               array(1) {
                 [0]=>
                 string(1) "x"
               }
             }
+            ["missingProperties"]=>
+            array(1) {
+              [0]=>
+              string(1) "x"
+            }
           }
         }
       }
-    }
-  }
-  ["writeConcernErrors"]=>
-  array(0) {
-  }
-  ["errorReply"]=>
-  object(MongoDB\BSON\Document)#%d (%d) {
-    ["data"]=>
-    string(8) "BQAAAAA="
-    ["value"]=>
-    object(stdClass)#%d (%d) {
     }
   }
 }

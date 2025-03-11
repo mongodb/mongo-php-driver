@@ -44,13 +44,5 @@ object(MongoDB\Driver\BulkWriteCommandResult)#%d (%d) {
   NULL
   ["deleteResults"]=>
   NULL
-  ["writeErrors"]=>
-  array(0) {
-  }
-  ["writeConcernErrors"]=>
-  array(0) {
-  }
-  ["errorReply"]=>
-  NULL
 }
 ===DONE===

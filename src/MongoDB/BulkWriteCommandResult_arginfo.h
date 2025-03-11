@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: a4cbc5665d7b1d99f5f4c6425d6d2eb3829bb001 */
+ * Stub hash: 042b10edec437daefeda4f0fc883dd25e240439f */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_Driver_BulkWriteCommandResult___construct, 0, 0, 0)
 ZEND_END_ARG_INFO()
@@ -22,13 +22,6 @@ ZEND_END_ARG_INFO()
 
 #define arginfo_class_MongoDB_Driver_BulkWriteCommandResult_getDeleteResults arginfo_class_MongoDB_Driver_BulkWriteCommandResult_getInsertResults
 
-ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_Driver_BulkWriteCommandResult_getWriteErrors, 0, 0, IS_ARRAY, 0)
-ZEND_END_ARG_INFO()
-
-#define arginfo_class_MongoDB_Driver_BulkWriteCommandResult_getWriteConcernErrors arginfo_class_MongoDB_Driver_BulkWriteCommandResult_getWriteErrors
-
-#define arginfo_class_MongoDB_Driver_BulkWriteCommandResult_getErrorReply arginfo_class_MongoDB_Driver_BulkWriteCommandResult_getInsertResults
-
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_Driver_BulkWriteCommandResult_isAcknowledged, 0, 0, _IS_BOOL, 0)
 ZEND_END_ARG_INFO()
 
@@ -42,9 +35,6 @@ static ZEND_METHOD(MongoDB_Driver_BulkWriteCommandResult, getDeletedCount);
 static ZEND_METHOD(MongoDB_Driver_BulkWriteCommandResult, getInsertResults);
 static ZEND_METHOD(MongoDB_Driver_BulkWriteCommandResult, getUpdateResults);
 static ZEND_METHOD(MongoDB_Driver_BulkWriteCommandResult, getDeleteResults);
-static ZEND_METHOD(MongoDB_Driver_BulkWriteCommandResult, getWriteErrors);
-static ZEND_METHOD(MongoDB_Driver_BulkWriteCommandResult, getWriteConcernErrors);
-static ZEND_METHOD(MongoDB_Driver_BulkWriteCommandResult, getErrorReply);
 static ZEND_METHOD(MongoDB_Driver_BulkWriteCommandResult, isAcknowledged);
 
 
@@ -58,9 +48,6 @@ static const zend_function_entry class_MongoDB_Driver_BulkWriteCommandResult_met
 	ZEND_ME(MongoDB_Driver_BulkWriteCommandResult, getInsertResults, arginfo_class_MongoDB_Driver_BulkWriteCommandResult_getInsertResults, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_Driver_BulkWriteCommandResult, getUpdateResults, arginfo_class_MongoDB_Driver_BulkWriteCommandResult_getUpdateResults, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_Driver_BulkWriteCommandResult, getDeleteResults, arginfo_class_MongoDB_Driver_BulkWriteCommandResult_getDeleteResults, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	ZEND_ME(MongoDB_Driver_BulkWriteCommandResult, getWriteErrors, arginfo_class_MongoDB_Driver_BulkWriteCommandResult_getWriteErrors, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	ZEND_ME(MongoDB_Driver_BulkWriteCommandResult, getWriteConcernErrors, arginfo_class_MongoDB_Driver_BulkWriteCommandResult_getWriteConcernErrors, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	ZEND_ME(MongoDB_Driver_BulkWriteCommandResult, getErrorReply, arginfo_class_MongoDB_Driver_BulkWriteCommandResult_getErrorReply, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_Driver_BulkWriteCommandResult, isAcknowledged, arginfo_class_MongoDB_Driver_BulkWriteCommandResult_isAcknowledged, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_FE_END
 };

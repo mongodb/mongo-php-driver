@@ -21,7 +21,8 @@ try {
     $manager->executeBulkWriteCommand($bulk);
 } catch (MongoDB\Driver\Exception\BulkWriteCommandException $e) {
     printf("%s(%d): %s\n", get_class($e), $e->getCode(), $e->getMessage());
-    var_dump($e->getBulkWriteCommandResult());
+    var_dump($e->getPartialResult());
+    var_dump($e->getWriteErrors());
 }
 
 ?>
@@ -48,29 +49,17 @@ object(MongoDB\Driver\BulkWriteCommandResult)#%d (%d) {
   NULL
   ["deleteResults"]=>
   NULL
-  ["writeErrors"]=>
-  array(1) {
-    [1]=>
-    object(MongoDB\Driver\WriteError)#%d (%d) {
-      ["message"]=>
-      string(128) "E11000 duplicate key error collection: phongo.bulkwritecommand_bulkwritecommand_ctor_ordered_001 index: _id_ dup key: { _id: 1 }"
-      ["code"]=>
-      int(11000)
-      ["index"]=>
-      int(1)
-      ["info"]=>
-      object(stdClass)#%d (%d) {
-      }
-    }
-  }
-  ["writeConcernErrors"]=>
-  array(0) {
-  }
-  ["errorReply"]=>
-  object(MongoDB\BSON\Document)#%d (%d) {
-    ["data"]=>
-    string(8) "BQAAAAA="
-    ["value"]=>
+}
+array(1) {
+  [1]=>
+  object(MongoDB\Driver\WriteError)#%d (%d) {
+    ["message"]=>
+    string(128) "E11000 duplicate key error collection: phongo.bulkwritecommand_bulkwritecommand_ctor_ordered_001 index: _id_ dup key: { _id: 1 }"
+    ["code"]=>
+    int(11000)
+    ["index"]=>
+    int(1)
+    ["info"]=>
     object(stdClass)#%d (%d) {
     }
   }

@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\Driver\BulkWriteCommand::__construct() bypassDocumentValidation=true
+MongoDB\Driver\BulkWriteCommandResult debug output with unacknowledged write concern
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_live(); ?>
@@ -10,19 +10,9 @@ MongoDB\Driver\BulkWriteCommand::__construct() bypassDocumentValidation=true
 
 require_once __DIR__ . "/../utils/basic.inc";
 
-$manager = create_test_manager();
+$manager = create_test_manager(URI, ['w' => 0]);
 
-$manager->executeWriteCommand(DATABASE_NAME, new MongoDB\Driver\Command([
-    'create' => COLLECTION_NAME,
-    'validator' => [
-        '$jsonSchema' => [
-            'bsonType' => 'object',
-            'required' => ['x'],
-        ],
-    ],
-]));
-
-$bulk = new MongoDB\Driver\BulkWriteCommand(['bypassDocumentValidation' => true]);
+$bulk = new MongoDB\Driver\BulkWriteCommand(['ordered' => false]);
 $bulk->insertOne(NS, ['_id' => 1]);
 
 $result = $manager->executeBulkWriteCommand($bulk);
@@ -35,9 +25,9 @@ var_dump($result);
 --EXPECTF--
 object(MongoDB\Driver\BulkWriteCommandResult)#%d (%d) {
   ["isAcknowledged"]=>
-  bool(true)
+  bool(false)
   ["insertedCount"]=>
-  int(1)
+  int(0)
   ["matchedCount"]=>
   int(0)
   ["modifiedCount"]=>

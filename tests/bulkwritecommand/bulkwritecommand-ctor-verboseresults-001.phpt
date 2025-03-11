@@ -94,13 +94,5 @@ object(MongoDB\Driver\BulkWriteCommandResult)#%d (%d) {
       }
     }
   }
-  ["writeErrors"]=>
-  array(0) {
-  }
-  ["writeConcernErrors"]=>
-  array(0) {
-  }
-  ["errorReply"]=>
-  NULL
 }
 ===DONE===

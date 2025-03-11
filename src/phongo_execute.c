@@ -30,6 +30,7 @@
 #include "MongoDB/BulkWriteCommand.h"
 #include "MongoDB/BulkWriteCommandResult.h"
 #include "MongoDB/Cursor.h"
+#include "MongoDB/Exception/BulkWriteCommandException.h"
 #include "MongoDB/ReadPreference.h"
 #include "MongoDB/Session.h"
 #include "MongoDB/WriteResult.h"
@@ -337,15 +338,14 @@ cleanup:
 
 bool phongo_execute_bulkwritecommand(zval* manager, php_phongo_bulkwritecommand_t* bwc, zval* zoptions, uint32_t server_id, zval* return_value)
 {
-	mongoc_client_t*                     client  = NULL;
-	mongoc_bulkwrite_t*                  bw      = bwc->bw;
-	mongoc_bulkwriteopts_t*              bw_opts = NULL;
-	mongoc_bulkwritereturn_t             bw_ret  = { 0 };
-	php_phongo_bulkwritecommandresult_t* bwcr;
-	zval*                                zsession      = NULL;
-	zval*                                zwriteConcern = NULL;
-	const mongoc_write_concern_t*        write_concern = NULL;
-	bool                                 success       = true;
+	mongoc_client_t*              client        = NULL;
+	mongoc_bulkwrite_t*           bw            = bwc->bw;
+	mongoc_bulkwriteopts_t*       bw_opts       = NULL;
+	mongoc_bulkwritereturn_t      bw_ret        = { 0 };
+	zval*                         zsession      = NULL;
+	zval*                         zwriteConcern = NULL;
+	const mongoc_write_concern_t* write_concern = NULL;
+	bool                          success       = true;
 
 	client = Z_MANAGER_OBJ_P(manager)->client;
 
@@ -387,27 +387,25 @@ bool phongo_execute_bulkwritecommand(zval* manager, php_phongo_bulkwritecommand_
 
 	bw_ret = mongoc_bulkwrite_execute(bw, bw_opts);
 
-	bwcr = phongo_bulkwritecommandresult_init(return_value, &bw_ret, manager);
+	phongo_bulkwritecommandresult_init(return_value, bw_ret.res);
 
 	/* Error handling for mongoc_bulkwrite_execute differs significantly from
 	 * mongoc_bulk_operation_execute.
 	 *
 	 * - There may or may not be a top-level error. Top-level errors include
 	 *   both logical errors (invalid arguments) and runtime errors (e.g. server
-	 *   selection failure). A bulk write fails due to write or write concern
+	 *   selection failure). A bulk write failing due to write or write concern
 	 *   errors will typically not have a top-level error.
 	 *
 	 * - There may or may not be an error reply document. This document could be
 	 *   the response of a failed bulkWrite command, but it may also originate
 	 *   from libmongoc (e.g. server selection, appending a session, iterating
 	 *   BSON). This function only uses it to extrapolate error labels and it is
-	 *   otherwise accessible to the user through BulkWriteCommandResult.
+	 *   otherwise accessible to the user through BulkWriteCommandException.
 	 *
 	 * - InvalidArgumentException may be thrown directly for a basic top-level
-	 *   error (assuming BulkWriteCommandResult would also be irrelevant).
-	 *   Otherwise, BulkWriteCommandException is thrown with an attached
-	 *   BulkWriteCommandResult that collects any error reply, write errors, and
-	 *   write concern errors, along with a possible partial write result.
+	 *   error if there is no partial write result or error reply. Otherwise,
+	 *   BulkWriteCommandException is thrown.
 	 */
 	if (bw_ret.exc) {
 		success                   = false;
@@ -438,12 +436,15 @@ bool phongo_execute_bulkwritecommand(zval* manager, php_phongo_bulkwritecommand_
 			zend_throw_exception(php_phongo_bulkwritecommandexception_ce, "Bulk write failed", 0);
 		}
 
+		/* Initialize BulkWriteCommandException properties. Although a
+		 * BulkWriteCommandResult is always returned on success, the partial
+		 * result reported via the exception may be null. */
+		php_phongo_bulkwritecommandexception_init_props(EG(exception), bw_ret.exc, bw_ret.res ? return_value : NULL);
+
 		/* Ensure error labels are added to the final BulkWriteCommandException.
 		 * If RuntimeException was previously thrown, labels may also have been
 		 * added to it by phongo_throw_exception_from_bson_error_t_and_reply. */
 		phongo_exception_add_error_labels(error_reply);
-
-		phongo_add_exception_prop(ZEND_STRL("bulkWriteCommandResult"), return_value);
 	}
 
 cleanup:

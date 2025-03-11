@@ -1,5 +1,5 @@
 /*
- * Copyright 2024-present MongoDB, Inc.
+* Copyright 2024-present MongoDB, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +14,13 @@
  * limitations under the License.
  */
 
-#ifndef PHONGO_BULKWRITECOMMANDRESULT_H
-#define PHONGO_BULKWRITECOMMANDRESULT_H
+#ifndef PHONGO_BULKWRITECOMMANDEXCEPTION_H
+#define PHONGO_BULKWRITECOMMANDEXCEPTION_H
 
 #include "mongoc/mongoc.h"
 
 #include <php.h>
 
-#include "phongo_structs.h"
+void php_phongo_bulkwritecommandexception_init_props(zend_object* object, const mongoc_bulkwriteexception_t* bw_exc, zval* result);
 
-php_phongo_bulkwritecommandresult_t* phongo_bulkwritecommandresult_init(zval* return_value, mongoc_bulkwriteresult_t* bw_res);
-
-#endif /* PHONGO_BULKWRITECOMMANDRESULT_H */
+#endif /* PHONGO_BULKWRITECOMMANDEXCEPTION_H */
