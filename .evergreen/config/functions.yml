@@ -192,17 +192,23 @@ functions:
           ${PREPARE_SHELL}
           bash ${DRIVERS_TOOLS}/.evergreen/stop-orchestration.sh
 
-  "run OCSP responder":
+  "start OCSP responder":
+    - command: subprocess.exec
+      params:
+        binary: bash
+        background: true
+        include_expansions_in_env:
+          - SERVER_TYPE
+          - OCSP_ALGORITHM
+        args:
+          - ${DRIVERS_TOOLS}/.evergreen/ocsp/setup.sh
+
+  "stop OCSP responder":
     - command: shell.exec
       params:
-        include_expansions_in_env:
-          - TEST_COLUMN
-          - CERT_TYPE
-          - USE_DELEGATE
-        shell: bash
         script: |
           ${PREPARE_SHELL}
-          bash ${PROJECT_DIRECTORY}/.evergreen/run-ocsp-responder.sh
+          bash ${DRIVERS_TOOLS}/.evergreen/ocsp/teardown.sh
 
   "run tests":
     - command: shell.exec
