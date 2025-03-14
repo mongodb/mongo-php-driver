@@ -408,12 +408,20 @@ bool phongo_execute_bulkwritecommand(zval* manager, php_phongo_bulkwritecommand_
 	 *   BulkWriteCommandException is thrown.
 	 */
 	if (bw_ret.exc) {
-		success                   = false;
-		bson_error_t  error       = { 0 };
-		const bson_t* error_reply = mongoc_bulkwriteexception_errorreply(bw_ret.exc);
+		success                           = false;
+		bson_error_t  error               = { 0 };
+		bool          has_top_level_error = mongoc_bulkwriteexception_error(bw_ret.exc, &error);
+		const bson_t* error_reply         = mongoc_bulkwriteexception_errorreply(bw_ret.exc);
 
-		// Consult any top-level error to throw the first exception
-		if (mongoc_bulkwriteexception_error(bw_ret.exc, &error)) {
+		/* Throw an exception if there is a top-level error and it does not
+		 * originate from the server. Assuming we do not return early for an
+		 * InvalidArgumentException, this first exception will be accessible
+		 * via Exception::getPrevious().
+		 *
+		 * TODO: MONGOC_ERROR_WRITE_CONCERN should never be reported as a
+		 * top-level error by mongoc_bulkwrite_execute, so consider removing.
+		 */
+		if (has_top_level_error && error.domain != MONGOC_ERROR_SERVER && error.domain != MONGOC_ERROR_WRITE_CONCERN) {
 			phongo_throw_exception_from_bson_error_t_and_reply(&error, error_reply);
 		}
 
@@ -433,7 +441,7 @@ bool phongo_execute_bulkwritecommand(zval* manager, php_phongo_bulkwritecommand_
 			zend_throw_exception(php_phongo_bulkwritecommandexception_ce, message, 0);
 			efree(message);
 		} else {
-			zend_throw_exception(php_phongo_bulkwritecommandexception_ce, "Bulk write failed", 0);
+			zend_throw_exception(php_phongo_bulkwritecommandexception_ce, has_top_level_error ? error.message : "Bulk write failed", error.code);
 		}
 
 		/* Initialize BulkWriteCommandException properties. Although a
