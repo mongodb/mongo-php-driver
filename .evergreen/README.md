@@ -13,4 +13,4 @@ hosts.
 [mongodb-labs/drivers-evergreen-tools](https://github.com/mongodb-labs/drivers-evergreen-tools)
 consists of common scripts used by many drivers (e.g. starting
 [mongo-orchestration](https://github.com/10gen/mongo-orchestration)). This package is installed as a Git submodule
-in the `tests` repository.
+in the `tests` directory.
