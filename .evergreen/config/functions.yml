@@ -4,12 +4,12 @@ functions:
     - command: git.get_project
       params:
         directory: "src"
-    # Fetch the libmongoc submodule
+    # Fetch the submodules
     - command: shell.exec
       params:
         working_dir: "src"
         script: |
-          git submodule update --init --depth 1
+          git submodule update --init
     # Make an evergreen expansion file with dynamic values
     - command: shell.exec
       params:
@@ -75,7 +75,6 @@ functions:
         working_dir: src
         script: |
           ${PREPARE_SHELL}
-          git submodule update --init --depth 1
           echo "{ \"releases\": { \"default\": \"$MONGODB_BINARIES\" }}" > $MONGO_ORCHESTRATION_HOME/orchestration.config
 
 
