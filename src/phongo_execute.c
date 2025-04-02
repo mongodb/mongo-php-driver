@@ -430,7 +430,7 @@ bool phongo_execute_bulkwritecommand(zval* manager, php_phongo_bulkwritecommand_
 		 * (CDRIVER-5842). Throw InvalidArgumentException directly iff there is
 		 * neither a partial write result nor an error reply (we can assume
 		 * there are no write or write concern errors for this case). */
-		if (EG(exception) && EG(exception)->ce == php_phongo_invalidargumentexception_ce && !bw_ret.res && !error_reply) {
+		if (EG(exception) && EG(exception)->ce == php_phongo_invalidargumentexception_ce && !bw_ret.res && bson_empty(error_reply)) {
 			goto cleanup;
 		}
 
