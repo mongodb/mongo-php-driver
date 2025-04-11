@@ -1,6 +1,10 @@
 UPGRADE FROM 1.x to 2.0
 =======================
 
+ * Add return type to implementations of `MongoDB\BSON\Serializable::bsonSerialize()`,
+   with `array|\stdClass|Document|PackedArray` or a subset of this union type.
+ * Add parameter and return type to implementations of `MongoDB\BSON\Unserializable`
+   to comply with the `bsonUnserialize(array $data): void` signature.
  * The `getServer()` method has been removed from the CommandFailedEvent,
    CommandStartedEvent, and CommandSucceededEvent event classes. The `getHost()`
    and `getPort()` methods have been added in its place.
