@@ -172,7 +172,7 @@
 #define PHONGO_PARSE_PARAMETERS_END()                 \
 	ZEND_PARSE_PARAMETERS_END_EX(                     \
 		zend_restore_error_handling(&error_handling); \
-		return );                                     \
+		return);                                      \
 	zend_restore_error_handling(&error_handling);     \
 	}                                                 \
 	while (0)
