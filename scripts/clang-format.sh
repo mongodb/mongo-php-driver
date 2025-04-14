@@ -29,7 +29,7 @@ if [ -z "$CLANG_FORMAT" ]; then
 	exit
 fi
 
-VERSION=`$CLANG_FORMAT -version | cut -d " " -f 3`
+VERSION=`$CLANG_FORMAT -version | grep -oE '[0-9]+\.[0-9]+\.[0-9]+'`
 VERSION_MAJOR=`echo $VERSION | cut -d "." -f 1`
 
 if [ $VERSION_MAJOR -lt 6 ]; then
