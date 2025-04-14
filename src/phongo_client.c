@@ -1128,7 +1128,7 @@ static mongoc_client_t* php_phongo_make_mongo_client(const mongoc_uri_t* uri, zv
 #ifdef HAVE_SYSTEM_LIBBSON
 	bson_version = bson_get_version();
 #else
-	bson_version   = "bundled";
+	bson_version = "bundled";
 #endif
 
 	MONGOC_DEBUG(
