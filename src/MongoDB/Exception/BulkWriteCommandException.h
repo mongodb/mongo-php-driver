@@ -1,5 +1,5 @@
 /*
- * Copyright 2022-present MongoDB, Inc.
+* Copyright 2024-present MongoDB, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-#ifndef PHONGO_WRITECONCERNERROR_H
-#define PHONGO_WRITECONCERNERROR_H
+#ifndef PHONGO_BULKWRITECOMMANDEXCEPTION_H
+#define PHONGO_BULKWRITECOMMANDEXCEPTION_H
 
-#include "bson/bson.h"
+#include "mongoc/mongoc.h"
 
 #include <php.h>
 
-bool phongo_writeconcernerror_init(zval* return_value, const bson_t* bson);
+void php_phongo_bulkwritecommandexception_init_props(zend_object* object, const mongoc_bulkwriteexception_t* bw_exc, zval* result);
 
-#endif /* PHONGO_WRITECONCERNERROR_H */
+#endif /* PHONGO_BULKWRITECOMMANDEXCEPTION_H */
