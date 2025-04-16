@@ -40,10 +40,9 @@ $manager = create_test_manager();
 $document = new MyClass('foo', new MyClass('bar', new MyClass('baz')));
 
 $bulk = new MongoDB\Driver\BulkWriteCommand();
-// @TODO: Fatal error: Uncaught MongoDB\Driver\Exception\InvalidArgumentException: Invalid key '__pclass': update only works with $ operators and pipelines
 $bulk->updateOne(NS,
     ['_id' => 'foo'],
-    $document,
+    ['$set' => $document],
     ['upsert' => true]
 );
 $result = $manager->executeBulkWriteCommand($bulk);

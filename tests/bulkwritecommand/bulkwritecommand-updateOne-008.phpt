@@ -13,11 +13,11 @@ class CommandLogger implements MongoDB\Driver\Monitoring\CommandSubscriber
 {
     public function commandStarted(MongoDB\Driver\Monitoring\CommandStartedEvent $event): void
     {
-        if ($event->getCommandName() !== 'update') {
+        if ($event->getCommandName() !== 'bulkWrite') {
             return;
         }
 
-        printf("update included sort: %s\n", json_encode($event->getCommand()->updates[0]->sort));
+        printf("update included sort: %s\n", json_encode($event->getCommand()->ops[0]->sort));
     }
 
     public function commandSucceeded(MongoDB\Driver\Monitoring\CommandSucceededEvent $event): void
@@ -43,9 +43,8 @@ $bulk = new MongoDB\Driver\BulkWriteCommand;
 $bulk->updateOne(NS, ['_id' => ['$gt' => 1]], ['$set' => ['x' => 11]], ['sort' => ['_id' => 1]]);
 $manager->executeBulkWriteCommand($bulk);
 
-// @TODO: Fatal error: Uncaught MongoDB\Driver\Exception\InvalidArgumentException: Invalid key 'x': update only works with $ operators and pipelines
 $bulk = new MongoDB\Driver\BulkWriteCommand;
-$bulk->updateOne(NS, ['_id' => ['$gt' => 1]], ['x' => 22], ['sort' => ['_id' => -1]]);
+$bulk->updateOne(NS, ['_id' => ['$gt' => 1]], ['$set' => ['x' => 22]], ['sort' => ['_id' => -1]]);
 $manager->executeBulkWriteCommand($bulk);
 
 $cursor = $manager->executeQuery(NS, new MongoDB\Driver\Query([]));

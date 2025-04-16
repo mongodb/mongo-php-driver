@@ -18,7 +18,7 @@ echo throws(function() use ($bulk) {
 // Expected "hint" option to yield string or document but got "array"
 echo throws(function() use ($bulk) {
     $bulk->deleteOne(NS, [], ['hint' => MongoDB\BSON\PackedArray::fromPHP([])]);
-}, MongoDB\Driver\Exception\UnexpectedValueException::class), "\n";
+}, MongoDB\Driver\Exception\InvalidArgumentException::class), "\n";
 
 ?>
 ===DONE===
@@ -28,6 +28,6 @@ OK: Got MongoDB\Driver\Exception\UnexpectedValueException
 MongoDB\BSON\PackedArray cannot be serialized as a root document
 OK: Got MongoDB\Driver\Exception\UnexpectedValueException
 MongoDB\BSON\PackedArray cannot be serialized as a root document
-OK: Got MongoDB\Driver\Exception\UnexpectedValueException
-MongoDB\BSON\PackedArray cannot be serialized as a root document
+OK: Got MongoDB\Driver\Exception\InvalidArgumentException
+Expected "hint" option to yield string or document but got "array"
 ===DONE===
