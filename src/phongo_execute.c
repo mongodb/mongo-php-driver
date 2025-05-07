@@ -440,6 +440,8 @@ bool phongo_execute_bulkwritecommand(zval* manager, php_phongo_bulkwritecommand_
 			(void) spprintf(&message, 0, "Bulk write failed due to previous %s: %s", PHONGO_ZVAL_EXCEPTION_NAME(EG(exception)), error.message);
 			zend_throw_exception(php_phongo_bulkwritecommandexception_ce, message, 0);
 			efree(message);
+		} else if (!has_top_level_error && bw_ret.res) {
+			zend_throw_exception(php_phongo_bulkwritecommandexception_ce, "Bulk write failed with %d write concern errors and %d write errors", error.code, bw_ret.res->n_write_concern_errors, bw_ret.res->n_write_errors);
 		} else {
 			zend_throw_exception(php_phongo_bulkwritecommandexception_ce, has_top_level_error ? error.message : "Bulk write failed", error.code);
 		}
