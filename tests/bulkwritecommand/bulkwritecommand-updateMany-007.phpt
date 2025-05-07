@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\Driver\BulkWriteCommand::updateOne() PackedArray for arrayFilters option
+MongoDB\Driver\BulkWriteCommand::updateMany() PackedArray for arrayFilters option
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_live(); ?>

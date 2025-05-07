@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\Driver\BulkWriteCommand::updateOne() $filter and $newObj are MongoDB\BSON\Document
+MongoDB\Driver\BulkWriteCommand::updateMany() $filter and $newObj are MongoDB\BSON\Document
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_live(); ?>
