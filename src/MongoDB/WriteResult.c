@@ -44,7 +44,10 @@
 
 zend_class_entry* php_phongo_writeresult_ce;
 
-static bool php_phongo_writeresult_get_writeconcernerror(php_phongo_writeresult_t* intern, zval* return_value)
+/* Populates return_value with a WriteConcernError object (if available).
+ * Returns true on success; otherwise, false is returned and an exception is
+ * thrown. */
+static bool phongo_writeresult_get_writeconcernerror(php_phongo_writeresult_t* intern, zval* return_value)
 {
 	bson_iter_t iter, child;
 	zval        writeconcernerror;
@@ -68,6 +71,7 @@ static bool php_phongo_writeresult_get_writeconcernerror(php_phongo_writeresult_
 			}
 
 			if (!phongo_writeconcernerror_init(&writeconcernerror, &cbson)) {
+				/* Exception already thrown */
 				zval_ptr_dtor(&writeconcernerror);
 				return false;
 			}
@@ -81,7 +85,9 @@ static bool php_phongo_writeresult_get_writeconcernerror(php_phongo_writeresult_
 	return true;
 }
 
-static bool php_phongo_writeresult_get_writeerrors(php_phongo_writeresult_t* intern, zval* return_value)
+/* Populates return_value with a list of WriteError objects. Returns true on
+ * success; otherwise, false is returned and an exception is thrown. */
+static bool phongo_writeresult_get_writeerrors(php_phongo_writeresult_t* intern, zval* return_value)
 {
 	bson_iter_t iter, child;
 
@@ -105,8 +111,9 @@ static bool php_phongo_writeresult_get_writeerrors(php_phongo_writeresult_t* int
 			}
 
 			if (!phongo_writeerror_init(&writeerror, &cbson)) {
+				/* Exception already thrown */
 				zval_ptr_dtor(&writeerror);
-				continue;
+				return false;
 			}
 
 			add_next_index_zval(return_value, &writeerror);
@@ -282,7 +289,7 @@ static PHP_METHOD(MongoDB_Driver_WriteResult, getWriteConcernError)
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
-	php_phongo_writeresult_get_writeconcernerror(intern, return_value);
+	phongo_writeresult_get_writeconcernerror(intern, return_value);
 }
 
 /* Returns any write errors that occurred */
@@ -294,7 +301,7 @@ static PHP_METHOD(MongoDB_Driver_WriteResult, getWriteErrors)
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
-	php_phongo_writeresult_get_writeerrors(intern, return_value);
+	phongo_writeresult_get_writeerrors(intern, return_value);
 }
 
 static PHP_METHOD(MongoDB_Driver_WriteResult, getErrorReplies)
@@ -401,14 +408,14 @@ static HashTable* php_phongo_writeresult_get_debug_info(zend_object* object, int
 	{
 		zval writeerrors;
 
-		php_phongo_writeresult_get_writeerrors(intern, &writeerrors);
+		phongo_writeresult_get_writeerrors(intern, &writeerrors);
 		ADD_ASSOC_ZVAL_EX(&retval, "writeErrors", &writeerrors);
 	}
 
 	{
 		zval writeconcernerror;
 
-		php_phongo_writeresult_get_writeconcernerror(intern, &writeconcernerror);
+		phongo_writeresult_get_writeconcernerror(intern, &writeconcernerror);
 		ADD_ASSOC_ZVAL_EX(&retval, "writeConcernError", &writeconcernerror);
 	}
 

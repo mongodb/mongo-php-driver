@@ -22,6 +22,8 @@
 
 #include <php.h>
 
+#include "phongo_structs.h"
+
 /* This enum is used for processing options and selecting a libmongoc function
  * to use in phongo_execute_command. The values are important, as READ and WRITE
  * are also used as a bit field to determine whether readPreference,
@@ -37,6 +39,7 @@ typedef enum {
 } php_phongo_command_type_t;
 
 bool phongo_execute_bulk_write(zval* manager, const char* namespace, php_phongo_bulkwrite_t* bulk_write, zval* zwriteConcern, uint32_t server_id, zval* return_value);
+bool phongo_execute_bulkwritecommand(zval* manager, php_phongo_bulkwritecommand_t* bwc, zval* zoptions, uint32_t server_id, zval* return_value);
 bool phongo_execute_command(zval* manager, php_phongo_command_type_t type, const char* db, zval* zcommand, zval* zreadPreference, uint32_t server_id, zval* return_value);
 bool phongo_execute_query(zval* manager, const char* namespace, zval* zquery, zval* zreadPreference, uint32_t server_id, zval* return_value);
 
