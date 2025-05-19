@@ -126,6 +126,9 @@ functions:
         script: |
           ${PREPARE_SHELL}
           perl -p -i -e "s|/data/mci/[0-9a-z]+/src|${PROJECT_DIRECTORY}|g" Makefile
+          for filename in $(find ${DRIVERS_TOOLS} -name \*.json); do
+            perl -p -i -e "s|/data/mci/[0-9a-z]+/src|${PROJECT_DIRECTORY}|g" $filename
+          done
 
   "compile driver" :
     - command: shell.exec
