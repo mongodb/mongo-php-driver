@@ -4,7 +4,6 @@ PHPC-1419: error labels from getMore are not exposed
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_libmongoc_crypto(); ?>
 <?php skip_if_no_failcommand_failpoint(); ?>
-<?php skip_if_server_version('<', '4.1.11'); ?>
 <?php skip_if_not_clean(); ?>
 --FILE--
 <?php
