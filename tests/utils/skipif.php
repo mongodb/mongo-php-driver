@@ -109,11 +109,7 @@ function skip_if_not_replica_set_or_sharded_cluster_with_replica_set()
 
 function skip_if_no_transactions()
 {
-    if (is_sharded_cluster_with_replica_set(URI)) {
-        skip_if_server_version('<', '4.2');
-    } elseif (is_replica_set(URI)) {
-        skip_if_server_version('<', '4.0');
-    } else {
+    if (! is_sharded_cluster_with_replica_set(URI) && ! is_replica_set(URI)) {
         exit('skip topology does not support transactions');
     }
 }
