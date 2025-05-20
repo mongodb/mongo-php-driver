@@ -837,17 +837,12 @@ function failGetMore(Manager $manager)
     $primary = $manager->selectServer(new ReadPreference('primary'));
     $version = get_server_version_from_server($primary);
 
-    if (version_compare($version, "4.0", ">=")) {
-        /* We use 237 here, as that's the same original code that MongoD would
-         * throw if a cursor had already gone by the time we call getMore. This
-         * allows us to make things consistent with the getMore OP behaviour
-         * from previous mongod versions. An errorCode is required here for the
-         * failPoint to work. */
-        configureFailPoint($manager, 'failCommand', 'alwaysOn', [ 'errorCode' => 237, 'failCommands' => ['getMore'] ]);
-        return;
-    }
-
-    throw new Exception("Trying to configure a getMore fail point for a server version ($version) that doesn't support it");
+    /* We use 237 here, as that's the same original code that MongoD would
+     * throw if a cursor had already gone by the time we call getMore. This
+     * allows us to make things consistent with the getMore OP behaviour
+     * from previous mongod versions. An errorCode is required here for the
+     * failPoint to work. */
+    configureFailPoint($manager, 'failCommand', 'alwaysOn', [ 'errorCode' => 237, 'failCommands' => ['getMore'] ]);
 }
 
 function createDBPointer(string $collection = 'phongo.test', string $id = '5a2e78accd485d55b4050000'): DBPointer
