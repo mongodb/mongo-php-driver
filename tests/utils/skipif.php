@@ -436,28 +436,6 @@ function skip_if_not_clean($databaseName = DATABASE_NAME, $collectionName = COLL
     disable_skipif_caching();
 }
 
-function skip_if_no_getmore_failpoint()
-{
-    $serverVersion = get_server_version(URI);
-
-    if (version_compare($serverVersion, '4.0', '<')) {
-        exit("skip Server version '$serverVersion' does not support a getMore failpoint'");
-    }
-}
-
-function skip_if_no_failcommand_failpoint()
-{
-    skip_if_test_commands_disabled();
-
-    $serverVersion = get_server_version(URI);
-
-    if (is_mongos(URI) && version_compare($serverVersion, '4.1.8', '<')) {
-        exit("skip mongos version '$serverVersion' does not support 'failCommand' failpoint'");
-    } elseif (version_compare($serverVersion, '4.0', '<')) {
-        exit("skip mongod version '$serverVersion' does not support 'failCommand' failpoint'");
-    }
-}
-
 function skip_if_no_mongo_orchestration()
 {
     $ctx = stream_context_create(['http' => ['timeout' => 0.5]]);
