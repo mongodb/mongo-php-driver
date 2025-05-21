@@ -1,22 +1,22 @@
 {
   "components": [
     {
-      "bom-ref": "pkg:github/mongodb/libmongocrypt@1.12.0",
+      "bom-ref": "pkg:github/mongodb/libmongocrypt@1.14.0",
       "externalReferences": [
         {
           "type": "distribution",
-          "url": "https://github.com/mongodb/libmongocrypt/archive/refs/tags/1.12.0.tar.gz"
+          "url": "https://github.com/mongodb/libmongocrypt/archive/refs/tags/1.14.0.tar.gz"
         },
         {
           "type": "website",
-          "url": "https://github.com/mongodb/libmongocrypt/tree/1.12.0"
+          "url": "https://github.com/mongodb/libmongocrypt/tree/1.14.0"
         }
       ],
       "group": "mongodb",
       "name": "libmongocrypt",
-      "purl": "pkg:github/mongodb/libmongocrypt@1.12.0",
+      "purl": "pkg:github/mongodb/libmongocrypt@1.14.0",
       "type": "library",
-      "version": "1.12.0"
+      "version": "1.14.0"
     },
     {
       "bom-ref": "pkg:github/mongodb/mongo-c-driver@2.0.1",
@@ -39,14 +39,14 @@
   ],
   "dependencies": [
     {
-      "ref": "pkg:github/mongodb/libmongocrypt@1.12.0"
+      "ref": "pkg:github/mongodb/libmongocrypt@1.14.0"
     },
     {
       "ref": "pkg:github/mongodb/mongo-c-driver@2.0.1"
     }
   ],
   "metadata": {
-    "timestamp": "2025-05-21T07:42:43.900310+00:00",
+    "timestamp": "2025-05-21T07:55:41.587707+00:00",
     "tools": [
       {
         "externalReferences": [
@@ -90,7 +90,7 @@
     ]
   },
   "serialNumber": "urn:uuid:acb30d08-ee47-4ff0-b301-d66ef1f54082",
-  "version": 13,
+  "version": 14,
   "$schema": "http://cyclonedx.org/schema/bom-1.5.schema.json",
   "bomFormat": "CycloneDX",
   "specVersion": "1.5"
