@@ -64,7 +64,7 @@ package.xml:
 	php bin/prep-release.php $(MONGODB_VERSION) $(MONGODB_STABILITY) $(RELEASE_NOTES_FILE)
 
 libmongoc-version-current:
-	cd src/libmongoc/ && python build/calc_release_version.py > ../LIBMONGOC_VERSION_CURRENT
+	cp src/libmongoc/VERSION_CURRENT src/LIBMONGOC_VERSION_CURRENT
 
 libmongocrypt-version-current:
 	cd src/libmongocrypt/ && python etc/calc_release_version.py > ../LIBMONGOCRYPT_VERSION_CURRENT
