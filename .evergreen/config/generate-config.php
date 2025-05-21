@@ -21,9 +21,7 @@ $supportedMongoDBVersions = [
     '4.2',
 ];
 
-// TODO: Change when PHP 8.4 is stable
-// $latestPhpVersion = max($phpVersions);
-$latestPhpVersion = '8.3';
+$latestPhpVersion = max($phpVersions);
 
 // Only test the latest PHP version for libmongoc
 $libmongocBuildPhpVersions = [ $latestPhpVersion ];
