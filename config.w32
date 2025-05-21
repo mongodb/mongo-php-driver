@@ -25,7 +25,7 @@ function mongodb_generate_header(inpath, outpath, replacements)
 
 function mongodb_parse_libmongoc_version_file(prefix)
 {
-  var infile = FSO.OpenTextFile(configure_module_dirname + "/src/LIBMONGOC_VERSION_CURRENT", 1);
+  var infile = FSO.OpenTextFile(configure_module_dirname + "/src/libmongoc/VERSION_CURRENT", 1);
   var version = infile.ReadLine();
   infile.Close();
 
