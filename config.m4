@@ -431,12 +431,14 @@ if test "$PHP_MONGODB" != "no"; then
       PHP_MONGODB_MONGOCRYPT_CRYPTO_SOURCES="cng.c commoncrypto.c libcrypto.c none.c"
       PHP_MONGODB_MONGOCRYPT_OS_POSIX_SOURCES="os_dll.c os_mutex.c"
       PHP_MONGODB_MONGOCRYPT_OS_WIN_SOURCES="os_dll.c os_mutex.c"
+      PHP_MONGODB_MONGOCRYPT_UNICODE_SOURCES="case-fold-map.c diacritic-fold-map.c fold.c"
       PHP_MONGODB_MONGOCRYPT_KMS_MESSAGE_SOURCES="hexlify.c kms_azure_request.c kms_b64.c kms_caller_identity_request.c kms_crypto_apple.c kms_crypto_libcrypto.c kms_crypto_none.c kms_crypto_windows.c kms_decrypt_request.c kms_encrypt_request.c kms_gcp_request.c kms_kmip_reader_writer.c kms_kmip_request.c kms_kmip_response.c kms_kmip_response_parser.c kms_kv_list.c kms_message.c kms_port.c kms_request.c kms_request_opt.c kms_request_str.c kms_response.c kms_response_parser.c sort.c"
 
       PHP_MONGODB_ADD_SOURCES([src/libmongocrypt/src/], $PHP_MONGODB_MONGOCRYPT_SOURCES, $PHP_MONGODB_LIBMONGOCRYPT_CFLAGS)
       PHP_MONGODB_ADD_SOURCES([src/libmongocrypt/src/crypto/], $PHP_MONGODB_MONGOCRYPT_CRYPTO_SOURCES, $PHP_MONGODB_LIBMONGOCRYPT_CFLAGS)
       PHP_MONGODB_ADD_SOURCES([src/libmongocrypt/src/os_posix/], $PHP_MONGODB_MONGOCRYPT_OS_POSIX_SOURCES, $PHP_MONGODB_LIBMONGOCRYPT_CFLAGS)
       PHP_MONGODB_ADD_SOURCES([src/libmongocrypt/src/os_win/], $PHP_MONGODB_MONGOCRYPT_OS_WIN_SOURCES, $PHP_MONGODB_LIBMONGOCRYPT_CFLAGS)
+      PHP_MONGODB_ADD_SOURCES([src/libmongocrypt/src/unicode/], $PHP_MONGODB_MONGOCRYPT_UNICODE_SOURCES, $PHP_MONGODB_LIBMONGOCRYPT_CFLAGS)
       PHP_MONGODB_ADD_SOURCES([src/libmongocrypt/kms-message/src/], $PHP_MONGODB_MONGOCRYPT_KMS_MESSAGE_SOURCES, $PHP_MONGODB_LIBMONGOCRYPT_CFLAGS)
 
       PHP_MONGODB_ADD_INCLUDE([src/libmongocrypt/src/])
@@ -447,6 +449,7 @@ if test "$PHP_MONGODB" != "no"; then
       PHP_MONGODB_ADD_BUILD_DIR([src/libmongocrypt/src/crypto/])
       PHP_MONGODB_ADD_BUILD_DIR([src/libmongocrypt/src/os_posix/])
       PHP_MONGODB_ADD_BUILD_DIR([src/libmongocrypt/src/os_win/])
+      PHP_MONGODB_ADD_BUILD_DIR([src/libmongocrypt/src/unicode/])
       PHP_MONGODB_ADD_BUILD_DIR([src/libmongocrypt/kms-message/src/])
 
       AC_CONFIG_FILES([
