@@ -98,6 +98,8 @@ if test "$PHP_MONGODB" != "no"; then
     AX_CHECK_COMPILE_FLAG(-Wno-unused-parameter,            PHP_MONGODB_DEV_CFLAGS="$PHP_MONGODB_DEV_CFLAGS -Wno-unused-parameter"          ,, -Werror)
     AX_CHECK_COMPILE_FLAG(-Wno-unused-but-set-variable,     PHP_MONGODB_DEV_CFLAGS="$PHP_MONGODB_DEV_CFLAGS -Wno-unused-but-set-variable"   ,, -Werror)
     AX_CHECK_COMPILE_FLAG(-Wno-missing-field-initializers,  PHP_MONGODB_DEV_CFLAGS="$PHP_MONGODB_DEV_CFLAGS -Wno-missing-field-initializers",, -Werror)
+    dnl Avoid warnings about deprecated libmongoc features, specifically hedged reads
+    AX_CHECK_COMPILE_FLAG(-Wno-deprecated-declarations,     PHP_MONGODB_DEV_CFLAGS="$PHP_MONGODB_DEV_CFLAGS -Wno-deprecated-declarations"   ,, -Werror)
 
     if test "$PHP_MONGODB_PHP_VERSION_ID" -ge "80108"; then
       AX_CHECK_COMPILE_FLAG(-Wstrict-prototypes, PHP_MONGODB_DEV_CFLAGS="$PHP_MONGODB_DEV_CFLAGS -Wstrict-prototypes",, -Werror)
