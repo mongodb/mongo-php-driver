@@ -4,12 +4,10 @@ MongoDB\Driver\Manager::__construct(): write concern options (w)
 <?php
 
 $tests = [
-    ['mongodb://127.0.0.1/?w=-1', []],
     ['mongodb://127.0.0.1/?w=0', []],
     ['mongodb://127.0.0.1/?w=1', []],
     ['mongodb://127.0.0.1/?w=majority', []],
     ['mongodb://127.0.0.1/?w=customTagSet', []],
-    [null, ['w' => -1]],
     [null, ['w' => -0]],
     [null, ['w' => 1]],
     [null, ['w' => 'majority']],
@@ -29,10 +27,6 @@ foreach ($tests as $test) {
 --EXPECTF--
 object(MongoDB\Driver\WriteConcern)#%d (%d) {
   ["w"]=>
-  int(-1)
-}
-object(MongoDB\Driver\WriteConcern)#%d (%d) {
-  ["w"]=>
   int(0)
 }
 object(MongoDB\Driver\WriteConcern)#%d (%d) {
@@ -46,10 +40,6 @@ object(MongoDB\Driver\WriteConcern)#%d (%d) {
 object(MongoDB\Driver\WriteConcern)#%d (%d) {
   ["w"]=>
   string(12) "customTagSet"
-}
-object(MongoDB\Driver\WriteConcern)#%d (%d) {
-  ["w"]=>
-  int(-1)
 }
 object(MongoDB\Driver\WriteConcern)#%d (%d) {
   ["w"]=>

@@ -595,7 +595,6 @@ static bool php_phongo_apply_wc_options_to_uri(mongoc_uri_t* uri, bson_t* option
 				int32_t value = bson_iter_int32(&iter);
 
 				switch (value) {
-					case MONGOC_WRITE_CONCERN_W_ERRORS_IGNORED:
 					case MONGOC_WRITE_CONCERN_W_UNACKNOWLEDGED:
 						mongoc_write_concern_set_w(new_wc, value);
 						break;
@@ -632,7 +631,7 @@ static bool php_phongo_apply_wc_options_to_uri(mongoc_uri_t* uri, bson_t* option
 	if (mongoc_write_concern_get_journal(new_wc)) {
 		int32_t w = mongoc_write_concern_get_w(new_wc);
 
-		if (w == MONGOC_WRITE_CONCERN_W_UNACKNOWLEDGED || w == MONGOC_WRITE_CONCERN_W_ERRORS_IGNORED) {
+		if (w == MONGOC_WRITE_CONCERN_W_UNACKNOWLEDGED) {
 			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Journal conflicts with w value: %d", w);
 			mongoc_write_concern_destroy(new_wc);
 
