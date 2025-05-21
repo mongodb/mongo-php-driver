@@ -38,17 +38,17 @@ echo throws(function() {
 <?php exit(0); ?>
 --EXPECT--
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Failed to parse MongoDB URI: 'mongodb://localhost:27017/?authMechanism=GSSAPI&authSource=admin'. GSSAPI and X509 require "$external" authSource.
+Failed to parse MongoDB URI: 'mongodb://localhost:27017/?authMechanism=GSSAPI&authSource=admin'. 'GSSAPI' authentication mechanism requires a username.
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Failed to parse URI options: GSSAPI and X509 require "$external" authSource
+Failed to parse URI options: 'GSSAPI' authentication mechanism requires a username
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Failed to parse MongoDB URI: 'mongodb://localhost:27017/?authMechanism=MONGODB-X509&authSource=admin'. GSSAPI and X509 require "$external" authSource.
+Failed to parse MongoDB URI: 'mongodb://localhost:27017/?authMechanism=MONGODB-X509&authSource=admin'. 'MONGODB-X509' authentication mechanism requires "$external" authSource, but "admin" was specified.
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Failed to parse URI options: GSSAPI and X509 require "$external" authSource
+Failed to parse URI options: 'MONGODB-X509' authentication mechanism requires "$external" authSource, but "admin" was specified
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Failed to parse MongoDB URI: 'mongodb://@localhost:27017/?authMechanism=SCRAM-SHA-1'. 'SCRAM-SHA-1' authentication mechanism requires username.
+Failed to parse MongoDB URI: 'mongodb://@localhost:27017/?authMechanism=SCRAM-SHA-1'. 'SCRAM-SHA-1' authentication mechanism requires a username.
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Failed to parse URI options: 'SCRAM-SHA-1' authentication mechanism requires username
+Failed to parse URI options: 'SCRAM-SHA-1' authentication mechanism requires a username
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Failed to parse URI options: 'MONGODB-X509' authentication mechanism does not accept a password
 ===DONE===
