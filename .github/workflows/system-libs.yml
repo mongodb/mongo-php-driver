@@ -35,3 +35,19 @@ jobs:
       - name: "Check driver version"
         shell: bash
         run: make show-config
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Setup MongoDB
+        id: setup-mongodb
+        uses: ./tests/drivers-evergreen-tools
+        with:
+          version: "8.0"
+          topology: "server"
+
+      - name: "Run Tests"
+        run: TEST_PHP_ARGS="-q -x --show-diff -g FAIL,XFAIL,BORK,WARN,LEAK,SKIP" make test
+        env:
+          MONGODB_URI: ${{ steps.setup-mongodb.outputs.cluster-uri }}
