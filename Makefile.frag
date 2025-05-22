@@ -1,4 +1,4 @@
-.PHONY: mv-coverage lcov-coveralls lcov-local coverage coveralls format format-changed format-check test-clean package package.xml libmongoc-version-current libmongocrypt-version-current generate-function-map
+.PHONY: mv-coverage lcov-coveralls lcov-local coverage coveralls format format-changed format-check test-clean package package.xml libmongocrypt-version-current generate-function-map
 
 ifneq (,$(realpath $(EXTENSION_DIR)/json.so))
 PHP_TEST_SHARED_EXTENSIONS := "-d" "extension=$(EXTENSION_DIR)/json.so" $(PHP_TEST_SHARED_EXTENSIONS)
@@ -62,9 +62,6 @@ package:
 
 package.xml:
 	php bin/prep-release.php $(MONGODB_VERSION) $(MONGODB_STABILITY) $(RELEASE_NOTES_FILE)
-
-libmongoc-version-current:
-	cd src/libmongoc/ && python build/calc_release_version.py > ../LIBMONGOC_VERSION_CURRENT
 
 libmongocrypt-version-current:
 	cd src/libmongocrypt/ && python etc/calc_release_version.py > ../LIBMONGOCRYPT_VERSION_CURRENT

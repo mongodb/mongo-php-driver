@@ -12,12 +12,12 @@ echo throws(function() {
     create_test_manager(null, ['w' => 1.0]);
 }, "MongoDB\Driver\Exception\InvalidArgumentException"), "\n";
 
-/* Note: Values of w < -1 are invalid, but libmongoc's URI string parsing only
+/* Note: Values of w < 0 are invalid, but libmongoc's URI string parsing only
  * logs a warning instead of raising an error (see: CDRIVER-2234), so we cannot
  * test for this. */
 
 echo throws(function() {
-    create_test_manager(null, ['w' => -2]);
+    create_test_manager(null, ['w' => -1]);
 }, "MongoDB\Driver\Exception\InvalidArgumentException"), "\n";
 
 ?>
@@ -27,5 +27,5 @@ echo throws(function() {
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Expected 32-bit integer or string for "w" URI option, double given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Unsupported w value: -2
+Unsupported w value: -1
 ===DONE===

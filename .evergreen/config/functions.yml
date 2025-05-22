@@ -140,7 +140,6 @@ functions:
              echo "Checking out libmongoc version: ${LIBMONGOC_VERSION}"
              git fetch
              git checkout ${LIBMONGOC_VERSION}
-             # Note: compile-unix.sh will run `make libmongoc-version-current`
           fi
     - command: subprocess.exec
       type: test
