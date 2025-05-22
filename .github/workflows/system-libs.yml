@@ -21,3 +21,14 @@ jobs:
         uses: ./.github/actions/linux/build-libmongoc
         with:
           version: 2.0.1
+
+      - name: "Build Driver"
+        id: build-driver
+        uses: ./.github/actions/linux/build
+        with:
+          version: "8.4"
+          configureOpts: "--with-mongodb-system-libs=yes"
+
+      - name: "Check driver version"
+        shell: bash
+        run: make show-config
