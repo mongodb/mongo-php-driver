@@ -33,7 +33,8 @@ runs:
           -D CMAKE_BUILD_TYPE=RelWithDebInfo \
           -D BUILD_VERSION="${LIBMONGOC_VERSION}" \
           -D ENABLE_MONGOC=ON \
-          -D ENABLE_TRACING=ON
+          -D ENABLE_TRACING=ON \
+          -D ENABLE_CLIENT_SIDE_ENCRYPTION=ON
       env:
         LIBMONGOC_VERSION: ${{ inputs.version }}
 
