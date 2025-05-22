@@ -1,0 +1,23 @@
+name: "System library tests"
+
+on:
+  push:
+    branches:
+      - "build-system-libs"
+
+jobs:
+  tests:
+    name: "Build"
+    runs-on: "ubuntu-24.04"
+
+    steps:
+      - name: "Checkout"
+        uses: "actions/checkout@v4"
+        with:
+          submodules: true
+
+      - name: "Build libmongoc"
+        id: build-libmongoc
+        uses: ./.github/actions/linux/build-libmongoc
+        with:
+          version: 2.0.1
