@@ -84,6 +84,8 @@ gpg --verify php_mongodb.dll.sig php_mongodb.dll.tgz
 > and cannot be verified. If you need to verify the integrity of the downloaded
 > binary, always download them from the GitHub release.
 
+The MongoDB PHP Driver follows [semantic versioning](https://semver.org/) for its releases.
+
 ## Reporting Issues
 
 Issues pertaining to the extension should be reported in the
