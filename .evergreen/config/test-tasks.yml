@@ -2,10 +2,14 @@ tasks:
   - name: "test-atlas-connectivity"
     tags: ["atlas", "nodb", "pr", "tag"]
     commands:
+      - command: ec2.assume_role
+        params:
+          role_arn: ${aws_test_secrets_role}
       # This creates secrets-export.sh, which is later sourced by run-tests.sh
       - command: subprocess.exec
         params:
           working_dir: "src"
+          include_expansions_in_env: [AWS_SECRET_ACCESS_KEY, AWS_ACCESS_KEY_ID, AWS_SESSION_TOKEN]
           binary: bash
           args:
             - -c
