@@ -29,6 +29,8 @@ To build and install the driver:
     $ pecl install mongodb
     $ echo "extension=mongodb.so" >> `php --ini | grep "Loaded Configuration" | sed -e "s|.*:\s*||"`
 
+The MongoDB PHP Driver follows [semantic versioning](https://semver.org/) for its releases.
+
 Additional installation instructions may be found in the
 [PHP.net documentation](https://php.net/manual/en/mongodb.installation.php).
 
@@ -83,8 +85,6 @@ gpg --verify php_mongodb.dll.sig php_mongodb.dll.tgz
 > Windows binaries distributed directly through PECL are not signed by MongoDB
 > and cannot be verified. If you need to verify the integrity of the downloaded
 > binary, always download them from the GitHub release.
-
-The MongoDB PHP Driver follows [semantic versioning](https://semver.org/) for its releases.
 
 ## Reporting Issues
 
