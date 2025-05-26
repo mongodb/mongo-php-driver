@@ -708,9 +708,9 @@ static mongoc_ssl_opt_t* php_phongo_make_ssl_opt(mongoc_uri_t* uri, zval* driver
 	}
 #endif
 
-#if defined(MONGOC_ENABLE_SSL_LIBRESSL) || defined(MONGOC_ENABLE_SSL_SECURE_TRANSPORT)
+#if defined(MONGOC_ENABLE_SSL_SECURE_TRANSPORT)
 	if (php_array_existsc(driverOptions, "crl_file")) {
-		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "\"crl_file\" option is not supported by LibreSSL and Secure Transport");
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "\"crl_file\" option is not supported by Secure Transport");
 		return NULL;
 	}
 #endif
