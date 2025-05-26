@@ -1,6 +1,6 @@
 PHP_ARG_WITH([mongodb-ssl],
              [whether to enable crypto and TLS],
-             [AS_HELP_STRING([--with-mongodb-ssl=@<:@auto/openssl/libressl/darwin/no@:>@],
+             [AS_HELP_STRING([--with-mongodb-ssl=@<:@auto/openssl/darwin/no@:>@],
                              [MongoDB: Enable TLS connections and SCRAM-SHA-1 authentication [default=auto]])],
              [auto],
              [no])
@@ -130,38 +130,6 @@ AS_IF([test "$PHP_MONGODB_SSL" = "darwin" -o \( "$PHP_MONGODB_SSL" = "auto" -a "
   PHP_MONGODB_SSL="darwin"
 ])
 
-AS_IF([test "$PHP_MONGODB_SSL" = "libressl" -o "$PHP_MONGODB_SSL" = "auto"],[
-  found_libressl="no"
-
-  PKG_CHECK_MODULES([PHP_MONGODB_SSL],[libtls libcrypto],[
-    PHP_MONGODB_BUNDLED_CFLAGS="$PHP_MONGODB_BUNDLED_CFLAGS $PHP_MONGODB_SSL_CFLAGS"
-    PHP_EVAL_LIBLINE([$PHP_MONGODB_SSL_LIBS],[MONGODB_SHARED_LIBADD])
-    PHP_MONGODB_SSL="libressl"
-    found_libressl="yes"
-  ],[
-    PHP_CHECK_LIBRARY([crypto],
-                      [EVP_DigestInit_ex],
-                      [have_crypto_lib="yes"],
-                      [have_crypto_lib="no"])
-    PHP_CHECK_LIBRARY([tls],
-                      [tls_init],
-                      [have_ssl_lib="yes"],
-                      [have_ssl_lib="no"],
-                      [-lcrypto])
-
-    if test "$have_ssl_lib" = "yes" -a "$have_crypto_lib" = "yes"; then
-      PHP_ADD_LIBRARY([tls],,[MONGODB_SHARED_LIBADD])
-      PHP_ADD_LIBRARY([crypto],,[MONGODB_SHARED_LIBADD])
-      PHP_MONGODB_SSL="libressl"
-      found_libressl="yes"
-    fi
-  ])
-
-  if test "$PHP_MONGODB_SSL" = "libressl" -a "$found_libressl" != "yes"; then
-    AC_MSG_ERROR([LibreSSL libraries and development headers could not be found])
-  fi
-])
-
 AS_IF([test "$PHP_MONGODB_SSL" = "auto"],[
   if test "$crypto_required" = "yes"; then
     AC_MSG_ERROR([crypto and TLS libraries not found])
@@ -177,12 +145,11 @@ AC_SUBST(MONGOC_ENABLE_SSL_SECURE_CHANNEL, 0)
 AC_SUBST(MONGOC_ENABLE_CRYPTO_CNG, 0)
 AC_SUBST(MONGOC_HAVE_BCRYPT_PBKDF2, 0)
 
-if test "$PHP_MONGODB_SSL" = "openssl" -o "$PHP_MONGODB_SSL" = "libressl" -o "$PHP_MONGODB_SSL" = "darwin"; then
+if test "$PHP_MONGODB_SSL" = "openssl" -o "$PHP_MONGODB_SSL" = "darwin"; then
   AC_SUBST(MONGOC_ENABLE_SSL, 1)
   AC_SUBST(MONGOC_ENABLE_CRYPTO, 1)
   if test "$PHP_MONGODB_SSL" = "darwin"; then
     AC_SUBST(MONGOC_ENABLE_SSL_OPENSSL, 0)
-    AC_SUBST(MONGOC_ENABLE_SSL_LIBRESSL, 0)
     AC_SUBST(MONGOC_ENABLE_SSL_SECURE_TRANSPORT, 1)
     AC_SUBST(MONGOC_ENABLE_CRYPTO_LIBCRYPTO, 0)
     AC_SUBST(MONGOC_ENABLE_CRYPTO_COMMON_CRYPTO, 1)
@@ -190,15 +157,6 @@ if test "$PHP_MONGODB_SSL" = "openssl" -o "$PHP_MONGODB_SSL" = "libressl" -o "$P
     PHP_MONGODB_BUNDLED_CFLAGS="$PHP_MONGODB_BUNDLED_CFLAGS -DKMS_MESSAGE_ENABLE_CRYPTO=1 -DKMS_MESSAGE_ENABLE_CRYPTO_COMMON_CRYPTO=1"
   elif test "$PHP_MONGODB_SSL" = "openssl"; then
     AC_SUBST(MONGOC_ENABLE_SSL_OPENSSL, 1)
-    AC_SUBST(MONGOC_ENABLE_SSL_LIBRESSL, 0)
-    AC_SUBST(MONGOC_ENABLE_SSL_SECURE_TRANSPORT, 0)
-    AC_SUBST(MONGOC_ENABLE_CRYPTO_LIBCRYPTO, 1)
-    AC_SUBST(MONGOC_ENABLE_CRYPTO_COMMON_CRYPTO, 0)
-
-    PHP_MONGODB_BUNDLED_CFLAGS="$PHP_MONGODB_BUNDLED_CFLAGS -DKMS_MESSAGE_ENABLE_CRYPTO=1 -DKMS_MESSAGE_ENABLE_CRYPTO_LIBCRYPTO=1"
-  elif test "$PHP_MONGODB_SSL" = "libressl"; then
-    AC_SUBST(MONGOC_ENABLE_SSL_OPENSSL, 0)
-    AC_SUBST(MONGOC_ENABLE_SSL_LIBRESSL, 1)
     AC_SUBST(MONGOC_ENABLE_SSL_SECURE_TRANSPORT, 0)
     AC_SUBST(MONGOC_ENABLE_CRYPTO_LIBCRYPTO, 1)
     AC_SUBST(MONGOC_ENABLE_CRYPTO_COMMON_CRYPTO, 0)
@@ -207,7 +165,6 @@ if test "$PHP_MONGODB_SSL" = "openssl" -o "$PHP_MONGODB_SSL" = "libressl" -o "$P
   fi
 else
   AC_SUBST(MONGOC_ENABLE_SSL, 0)
-  AC_SUBST(MONGOC_ENABLE_SSL_LIBRESSL, 0)
   AC_SUBST(MONGOC_ENABLE_SSL_OPENSSL, 0)
   AC_SUBST(MONGOC_ENABLE_SSL_SECURE_TRANSPORT, 0)
   AC_SUBST(MONGOC_ENABLE_CRYPTO, 0)
