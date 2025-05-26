@@ -5,19 +5,27 @@ PHP_ARG_WITH([mongodb-ssl],
              [auto],
              [no])
 
+dnl PHP_ARG_WITH without a value assigns "yes". Treat it like "auto" but
+dnl require a crypto library.
+if test "$PHP_MONGODB_SSL" = "yes"; then
+  PHP_MONGODB_SSL="auto"
+fi
+
+dnl TODO 3.0: Remove libressl from valid options
+PHP_MONGODB_VALIDATE_ARG([PHP_MONGODB_SSL], [auto openssl libressl darwin no])
+
+if test "$PHP_MONGODB_SSL" = "libressl"; then
+  dnl libressl is a valid option, but it is not supported by libmongoc
+  dnl Warn users that it is not supported and treat it like "auto"
+  PHP_MONGODB_SSL="auto"
+  AC_MSG_WARN([Building with libressl is not supported by libmongoc. Falling back to "auto".])
+fi
+
 if test "$PHP_MONGODB_SSL" = "auto" -o "$PHP_MONGODB_SSL" = "no"; then
   crypto_required="no"
 else
   crypto_required="yes"
-
-  dnl PHP_ARG_WITH without a value assigns "yes". Treat it like "auto" but
-  dnl require a crypto library.
-  if test "$PHP_MONGODB_SSL" = "yes"; then
-    PHP_MONGODB_SSL="auto"
-  fi
 fi
-
-PHP_MONGODB_VALIDATE_ARG([PHP_MONGODB_SSL], [auto openssl libressl darwin no])
 
 AS_IF([test "$PHP_MONGODB_SSL" = "openssl" -o "$PHP_MONGODB_SSL" = "auto"],[
   found_openssl="no"
