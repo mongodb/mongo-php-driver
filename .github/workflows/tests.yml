@@ -128,3 +128,54 @@ jobs:
         php: [ "8.1", "8.2", "8.3", "8.4" ]
         arch: [ x64, x86 ]
         ts: [ ts, nts ]
+
+  test-system-libs:
+    name: "System Library Tests"
+    runs-on: "ubuntu-latest"
+    env:
+      PHP_VERSION: "8.3"
+      LIBMONGOCRYPT_VERSION: "1.14"
+      LIBMONGOC_VERSION: "2.0.1"
+      SERVER_VERSION: "8.0"
+
+    steps:
+      - name: "Checkout"
+        uses: "actions/checkout@v4"
+        with:
+          submodules: true
+
+      - name: "Install libmongocrypt"
+        uses: ./.github/actions/linux/build-libmongocrypt
+        with:
+          version: ${{ env.LIBMONGOCRYPT_VERSION }}
+
+      - name: "Build libmongoc"
+        uses: ./.github/actions/linux/build-libmongoc
+        with:
+          version: ${{ env.LIBMONGOC_VERSION }}
+
+      - name: "Build Driver"
+        uses: ./.github/actions/linux/build
+        with:
+          version: ${{ env.PHP_VERSION }}
+          configureOpts: "--with-mongodb-system-libs=yes"
+
+      - name: "Check driver version"
+        shell: bash
+        run: make show-config
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Setup MongoDB
+        id: setup-mongodb
+        uses: ./tests/drivers-evergreen-tools
+        with:
+          version: ${{ ENV.SERVER_VERSION }}
+          topology: "server"
+
+      - name: "Run Tests"
+        run: TEST_PHP_ARGS="-q -x --show-diff -g FAIL,XFAIL,BORK,WARN,LEAK,SKIP" make test
+        env:
+          MONGODB_URI: ${{ steps.setup-mongodb.outputs.cluster-uri }}
