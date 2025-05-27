@@ -112,11 +112,12 @@ jobs:
 
       - name: "Determine branch to merge up to"
         id: get-next-branch
-        uses: alcaeus/automatic-merge-up-action/get-next-branch@main
+        uses: alcaeus/automatic-merge-up-action/get-next-branch@1.0.0
         with:
           ref: ${{ github.ref_name }}
           branchNamePattern: 'v<major>.<minor>'
           devBranchNamePattern: 'v<major>.x'
+          ignoredBranches: ${{ vars.IGNORED_MERGE_UP_BRANCHES }}
 
       - name: "Manually merge up changes"
         if: ${{ steps.get-next-branch.outputs.hasNextBranch }}
