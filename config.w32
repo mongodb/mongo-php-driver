@@ -70,7 +70,7 @@ function MONGODB_ADD_SOURCES(dir, file_list)
 }
 
 ARG_ENABLE("mongodb", "MongoDB support", "no");
-ARG_WITH("mongodb-sasl", "MongoDB: Build with SSPI SASL", "yes");
+ARG_WITH("mongodb-sasl", "MongoDB: Build with SSPI SASL (valid values: 'yes' (fallback to SSPI), 'sspi', 'no')", "yes");
 ARG_WITH("mongodb-client-side-encryption", "MongoDB: Enable client-side encryption", "yes");
 
 if (PHP_MONGODB != "no") {
@@ -235,17 +235,17 @@ if (PHP_MONGODB != "no") {
   if (PHP_MONGODB_SASL != "no" &&
       CHECK_LIB("libsasl.lib", "mongodb", PHP_MONGODB) &&
       CHECK_HEADER_ADD_INCLUDE("sasl/sasl.h", "CFLAGS_MONGODB")) {
-    mongoc_opts.MONGOC_ENABLE_SASL = 1;
 
     // TODO 3.0: Remove warning on "yes" as it implies "sspi"
     if (PHP_MONGODB_SASL == "yes") {
-      WARNING("Cyrus SASL support for Windows was removed. Falling back to SSPI.");
+      WARNING("Cyrus SASL support for Windows was removed. Falling back to SSPI; use '--with-mongodb-sasl=sspi' to avoid this warning.");
     }
 
     if (PHP_MONGODB_SASL == "yes" || PHP_MONGODB_SASL == "sspi") {
+      mongoc_opts.MONGOC_ENABLE_SASL = 1;
       mongoc_opts.MONGOC_ENABLE_SASL_SSPI = 1;
     } else {
-      WARNING("mongodb sasl support not enabled, unknown value for PHP_MONGODB_SASL: " + PHP_MONGODB_SASL);
+      WARNING("MongoDB SASL support not enabled, unknown value for PHP_MONGODB_SASL: " + PHP_MONGODB_SASL);
     }
 
     if (CHECK_FUNC_IN_HEADER("sasl/sasl.h", "sasl_client_done")) {
