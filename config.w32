@@ -70,7 +70,7 @@ function MONGODB_ADD_SOURCES(dir, file_list)
 }
 
 ARG_ENABLE("mongodb", "MongoDB support", "no");
-ARG_WITH("mongodb-sasl", "MongoDB: Build against Cyrus-SASL", "yes");
+ARG_WITH("mongodb-sasl", "MongoDB: Build with SSPI SASL (valid values: 'yes' (fallback to SSPI), 'sspi', 'no')", "yes");
 ARG_WITH("mongodb-client-side-encryption", "MongoDB: Enable client-side encryption", "yes");
 
 if (PHP_MONGODB != "no") {
@@ -232,21 +232,33 @@ if (PHP_MONGODB != "no") {
     WARNING("mongodb libopenssl support not enabled, libs not found");
   }
 
-  // TODO: Support building with native GSSAPI (SSPI) on Windows
-  if (PHP_MONGODB_SASL != "no" &&
-      CHECK_LIB("libsasl.lib", "mongodb", PHP_MONGODB) &&
-      CHECK_HEADER_ADD_INCLUDE("sasl/sasl.h", "CFLAGS_MONGODB")) {
-    mongoc_opts.MONGOC_ENABLE_SASL = 1;
-    mongoc_opts.MONGOC_ENABLE_SASL_CYRUS = 1;
+  has_sasl_libs = CHECK_LIB("libsasl.lib", "mongodb", PHP_MONGODB) &&
+    CHECK_HEADER_ADD_INCLUDE("sasl/sasl.h", "CFLAGS_MONGODB");
+  if (PHP_MONGODB_SASL != "no") {
+    if (has_sasl_libs) {
+      // TODO 3.0: Remove warning on "yes" as it implies "sspi"
+      if (PHP_MONGODB_SASL == "yes") {
+        WARNING("Cyrus SASL support for Windows was removed. Falling back to SSPI; use '--with-mongodb-sasl=sspi' to avoid this warning.");
+        PHP_MONGODB_SASL = "sspi";
+      }
 
-    // Referenced by _mongoc_cyrus_verifyfile_cb in mongoc-cyrus.c on Windows
-    ADD_FLAG("CFLAGS_MONGODB", "/D MONGOC_CYRUS_PLUGIN_PATH_PREFIX=NULL");
+      if (PHP_MONGODB_SASL == "sspi") {
+        mongoc_opts.MONGOC_ENABLE_SASL = 1;
+        mongoc_opts.MONGOC_ENABLE_SASL_SSPI = 1;
+      } else {
+        ERROR("MongoDB SASL support not enabled, unknown value for --with-mongodb-sasl: " + PHP_MONGODB_SASL);
+      }
 
-    if (CHECK_FUNC_IN_HEADER("sasl/sasl.h", "sasl_client_done")) {
-      mongoc_opts.MONGOC_HAVE_SASL_CLIENT_DONE = 1;
+      if (CHECK_FUNC_IN_HEADER("sasl/sasl.h", "sasl_client_done")) {
+        mongoc_opts.MONGOC_HAVE_SASL_CLIENT_DONE = 1;
+      }
+    } else if (PHP_MONGODB_SASL != "yes") {
+      // If the user explicitly requested SASL support, we error out if the
+      // necessary libraries are not found.
+      ERROR("MongoDB SASL support not enabled, libs not found");
+    } else {
+      WARNING("MongoDB SASL support not enabled, libs not found");
     }
-  } else if (PHP_MONGODB_SASL != "no") {
-    WARNING("mongodb libsasl support not enabled, libs not found");
   }
 
   if (PHP_MONGODB_CLIENT_SIDE_ENCRYPTION != "no" && mongoc_ssl_found) {
