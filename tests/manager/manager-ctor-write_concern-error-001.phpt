@@ -12,10 +12,6 @@ echo throws(function() {
     create_test_manager(null, ['w' => 1.0]);
 }, "MongoDB\Driver\Exception\InvalidArgumentException"), "\n";
 
-/* Note: Values of w < 0 are invalid, but libmongoc's URI string parsing only
- * logs a warning instead of raising an error (see: CDRIVER-2234), so we cannot
- * test for this. */
-
 echo throws(function() {
     create_test_manager(null, ['w' => -1]);
 }, "MongoDB\Driver\Exception\InvalidArgumentException"), "\n";

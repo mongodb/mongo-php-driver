@@ -49,7 +49,7 @@ function get_files() {
 
         "src/libmongoc/src/common/src/*.{c,h,h.in}",
         // Note: src/libmongoc/src/common/src/mlib/ does not contain source files (as of libmongoc 2.0.1)
-        "src/libmongoc/src/common/src/mlib/*.{c,h}",
+        "src/libmongoc/src/common/src/mlib/*.h",
         "src/libmongoc/src/kms-message/src/*.{c,h}",
         "src/libmongoc/src/kms-message/src/kms_message/*.{c,h}",
         "src/libmongoc/src/libbson/src/bson/*.{c,h,h.in}",
@@ -65,7 +65,7 @@ function get_files() {
         "src/libmongocrypt-compat/mongocrypt/*.{c,h}",
         "src/libmongocrypt/src/*.{c,h,h.in}",
         "src/libmongocrypt/src/crypto/*.{c,h}",
-        "src/libmongocrypt/src/mlib/*.{c,h}",
+        "src/libmongocrypt/src/mlib/*.h",
         // Note: src/libmongocrypt/src/mlib/ does not contain source files (as of libmongocrypt 1.14.0)
         "src/libmongocrypt/src/mlib/*.h",
         "src/libmongocrypt/src/os_posix/*.{c,h}",
