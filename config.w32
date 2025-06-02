@@ -245,14 +245,14 @@ if (PHP_MONGODB != "no") {
       mongoc_opts.MONGOC_ENABLE_SASL = 1;
       mongoc_opts.MONGOC_ENABLE_SASL_SSPI = 1;
     } else {
-      WARNING("MongoDB SASL support not enabled, unknown value for PHP_MONGODB_SASL: " + PHP_MONGODB_SASL);
+      ERROR("MongoDB SASL support not enabled, unknown value for --with-mongodb-sasl: " + PHP_MONGODB_SASL);
     }
 
     if (CHECK_FUNC_IN_HEADER("sasl/sasl.h", "sasl_client_done")) {
       mongoc_opts.MONGOC_HAVE_SASL_CLIENT_DONE = 1;
     }
   } else if (PHP_MONGODB_SASL != "no") {
-    WARNING("mongodb libsasl support not enabled, libs not found");
+    ERROR("MongoDB SASL support not enabled, libs not found");
   }
 
   if (PHP_MONGODB_CLIENT_SIDE_ENCRYPTION != "no" && mongoc_ssl_found) {
