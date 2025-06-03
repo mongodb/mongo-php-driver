@@ -619,9 +619,9 @@ void phongo_server_init(zval* return_value, zval* manager, uint32_t server_id)
 
 bool php_phongo_server_to_zval(zval* retval, mongoc_client_t* client, mongoc_server_description_t* sd)
 {
-	mongoc_host_list_t* host           = mongoc_server_description_host(sd);
-	const bson_t*       hello_response = mongoc_server_description_hello_response(sd);
-	bson_iter_t         iter;
+	const mongoc_host_list_t* host           = mongoc_server_description_host(sd);
+	const bson_t*             hello_response = mongoc_server_description_hello_response(sd);
+	bson_iter_t               iter;
 
 	array_init(retval);
 

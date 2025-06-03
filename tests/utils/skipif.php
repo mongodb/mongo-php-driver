@@ -375,8 +375,8 @@ function skip_if_not_libmongoc_crypto(array $libs = [])
  * Skips the test if libmongoc does not support SSL.
  *
  * If one or more libaries are provided, additionally check that the reported
- * library is in that array. Possible values are "OpenSSL", "LibreSSL",
- * "Secure Transport", and "Secure Channel".
+ * library is in that array. Possible values are "OpenSSL", "Secure Transport",
+ * and "Secure Channel".
  *
  * @param array $libs Optional list of SSL libraries to require
  */

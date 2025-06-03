@@ -4,7 +4,7 @@ SCRIPT_DIR=$(dirname ${BASH_SOURCE[0]})
 ROOT_DIR=$(realpath "${SCRIPT_DIR}/../")
 PURLS_FILE="${ROOT_DIR}/purls.txt"
 
-LIBMONGOC_VERSION=$(cat ${ROOT_DIR}/src/LIBMONGOC_VERSION_CURRENT | tr -d '[:space:]')
+LIBMONGOC_VERSION=$(cat ${ROOT_DIR}/src/libmongoc/VERSION_CURRENT | tr -d '[:space:]')
 LIBMONGOCRYPT_VERSION=$(cat ${ROOT_DIR}/src/LIBMONGOCRYPT_VERSION_CURRENT | tr -d '[:space:]')
 
 # Generate purls file from stored versions

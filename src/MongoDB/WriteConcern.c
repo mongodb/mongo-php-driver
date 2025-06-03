@@ -80,7 +80,7 @@ static bool php_phongo_writeconcern_init_from_hash(php_phongo_writeconcern_t* in
 
 	if ((j = zend_hash_str_find(props, "j", sizeof("j") - 1))) {
 		if (Z_TYPE_P(j) == IS_TRUE || Z_TYPE_P(j) == IS_FALSE) {
-			if (zend_is_true(j) && (mongoc_write_concern_get_w(intern->write_concern) == MONGOC_WRITE_CONCERN_W_UNACKNOWLEDGED || mongoc_write_concern_get_w(intern->write_concern) == MONGOC_WRITE_CONCERN_W_ERRORS_IGNORED)) {
+			if (zend_is_true(j) && (mongoc_write_concern_get_w(intern->write_concern) == MONGOC_WRITE_CONCERN_W_UNACKNOWLEDGED)) {
 				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Cannot enable journaling when using w = 0");
 				goto failure;
 			}
@@ -143,7 +143,7 @@ static PHP_METHOD(MongoDB_Driver_WriteConcern, __construct)
 	switch (ZEND_NUM_ARGS()) {
 		case 3:
 			if (journal && Z_TYPE_P(journal) != IS_NULL) {
-				if (zend_is_true(journal) && (mongoc_write_concern_get_w(intern->write_concern) == MONGOC_WRITE_CONCERN_W_UNACKNOWLEDGED || mongoc_write_concern_get_w(intern->write_concern) == MONGOC_WRITE_CONCERN_W_ERRORS_IGNORED)) {
+				if (zend_is_true(journal) && (mongoc_write_concern_get_w(intern->write_concern) == MONGOC_WRITE_CONCERN_W_UNACKNOWLEDGED)) {
 					phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Cannot enable journaling when using w = 0");
 					return;
 				}

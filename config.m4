@@ -98,6 +98,8 @@ if test "$PHP_MONGODB" != "no"; then
     AX_CHECK_COMPILE_FLAG(-Wno-unused-parameter,            PHP_MONGODB_DEV_CFLAGS="$PHP_MONGODB_DEV_CFLAGS -Wno-unused-parameter"          ,, -Werror)
     AX_CHECK_COMPILE_FLAG(-Wno-unused-but-set-variable,     PHP_MONGODB_DEV_CFLAGS="$PHP_MONGODB_DEV_CFLAGS -Wno-unused-but-set-variable"   ,, -Werror)
     AX_CHECK_COMPILE_FLAG(-Wno-missing-field-initializers,  PHP_MONGODB_DEV_CFLAGS="$PHP_MONGODB_DEV_CFLAGS -Wno-missing-field-initializers",, -Werror)
+    dnl Avoid warnings about deprecated libmongoc features, specifically hedged reads
+    AX_CHECK_COMPILE_FLAG(-Wno-deprecated-declarations,     PHP_MONGODB_DEV_CFLAGS="$PHP_MONGODB_DEV_CFLAGS -Wno-deprecated-declarations"   ,, -Werror)
 
     if test "$PHP_MONGODB_PHP_VERSION_ID" -ge "80108"; then
       AX_CHECK_COMPILE_FLAG(-Wstrict-prototypes, PHP_MONGODB_DEV_CFLAGS="$PHP_MONGODB_DEV_CFLAGS -Wstrict-prototypes",, -Werror)
@@ -240,30 +242,30 @@ if test "$PHP_MONGODB" != "no"; then
   PHP_MONGODB_MONGOCRYPT_VERSION_STRING="None"
 
   if test "$PHP_MONGODB_SYSTEM_LIBS" != "no"; then
-    PKG_CHECK_MODULES([PHP_MONGODB_BSON], [libbson-1.0 >= 1.30.4], [
-      PHP_MONGODB_BSON_VERSION=`$PKG_CONFIG libbson-1.0 --modversion`
+    PKG_CHECK_MODULES([PHP_MONGODB_BSON], [bson2 >= 2.0.1], [
+      PHP_MONGODB_BSON_VERSION=`$PKG_CONFIG bson2 --modversion`
       PHP_MONGODB_BSON_VERSION_STRING="System ($PHP_MONGODB_BSON_VERSION)"
 
       PHP_MONGODB_CFLAGS="$PHP_MONGODB_CFLAGS $PHP_MONGODB_BSON_CFLAGS"
       PHP_EVAL_LIBLINE($PHP_MONGODB_BSON_LIBS, MONGODB_SHARED_LIBADD)
       AC_DEFINE(HAVE_SYSTEM_LIBBSON, 1, [Use system libbson])
     ],[
-      AC_MSG_ERROR([Could not find system library for libbson >= 1.30.4])
+      AC_MSG_ERROR([Could not find system library for libbson >= 2.0.1])
     ])
 
-    PKG_CHECK_MODULES([PHP_MONGODB_MONGOC], [libmongoc-1.0 >= 1.30.4], [
-      PHP_MONGODB_BSON_VERSION=`$PKG_CONFIG libbson-1.0 --modversion`
-      PHP_MONGODB_BSON_VERSION_STRING="System ($PHP_MONGODB_BSON_VERSION)"
+    PKG_CHECK_MODULES([PHP_MONGODB_MONGOC], [mongoc2 >= 2.0.1], [
+      PHP_MONGODB_MONGOC_VERSION=`$PKG_CONFIG mongoc2 --modversion`
+      PHP_MONGODB_MONGOC_VERSION_STRING="System ($PHP_MONGODB_MONGOC_VERSION)"
 
       PHP_MONGODB_CFLAGS="$PHP_MONGODB_CFLAGS $PHP_MONGODB_MONGOC_CFLAGS"
       PHP_EVAL_LIBLINE($PHP_MONGODB_MONGOC_LIBS, MONGODB_SHARED_LIBADD)
       AC_DEFINE(HAVE_SYSTEM_LIBMONGOC, 1, [Use system libmongoc])
     ],[
-      AC_MSG_ERROR(Could not find system library for libmongoc >= 1.30.4)
+      AC_MSG_ERROR(Could not find system library for libmongoc >= 2.0.1)
     ])
 
     if test "$PHP_MONGODB_CLIENT_SIDE_ENCRYPTION" != "no"; then
-      PKG_CHECK_MODULES([PHP_MONGODB_MONGOCRYPT], [libmongocrypt >= 1.12.0], [
+      PKG_CHECK_MODULES([PHP_MONGODB_MONGOCRYPT], [libmongocrypt >= 1.14.0], [
         PHP_MONGODB_MONGOCRYPT_VERSION=`$PKG_CONFIG libmongocrypt --modversion`
         PHP_MONGODB_MONGOCRYPT_VERSION_STRING="System ($PHP_MONGODB_MONGOCRYPT_VERSION)"
 
@@ -271,7 +273,7 @@ if test "$PHP_MONGODB" != "no"; then
         PHP_EVAL_LIBLINE($PHP_MONGODB_MONGOCRYPT_LIBS, MONGODB_SHARED_LIBADD)
         AC_DEFINE(HAVE_SYSTEM_LIBMONGOCRYPT, 1, [Use system libmongocrypt])
       ],[
-        AC_MSG_ERROR(Could not find system library for libmongocrypt >= 1.12.0)
+        AC_MSG_ERROR(Could not find system library for libmongocrypt >= 1.14.0)
       ])
     fi
   fi
@@ -327,10 +329,8 @@ if test "$PHP_MONGODB" != "no"; then
     PHP_MONGODB_BSON_VERSION_STRING="Bundled ($libbson_VERSION_FULL)"
     PHP_MONGODB_MONGOC_VERSION_STRING="Bundled ($libmongoc_VERSION_FULL)"
 
-    AC_SUBST(BSON_EXTRA_ALIGN, 0)
     AC_SUBST(BSON_OS, 1)
 
-    AC_SUBST(MONGOC_NO_AUTOMATIC_GLOBALS, 1)
     AC_SUBST(MONGOC_ENABLE_MONGODB_AWS_AUTH, 0)
     AC_SUBST(MONGOC_ENABLE_RDTSCP, 0)
     AC_SUBST(MONGOC_ENABLE_SHM_COUNTERS, 0)
@@ -358,9 +358,9 @@ if test "$PHP_MONGODB" != "no"; then
     dnl Sources below are updated by scripts/update-submodule-sources.php
     PHP_MONGODB_COMMON_SOURCES="common-atomic.c common-b64.c common-json.c common-md5.c common-oid.c common-string.c common-thread.c"
     PHP_MONGODB_KMS_MESSAGE_SOURCES="hexlify.c kms_azure_request.c kms_b64.c kms_caller_identity_request.c kms_crypto_apple.c kms_crypto_libcrypto.c kms_crypto_none.c kms_crypto_windows.c kms_decrypt_request.c kms_encrypt_request.c kms_gcp_request.c kms_kmip_reader_writer.c kms_kmip_request.c kms_kmip_response.c kms_kmip_response_parser.c kms_kv_list.c kms_message.c kms_port.c kms_request.c kms_request_opt.c kms_request_str.c kms_response.c kms_response_parser.c sort.c"
-    PHP_MONGODB_BSON_SOURCES="bcon.c bson-atomic.c bson.c bson-clock.c bson-context.c bson-decimal128.c bson-error.c bson-iso8601.c bson-iter.c bson-json.c bson-keys.c bson-md5.c bson-memory.c bson-oid.c bson-reader.c bson-string.c bson-timegm.c bson-utf8.c bson-value.c bson-version-functions.c bson-writer.c"
+    PHP_MONGODB_BSON_SOURCES="bcon.c bson.c bson-clock.c bson-context.c bson-decimal128.c bson-error.c bson-iso8601.c bson-iter.c bson-json.c bson-keys.c bson-memory.c bson-oid.c bson-reader.c bson-string.c bson-timegm.c bson-utf8.c bson-value.c bson-vector.c bson-version-functions.c bson-writer.c"
     PHP_MONGODB_JSONSL_SOURCES="jsonsl.c"
-    PHP_MONGODB_MONGOC_SOURCES="mcd-azure.c mcd-nsinfo.c mcd-rpc.c mongoc-aggregate.c mongoc-apm.c mongoc-array.c mongoc-async.c mongoc-async-cmd.c mongoc-buffer.c mongoc-bulk-operation.c mongoc-bulkwrite.c mongoc-change-stream.c mongoc-client.c mongoc-client-pool.c mongoc-client-session.c mongoc-client-side-encryption.c mongoc-cluster-aws.c mongoc-cluster.c mongoc-cluster-cyrus.c mongoc-cluster-sasl.c mongoc-cluster-sspi.c mongoc-cmd.c mongoc-collection.c mongoc-compression.c mongoc-counters.c mongoc-crypt.c mongoc-crypto.c mongoc-crypto-cng.c mongoc-crypto-common-crypto.c mongoc-crypto-openssl.c mongoc-cursor-array.c mongoc-cursor.c mongoc-cursor-change-stream.c mongoc-cursor-cmd.c mongoc-cursor-cmd-deprecated.c mongoc-cursor-find.c mongoc-cursor-find-cmd.c mongoc-cursor-find-opquery.c mongoc-cursor-legacy.c mongoc-cyrus.c mongoc-database.c mongoc-deprioritized-servers.c mongoc-error.c mongoc-find-and-modify.c mongoc-flags.c mongoc-generation-map.c mongoc-gridfs-bucket.c mongoc-gridfs-bucket-file.c mongoc-gridfs.c mongoc-gridfs-file.c mongoc-gridfs-file-list.c mongoc-gridfs-file-page.c mongoc-handshake.c mongoc-host-list.c mongoc-http.c mongoc-index.c mongoc-init.c mongoc-interrupt.c mongoc-libressl.c mongoc-linux-distro-scanner.c mongoc-list.c mongoc-log-and-monitor-private.c mongoc-log.c mongoc-matcher.c mongoc-matcher-op.c mongoc-memcmp.c mongoc-ocsp-cache.c mongoc-opcode.c mongoc-openssl.c mongoc-optional.c mongoc-opts.c mongoc-opts-helpers.c mongoc-queue.c mongoc-rand-cng.c mongoc-rand-common-crypto.c mongoc-rand-openssl.c mongoc-read-concern.c mongoc-read-prefs.c mongoc-rpc.c mongoc-sasl.c mongoc-scram.c mongoc-secure-channel.c mongoc-secure-transport.c mongoc-server-api.c mongoc-server-description.c mongoc-server-monitor.c mongoc-server-stream.c mongoc-set.c mongoc-shared.c mongoc-socket.c mongoc-ssl.c mongoc-sspi.c mongoc-stream-buffered.c mongoc-stream.c mongoc-stream-file.c mongoc-stream-gridfs.c mongoc-stream-gridfs-download.c mongoc-stream-gridfs-upload.c mongoc-stream-socket.c mongoc-stream-tls.c mongoc-stream-tls-libressl.c mongoc-stream-tls-openssl-bio.c mongoc-stream-tls-openssl.c mongoc-stream-tls-secure-channel.c mongoc-stream-tls-secure-transport.c mongoc-structured-log.c mongoc-timeout.c mongoc-topology-background-monitoring.c mongoc-topology.c mongoc-topology-description-apm.c mongoc-topology-description.c mongoc-topology-scanner.c mongoc-ts-pool.c mongoc-uri.c mongoc-util.c mongoc-version-functions.c mongoc-write-command.c mongoc-write-concern.c service-gcp.c"
+    PHP_MONGODB_MONGOC_SOURCES="mcd-azure.c mcd-nsinfo.c mcd-rpc.c mongoc-aggregate.c mongoc-apm.c mongoc-array.c mongoc-async.c mongoc-async-cmd.c mongoc-buffer.c mongoc-bulk-operation.c mongoc-bulkwrite.c mongoc-change-stream.c mongoc-client.c mongoc-client-pool.c mongoc-client-session.c mongoc-client-side-encryption.c mongoc-cluster-aws.c mongoc-cluster.c mongoc-cluster-cyrus.c mongoc-cluster-sasl.c mongoc-cluster-sspi.c mongoc-cmd.c mongoc-collection.c mongoc-compression.c mongoc-counters.c mongoc-crypt.c mongoc-crypto.c mongoc-crypto-cng.c mongoc-crypto-common-crypto.c mongoc-crypto-openssl.c mongoc-cursor-array.c mongoc-cursor.c mongoc-cursor-change-stream.c mongoc-cursor-cmd.c mongoc-cursor-cmd-deprecated.c mongoc-cursor-find.c mongoc-cursor-find-cmd.c mongoc-cursor-find-opquery.c mongoc-cursor-legacy.c mongoc-cyrus.c mongoc-database.c mongoc-deprioritized-servers.c mongoc-error.c mongoc-find-and-modify.c mongoc-flags.c mongoc-generation-map.c mongoc-gridfs-bucket.c mongoc-gridfs-bucket-file.c mongoc-gridfs.c mongoc-gridfs-file.c mongoc-gridfs-file-list.c mongoc-gridfs-file-page.c mongoc-handshake.c mongoc-host-list.c mongoc-http.c mongoc-init.c mongoc-interrupt.c mongoc-linux-distro-scanner.c mongoc-list.c mongoc-log-and-monitor-private.c mongoc-log.c mongoc-memcmp.c mongoc-ocsp-cache.c mongoc-opcode.c mongoc-openssl.c mongoc-optional.c mongoc-opts.c mongoc-opts-helpers.c mongoc-queue.c mongoc-rand-cng.c mongoc-rand-common-crypto.c mongoc-rand-openssl.c mongoc-read-concern.c mongoc-read-prefs.c mongoc-rpc.c mongoc-sasl.c mongoc-scram.c mongoc-secure-channel.c mongoc-secure-transport.c mongoc-server-api.c mongoc-server-description.c mongoc-server-monitor.c mongoc-server-stream.c mongoc-set.c mongoc-shared.c mongoc-socket.c mongoc-ssl.c mongoc-sspi.c mongoc-stream-buffered.c mongoc-stream.c mongoc-stream-file.c mongoc-stream-gridfs.c mongoc-stream-gridfs-download.c mongoc-stream-gridfs-upload.c mongoc-stream-socket.c mongoc-stream-tls.c mongoc-stream-tls-openssl-bio.c mongoc-stream-tls-openssl.c mongoc-stream-tls-secure-channel.c mongoc-stream-tls-secure-transport.c mongoc-structured-log.c mongoc-timeout.c mongoc-topology-background-monitoring.c mongoc-topology.c mongoc-topology-description-apm.c mongoc-topology-description.c mongoc-topology-scanner.c mongoc-ts-pool.c mongoc-uri.c mongoc-util.c mongoc-version-functions.c mongoc-write-command.c mongoc-write-concern.c service-gcp.c"
     PHP_MONGODB_UTF8PROC_SOURCES="utf8proc.c"
     PHP_MONGODB_ZLIB_SOURCES="adler32.c compress.c crc32.c deflate.c gzclose.c gzlib.c gzread.c gzwrite.c infback.c inffast.c inflate.c inftrees.c trees.c uncompr.c zutil.c"
 
@@ -425,16 +425,18 @@ if test "$PHP_MONGODB" != "no"; then
       AC_SUBST(MONGOCRYPT_ENABLE_TRACE, 1)
 
       dnl Sources below are updated by scripts/update-submodule-sources.php
-      PHP_MONGODB_MONGOCRYPT_SOURCES="mc-array.c mc-efc.c mc-fle2-encryption-placeholder.c mc-fle2-find-equality-payload.c mc-fle2-find-equality-payload-v2.c mc-fle2-find-range-payload.c mc-fle2-find-range-payload-v2.c mc-fle2-insert-update-payload.c mc-fle2-insert-update-payload-v2.c mc-fle2-payload-iev.c mc-fle2-payload-iev-v2.c mc-fle2-payload-uev.c mc-fle2-payload-uev-common.c mc-fle2-payload-uev-v2.c mc-fle2-rfds.c mc-fle2-tag-and-encrypted-metadata-block.c mc-range-edge-generation.c mc-range-encoding.c mc-range-mincover.c mc-rangeopts.c mc-reader.c mc-tokens.c mc-writer.c mongocrypt-binary.c mongocrypt-buffer.c mongocrypt.c mongocrypt-cache.c mongocrypt-cache-collinfo.c mongocrypt-cache-key.c mongocrypt-cache-oauth.c mongocrypt-ciphertext.c mongocrypt-crypto.c mongocrypt-ctx.c mongocrypt-ctx-datakey.c mongocrypt-ctx-decrypt.c mongocrypt-ctx-encrypt.c mongocrypt-ctx-rewrap-many-datakey.c mongocrypt-endpoint.c mongocrypt-kek.c mongocrypt-key-broker.c mongocrypt-key.c mongocrypt-kms-ctx.c mongocrypt-log.c mongocrypt-marking.c mongocrypt-opts.c mongocrypt-status.c mongocrypt-traverse-util.c mongocrypt-util.c"
+      PHP_MONGODB_MONGOCRYPT_SOURCES="mc-array.c mc-efc.c mc-fle2-encryption-placeholder.c mc-fle2-find-equality-payload.c mc-fle2-find-equality-payload-v2.c mc-fle2-find-range-payload.c mc-fle2-find-range-payload-v2.c mc-fle2-find-text-payload.c mc-fle2-insert-update-payload.c mc-fle2-insert-update-payload-v2.c mc-fle2-payload-iev.c mc-fle2-payload-iev-v2.c mc-fle2-payload-uev.c mc-fle2-payload-uev-common.c mc-fle2-payload-uev-v2.c mc-fle2-rfds.c mc-fle2-tag-and-encrypted-metadata-block.c mc-parse-utils.c mc-range-edge-generation.c mc-range-encoding.c mc-range-mincover.c mc-rangeopts.c mc-reader.c mc-schema-broker.c mc-str-encode-string-sets.c mc-text-search-str-encode.c mc-tokens.c mc-writer.c mongocrypt-binary.c mongocrypt-buffer.c mongocrypt.c mongocrypt-cache.c mongocrypt-cache-collinfo.c mongocrypt-cache-key.c mongocrypt-cache-oauth.c mongocrypt-ciphertext.c mongocrypt-crypto.c mongocrypt-ctx.c mongocrypt-ctx-datakey.c mongocrypt-ctx-decrypt.c mongocrypt-ctx-encrypt.c mongocrypt-ctx-rewrap-many-datakey.c mongocrypt-endpoint.c mongocrypt-kek.c mongocrypt-key-broker.c mongocrypt-key.c mongocrypt-kms-ctx.c mongocrypt-log.c mongocrypt-marking.c mongocrypt-opts.c mongocrypt-status.c mongocrypt-traverse-util.c mongocrypt-util.c"
       PHP_MONGODB_MONGOCRYPT_CRYPTO_SOURCES="cng.c commoncrypto.c libcrypto.c none.c"
       PHP_MONGODB_MONGOCRYPT_OS_POSIX_SOURCES="os_dll.c os_mutex.c"
       PHP_MONGODB_MONGOCRYPT_OS_WIN_SOURCES="os_dll.c os_mutex.c"
+      PHP_MONGODB_MONGOCRYPT_UNICODE_SOURCES="case-fold-map.c diacritic-fold-map.c fold.c"
       PHP_MONGODB_MONGOCRYPT_KMS_MESSAGE_SOURCES="hexlify.c kms_azure_request.c kms_b64.c kms_caller_identity_request.c kms_crypto_apple.c kms_crypto_libcrypto.c kms_crypto_none.c kms_crypto_windows.c kms_decrypt_request.c kms_encrypt_request.c kms_gcp_request.c kms_kmip_reader_writer.c kms_kmip_request.c kms_kmip_response.c kms_kmip_response_parser.c kms_kv_list.c kms_message.c kms_port.c kms_request.c kms_request_opt.c kms_request_str.c kms_response.c kms_response_parser.c sort.c"
 
       PHP_MONGODB_ADD_SOURCES([src/libmongocrypt/src/], $PHP_MONGODB_MONGOCRYPT_SOURCES, $PHP_MONGODB_LIBMONGOCRYPT_CFLAGS)
       PHP_MONGODB_ADD_SOURCES([src/libmongocrypt/src/crypto/], $PHP_MONGODB_MONGOCRYPT_CRYPTO_SOURCES, $PHP_MONGODB_LIBMONGOCRYPT_CFLAGS)
       PHP_MONGODB_ADD_SOURCES([src/libmongocrypt/src/os_posix/], $PHP_MONGODB_MONGOCRYPT_OS_POSIX_SOURCES, $PHP_MONGODB_LIBMONGOCRYPT_CFLAGS)
       PHP_MONGODB_ADD_SOURCES([src/libmongocrypt/src/os_win/], $PHP_MONGODB_MONGOCRYPT_OS_WIN_SOURCES, $PHP_MONGODB_LIBMONGOCRYPT_CFLAGS)
+      PHP_MONGODB_ADD_SOURCES([src/libmongocrypt/src/unicode/], $PHP_MONGODB_MONGOCRYPT_UNICODE_SOURCES, $PHP_MONGODB_LIBMONGOCRYPT_CFLAGS)
       PHP_MONGODB_ADD_SOURCES([src/libmongocrypt/kms-message/src/], $PHP_MONGODB_MONGOCRYPT_KMS_MESSAGE_SOURCES, $PHP_MONGODB_LIBMONGOCRYPT_CFLAGS)
 
       PHP_MONGODB_ADD_INCLUDE([src/libmongocrypt/src/])
@@ -445,6 +447,7 @@ if test "$PHP_MONGODB" != "no"; then
       PHP_MONGODB_ADD_BUILD_DIR([src/libmongocrypt/src/crypto/])
       PHP_MONGODB_ADD_BUILD_DIR([src/libmongocrypt/src/os_posix/])
       PHP_MONGODB_ADD_BUILD_DIR([src/libmongocrypt/src/os_win/])
+      PHP_MONGODB_ADD_BUILD_DIR([src/libmongocrypt/src/unicode/])
       PHP_MONGODB_ADD_BUILD_DIR([src/libmongocrypt/kms-message/src/])
 
       AC_CONFIG_FILES([
@@ -496,8 +499,8 @@ Build configuration:
   Extra flags                                      : $PHP_MONGODB_STD_CFLAGS
   Developer flags (slow)                           : $PHP_MONGODB_DEV_CFLAGS
   Code Coverage flags (extra slow)                 : $PHP_MONGODB_COVERAGE_CFLAGS
-  libmongoc                                        : $PHP_MONGODB_BSON_VERSION_STRING
-  libbson                                          : $PHP_MONGODB_MONGOC_VERSION_STRING
+  libmongoc                                        : $PHP_MONGODB_MONGOC_VERSION_STRING
+  libbson                                          : $PHP_MONGODB_BSON_VERSION_STRING
   libmongocrypt                                    : $PHP_MONGODB_MONGOCRYPT_VERSION_STRING
   LDFLAGS                                          : $LDFLAGS
   EXTRA_LDFLAGS                                    : $EXTRA_LDFLAGS
