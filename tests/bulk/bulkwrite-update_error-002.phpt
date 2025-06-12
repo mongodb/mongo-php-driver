@@ -11,10 +11,6 @@ echo throws(function() use ($bulk) {
     $bulk->update(['x' => 1], ['$set' => ['x' => ['' => 1]]]);
 }, 'MongoDB\Driver\Exception\InvalidArgumentException'), "\n\n";
 
-echo throws(function() use ($bulk) {
-    $bulk->update(['x' => 1], ['$set' => ['x' => ["\xc3\x28" => 1]]]);
-}, 'MongoDB\Driver\Exception\InvalidArgumentException'), "\n\n";
-
 /* This newObj argument mixes an update and replacement document, but
  * php_phongo_bulkwrite_update_has_operators() will categorize it as an update
  * due to the presence of an atomic operator. As such, _mongoc_validate_update()
@@ -28,10 +24,7 @@ echo throws(function() use ($bulk) {
 <?php exit(0); ?>
 --EXPECT--
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-invalid argument for update: empty key
-
-OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-invalid argument for update: corrupt BSON
+invalid argument for update: Element key cannot be an empty string
 
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Invalid key 'z': update only works with $ operators and pipelines

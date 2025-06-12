@@ -15,8 +15,7 @@ runs:
     - name: Add repository
       shell: bash
       working-directory: /tmp
-      # Note: no packages for Ubuntu 24.04 noble exist, so we use those for 22.04
-      run: echo "deb https://libmongocrypt.s3.amazonaws.com/apt/ubuntu jammy/libmongocrypt/${LIBMONGOCRYPT_VERSION} universe" | sudo tee /etc/apt/sources.list.d/libmongocrypt.list
+      run: echo "deb https://libmongocrypt.s3.amazonaws.com/apt/ubuntu noble/libmongocrypt/${LIBMONGOCRYPT_VERSION} universe" | sudo tee /etc/apt/sources.list.d/libmongocrypt.list
       env:
         LIBMONGOCRYPT_VERSION: ${{ inputs.version }}
 

@@ -135,7 +135,7 @@ jobs:
     env:
       PHP_VERSION: "8.3"
       LIBMONGOCRYPT_VERSION: "1.14"
-      LIBMONGOC_VERSION: "2.0.1"
+      LIBMONGOC_VERSION: "2.0.2"
       SERVER_VERSION: "8.0"
 
     steps:
