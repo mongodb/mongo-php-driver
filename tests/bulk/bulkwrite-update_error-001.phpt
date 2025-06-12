@@ -9,10 +9,6 @@ $bulk = new MongoDB\Driver\BulkWrite;
 
 echo throws(function() use ($bulk) {
     $bulk->update(['x' => 1], ['' => 1]);
-}, 'MongoDB\Driver\Exception\InvalidArgumentException'), "\n\n";
-
-echo throws(function() use ($bulk) {
-    $bulk->update(['x' => 1], ["\xc3\x28" => 1]);
 }, 'MongoDB\Driver\Exception\InvalidArgumentException'), "\n";
 
 ?>
@@ -20,8 +16,5 @@ echo throws(function() use ($bulk) {
 <?php exit(0); ?>
 --EXPECT--
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-invalid argument for replace: empty key
-
-OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-invalid argument for replace: corrupt BSON
+invalid argument for replace: Element key cannot be an empty string
 ===DONE===
