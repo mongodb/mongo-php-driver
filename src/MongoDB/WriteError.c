@@ -143,7 +143,19 @@ void php_phongo_writeerror_init_ce(INIT_FUNC_ARGS)
 	php_phongo_handler_writeerror.offset         = XtOffsetOf(php_phongo_writeerror_t, std);
 }
 
-zend_bool phongo_writeerror_init(zval* return_value, bson_t* bson)
+bool phongo_writeerror_init(zval* return_value, const bson_t* bson)
+{
+	return phongo_writeerror_init_ex(return_value, bson, 0);
+}
+
+/* Initializes a new WriteError in return_value using the BSON document. Returns
+ * true on success; otherwise, false is returned and an exception is thrown.
+ *
+ * This function supports documents from both mongoc_bulk_operation_execute and
+ * mongoc_bulkwriteexception_t (returned by mongoc_bulkwrite_execute). When
+ * initializing from mongoc_bulkwriteexception_t, an index should be explicitly
+ * provided since the BSON document will not have an "index" field. */
+bool phongo_writeerror_init_ex(zval* return_value, const bson_t* bson, int32_t index)
 {
 	bson_iter_t              iter;
 	php_phongo_writeerror_t* intern;
@@ -152,26 +164,31 @@ zend_bool phongo_writeerror_init(zval* return_value, bson_t* bson)
 
 	intern        = Z_WRITEERROR_OBJ_P(return_value);
 	intern->code  = 0;
-	intern->index = 0;
+	intern->index = index;
 
 	if (bson_iter_init_find(&iter, bson, "code") && BSON_ITER_HOLDS_INT32(&iter)) {
 		intern->code = bson_iter_int32(&iter);
 	}
 
-	if (bson_iter_init_find(&iter, bson, "errmsg") && BSON_ITER_HOLDS_UTF8(&iter)) {
+	// Additionally check for field name used by mongoc_bulkwriteexception_t
+	if ((bson_iter_init_find(&iter, bson, "errmsg") && BSON_ITER_HOLDS_UTF8(&iter)) ||
+		(bson_iter_init_find(&iter, bson, "message") && BSON_ITER_HOLDS_UTF8(&iter))) {
 		uint32_t    errmsg_len;
 		const char* err_msg = bson_iter_utf8(&iter, &errmsg_len);
 
 		intern->message = estrndup(err_msg, errmsg_len);
 	}
 
-	if (bson_iter_init_find(&iter, bson, "errInfo") && BSON_ITER_HOLDS_DOCUMENT(&iter)) {
+	// Additionally check for field name used by mongoc_bulkwriteexception_t
+	if ((bson_iter_init_find(&iter, bson, "errInfo") && BSON_ITER_HOLDS_DOCUMENT(&iter)) ||
+		(bson_iter_init_find(&iter, bson, "details") && BSON_ITER_HOLDS_DOCUMENT(&iter))) {
 		uint32_t       len;
 		const uint8_t* data = NULL;
 
 		bson_iter_document(&iter, &len, &data);
 
 		if (!php_phongo_bson_data_to_zval(data, len, &intern->info)) {
+			/* Exception already thrown */
 			zval_ptr_dtor(&intern->info);
 			ZVAL_UNDEF(&intern->info);
 
@@ -179,7 +196,9 @@ zend_bool phongo_writeerror_init(zval* return_value, bson_t* bson)
 		}
 	}
 
-	if (bson_iter_init_find(&iter, bson, "index") && BSON_ITER_HOLDS_INT32(&iter)) {
+	/* If the WriteError is initialized from mongoc_bulkwriteexception_t, an
+	 * index should already have been specified. */
+	if (!intern->index && bson_iter_init_find(&iter, bson, "index") && BSON_ITER_HOLDS_INT32(&iter)) {
 		intern->index = bson_iter_int32(&iter);
 	}
 

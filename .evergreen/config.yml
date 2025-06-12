@@ -23,6 +23,7 @@ post:
   - func: "upload test results"
   - func: "stop mongo-orchestration"
   - func: "stop load balancer"
+  - func: "stop OCSP responder"
   - func: "cleanup"
 
 # These aliases define the default variant/tasks to test for pull requests and merge queue

@@ -1,5 +1,7 @@
 <?php
 
+use MongoDB\BSON\DBPointer;
+use MongoDB\BSON\Symbol;
 use MongoDB\Driver\BulkWrite;
 use MongoDB\Driver\Command;
 use MongoDB\Driver\Manager;
@@ -835,15 +837,30 @@ function failGetMore(Manager $manager)
     $primary = $manager->selectServer(new ReadPreference('primary'));
     $version = get_server_version_from_server($primary);
 
-    if (version_compare($version, "4.0", ">=")) {
-        /* We use 237 here, as that's the same original code that MongoD would
-         * throw if a cursor had already gone by the time we call getMore. This
-         * allows us to make things consistent with the getMore OP behaviour
-         * from previous mongod versions. An errorCode is required here for the
-         * failPoint to work. */
-        configureFailPoint($manager, 'failCommand', 'alwaysOn', [ 'errorCode' => 237, 'failCommands' => ['getMore'] ]);
-        return;
-    }
+    /* We use 237 here, as that's the same original code that MongoD would
+     * throw if a cursor had already gone by the time we call getMore. This
+     * allows us to make things consistent with the getMore OP behaviour
+     * from previous mongod versions. An errorCode is required here for the
+     * failPoint to work. */
+    configureFailPoint($manager, 'failCommand', 'alwaysOn', [ 'errorCode' => 237, 'failCommands' => ['getMore'] ]);
+}
 
-    throw new Exception("Trying to configure a getMore fail point for a server version ($version) that doesn't support it");
+function createDBPointer(string $collection = 'phongo.test', string $id = '5a2e78accd485d55b4050000'): DBPointer
+{
+    return unserialize(sprintf(
+        'O:22:"MongoDB\BSON\DBPointer":2:{s:3:"ref";s:%d:"%s";s:2:"id";s:%d:"%s";}',
+        strlen($collection),
+        $collection,
+        strlen($id),
+        $id,
+    ));
+}
+
+function createSymbol(string $value = 'symbolValue')
+{
+    return unserialize(sprintf(
+        'O:19:"MongoDB\BSON\Symbol":1:{s:6:"symbol";s:%d:"%s";}',
+        strlen($value),
+        $value,
+    ));
 }

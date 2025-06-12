@@ -16,8 +16,7 @@ $clientEncryption = $manager->createClientEncryption([
 ]);
 
 class SerializableError implements MongoDB\BSON\Serializable {
-    #[\ReturnTypeWillChange]
-    public function bsonSerialize()
+    public function bsonSerialize(): array
     {
         throw new RuntimeException('bsonSerialize() error');
     }

@@ -1,6 +1,7 @@
 --TEST--
 Connect to MongoDB with SSL and X509 auth and username retrieved from cert
 --XFAIL--
+X509 tests must be reimplemented (PHPC-1262)
 parse_url() tests must be reimplemented (PHPC-1177)
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
@@ -12,20 +13,20 @@ parse_url() tests must be reimplemented (PHPC-1177)
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
 
-$driverOptions = [
+$uriOptions = [
+    'authMechanism' => 'MONGODB-X509',
+    'tls' => true,
     // libmongoc does not allow the hostname to be overridden as "server"
-    'allow_invalid_hostname' => true,
-    'weak_cert_validation' => false,
-    'ca_file' => SSL_DIR . '/ca.pem',
-    'pem_file' => SSL_DIR . '/client.pem',
+    'tlsAllowInvalidHostnames' => true,
+    'tlsAllowInvalidCertificates' => false,
+    'tlsCAFile' => SSL_DIR . '/ca.pem',
+    'tlsCertificateKeyFile' => SSL_DIR . '/client.pem',
 ];
-
-$uriOptions = ['authMechanism' => 'MONGODB-X509', 'ssl' => true];
 
 $parsed = parse_url(URI);
 $uri = sprintf('mongodb://%s:%d', $parsed['host'], $parsed['port']);
 
-$manager = create_test_manager($uri, $uriOptions, $driverOptions);
+$manager = create_test_manager($uri, $uriOptions);
 $cursor = $manager->executeCommand(DATABASE_NAME, new MongoDB\Driver\Command(['ping' => 1]));
 var_dump($cursor->toArray()[0]);
 

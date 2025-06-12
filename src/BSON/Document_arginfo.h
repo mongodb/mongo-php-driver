@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 4efc86c2e070f6d6a8dd5cbfe6ea126fba9a4251 */
+ * Stub hash: 13d114590a7c0bc86da4dbb1383d17c296edcb40 */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_BSON_Document___construct, 0, 0, 0)
 ZEND_END_ARG_INFO()
@@ -59,12 +59,6 @@ ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_MongoDB_BSON_Document___set
 	ZEND_ARG_TYPE_INFO(0, properties, IS_ARRAY, 0)
 ZEND_END_ARG_INFO()
 
-#define arginfo_class_MongoDB_BSON_Document_serialize arginfo_class_MongoDB_BSON_Document_toCanonicalExtendedJSON
-
-ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_BSON_Document_unserialize, 0, 1, IS_VOID, 0)
-	ZEND_ARG_TYPE_INFO(0, data, IS_STRING, 0)
-ZEND_END_ARG_INFO()
-
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_BSON_Document___unserialize, 0, 1, IS_VOID, 0)
 	ZEND_ARG_TYPE_INFO(0, data, IS_ARRAY, 0)
 ZEND_END_ARG_INFO()
@@ -89,8 +83,6 @@ static ZEND_METHOD(MongoDB_BSON_Document, offsetSet);
 static ZEND_METHOD(MongoDB_BSON_Document, offsetUnset);
 static ZEND_METHOD(MongoDB_BSON_Document, __toString);
 static ZEND_METHOD(MongoDB_BSON_Document, __set_state);
-static ZEND_METHOD(MongoDB_BSON_Document, serialize);
-static ZEND_METHOD(MongoDB_BSON_Document, unserialize);
 static ZEND_METHOD(MongoDB_BSON_Document, __unserialize);
 static ZEND_METHOD(MongoDB_BSON_Document, __serialize);
 
@@ -112,21 +104,19 @@ static const zend_function_entry class_MongoDB_BSON_Document_methods[] = {
 	ZEND_ME(MongoDB_BSON_Document, offsetUnset, arginfo_class_MongoDB_BSON_Document_offsetUnset, ZEND_ACC_PUBLIC)
 	ZEND_ME(MongoDB_BSON_Document, __toString, arginfo_class_MongoDB_BSON_Document___toString, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_BSON_Document, __set_state, arginfo_class_MongoDB_BSON_Document___set_state, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC|ZEND_ACC_FINAL)
-	ZEND_ME(MongoDB_BSON_Document, serialize, arginfo_class_MongoDB_BSON_Document_serialize, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	ZEND_ME(MongoDB_BSON_Document, unserialize, arginfo_class_MongoDB_BSON_Document_unserialize, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_BSON_Document, __unserialize, arginfo_class_MongoDB_BSON_Document___unserialize, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_BSON_Document, __serialize, arginfo_class_MongoDB_BSON_Document___serialize, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_FE_END
 };
 
-static zend_class_entry *register_class_MongoDB_BSON_Document(zend_class_entry *class_entry_IteratorAggregate, zend_class_entry *class_entry_Serializable, zend_class_entry *class_entry_ArrayAccess, zend_class_entry *class_entry_MongoDB_BSON_Type, zend_class_entry *class_entry_Stringable)
+static zend_class_entry *register_class_MongoDB_BSON_Document(zend_class_entry *class_entry_IteratorAggregate, zend_class_entry *class_entry_ArrayAccess, zend_class_entry *class_entry_MongoDB_BSON_Type, zend_class_entry *class_entry_Stringable)
 {
 	zend_class_entry ce, *class_entry;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\BSON", "Document", class_MongoDB_BSON_Document_methods);
 	class_entry = zend_register_internal_class_ex(&ce, NULL);
 	class_entry->ce_flags |= ZEND_ACC_FINAL;
-	zend_class_implements(class_entry, 5, class_entry_IteratorAggregate, class_entry_Serializable, class_entry_ArrayAccess, class_entry_MongoDB_BSON_Type, class_entry_Stringable);
+	zend_class_implements(class_entry, 4, class_entry_IteratorAggregate, class_entry_ArrayAccess, class_entry_MongoDB_BSON_Type, class_entry_Stringable);
 
 	return class_entry;
 }

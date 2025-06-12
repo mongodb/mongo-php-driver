@@ -8,8 +8,7 @@ require_once __DIR__ . '/../utils/basic.inc';
 class MyClass implements MongoDB\BSON\Persistable {
     private $props;
 
-    #[\ReturnTypeWillChange]
-    public function bsonSerialize() {
+    public function bsonSerialize(): array {
         return array(
             "random" => "class",
             "data"
@@ -22,8 +21,7 @@ class MyClass implements MongoDB\BSON\Persistable {
 class MyClass2 implements MongoDB\BSON\Persistable {
     private $props;
 
-    #[\ReturnTypeWillChange]
-    public function bsonSerialize() {
+    public function bsonSerialize(): array {
         return array(
             1, 2, 3,
         );

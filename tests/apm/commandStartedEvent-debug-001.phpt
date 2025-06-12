@@ -48,9 +48,6 @@ object(MongoDB\Driver\Monitoring\CommandStartedEvent)#%d (%d) {
   string(%d) "%d"
   ["requestId"]=>
   string(%d) "%d"
-  ["server"]=>
-  object(MongoDB\Driver\Server)#%d (%d) {%A
-  }
   ["serviceId"]=>
   %r(NULL|object\(MongoDB\\BSON\\ObjectId\).*)%r
   ["serverConnectionId"]=>

@@ -21,6 +21,6 @@
 
 #include <php.h>
 
-zend_bool phongo_writeconcernerror_init(zval* return_value, bson_t* bson);
+bool phongo_writeconcernerror_init(zval* return_value, const bson_t* bson);
 
 #endif /* PHONGO_WRITECONCERNERROR_H */
