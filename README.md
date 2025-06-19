@@ -29,6 +29,8 @@ To build and install the driver:
     $ pecl install mongodb
     $ echo "extension=mongodb.so" >> `php --ini | grep "Loaded Configuration" | sed -e "s|.*:\s*||"`
 
+The MongoDB PHP Driver follows [semantic versioning](https://semver.org/) for its releases.
+
 Additional installation instructions may be found in the
 [PHP.net documentation](https://php.net/manual/en/mongodb.installation.php).
 
