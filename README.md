@@ -22,12 +22,30 @@ languages.
  - https://www.php.net/mongodb
  - https://www.mongodb.com/docs/drivers/php-drivers/
 
-## Installation
+## Installation with pie
+
+To install this extension, you need [pie](https://github.com/php/pie) installed on your system. `pie` is a modern tool for managing PHP extensions.
+
+Install the [`mongodb/mongodb-extension`](https://packagist.org/packages/mongodb/mongodb-extension) package from Packagist using the following command:
+
+```shell
+pie install mongodb/mongodb-extension
+```
+
+This will automatically download, build, and enable the MongoDB extension for your PHP installation.
+
+For more details on using `pie`, see the [pie documentation](https://github.com/php/pie).
+
+## Installation with pecl
+
+Using pecl to install extensions is deprecated, 
 
 To build and install the driver:
 
-    $ pecl install mongodb
-    $ echo "extension=mongodb.so" >> `php --ini | grep "Loaded Configuration" | sed -e "s|.*:\s*||"`
+```shell
+pecl install mongodb
+echo "extension=mongodb.so" >> `php --ini | grep "Loaded Configuration" | sed -e "s|.*:\s*||"`
+```
 
 The MongoDB PHP Driver follows [semantic versioning](https://semver.org/) for its releases.
 
@@ -40,7 +58,7 @@ distributed as the
 [`mongodb/mongodb`](https://packagist.org/packages/mongodb/mongodb) package for
 [Composer](https://getcomposer.org).
 
-## Release Integrity
+### Release Integrity
 
 Releases are created automatically and signed using the 
 [PHP team's GPG key](https://pgp.mongodb.com/php-driver.asc). This applies to
