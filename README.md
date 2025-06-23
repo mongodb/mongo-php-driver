@@ -72,6 +72,9 @@ distributed as the
 
 ## Release Integrity
 
+> [!NOTE]
+> Integrity validation is not yet supported when installing with `pie`. If you require signature verification, use the manual or PECL installation methods described below.
+
 Releases are created automatically and signed using the 
 [PHP team's GPG key](https://pgp.mongodb.com/php-driver.asc). This applies to
 the git tag as well as all release packages provided as part of a
