@@ -15,7 +15,9 @@ on:
 
 env:
   default-release-message: |
-    The PHP team is happy to announce that version {0} of the [mongodb](https://pecl.php.net/package/mongodb) PHP extension is now available on PECL.
+    The PHP team is happy to announce that version {0} of the MongoDB PHP extension is now available.
+    - [mongodb/mongodb-extension](https://packagist.org/packages/mongodb/mongodb-extension#{0}) on Packagist.
+    - [mongodb](https://pecl.php.net/package/mongodb) on PECL
 
     **Release Highlights**
 
@@ -32,16 +34,10 @@ env:
     You can either download and install the source manually, or you can install the extension with:
 
     ```
-    pecl install mongodb-{0}
+    pie install mongodb/mongodb-extension:{0}
     ```
 
-    or update with:
-
-    ```
-    pecl upgrade mongodb-{0}
-    ```
-
-    Windows binaries are attached to the GitHub release notes.
+    Sources and Windows binaries are attached to the GitHub release notes.
 
 jobs:
   prepare-release:
