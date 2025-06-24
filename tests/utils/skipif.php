@@ -459,6 +459,10 @@ function skip_if_crypt_shared()
 
 function skip_if_no_crypt_shared()
 {
+    if (PHP_INT_SIZE !== 8) {
+        exit('skip crypt_shared is only available on 64-bit systems');
+    }
+
     // Intentionally consider empty values for CRYPT_SHARED_LIB_PATH
     if ( ! getenv('CRYPT_SHARED_LIB_PATH')) {
         exit('skip crypt_shared is not available');
