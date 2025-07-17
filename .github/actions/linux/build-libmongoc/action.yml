@@ -5,7 +5,7 @@ inputs:
     description: "Prefix to install libmongoc to"
     default: "/usr/local"
   version:
-    description: "Libmongoc version to build"
+    description: "Libmongoc version to build (major.minor)"
     required: true
 runs:
   using: composite
