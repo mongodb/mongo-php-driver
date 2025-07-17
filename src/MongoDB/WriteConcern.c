@@ -368,11 +368,6 @@ static void php_phongo_writeconcern_free_object(zend_object* object)
 
 	zend_object_std_dtor(&intern->std);
 
-	if (intern->properties) {
-		zend_hash_destroy(intern->properties);
-		FREE_HASHTABLE(intern->properties);
-	}
-
 	if (intern->write_concern) {
 		mongoc_write_concern_destroy(intern->write_concern);
 	}

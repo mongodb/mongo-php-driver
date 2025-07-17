@@ -175,11 +175,6 @@ static void php_phongo_dbpointer_free_object(zend_object* object)
 	if (intern->ref) {
 		efree(intern->ref);
 	}
-
-	if (intern->properties) {
-		zend_hash_destroy(intern->properties);
-		FREE_HASHTABLE(intern->properties);
-	}
 }
 
 zend_object* php_phongo_dbpointer_create_object(zend_class_entry* class_type)

@@ -227,11 +227,6 @@ static void php_phongo_regex_free_object(zend_object* object)
 	if (intern->flags) {
 		efree(intern->flags);
 	}
-
-	if (intern->properties) {
-		zend_hash_destroy(intern->properties);
-		FREE_HASHTABLE(intern->properties);
-	}
 }
 
 static zend_object* php_phongo_regex_create_object(zend_class_entry* class_type)

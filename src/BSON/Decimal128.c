@@ -167,11 +167,6 @@ static void php_phongo_decimal128_free_object(zend_object* object)
 	php_phongo_decimal128_t* intern = Z_OBJ_DECIMAL128(object);
 
 	zend_object_std_dtor(&intern->std);
-
-	if (intern->properties) {
-		zend_hash_destroy(intern->properties);
-		FREE_HASHTABLE(intern->properties);
-	}
 }
 
 static zend_object* php_phongo_decimal128_create_object(zend_class_entry* class_type)

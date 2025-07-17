@@ -212,11 +212,6 @@ static void php_phongo_binary_free_object(zend_object* object)
 	if (intern->data) {
 		efree(intern->data);
 	}
-
-	if (intern->properties) {
-		zend_hash_destroy(intern->properties);
-		FREE_HASHTABLE(intern->properties);
-	}
 }
 
 static zend_object* php_phongo_binary_create_object(zend_class_entry* class_type)

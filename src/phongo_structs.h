@@ -121,13 +121,11 @@ typedef struct {
 
 typedef struct {
 	mongoc_read_concern_t* read_concern;
-	HashTable*             properties;
 	zend_object            std;
 } php_phongo_readconcern_t;
 
 typedef struct {
 	mongoc_read_prefs_t* read_preference;
-	HashTable*           properties;
 	zend_object          std;
 } php_phongo_readpreference_t;
 
@@ -140,13 +138,11 @@ typedef struct {
 
 typedef struct {
 	mongoc_server_api_t* server_api;
-	HashTable*           properties;
 	zend_object          std;
 } php_phongo_serverapi_t;
 
 typedef struct {
 	mongoc_server_description_t* server_description;
-	HashTable*                   properties;
 	zend_object                  std;
 } php_phongo_serverdescription_t;
 
@@ -159,12 +155,10 @@ typedef struct {
 
 typedef struct {
 	mongoc_topology_description_t* topology_description;
-	HashTable*                     properties;
 	zend_object                    std;
 } php_phongo_topologydescription_t;
 
 typedef struct {
-	HashTable*              properties;
 	mongoc_write_concern_t* write_concern;
 	zend_object             std;
 } php_phongo_writeconcern_t;
@@ -196,19 +190,16 @@ typedef struct {
 	char*       data;
 	int         data_len;
 	uint8_t     type;
-	HashTable*  properties;
 	zend_object std;
 } php_phongo_binary_t;
 
 typedef struct {
 	bson_t*     bson;
-	HashTable*  properties;
 	zend_object std;
 } php_phongo_packedarray_t;
 
 typedef struct {
 	bson_t*     bson;
-	HashTable*  properties;
 	zend_object std;
 } php_phongo_document_t;
 
@@ -219,7 +210,6 @@ typedef struct {
 	bool        is_array;
 	size_t      key;
 	zval        current;
-	HashTable*  properties;
 	zend_object std;
 } php_phongo_iterator_t;
 
@@ -227,21 +217,18 @@ typedef struct {
 	char*       ref;
 	size_t      ref_len;
 	char        id[25];
-	HashTable*  properties;
 	zend_object std;
 } php_phongo_dbpointer_t;
 
 typedef struct {
 	bool              initialized;
 	bson_decimal128_t decimal;
-	HashTable*        properties;
 	zend_object       std;
 } php_phongo_decimal128_t;
 
 typedef struct {
 	bool        initialized;
 	int64_t     integer;
-	HashTable*  properties;
 	zend_object std;
 } php_phongo_int64_t;
 
@@ -249,7 +236,6 @@ typedef struct {
 	char*       code;
 	size_t      code_len;
 	bson_t*     scope;
-	HashTable*  properties;
 	zend_object std;
 } php_phongo_javascript_t;
 
@@ -264,7 +250,6 @@ typedef struct {
 typedef struct {
 	bool        initialized;
 	char        oid[25];
-	HashTable*  properties;
 	zend_object std;
 } php_phongo_objectid_t;
 
@@ -273,14 +258,12 @@ typedef struct {
 	int         pattern_len;
 	char*       flags;
 	int         flags_len;
-	HashTable*  properties;
 	zend_object std;
 } php_phongo_regex_t;
 
 typedef struct {
 	char*       symbol;
 	size_t      symbol_len;
-	HashTable*  properties;
 	zend_object std;
 } php_phongo_symbol_t;
 
@@ -288,7 +271,6 @@ typedef struct {
 	bool        initialized;
 	uint32_t    increment;
 	uint32_t    timestamp;
-	HashTable*  properties;
 	zend_object std;
 } php_phongo_timestamp_t;
 
@@ -299,7 +281,6 @@ typedef struct {
 typedef struct {
 	bool        initialized;
 	int64_t     milliseconds;
-	HashTable*  properties;
 	zend_object std;
 } php_phongo_utcdatetime_t;
 

@@ -300,11 +300,6 @@ static void php_phongo_utcdatetime_free_object(zend_object* object)
 	php_phongo_utcdatetime_t* intern = Z_OBJ_UTCDATETIME(object);
 
 	zend_object_std_dtor(&intern->std);
-
-	if (intern->properties) {
-		zend_hash_destroy(intern->properties);
-		FREE_HASHTABLE(intern->properties);
-	}
 }
 
 static zend_object* php_phongo_utcdatetime_create_object(zend_class_entry* class_type)
