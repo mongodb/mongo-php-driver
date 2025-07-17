@@ -232,7 +232,7 @@ static int php_phongo_dbpointer_compare_objects(zval* o1, zval* o2)
 
 static HashTable* php_phongo_dbpointer_get_debug_info(zend_object* object, int* is_temp)
 {
-	*is_temp = 1;
+	*is_temp = 0;
 	return php_phongo_dbpointer_get_properties_hash(object, true);
 }
 

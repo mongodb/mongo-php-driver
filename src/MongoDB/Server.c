@@ -578,7 +578,7 @@ static HashTable* php_phongo_server_get_debug_info(zend_object* object, int* is_
 	mongoc_client_t*             client;
 	mongoc_server_description_t* sd;
 
-	*is_temp = 1;
+	*is_temp = 0;
 	intern   = Z_OBJ_SERVER(object);
 	client   = Z_MANAGER_OBJ_P(&intern->manager)->client;
 

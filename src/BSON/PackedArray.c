@@ -482,7 +482,7 @@ static HashTable* php_phongo_packedarray_get_debug_info(zend_object* object, int
 	php_phongo_packedarray_t* intern;
 	HashTable*                props;
 
-	*is_temp = 1;
+	*is_temp = 0;
 	intern   = Z_OBJ_PACKEDARRAY(object);
 
 	/* This get_debug_info handler reports an additional property. This does not

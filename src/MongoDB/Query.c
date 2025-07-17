@@ -363,7 +363,7 @@ static HashTable* php_phongo_query_get_debug_info(zend_object* object, int* is_t
 	php_phongo_query_t* intern;
 	zval                retval = ZVAL_STATIC_INIT;
 
-	*is_temp = 1;
+	*is_temp = 0;
 	intern   = Z_OBJ_QUERY(object);
 
 	array_init_size(&retval, 3);

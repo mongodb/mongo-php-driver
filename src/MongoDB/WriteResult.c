@@ -369,7 +369,7 @@ static HashTable* php_phongo_writeresult_get_debug_info(zend_object* object, int
 	bson_iter_t               iter;
 
 	intern   = Z_OBJ_WRITERESULT(object);
-	*is_temp = 1;
+	*is_temp = 0;
 	array_init_size(&retval, 10);
 
 #define PHONGO_WRITERESULT_SCP(field)                                                         \

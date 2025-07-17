@@ -96,7 +96,7 @@ static HashTable* php_phongo_topologychangedevent_get_debug_info(zend_object* ob
 	zval                               retval = ZVAL_STATIC_INIT;
 
 	intern   = Z_OBJ_TOPOLOGYCHANGEDEVENT(object);
-	*is_temp = 1;
+	*is_temp = 0;
 	array_init_size(&retval, 3);
 
 	{

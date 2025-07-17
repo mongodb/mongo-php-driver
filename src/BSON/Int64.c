@@ -545,7 +545,7 @@ static zend_result php_phongo_int64_do_operation(zend_uchar opcode, zval* result
 
 static HashTable* php_phongo_int64_get_debug_info(zend_object* object, int* is_temp)
 {
-	*is_temp = 1;
+	*is_temp = 0;
 	return php_phongo_int64_get_properties_hash(object, true);
 }
 

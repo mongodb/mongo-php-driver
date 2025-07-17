@@ -498,7 +498,7 @@ static HashTable* php_phongo_document_get_debug_info(zend_object* object, int* i
 	php_phongo_document_t* intern;
 	HashTable*             props;
 
-	*is_temp = 1;
+	*is_temp = 0;
 	intern   = Z_OBJ_DOCUMENT(object);
 
 	/* This get_debug_info handler reports an additional property. This does not

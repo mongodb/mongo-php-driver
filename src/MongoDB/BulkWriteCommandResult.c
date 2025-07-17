@@ -201,7 +201,7 @@ static HashTable* php_phongo_bulkwritecommandresult_get_debug_info(zend_object* 
 	zval                                 retval = ZVAL_STATIC_INIT;
 
 	intern   = Z_OBJ_BULKWRITECOMMANDRESULT(object);
-	*is_temp = 1;
+	*is_temp = 0;
 	array_init_size(&retval, 12);
 
 	ADD_ASSOC_BOOL_EX(&retval, "isAcknowledged", intern->is_acknowledged);

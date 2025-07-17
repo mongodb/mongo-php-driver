@@ -258,7 +258,7 @@ done:
 
 static HashTable* php_phongo_serverdescription_get_debug_info(zend_object* object, int* is_temp)
 {
-	*is_temp = 1;
+	*is_temp = 0;
 	return php_phongo_serverdescription_get_properties_hash(object, true);
 }
 

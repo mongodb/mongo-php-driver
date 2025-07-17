@@ -85,7 +85,7 @@ static HashTable* php_phongo_serverclosedevent_get_debug_info(zend_object* objec
 	zval                            retval = ZVAL_STATIC_INIT;
 
 	intern   = Z_OBJ_SERVERCLOSEDEVENT(object);
-	*is_temp = 1;
+	*is_temp = 0;
 	array_init_size(&retval, 3);
 
 	ADD_ASSOC_STRING(&retval, "host", intern->host.host);

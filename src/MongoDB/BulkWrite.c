@@ -592,7 +592,7 @@ static HashTable* php_phongo_bulkwrite_get_debug_info(zend_object* object, int* 
 	zval                    retval = ZVAL_STATIC_INIT;
 	php_phongo_bulkwrite_t* intern = NULL;
 
-	*is_temp = 1;
+	*is_temp = 0;
 	intern   = Z_OBJ_BULKWRITE(object);
 	array_init(&retval);
 
