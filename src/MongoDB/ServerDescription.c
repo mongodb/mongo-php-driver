@@ -187,7 +187,7 @@ HashTable* php_phongo_serverdescription_get_properties_hash(zend_object* object,
 
 	intern = Z_OBJ_SERVERDESCRIPTION(object);
 
-	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_debug, intern, props, 6);
+	props = zend_std_get_properties(object);
 
 	if (!intern->server_description) {
 		return props;

@@ -159,7 +159,7 @@ static HashTable* php_phongo_std_get_gc(zend_object* object, zval** table, int* 
 {
 	*table = NULL;
 	*n     = 0;
-	return zend_std_get_properties(object);
+	return object->handlers->get_properties(object);
 }
 
 PHP_MINIT_FUNCTION(mongodb) /* {{{ */

@@ -136,7 +136,7 @@ HashTable* php_phongo_topologydescription_get_properties_hash(zend_object* objec
 
 	intern = Z_OBJ_TOPOLOGYDESCRIPTION(object);
 
-	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_debug, intern, props, 2);
+	props = zend_std_get_properties(object);
 
 	if (!intern->topology_description) {
 		return props;

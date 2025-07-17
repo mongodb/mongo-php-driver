@@ -96,7 +96,7 @@ static HashTable* php_phongo_timestamp_get_properties_hash(zend_object* object, 
 
 	intern = Z_OBJ_TIMESTAMP(object);
 
-	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_temp, intern, props, 2);
+	props = zend_std_get_properties(object);
 
 	if (!intern->initialized) {
 		return props;

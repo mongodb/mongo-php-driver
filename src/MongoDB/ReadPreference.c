@@ -389,7 +389,7 @@ static HashTable* php_phongo_readpreference_get_properties_hash(zend_object* obj
 
 	intern = Z_OBJ_READPREFERENCE(object);
 
-	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_temp, intern, props, 4);
+	props = zend_std_get_properties(object);
 
 	if (!intern->read_preference) {
 		return props;

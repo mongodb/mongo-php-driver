@@ -70,7 +70,7 @@ static HashTable* php_phongo_binary_get_properties_hash(zend_object* object, boo
 
 	intern = Z_OBJ_BINARY(object);
 
-	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_temp, intern, props, 2);
+	props = zend_std_get_properties(object);
 
 	if (!intern->data) {
 		return props;

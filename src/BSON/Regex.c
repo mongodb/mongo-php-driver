@@ -85,7 +85,7 @@ static HashTable* php_phongo_regex_get_properties_hash(zend_object* object, bool
 
 	intern = Z_OBJ_REGEX(object);
 
-	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_temp, intern, props, 2);
+	props = zend_std_get_properties(object);
 
 	if (!intern->pattern) {
 		return props;

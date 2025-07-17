@@ -160,7 +160,7 @@ static HashTable* php_phongo_iterator_get_properties_hash(zend_object* object, b
 
 	intern = Z_OBJ_ITERATOR(object);
 
-	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_temp, intern, props, 1);
+	props = zend_std_get_properties(object);
 
 	zend_hash_str_update(props, "bson", sizeof("bson") - 1, &intern->bson);
 	Z_TRY_ADDREF(intern->bson);

@@ -62,7 +62,7 @@ static HashTable* php_phongo_document_get_properties_hash(zend_object* object, b
 
 	intern = Z_OBJ_DOCUMENT(object);
 
-	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_temp, intern, props, size);
+	props = zend_std_get_properties(object);
 
 	if (!intern->bson) {
 		return props;
@@ -514,17 +514,13 @@ static HashTable* php_phongo_document_get_debug_info(zend_object* object, int* i
 		state.map.document.type = PHONGO_TYPEMAP_BSON;
 		if (!php_phongo_bson_to_zval_ex(intern->bson, &state)) {
 			zval_ptr_dtor(&state.zchild);
-			goto failure;
+			return NULL;
 		}
 
 		zend_hash_str_update(props, "value", sizeof("value") - 1, &state.zchild);
 	}
 
 	return props;
-
-failure:
-	PHONGO_GET_PROPERTY_HASH_FREE_PROPS(is_temp, props);
-	return NULL;
 }
 
 static HashTable* php_phongo_document_get_properties(zend_object* object)
