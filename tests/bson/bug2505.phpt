@@ -4,6 +4,8 @@ PHPC-2505: gc_collect_cycles() may interfere with using foreach to iterate objec
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
 
+gc_disable();
+
 $tests = [
     [ 'binary' => new MongoDB\BSON\Binary('foo', MongoDB\BSON\Binary::TYPE_GENERIC) ],
     [ 'dbpointer' => createDBPointer() ],
@@ -31,6 +33,9 @@ foreach ($tests as $test) {
     }
 }
 $buf1 = ob_end_clean();
+
+gc_enable();
+gc_collect_cycles();
 
 ob_start();
 foreach ($tests as $test) {
