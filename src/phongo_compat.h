@@ -177,6 +177,13 @@
 	}                                                 \
 	while (0)
 
+#define PHONGO_RETURN_PROPERTIES_ARR(value) \
+	do {                                                \
+		HashTable* __ht = value;              \
+		GC_TRY_ADDREF(__ht); \
+		RETURN_ARR(__ht);                  \
+	} while (0)
+
 #ifndef ZEND_PARSE_PARAMETERS_NONE
 #define PHONGO_PARSE_PARAMETERS_NONE()                                          \
 	do {                                                                        \

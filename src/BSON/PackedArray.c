@@ -56,7 +56,7 @@ static bool php_phongo_packedarray_init_from_hash(php_phongo_packedarray_t* inte
 	return false;
 }
 
-static HashTable* php_phongo_packedarray_get_properties_hash(zend_object* object, bool is_temp, int size)
+static HashTable* php_phongo_packedarray_get_properties_hash(zend_object* object, int size)
 {
 	php_phongo_packedarray_t* intern;
 	HashTable*                props;
@@ -403,7 +403,7 @@ static PHP_METHOD(MongoDB_BSON_PackedArray, __serialize)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
 
-	RETURN_ARR(php_phongo_packedarray_get_properties_hash(Z_OBJ_P(getThis()), true, 1));
+	PHONGO_RETURN_PROPERTIES_ARR(php_phongo_packedarray_get_properties_hash(Z_OBJ_P(getThis()), 1));
 }
 
 static PHP_METHOD(MongoDB_BSON_PackedArray, __unserialize)
@@ -483,7 +483,7 @@ static HashTable* php_phongo_packedarray_get_debug_info(zend_object* object, int
 	/* This get_debug_info handler reports an additional property. This does not
 	 * conflict with other uses of php_phongo_document_get_properties_hash since
 	 * we always allocated a new HashTable with is_temp=true. */
-	props = php_phongo_packedarray_get_properties_hash(object, true, 2);
+	props = php_phongo_packedarray_get_properties_hash(object, 2);
 
 	{
 		php_phongo_bson_state state;
@@ -505,7 +505,7 @@ static HashTable* php_phongo_packedarray_get_debug_info(zend_object* object, int
 
 static HashTable* php_phongo_packedarray_get_properties(zend_object* object)
 {
-	return php_phongo_packedarray_get_properties_hash(object, false, 1);
+	return php_phongo_packedarray_get_properties_hash(object, 1);
 }
 
 zval* php_phongo_packedarray_read_dimension(zend_object* object, zval* offset, int type, zval* rv)

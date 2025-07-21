@@ -153,7 +153,7 @@ static void php_phongo_iterator_rewind(php_phongo_iterator_t* intern)
 	intern->valid = bson_iter_next(&intern->iter);
 }
 
-static HashTable* php_phongo_iterator_get_properties_hash(zend_object* object, bool is_temp)
+static HashTable* php_phongo_iterator_get_properties_hash(zend_object* object)
 {
 	php_phongo_iterator_t* intern;
 	HashTable*             props;
@@ -284,12 +284,12 @@ static zend_object* php_phongo_iterator_clone_object(zend_object* object)
 static HashTable* php_phongo_iterator_get_debug_info(zend_object* object, int* is_temp)
 {
 	*is_temp = 0;
-	return php_phongo_iterator_get_properties_hash(object, true);
+	return php_phongo_iterator_get_properties_hash(object);
 }
 
 static HashTable* php_phongo_iterator_get_properties(zend_object* object)
 {
-	return php_phongo_iterator_get_properties_hash(object, false);
+	return php_phongo_iterator_get_properties_hash(object);
 }
 
 /* Iterator handlers */

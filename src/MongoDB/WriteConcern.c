@@ -262,7 +262,7 @@ static PHP_METHOD(MongoDB_Driver_WriteConcern, isDefault)
 	RETURN_BOOL(mongoc_write_concern_is_default(intern->write_concern));
 }
 
-static HashTable* php_phongo_writeconcern_get_properties_hash(zend_object* object, bool is_temp, bool is_bson, bool is_serialize)
+static HashTable* php_phongo_writeconcern_get_properties_hash(zend_object* object, bool is_bson, bool is_serialize)
 {
 	php_phongo_writeconcern_t* intern;
 	HashTable*                 props;
@@ -337,7 +337,7 @@ static PHP_METHOD(MongoDB_Driver_WriteConcern, bsonSerialize)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
 
-	ZVAL_ARR(return_value, php_phongo_writeconcern_get_properties_hash(Z_OBJ_P(getThis()), true, true, false));
+	ZVAL_ARR(return_value, php_phongo_writeconcern_get_properties_hash(Z_OBJ_P(getThis()), true, false));
 	convert_to_object(return_value);
 }
 
@@ -345,7 +345,7 @@ static PHP_METHOD(MongoDB_Driver_WriteConcern, __serialize)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
 
-	RETURN_ARR(php_phongo_writeconcern_get_properties_hash(Z_OBJ_P(getThis()), true, false, true));
+	PHONGO_RETURN_PROPERTIES_ARR(php_phongo_writeconcern_get_properties_hash(Z_OBJ_P(getThis()), false, true));
 }
 
 static PHP_METHOD(MongoDB_Driver_WriteConcern, __unserialize)
@@ -388,12 +388,12 @@ static zend_object* php_phongo_writeconcern_create_object(zend_class_entry* clas
 static HashTable* php_phongo_writeconcern_get_debug_info(zend_object* object, int* is_temp)
 {
 	*is_temp = 0;
-	return php_phongo_writeconcern_get_properties_hash(object, true, false, false);
+	return php_phongo_writeconcern_get_properties_hash(object, false, false);
 }
 
 static HashTable* php_phongo_writeconcern_get_properties(zend_object* object)
 {
-	return php_phongo_writeconcern_get_properties_hash(object, false, false, false);
+	return php_phongo_writeconcern_get_properties_hash(object, false, false);
 }
 
 void php_phongo_writeconcern_init_ce(INIT_FUNC_ARGS)

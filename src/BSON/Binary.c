@@ -63,7 +63,7 @@ static bool php_phongo_binary_init_from_hash(php_phongo_binary_t* intern, HashTa
 	return false;
 }
 
-static HashTable* php_phongo_binary_get_properties_hash(zend_object* object, bool is_temp)
+static HashTable* php_phongo_binary_get_properties_hash(zend_object* object)
 {
 	php_phongo_binary_t* intern;
 	HashTable*           props;
@@ -186,7 +186,7 @@ static PHP_METHOD(MongoDB_BSON_Binary, __serialize)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
 
-	RETURN_ARR(php_phongo_binary_get_properties_hash(Z_OBJ_P(getThis()), true));
+	PHONGO_RETURN_PROPERTIES_ARR(php_phongo_binary_get_properties_hash(Z_OBJ_P(getThis())));
 }
 
 static PHP_METHOD(MongoDB_BSON_Binary, __unserialize)
@@ -268,12 +268,12 @@ static int php_phongo_binary_compare_objects(zval* o1, zval* o2)
 static HashTable* php_phongo_binary_get_debug_info(zend_object* object, int* is_temp)
 {
 	*is_temp = 0;
-	return php_phongo_binary_get_properties_hash(object, true);
+	return php_phongo_binary_get_properties_hash(object);
 }
 
 static HashTable* php_phongo_binary_get_properties(zend_object* object)
 {
-	return php_phongo_binary_get_properties_hash(object, false);
+	return php_phongo_binary_get_properties_hash(object);
 }
 
 void php_phongo_binary_init_ce(INIT_FUNC_ARGS)

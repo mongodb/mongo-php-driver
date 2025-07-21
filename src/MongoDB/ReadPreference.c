@@ -380,7 +380,7 @@ static PHP_METHOD(MongoDB_Driver_ReadPreference, getTagSets)
 	}
 }
 
-static HashTable* php_phongo_readpreference_get_properties_hash(zend_object* object, bool is_temp)
+static HashTable* php_phongo_readpreference_get_properties_hash(zend_object* object)
 {
 	php_phongo_readpreference_t* intern;
 	HashTable*                   props;
@@ -452,7 +452,7 @@ static PHP_METHOD(MongoDB_Driver_ReadPreference, bsonSerialize)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
 
-	ZVAL_ARR(return_value, php_phongo_readpreference_get_properties_hash(Z_OBJ_P(getThis()), true));
+	ZVAL_ARR(return_value, php_phongo_readpreference_get_properties_hash(Z_OBJ_P(getThis())));
 	convert_to_object(return_value);
 }
 
@@ -460,7 +460,7 @@ static PHP_METHOD(MongoDB_Driver_ReadPreference, __serialize)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
 
-	RETURN_ARR(php_phongo_readpreference_get_properties_hash(Z_OBJ_P(getThis()), true));
+	PHONGO_RETURN_PROPERTIES_ARR(php_phongo_readpreference_get_properties_hash(Z_OBJ_P(getThis())));
 }
 
 static PHP_METHOD(MongoDB_Driver_ReadPreference, __unserialize)
@@ -503,12 +503,12 @@ static zend_object* php_phongo_readpreference_create_object(zend_class_entry* cl
 static HashTable* php_phongo_readpreference_get_debug_info(zend_object* object, int* is_temp)
 {
 	*is_temp = 0;
-	return php_phongo_readpreference_get_properties_hash(object, true);
+	return php_phongo_readpreference_get_properties_hash(object);
 }
 
 static HashTable* php_phongo_readpreference_get_properties(zend_object* object)
 {
-	return php_phongo_readpreference_get_properties_hash(object, false);
+	return php_phongo_readpreference_get_properties_hash(object);
 }
 
 void php_phongo_readpreference_init_ce(INIT_FUNC_ARGS)

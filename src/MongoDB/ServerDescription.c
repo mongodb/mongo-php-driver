@@ -175,7 +175,7 @@ static zend_object* php_phongo_serverdescription_create_object(zend_class_entry*
 	return &intern->std;
 }
 
-HashTable* php_phongo_serverdescription_get_properties_hash(zend_object* object, bool is_debug)
+HashTable* php_phongo_serverdescription_get_properties_hash(zend_object* object)
 {
 	php_phongo_serverdescription_t* intern = NULL;
 	HashTable*                      props;
@@ -254,12 +254,12 @@ done:
 static HashTable* php_phongo_serverdescription_get_debug_info(zend_object* object, int* is_temp)
 {
 	*is_temp = 0;
-	return php_phongo_serverdescription_get_properties_hash(object, true);
+	return php_phongo_serverdescription_get_properties_hash(object);
 }
 
 static HashTable* php_phongo_serverdescription_get_properties(zend_object* object)
 {
-	return php_phongo_serverdescription_get_properties_hash(object, false);
+	return php_phongo_serverdescription_get_properties_hash(object);
 }
 
 void php_phongo_serverdescription_init_ce(INIT_FUNC_ARGS)
