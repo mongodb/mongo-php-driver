@@ -272,7 +272,7 @@ static HashTable* php_phongo_writeconcern_get_properties_hash(zend_object* objec
 
 	intern = Z_OBJ_WRITECONCERN(object);
 
-	props = zend_std_get_properties(object);
+	props = zend_array_dup(zend_std_get_properties(object));
 
 	if (!intern->write_concern) {
 		return props;
@@ -345,7 +345,7 @@ static PHP_METHOD(MongoDB_Driver_WriteConcern, __serialize)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
 
-	PHONGO_RETURN_PROPERTIES_ARR(php_phongo_writeconcern_get_properties_hash(Z_OBJ_P(getThis()), false, true));
+	RETURN_ARR(php_phongo_writeconcern_get_properties_hash(Z_OBJ_P(getThis()), false, true));
 }
 
 static PHP_METHOD(MongoDB_Driver_WriteConcern, __unserialize)

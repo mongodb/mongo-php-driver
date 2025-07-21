@@ -146,7 +146,7 @@ static HashTable* php_phongo_serverapi_get_properties_hash(zend_object* object, 
 
 	intern = Z_OBJ_SERVERAPI(object);
 
-	props = zend_std_get_properties(object);
+	props = zend_array_dup(zend_std_get_properties(object));
 
 	ZVAL_STRING(&version, mongoc_server_api_version_to_string(mongoc_server_api_get_version(intern->server_api)));
 	zend_hash_str_add(props, "version", sizeof("version") - 1, &version);
@@ -188,7 +188,7 @@ static PHP_METHOD(MongoDB_Driver_ServerApi, __serialize)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
 
-	PHONGO_RETURN_PROPERTIES_ARR(php_phongo_serverapi_get_properties_hash(Z_OBJ_P(getThis()), true));
+	RETURN_ARR(php_phongo_serverapi_get_properties_hash(Z_OBJ_P(getThis()), true));
 }
 
 static PHP_METHOD(MongoDB_Driver_ServerApi, __unserialize)

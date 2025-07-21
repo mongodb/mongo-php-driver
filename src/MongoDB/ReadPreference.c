@@ -389,7 +389,7 @@ static HashTable* php_phongo_readpreference_get_properties_hash(zend_object* obj
 
 	intern = Z_OBJ_READPREFERENCE(object);
 
-	props = zend_std_get_properties(object);
+	props = zend_array_dup(zend_std_get_properties(object));
 
 	if (!intern->read_preference) {
 		return props;
@@ -460,7 +460,7 @@ static PHP_METHOD(MongoDB_Driver_ReadPreference, __serialize)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
 
-	PHONGO_RETURN_PROPERTIES_ARR(php_phongo_readpreference_get_properties_hash(Z_OBJ_P(getThis())));
+	RETURN_ARR(php_phongo_readpreference_get_properties_hash(Z_OBJ_P(getThis())));
 }
 
 static PHP_METHOD(MongoDB_Driver_ReadPreference, __unserialize)

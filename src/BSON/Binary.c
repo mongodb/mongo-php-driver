@@ -70,7 +70,7 @@ static HashTable* php_phongo_binary_get_properties_hash(zend_object* object)
 
 	intern = Z_OBJ_BINARY(object);
 
-	props = zend_std_get_properties(object);
+	props = zend_array_dup(zend_std_get_properties(object));
 
 	if (!intern->data) {
 		return props;
@@ -186,7 +186,7 @@ static PHP_METHOD(MongoDB_BSON_Binary, __serialize)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
 
-	PHONGO_RETURN_PROPERTIES_ARR(php_phongo_binary_get_properties_hash(Z_OBJ_P(getThis())));
+	RETURN_ARR(php_phongo_binary_get_properties_hash(Z_OBJ_P(getThis())));
 }
 
 static PHP_METHOD(MongoDB_BSON_Binary, __unserialize)

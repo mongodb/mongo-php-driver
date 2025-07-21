@@ -131,7 +131,7 @@ HashTable* php_phongo_topologydescription_get_properties_hash(zend_object* objec
 
 	intern = Z_OBJ_TOPOLOGYDESCRIPTION(object);
 
-	props = zend_std_get_properties(object);
+	props = zend_array_dup(zend_std_get_properties(object));
 
 	if (!intern->topology_description) {
 		return props;

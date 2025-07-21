@@ -182,7 +182,7 @@ HashTable* php_phongo_serverdescription_get_properties_hash(zend_object* object)
 
 	intern = Z_OBJ_SERVERDESCRIPTION(object);
 
-	props = zend_std_get_properties(object);
+	props = zend_array_dup(zend_std_get_properties(object));
 
 	if (!intern->server_description) {
 		return props;

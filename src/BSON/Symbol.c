@@ -59,7 +59,7 @@ HashTable* php_phongo_symbol_get_properties_hash(zend_object* object)
 
 	intern = Z_OBJ_SYMBOL(object);
 
-	props = zend_std_get_properties(object);
+	props = zend_array_dup(zend_std_get_properties(object));
 
 	if (!intern->symbol) {
 		return props;

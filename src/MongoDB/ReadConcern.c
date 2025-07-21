@@ -130,7 +130,7 @@ static HashTable* php_phongo_readconcern_get_properties_hash(zend_object* object
 
 	intern = Z_OBJ_READCONCERN(object);
 
-	props = zend_std_get_properties(object);
+	props = zend_array_dup(zend_std_get_properties(object));
 
 	if (!intern->read_concern) {
 		return props;
@@ -160,7 +160,7 @@ static PHP_METHOD(MongoDB_Driver_ReadConcern, __serialize)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
 
-	PHONGO_RETURN_PROPERTIES_ARR(php_phongo_readconcern_get_properties_hash(Z_OBJ_P(getThis())));
+	RETURN_ARR(php_phongo_readconcern_get_properties_hash(Z_OBJ_P(getThis())));
 }
 
 static PHP_METHOD(MongoDB_Driver_ReadConcern, __unserialize)
