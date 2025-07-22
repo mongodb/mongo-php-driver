@@ -34,6 +34,9 @@ foreach ($tests as $test) {
     }
 }
 $buf1 = ob_get_clean();
+if ($buf1 === false) {
+    throw new \AssertionError("Could not flush buffer");
+}
 
 gc_enable();
 gc_collect_cycles();
@@ -48,6 +51,9 @@ foreach ($tests as $test) {
     }
 }
 $buf2 = ob_get_clean();
+if ($buf2 === false) {
+    throw new \AssertionError("Could not flush buffer");
+}
 
 if ($buf1 === $buf2) {
     echo "OK!\n";
