@@ -193,6 +193,17 @@ static void php_phongo_unset_property(zend_object *zobj, zend_string *name, void
 	zend_hash_del(zobj->handlers->get_properties(zobj), name);
 }
 
+static zval *php_phongo_get_property_ptr_ptr(zend_object *zobj, zend_string *name, int type, void **cache_slot)
+{
+	HashTable *props = zobj->handlers->get_properties(zobj);
+	
+	zval *value = zend_hash_find(props, name);
+	if (value) {
+		return value;
+	}
+	return zend_hash_add(props, name, &EG(uninitialized_zval));
+}
+
 PHP_MINIT_FUNCTION(mongodb) /* {{{ */
 {
 	bson_mem_vtable_t bson_mem_vtable = {
@@ -235,6 +246,7 @@ PHP_MINIT_FUNCTION(mongodb) /* {{{ */
 	phongo_std_object_handlers.write_property = php_phongo_write_property;
 	phongo_std_object_handlers.has_property = php_phongo_has_property;
 	phongo_std_object_handlers.unset_property = php_phongo_unset_property;
+	phongo_std_object_handlers.get_property_ptr_ptr = php_phongo_get_property_ptr_ptr;
 
 	/* Initialize zend_class_entry dependencies.
 	 *
