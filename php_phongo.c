@@ -188,6 +188,10 @@ static int php_phongo_has_property(zend_object *zobj, zend_string *name, int has
 	}
 	return false;
 }
+static void php_phongo_unset_property(zend_object *zobj, zend_string *name, void **cache_slot)
+{
+	zend_hash_del(zobj->handlers->get_properties(zobj), name);
+}
 
 PHP_MINIT_FUNCTION(mongodb) /* {{{ */
 {
@@ -230,6 +234,7 @@ PHP_MINIT_FUNCTION(mongodb) /* {{{ */
 	phongo_std_object_handlers.read_property = php_phongo_read_property;
 	phongo_std_object_handlers.write_property = php_phongo_write_property;
 	phongo_std_object_handlers.has_property = php_phongo_has_property;
+	phongo_std_object_handlers.unset_property = php_phongo_unset_property;
 
 	/* Initialize zend_class_entry dependencies.
 	 *
