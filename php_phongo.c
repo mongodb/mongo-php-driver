@@ -162,6 +162,33 @@ static HashTable* php_phongo_std_get_gc(zend_object* object, zval** table, int* 
 	return object->handlers->get_properties(object);
 }
 
+static zval* php_phongo_read_property(zend_object *object, zend_string *member, int type, void **cache_slot, zval *rv)
+{
+	return zend_hash_find(object->handlers->get_properties(object), member);
+}
+
+static zval *php_phongo_write_property(zend_object *zobj, zend_string *name, zval *value, void **cache_slot)
+{
+	return zend_hash_add_new(zobj->handlers->get_properties(zobj), name, value);
+}
+static int php_phongo_has_property(zend_object *zobj, zend_string *name, int has_set_exists, void **cache_slot)
+{
+	zval *value = zend_hash_find(zobj->handlers->get_properties(zobj), name);
+	if (value) {
+		if (has_set_exists == ZEND_PROPERTY_NOT_EMPTY) {
+			return zend_is_true(value);
+		}
+		if (has_set_exists < ZEND_PROPERTY_NOT_EMPTY) {
+			ZEND_ASSERT(has_set_exists == ZEND_PROPERTY_ISSET);
+			ZVAL_DEREF(value);
+			return (Z_TYPE_P(value) != IS_NULL);
+		}
+		ZEND_ASSERT(has_set_exists == ZEND_PROPERTY_EXISTS);
+		return true;
+	}
+	return false;
+}
+
 PHP_MINIT_FUNCTION(mongodb) /* {{{ */
 {
 	bson_mem_vtable_t bson_mem_vtable = {
@@ -200,6 +227,9 @@ PHP_MINIT_FUNCTION(mongodb) /* {{{ */
 	/* Ensure that get_gc delegates to zend_std_get_properties directly in case
 	 * our class defines a get_properties handler for debugging purposes. */
 	phongo_std_object_handlers.get_gc = php_phongo_std_get_gc;
+	phongo_std_object_handlers.read_property = php_phongo_read_property;
+	phongo_std_object_handlers.write_property = php_phongo_write_property;
+	phongo_std_object_handlers.has_property = php_phongo_has_property;
 
 	/* Initialize zend_class_entry dependencies.
 	 *
