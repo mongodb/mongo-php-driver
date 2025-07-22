@@ -77,7 +77,7 @@ zend_object_handlers* phongo_get_std_object_handlers(void);
 #define PHONGO_GET_PROPERTY_HASH_FREE_PROPS(is_temp, props) \
 	do {                                                    \
 		if (is_temp) {                                      \
-			zend_hash_destroy((props));                     \
+			zend_hash_release((props));                     \
 		}                                                   \
 	} while (0)
 
