@@ -169,6 +169,7 @@ static zval* php_phongo_read_property(zend_object *object, zend_string *member, 
 
 static zval *php_phongo_write_property(zend_object *zobj, zend_string *name, zval *value, void **cache_slot)
 {
+	Z_TRY_ADDREF_P(value);
 	return zend_hash_add_new(zobj->handlers->get_properties(zobj), name, value);
 }
 static int php_phongo_has_property(zend_object *zobj, zend_string *name, int has_set_exists, void **cache_slot)
