@@ -65,15 +65,27 @@ final class Binary implements BinaryInterface, \JsonSerializable, Type, \Stringa
 
     /**
      * @var int
+     * @cvalue BSON_SUBTYPE_VECTOR
+     */
+    public const TYPE_VECTOR = UNKNOWN;
+
+    /**
+     * @var int
      * @cvalue BSON_SUBTYPE_USER
      */
     public const TYPE_USER_DEFINED = UNKNOWN;
 
     final public function __construct(string $data, int $type = Binary::TYPE_GENERIC) {}
 
+    final public static function fromVector(array $vector, VectorType $vectorType): Binary {}
+
     final public function getData(): string {}
 
     final public function getType(): int {}
+
+    final public function getVectorType(): VectorType {}
+
+    final public function toArray(): array {}
 
     final public static function __set_state(array $properties): Binary {}
 

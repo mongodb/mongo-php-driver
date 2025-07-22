@@ -16,15 +16,20 @@
 
 #include <php.h>
 #include <ext/standard/base64.h>
+#include <Zend/zend_enum.h>
 #include <Zend/zend_interfaces.h>
 
 #include "php_phongo.h"
+#include "phongo_bson_encode.h"
 #include "phongo_error.h"
+#include "Binary.h"
 #include "Binary_arginfo.h"
 
-#define PHONGO_BINARY_UUID_SIZE 16
-
 zend_class_entry* php_phongo_binary_ce;
+
+static phongo_bson_vector_type_t phongo_binary_get_vector_type_from_data(const uint8_t* data, uint32_t data_len);
+static phongo_bson_vector_type_t phongo_binary_get_vector_type(const php_phongo_binary_t* intern);
+static void                      phongo_binary_get_vector_as_array(const php_phongo_binary_t* intern, zval* return_value);
 
 /* Initialize the object and return whether it was successful. An exception will
  * be thrown on error. */
@@ -37,6 +42,11 @@ static bool php_phongo_binary_init(php_phongo_binary_t* intern, const char* data
 
 	if ((type == BSON_SUBTYPE_UUID_DEPRECATED || type == BSON_SUBTYPE_UUID) && data_len != PHONGO_BINARY_UUID_SIZE) {
 		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected UUID length to be %d bytes, %d given", PHONGO_BINARY_UUID_SIZE, data_len);
+		return false;
+	}
+
+	if ((type == BSON_SUBTYPE_VECTOR) && phongo_binary_get_vector_type_from_data((const uint8_t*) data, data_len) == PHONGO_BSON_VECTOR_TYPE_INVALID) {
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Binary vector data is invalid");
 		return false;
 	}
 
@@ -272,8 +282,29 @@ static int php_phongo_binary_compare_objects(zval* o1, zval* o2)
 
 static HashTable* php_phongo_binary_get_debug_info(zend_object* object, int* is_temp)
 {
-	*is_temp = 1;
-	return php_phongo_binary_get_properties_hash(object, true);
+	*is_temp         = 1;
+	HashTable* props = php_phongo_binary_get_properties_hash(object, true);
+
+	php_phongo_binary_t* intern = Z_OBJ_BINARY(object);
+
+	if (intern->type == BSON_SUBTYPE_VECTOR) {
+		zval vector;
+
+		phongo_binary_get_vector_as_array(intern, &vector);
+
+		if (EG(exception)) {
+			return props;
+		}
+
+		zend_hash_str_update(props, "vector", sizeof("vector") - 1, &vector);
+
+		zval vector_type;
+
+		ZVAL_LONG(&vector_type, phongo_binary_get_vector_type(intern));
+		zend_hash_str_update(props, "vectorType", sizeof("vectorType") - 1, &vector_type);
+	}
+
+	return props;
 }
 
 static HashTable* php_phongo_binary_get_properties(zend_object* object)
@@ -297,14 +328,339 @@ void php_phongo_binary_init_ce(INIT_FUNC_ARGS)
 
 bool phongo_binary_new(zval* object, const char* data, size_t data_len, bson_subtype_t type)
 {
-	php_phongo_binary_t* intern;
-
 	object_init_ex(object, php_phongo_binary_ce);
 
-	intern           = Z_BINARY_OBJ_P(object);
-	intern->data     = estrndup(data, data_len);
-	intern->data_len = data_len;
-	intern->type     = (uint8_t) type;
+	return php_phongo_binary_init(Z_BINARY_OBJ_P(object), data, data_len, type);
+}
 
-	return true;
+static inline void phongo_binary_init_vector_from_bson_key(php_phongo_binary_t* intern, const bson_t* doc, const char* key)
+{
+	bson_iter_t iter;
+
+	if (!(bson_iter_init_find(&iter, doc, key) && BSON_ITER_HOLDS_VECTOR(&iter))) {
+		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "bson_iter_init_find failed to find binary vector in key \"%s\"", key);
+		return;
+	}
+
+	uint32_t       data_len;
+	const uint8_t* data;
+
+	bson_iter_binary(&iter, NULL, &data_len, &data);
+	php_phongo_binary_init(intern, (const char*) data, data_len, BSON_SUBTYPE_VECTOR);
+}
+
+static void phongo_binary_init_vector_from_float32_array(php_phongo_binary_t* intern, HashTable* vector)
+{
+	if (!zend_array_is_list(vector)) {
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected vector to be a list");
+		return;
+	}
+
+	const size_t vector_len = zend_array_count(vector);
+
+	bson_t                     doc = BSON_INITIALIZER;
+	bson_vector_float32_view_t view;
+
+	if (!BSON_APPEND_VECTOR_FLOAT32_UNINIT(&doc, "vector", vector_len, &view)) {
+		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "BSON_APPEND_VECTOR_FLOAT32_UNINIT failed for vector of size %zu", vector_len);
+		return;
+	}
+
+	zval*  val;
+	size_t i = 0;
+
+	ZEND_HASH_FOREACH_VAL_IND(vector, val)
+	{
+		if (Z_TYPE_P(val) != IS_DOUBLE) {
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected vector[%zu] to be a float, %s given", i, zend_zval_type_name(val));
+			return;
+		}
+
+		float v = (float) Z_DVAL_P(val);
+
+		if (!bson_vector_float32_view_write(view, &v, 1, i)) {
+			phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "bson_vector_float32_view_write failed to write vector[%zu]", i);
+			return;
+		}
+
+		i += 1;
+	}
+	ZEND_HASH_FOREACH_END();
+
+	phongo_binary_init_vector_from_bson_key(intern, &doc, "vector");
+}
+
+static void phongo_binary_init_vector_from_int8_array(php_phongo_binary_t* intern, HashTable* vector)
+{
+	if (!zend_array_is_list(vector)) {
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected vector to be a list");
+		return;
+	}
+
+	const size_t vector_len = zend_array_count(vector);
+
+	bson_t                  doc = BSON_INITIALIZER;
+	bson_vector_int8_view_t view;
+
+	if (!BSON_APPEND_VECTOR_INT8_UNINIT(&doc, "vector", vector_len, &view)) {
+		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "BSON_APPEND_VECTOR_INT8_UNINIT failed for vector of size %zu", vector_len);
+		return;
+	}
+
+	zval*  val;
+	size_t i = 0;
+
+	ZEND_HASH_FOREACH_VAL_IND(vector, val)
+	{
+		if (Z_TYPE_P(val) != IS_LONG) {
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected vector[%zu] to be an integer, %s given", i, zend_zval_type_name(val));
+			return;
+		}
+
+		if (Z_LVAL_P(val) < INT8_MIN || Z_LVAL_P(val) > INT8_MAX) {
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected vector[%zu] to be a signed 8-bit integer, %" PHONGO_LONG_FORMAT " given", i, Z_LVAL_P(val));
+			return;
+		}
+
+		int8_t v = (int8_t) Z_LVAL_P(val);
+
+		if (!bson_vector_int8_view_write(view, &v, 1, i)) {
+			phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "bson_vector_int8_view_write failed to write vector[%zu]", i);
+			return;
+		}
+
+		i += 1;
+	}
+	ZEND_HASH_FOREACH_END();
+
+	phongo_binary_init_vector_from_bson_key(intern, &doc, "vector");
+}
+
+static void phongo_binary_init_vector_from_packed_bit_array(php_phongo_binary_t* intern, HashTable* vector)
+{
+	if (!zend_array_is_list(vector)) {
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected vector to be a list");
+		return;
+	}
+
+	const size_t vector_len = zend_array_count(vector);
+
+	bson_t                        doc = BSON_INITIALIZER;
+	bson_vector_packed_bit_view_t view;
+
+	if (!BSON_APPEND_VECTOR_PACKED_BIT_UNINIT(&doc, "vector", vector_len, &view)) {
+		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "BSON_APPEND_VECTOR_PACKED_BIT_UNINIT failed for vector of size %zu", vector_len);
+		return;
+	}
+
+	zval*  val;
+	size_t i = 0;
+
+	ZEND_HASH_FOREACH_VAL_IND(vector, val)
+	{
+		if (Z_TYPE_P(val) != IS_LONG && Z_TYPE_P(val) != IS_TRUE && Z_TYPE_P(val) != IS_FALSE) {
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected vector[%zu] to be an integer or boolean, %s given", i, zend_zval_type_name(val));
+			return;
+		}
+
+		if (Z_TYPE_P(val) == IS_LONG && (Z_LVAL_P(val) < 0 || Z_LVAL_P(val) > 1)) {
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected vector[%zu] to be 0 or 1, %" PHONGO_LONG_FORMAT " given", i, Z_LVAL_P(val));
+			return;
+		}
+
+		bool v = zend_is_true(val);
+
+		if (!bson_vector_packed_bit_view_pack_bool(view, &v, 1, i)) {
+			phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "bson_vector_packed_bit_view_pack_bool failed to write vector[%zu]", i);
+			return;
+		}
+
+		i += 1;
+	}
+	ZEND_HASH_FOREACH_END();
+
+	phongo_binary_init_vector_from_bson_key(intern, &doc, "vector");
+}
+
+static PHP_METHOD(MongoDB_BSON_Binary, fromVector)
+{
+	HashTable*           vector;
+	zend_object*         type;
+
+	object_init_ex(return_value, php_phongo_binary_ce);
+	php_phongo_binary_t* intern = Z_BINARY_OBJ_P(return_value);
+
+	PHONGO_PARSE_PARAMETERS_START(2, 2)
+	Z_PARAM_ARRAY_HT(vector)
+	Z_PARAM_OBJ_OF_CLASS(type, php_phongo_vectortype_ce)
+	PHONGO_PARSE_PARAMETERS_END();
+
+	zval *type_name = zend_enum_fetch_case_name(type);
+
+	if (zend_string_equals_literal(Z_STR_P(type_name), "Float32")) {
+		phongo_binary_init_vector_from_float32_array(intern, vector);
+		return;
+	}
+
+	if (zend_string_equals_literal(Z_STR_P(type_name), "Int8")) {
+		phongo_binary_init_vector_from_int8_array(intern, vector);
+		return;
+	}
+
+	if (zend_string_equals_literal(Z_STR_P(type_name), "PackedBit")) {
+		phongo_binary_init_vector_from_packed_bit_array(intern, vector);
+		return;
+	}
+
+	phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Unsupported binary vector type: %s", Z_STR_P(type_name));
+	RETURN_THROWS();
+}
+
+static phongo_bson_vector_type_t phongo_binary_get_vector_type_from_data(const uint8_t* data, uint32_t data_len)
+{
+	if (bson_vector_int8_const_view_init(NULL, data, data_len)) {
+		return PHONGO_BSON_VECTOR_TYPE_INT8;
+	}
+
+	if (bson_vector_float32_const_view_init(NULL, data, data_len)) {
+		return PHONGO_BSON_VECTOR_TYPE_FLOAT32;
+	}
+
+	if (bson_vector_packed_bit_const_view_init(NULL, data, data_len)) {
+		return PHONGO_BSON_VECTOR_TYPE_PACKED_BIT;
+	}
+
+	return PHONGO_BSON_VECTOR_TYPE_INVALID;
+}
+
+static phongo_bson_vector_type_t phongo_binary_get_vector_type(const php_phongo_binary_t* intern)
+{
+	return phongo_binary_get_vector_type_from_data((const uint8_t*) intern->data, intern->data_len);
+}
+
+static PHP_METHOD(MongoDB_BSON_Binary, getVectorType)
+{
+	PHONGO_PARSE_PARAMETERS_NONE();
+
+	php_phongo_binary_t* intern = Z_BINARY_OBJ_P(getThis());
+
+	if (intern->type != BSON_SUBTYPE_VECTOR) {
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected Binary of type vector (%" PRId8 ") but it is %" PHONGO_LONG_FORMAT, BSON_SUBTYPE_VECTOR, intern->type);
+		RETURN_THROWS();
+	}
+
+	phongo_bson_vector_type_t type = phongo_binary_get_vector_type(Z_BINARY_OBJ_P(getThis()));
+	const char *type_case;
+
+	switch (type) {
+		case PHONGO_BSON_VECTOR_TYPE_FLOAT32:
+			type_case = "Float32";
+			break;
+		case PHONGO_BSON_VECTOR_TYPE_INT8:
+			type_case = "Int8";
+			break;
+		case PHONGO_BSON_VECTOR_TYPE_PACKED_BIT:
+			type_case = "PackedBit";
+			break;
+		default:
+			// The vector should always be valid by this point, but check for an error
+			phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Binary vector data is invalid");
+			RETURN_THROWS();
+	}
+
+	RETVAL_OBJ_COPY(zend_enum_get_case_cstr(php_phongo_vectortype_ce, type_case));
+}
+
+static void phongo_binary_get_vector_as_array(const php_phongo_binary_t* intern, zval* return_value)
+{
+	phongo_bson_vector_type_t type = phongo_binary_get_vector_type(intern);
+
+	// The vector should always be valid by this point, but check for an error
+	if (type == PHONGO_BSON_VECTOR_TYPE_INVALID) {
+		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Binary vector data is invalid");
+		RETURN_THROWS();
+	}
+
+	bson_t tmp_doc = BSON_INITIALIZER;
+
+	if (type == PHONGO_BSON_VECTOR_TYPE_INT8) {
+		bson_vector_int8_const_view_t view;
+
+		if (!bson_vector_int8_const_view_init(&view, (const uint8_t*) intern->data, intern->data_len) ||
+			!BSON_APPEND_ARRAY_FROM_VECTOR_INT8(&tmp_doc, "vector", view)) {
+			phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Failed to convert binary vector data to an array");
+			bson_destroy(&tmp_doc);
+			RETURN_THROWS();
+		}
+	} else if (type == PHONGO_BSON_VECTOR_TYPE_FLOAT32) {
+		bson_vector_float32_const_view_t view;
+
+		if (!bson_vector_float32_const_view_init(&view, (const uint8_t*) intern->data, intern->data_len) ||
+			!BSON_APPEND_ARRAY_FROM_VECTOR_FLOAT32(&tmp_doc, "vector", view)) {
+			phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Failed to convert binary vector data to an array");
+			bson_destroy(&tmp_doc);
+			RETURN_THROWS();
+		}
+	} else if (type == PHONGO_BSON_VECTOR_TYPE_PACKED_BIT) {
+		bson_vector_packed_bit_const_view_t view;
+
+		if (!bson_vector_packed_bit_const_view_init(&view, (const uint8_t*) intern->data, intern->data_len) ||
+			!BSON_APPEND_ARRAY_FROM_VECTOR_PACKED_BIT(&tmp_doc, "vector", view)) {
+			phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Failed to convert binary vector data to an array");
+			bson_destroy(&tmp_doc);
+			RETURN_THROWS();
+		}
+	}
+
+	bson_iter_t iter;
+
+	if (!(bson_iter_init_find(&iter, &tmp_doc, "vector") && BSON_ITER_HOLDS_ARRAY(&iter))) {
+		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "bson_iter_init_find failed for appended vector");
+		bson_destroy(&tmp_doc);
+		RETURN_THROWS();
+	}
+
+	uint32_t       data_len;
+	const uint8_t* data;
+
+	bson_iter_array(&iter, &data_len, &data);
+
+	bson_t tmp_vector = BSON_INITIALIZER;
+
+	if (!bson_init_static(&tmp_vector, data, data_len)) {
+		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "bson_init_static failed for appended vector");
+		bson_destroy(&tmp_doc);
+		RETURN_THROWS();
+	}
+
+	php_phongo_bson_state state;
+	PHONGO_BSON_INIT_STATE(state);
+	state.is_visiting_array = true;
+
+	if (!php_phongo_bson_to_zval_ex(&tmp_vector, &state)) {
+		// Exception already thrown
+		bson_destroy(&tmp_doc);
+		zval_ptr_dtor(&state.zchild);
+		php_phongo_bson_typemap_dtor(&state.map);
+		RETURN_THROWS();
+	}
+
+	bson_destroy(&tmp_doc);
+	php_phongo_bson_typemap_dtor(&state.map);
+
+	RETURN_ZVAL(&state.zchild, 0, 1);
+}
+
+static PHP_METHOD(MongoDB_BSON_Binary, toArray)
+{
+	PHONGO_PARSE_PARAMETERS_NONE();
+
+	php_phongo_binary_t* intern = Z_BINARY_OBJ_P(getThis());
+
+	if (intern->type != BSON_SUBTYPE_VECTOR) {
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected Binary of type vector (%" PRId8 ") but it is %" PHONGO_LONG_FORMAT, BSON_SUBTYPE_VECTOR, intern->type);
+		RETURN_THROWS();
+	}
+
+	phongo_binary_get_vector_as_array(Z_BINARY_OBJ_P(getThis()), return_value);
 }

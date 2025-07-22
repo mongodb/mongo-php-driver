@@ -194,7 +194,7 @@ typedef struct {
 
 typedef struct {
 	char*       data;
-	int         data_len;
+	size_t      data_len;
 	uint8_t     type;
 	HashTable*  properties;
 	zend_object std;

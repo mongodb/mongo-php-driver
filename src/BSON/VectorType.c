@@ -1,5 +1,5 @@
 /*
- * Copyright 2022-present MongoDB, Inc.
+ * Copyright 2014-present MongoDB, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,18 +14,15 @@
  * limitations under the License.
  */
 
-#ifndef PHONGO_BSON_BINARY_H
-#define PHONGO_BSON_BINARY_H
+#include <php.h>
+#include <Zend/zend_enum.h>
 
-#define PHONGO_BINARY_UUID_SIZE 16
+#include "php_phongo.h"
+#include "VectorType_arginfo.h"
 
-typedef enum {
-	PHONGO_BSON_VECTOR_TYPE_INVALID    = 0,
-	PHONGO_BSON_VECTOR_TYPE_INT8       = 0x03,
-	PHONGO_BSON_VECTOR_TYPE_FLOAT32    = 0x27,
-	PHONGO_BSON_VECTOR_TYPE_PACKED_BIT = 0x10,
-} phongo_bson_vector_type_t;
+zend_class_entry* php_phongo_vectortype_ce;
 
-bool phongo_binary_new(zval* object, const char* data, size_t data_len, bson_subtype_t type);
-
-#endif /* PHONGO_BSON_BINARY_H */
+void php_phongo_vectortype_init_ce(INIT_FUNC_ARGS)
+{
+	php_phongo_vectortype_ce = register_class_MongoDB_BSON_VectorType();
+}

@@ -1,15 +1,26 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: a08dec3b63e23fbde350360b32fa0323e47069da */
+ * Stub hash: 3c433c48b47c68051a55617ddbb9ed0f50c21484 */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_BSON_Binary___construct, 0, 0, 1)
 	ZEND_ARG_TYPE_INFO(0, data, IS_STRING, 0)
 	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, type, IS_LONG, 0, "MongoDB\\BSON\\Binary::TYPE_GENERIC")
 ZEND_END_ARG_INFO()
 
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_MongoDB_BSON_Binary_fromVector, 0, 2, MongoDB\\BSON\\Binary, 0)
+	ZEND_ARG_TYPE_INFO(0, vector, IS_ARRAY, 0)
+	ZEND_ARG_OBJ_INFO(0, vectorType, MongoDB\\BSON\\VectorType, 0)
+ZEND_END_ARG_INFO()
+
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_BSON_Binary_getData, 0, 0, IS_STRING, 0)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_BSON_Binary_getType, 0, 0, IS_LONG, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_MongoDB_BSON_Binary_getVectorType, 0, 0, MongoDB\\BSON\\VectorType, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_BSON_Binary_toArray, 0, 0, IS_ARRAY, 0)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_MongoDB_BSON_Binary___set_state, 0, 1, MongoDB\\BSON\\Binary, 0)
@@ -22,27 +33,30 @@ ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_BSON_Binary___unse
 	ZEND_ARG_TYPE_INFO(0, data, IS_ARRAY, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_BSON_Binary___serialize, 0, 0, IS_ARRAY, 0)
-ZEND_END_ARG_INFO()
+#define arginfo_class_MongoDB_BSON_Binary___serialize arginfo_class_MongoDB_BSON_Binary_toArray
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_BSON_Binary_jsonSerialize, 0, 0, IS_MIXED, 0)
 ZEND_END_ARG_INFO()
 
-
 static ZEND_METHOD(MongoDB_BSON_Binary, __construct);
+static ZEND_METHOD(MongoDB_BSON_Binary, fromVector);
 static ZEND_METHOD(MongoDB_BSON_Binary, getData);
 static ZEND_METHOD(MongoDB_BSON_Binary, getType);
+static ZEND_METHOD(MongoDB_BSON_Binary, getVectorType);
+static ZEND_METHOD(MongoDB_BSON_Binary, toArray);
 static ZEND_METHOD(MongoDB_BSON_Binary, __set_state);
 static ZEND_METHOD(MongoDB_BSON_Binary, __toString);
 static ZEND_METHOD(MongoDB_BSON_Binary, __unserialize);
 static ZEND_METHOD(MongoDB_BSON_Binary, __serialize);
 static ZEND_METHOD(MongoDB_BSON_Binary, jsonSerialize);
 
-
 static const zend_function_entry class_MongoDB_BSON_Binary_methods[] = {
 	ZEND_ME(MongoDB_BSON_Binary, __construct, arginfo_class_MongoDB_BSON_Binary___construct, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	ZEND_ME(MongoDB_BSON_Binary, fromVector, arginfo_class_MongoDB_BSON_Binary_fromVector, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_BSON_Binary, getData, arginfo_class_MongoDB_BSON_Binary_getData, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_BSON_Binary, getType, arginfo_class_MongoDB_BSON_Binary_getType, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	ZEND_ME(MongoDB_BSON_Binary, getVectorType, arginfo_class_MongoDB_BSON_Binary_getVectorType, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	ZEND_ME(MongoDB_BSON_Binary, toArray, arginfo_class_MongoDB_BSON_Binary_toArray, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_BSON_Binary, __set_state, arginfo_class_MongoDB_BSON_Binary___set_state, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_BSON_Binary, __toString, arginfo_class_MongoDB_BSON_Binary___toString, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_BSON_Binary, __unserialize, arginfo_class_MongoDB_BSON_Binary___unserialize, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
@@ -56,8 +70,7 @@ static zend_class_entry *register_class_MongoDB_BSON_Binary(zend_class_entry *cl
 	zend_class_entry ce, *class_entry;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\BSON", "Binary", class_MongoDB_BSON_Binary_methods);
-	class_entry = zend_register_internal_class_ex(&ce, NULL);
-	class_entry->ce_flags |= ZEND_ACC_FINAL;
+	class_entry = zend_register_internal_class_with_flags(&ce, NULL, ZEND_ACC_FINAL);
 	zend_class_implements(class_entry, 4, class_entry_MongoDB_BSON_BinaryInterface, class_entry_JsonSerializable, class_entry_MongoDB_BSON_Type, class_entry_Stringable);
 
 	zval const_TYPE_GENERIC_value;
@@ -113,6 +126,12 @@ static zend_class_entry *register_class_MongoDB_BSON_Binary(zend_class_entry *cl
 	zend_string *const_TYPE_SENSITIVE_name = zend_string_init_interned("TYPE_SENSITIVE", sizeof("TYPE_SENSITIVE") - 1, 1);
 	zend_declare_class_constant_ex(class_entry, const_TYPE_SENSITIVE_name, &const_TYPE_SENSITIVE_value, ZEND_ACC_PUBLIC, NULL);
 	zend_string_release(const_TYPE_SENSITIVE_name);
+
+	zval const_TYPE_VECTOR_value;
+	ZVAL_LONG(&const_TYPE_VECTOR_value, BSON_SUBTYPE_VECTOR);
+	zend_string *const_TYPE_VECTOR_name = zend_string_init_interned("TYPE_VECTOR", sizeof("TYPE_VECTOR") - 1, 1);
+	zend_declare_class_constant_ex(class_entry, const_TYPE_VECTOR_name, &const_TYPE_VECTOR_value, ZEND_ACC_PUBLIC, NULL);
+	zend_string_release(const_TYPE_VECTOR_name);
 
 	zval const_TYPE_USER_DEFINED_value;
 	ZVAL_LONG(&const_TYPE_USER_DEFINED_value, BSON_SUBTYPE_USER);
