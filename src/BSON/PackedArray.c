@@ -431,7 +431,7 @@ static void php_phongo_packedarray_free_object(zend_object* object)
 	}
 
 	if (intern->properties) {
-		zend_hash_destroy(intern->properties);
+		zend_hash_release(intern->properties);
 	}
 }
 

@@ -212,7 +212,7 @@ static void php_phongo_serverapi_free_object(zend_object* object)
 	zend_object_std_dtor(&intern->std);
 
 	if (intern->properties) {
-		zend_hash_destroy(intern->properties);
+		zend_hash_release(intern->properties);
 	}
 
 	if (intern->server_api) {
