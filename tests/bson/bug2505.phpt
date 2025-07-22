@@ -27,12 +27,13 @@ $tests = [
 ob_start();
 foreach ($tests as $test) {
     echo key($test), "\n";
+    $test = reset($test);
 
     foreach ($test as $k => $v) {
         var_dump($k, $v);
     }
 }
-$buf1 = ob_end_clean();
+$buf1 = ob_get_clean();
 
 gc_enable();
 gc_collect_cycles();
@@ -40,18 +41,20 @@ gc_collect_cycles();
 ob_start();
 foreach ($tests as $test) {
     echo key($test), "\n";
+    $test = reset($test);
 
     foreach ($test as $k => $v) {
         var_dump($k, $v);
     }
 }
-$buf2 = ob_end_clean();
+$buf2 = ob_get_clean();
 
 if ($buf1 === $buf2) {
     echo "OK!\n";
     exit(0);
 } else {
-    echo("buf1 != buf2: $buf1\n!=\n$buf2\n");
+    echo("buf1 != buf2: $buf1\n\n IS NOT EQUAL TO \n\n$buf2\n");
+    exit(1);
 }
 
 ?>
