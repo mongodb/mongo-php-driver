@@ -147,6 +147,7 @@ static HashTable* php_phongo_serverapi_get_properties_hash(zend_object* object, 
 	intern = Z_OBJ_SERVERAPI(object);
 
 	props = zend_array_dup(zend_std_get_properties(object));
+	GC_SET_REFCOUNT(props, 0);
 
 	ZVAL_STRING(&version, mongoc_server_api_version_to_string(mongoc_server_api_get_version(intern->server_api)));
 	zend_hash_str_add(props, "version", sizeof("version") - 1, &version);

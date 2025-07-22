@@ -86,6 +86,7 @@ static HashTable* php_phongo_regex_get_properties_hash(zend_object* object)
 	intern = Z_OBJ_REGEX(object);
 
 	props = zend_array_dup(zend_std_get_properties(object));
+	GC_SET_REFCOUNT(props, 0);
 
 	if (!intern->pattern) {
 		return props;

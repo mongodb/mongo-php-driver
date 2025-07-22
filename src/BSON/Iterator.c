@@ -161,6 +161,7 @@ static HashTable* php_phongo_iterator_get_properties_hash(zend_object* object)
 	intern = Z_OBJ_ITERATOR(object);
 
 	props = zend_array_dup(zend_std_get_properties(object));
+	GC_SET_REFCOUNT(props, 0);
 
 	zend_hash_str_update(props, "bson", sizeof("bson") - 1, &intern->bson);
 	Z_TRY_ADDREF(intern->bson);

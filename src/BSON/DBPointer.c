@@ -72,6 +72,7 @@ HashTable* php_phongo_dbpointer_get_properties_hash(zend_object* object)
 	intern = Z_OBJ_DBPOINTER(object);
 
 	props = zend_array_dup(zend_std_get_properties(object));
+	GC_SET_REFCOUNT(props, 0);
 
 	if (!intern->ref) {
 		return props;
