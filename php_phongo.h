@@ -60,6 +60,28 @@ ZEND_TSRMLS_CACHE_EXTERN()
 
 zend_object_handlers* phongo_get_std_object_handlers(void);
 
+#define PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_temp, intern, props, size) \
+	do {                                                                  \
+		if (is_temp) {                                                    \
+			ALLOC_HASHTABLE(props);                                       \
+			zend_hash_init((props), (size), NULL, ZVAL_PTR_DTOR, 0);      \
+		} else if ((intern)->properties) {                                \
+			(props) = (intern)->properties;                               \
+		} else {                                                          \
+			ALLOC_HASHTABLE(props);                                       \
+			zend_hash_init((props), (size), NULL, ZVAL_PTR_DTOR, 0);      \
+			(intern)->properties = (props);                               \
+		}                                                                 \
+	} while (0)
+
+#define PHONGO_GET_PROPERTY_HASH_FREE_PROPS(is_temp, props) \
+	do {                                                    \
+		if (is_temp) {                                      \
+			zend_hash_destroy((props));                     \
+			FREE_HASHTABLE(props);                          \
+		}                                                   \
+	} while (0)
+
 #define PHONGO_ZVAL_EXCEPTION_NAME(e) (ZSTR_VAL(e->ce->name))
 
 #define PHONGO_SET_CREATED_BY_PID(intern)          \
