@@ -158,6 +158,11 @@ static void php_phongo_serverdescription_free_object(zend_object* object)
 
 	zend_object_std_dtor(&intern->std);
 
+	if (intern->properties) {
+		zend_hash_destroy(intern->properties);
+		FREE_HASHTABLE(intern->properties);
+	}
+
 	if (intern->server_description) {
 		mongoc_server_description_destroy(intern->server_description);
 	}
@@ -175,15 +180,14 @@ static zend_object* php_phongo_serverdescription_create_object(zend_class_entry*
 	return &intern->std;
 }
 
-HashTable* php_phongo_serverdescription_get_properties_hash(zend_object* object)
+HashTable* php_phongo_serverdescription_get_properties_hash(zend_object* object, bool is_debug)
 {
 	php_phongo_serverdescription_t* intern = NULL;
 	HashTable*                      props;
 
 	intern = Z_OBJ_SERVERDESCRIPTION(object);
 
-	props = zend_array_dup(zend_std_get_properties(object));
-	GC_SET_REFCOUNT(props, 0);
+	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_debug, intern, props, 6);
 
 	if (!intern->server_description) {
 		return props;
@@ -254,13 +258,13 @@ done:
 
 static HashTable* php_phongo_serverdescription_get_debug_info(zend_object* object, int* is_temp)
 {
-	*is_temp = 0;
-	return php_phongo_serverdescription_get_properties_hash(object);
+	*is_temp = 1;
+	return php_phongo_serverdescription_get_properties_hash(object, true);
 }
 
 static HashTable* php_phongo_serverdescription_get_properties(zend_object* object)
 {
-	return php_phongo_serverdescription_get_properties_hash(object);
+	return php_phongo_serverdescription_get_properties_hash(object, false);
 }
 
 void php_phongo_serverdescription_init_ce(INIT_FUNC_ARGS)

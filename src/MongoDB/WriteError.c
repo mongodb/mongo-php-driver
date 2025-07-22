@@ -115,7 +115,7 @@ static HashTable* php_phongo_writeerror_get_debug_info(zend_object* object, int*
 	php_phongo_writeerror_t* intern;
 	zval                     retval = ZVAL_STATIC_INIT;
 
-	*is_temp = 0;
+	*is_temp = 1;
 	intern   = Z_OBJ_WRITEERROR(object);
 
 	array_init_size(&retval, 3);

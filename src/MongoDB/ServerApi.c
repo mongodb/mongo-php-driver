@@ -137,7 +137,7 @@ static PHP_METHOD(MongoDB_Driver_ServerApi, __set_state)
 	php_phongo_serverapi_init_from_hash(intern, props);
 }
 
-static HashTable* php_phongo_serverapi_get_properties_hash(zend_object* object, bool include_null)
+static HashTable* php_phongo_serverapi_get_properties_hash(zend_object* object, bool is_temp, bool include_null)
 {
 	php_phongo_serverapi_t* intern;
 	HashTable*              props;
@@ -146,8 +146,7 @@ static HashTable* php_phongo_serverapi_get_properties_hash(zend_object* object, 
 
 	intern = Z_OBJ_SERVERAPI(object);
 
-	props = zend_array_dup(zend_std_get_properties(object));
-	GC_SET_REFCOUNT(props, 0);
+	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_temp, intern, props, 1);
 
 	ZVAL_STRING(&version, mongoc_server_api_version_to_string(mongoc_server_api_get_version(intern->server_api)));
 	zend_hash_str_add(props, "version", sizeof("version") - 1, &version);
@@ -181,7 +180,7 @@ static PHP_METHOD(MongoDB_Driver_ServerApi, bsonSerialize)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
 
-	ZVAL_ARR(return_value, php_phongo_serverapi_get_properties_hash(Z_OBJ_P(getThis()), false));
+	ZVAL_ARR(return_value, php_phongo_serverapi_get_properties_hash(Z_OBJ_P(getThis()), true, false));
 	convert_to_object(return_value);
 }
 
@@ -189,7 +188,7 @@ static PHP_METHOD(MongoDB_Driver_ServerApi, __serialize)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
 
-	RETURN_ARR(php_phongo_serverapi_get_properties_hash(Z_OBJ_P(getThis()), true));
+	RETURN_ARR(php_phongo_serverapi_get_properties_hash(Z_OBJ_P(getThis()), true, true));
 }
 
 static PHP_METHOD(MongoDB_Driver_ServerApi, __unserialize)
@@ -212,6 +211,11 @@ static void php_phongo_serverapi_free_object(zend_object* object)
 
 	zend_object_std_dtor(&intern->std);
 
+	if (intern->properties) {
+		zend_hash_destroy(intern->properties);
+		FREE_HASHTABLE(intern->properties);
+	}
+
 	if (intern->server_api) {
 		mongoc_server_api_destroy(intern->server_api);
 	}
@@ -231,13 +235,13 @@ static zend_object* php_phongo_serverapi_create_object(zend_class_entry* class_t
 
 static HashTable* php_phongo_serverapi_get_debug_info(zend_object* object, int* is_temp)
 {
-	*is_temp = 0;
-	return php_phongo_serverapi_get_properties_hash(object, true);
+	*is_temp = 1;
+	return php_phongo_serverapi_get_properties_hash(object, true, true);
 }
 
 static HashTable* php_phongo_serverapi_get_properties(zend_object* object)
 {
-	return php_phongo_serverapi_get_properties_hash(object, true);
+	return php_phongo_serverapi_get_properties_hash(object, false, true);
 }
 
 void php_phongo_serverapi_init_ce(INIT_FUNC_ARGS)

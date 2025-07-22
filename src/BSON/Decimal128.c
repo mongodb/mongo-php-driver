@@ -53,7 +53,7 @@ static bool php_phongo_decimal128_init_from_hash(php_phongo_decimal128_t* intern
 	return false;
 }
 
-static HashTable* php_phongo_decimal128_get_properties_hash(zend_object* object)
+static HashTable* php_phongo_decimal128_get_properties_hash(zend_object* object, bool is_temp)
 {
 	php_phongo_decimal128_t* intern;
 	HashTable*               props;
@@ -61,8 +61,7 @@ static HashTable* php_phongo_decimal128_get_properties_hash(zend_object* object)
 
 	intern = Z_OBJ_DECIMAL128(object);
 
-	props = zend_array_dup(zend_std_get_properties(object));
-	GC_SET_REFCOUNT(props, 0);
+	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_temp, intern, props, 1);
 
 	if (!intern->initialized) {
 		return props;
@@ -146,7 +145,7 @@ static PHP_METHOD(MongoDB_BSON_Decimal128, __serialize)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
 
-	RETURN_ARR(php_phongo_decimal128_get_properties_hash(Z_OBJ_P(getThis())));
+	RETURN_ARR(php_phongo_decimal128_get_properties_hash(Z_OBJ_P(getThis()), true));
 }
 
 static PHP_METHOD(MongoDB_BSON_Decimal128, __unserialize)
@@ -168,6 +167,11 @@ static void php_phongo_decimal128_free_object(zend_object* object)
 	php_phongo_decimal128_t* intern = Z_OBJ_DECIMAL128(object);
 
 	zend_object_std_dtor(&intern->std);
+
+	if (intern->properties) {
+		zend_hash_destroy(intern->properties);
+		FREE_HASHTABLE(intern->properties);
+	}
 }
 
 static zend_object* php_phongo_decimal128_create_object(zend_class_entry* class_type)
@@ -203,13 +207,13 @@ static zend_object* php_phongo_decimal128_clone_object(zend_object* object)
 
 static HashTable* php_phongo_decimal128_get_debug_info(zend_object* object, int* is_temp)
 {
-	*is_temp = 0;
-	return php_phongo_decimal128_get_properties_hash(object);
+	*is_temp = 1;
+	return php_phongo_decimal128_get_properties_hash(object, true);
 }
 
 static HashTable* php_phongo_decimal128_get_properties(zend_object* object)
 {
-	return php_phongo_decimal128_get_properties_hash(object);
+	return php_phongo_decimal128_get_properties_hash(object, false);
 }
 
 void php_phongo_decimal128_init_ce(INIT_FUNC_ARGS)

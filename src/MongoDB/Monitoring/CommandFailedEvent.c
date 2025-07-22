@@ -219,7 +219,7 @@ static HashTable* php_phongo_commandfailedevent_get_debug_info(zend_object* obje
 	PHONGO_BSON_INIT_STATE(reply_state);
 
 	intern   = Z_OBJ_COMMANDFAILEDEVENT(object);
-	*is_temp = 0;
+	*is_temp = 1;
 	array_init_size(&retval, 10);
 
 	ADD_ASSOC_STRING(&retval, "host", intern->host.host);

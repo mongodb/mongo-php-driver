@@ -585,7 +585,7 @@ static HashTable* php_phongo_session_get_debug_info(zend_object* object, int* is
 	php_phongo_session_t* intern = NULL;
 	zval                  retval = ZVAL_STATIC_INIT;
 
-	*is_temp = 0;
+	*is_temp = 1;
 	intern   = Z_OBJ_SESSION(object);
 
 	array_init(&retval);

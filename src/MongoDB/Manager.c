@@ -825,7 +825,7 @@ static HashTable* php_phongo_manager_get_debug_info(zend_object* object, int* is
 	zval                          retval = ZVAL_STATIC_INIT;
 	zval                          cluster;
 
-	*is_temp = 0;
+	*is_temp = 1;
 	intern   = Z_OBJ_MANAGER(object);
 
 	array_init_size(&retval, 3);
