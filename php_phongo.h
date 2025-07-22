@@ -78,7 +78,6 @@ zend_object_handlers* phongo_get_std_object_handlers(void);
 	do {                                                    \
 		if (is_temp) {                                      \
 			zend_hash_destroy((props));                     \
-			FREE_HASHTABLE(props);                          \
 		}                                                   \
 	} while (0)
 
