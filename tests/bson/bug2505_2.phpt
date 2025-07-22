@@ -11,7 +11,8 @@ $tests = [
     [ 'int64' => new MongoDB\BSON\Int64('9223372036854775807') ],
     // JavaScript w/ scope may not be necessary (same code path as w/o scope), but we'll test it anyway
     [ 'javascript' => new MongoDB\BSON\Javascript('function() { return 1; }') ],
-    [ 'javascript_ws' => new MongoDB\BSON\Javascript('function() { return a; }', ['a' => 1]) ],
+    // The context is recreated every time with a different object ID
+    //[ 'javascript_ws' => new MongoDB\BSON\Javascript('function() { return a; }', ['a' => 1]) ],
     // MaxKey and MinKey don't have get_properties or get_gc handlers, but we'll test them anyway
     [ 'maxkey' => new MongoDB\BSON\MaxKey ],
     [ 'minkey' => new MongoDB\BSON\MinKey ],
