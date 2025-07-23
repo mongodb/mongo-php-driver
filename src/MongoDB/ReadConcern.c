@@ -218,7 +218,7 @@ static HashTable* php_phongo_readconcern_get_properties(zend_object* object)
 	return php_phongo_readconcern_get_properties_hash(object, false);
 }
 
-PHONGO_GET_PROPERTY_HANDLERS(read_concern, Z_OBJ_READCONCERN);
+PHONGO_GET_PROPERTY_HANDLERS(readconcern, Z_OBJ_READCONCERN);
 
 void php_phongo_readconcern_init_ce(INIT_FUNC_ARGS)
 {

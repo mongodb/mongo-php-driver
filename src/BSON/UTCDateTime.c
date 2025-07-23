@@ -365,7 +365,7 @@ static HashTable* php_phongo_utcdatetime_get_properties(zend_object* object)
 	return php_phongo_utcdatetime_get_properties_hash(object, false);
 }
 
-PHONGO_GET_PROPERTY_HANDLERS(utc_datetime, Z_OBJ_UTCDATETIME);
+PHONGO_GET_PROPERTY_HANDLERS(utcdatetime, Z_OBJ_UTCDATETIME);
 
 void php_phongo_utcdatetime_init_ce(INIT_FUNC_ARGS)
 {
