@@ -62,14 +62,17 @@ zend_object_handlers* phongo_get_std_object_handlers(void);
 
 #define PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_temp, intern, props, size) \
 	do {                                                                  \
+		if (!(intern)->php_properties) {                                  \
+			ALLOC_HASHTABLE(props);                                       \
+			zend_hash_init((props), (size), NULL, ZVAL_PTR_DTOR, 0);      \
+		}                                                                 \
 		if (is_temp) {                                                    \
-			ALLOC_HASHTABLE(props);                                       \
-			zend_hash_init((props), (size), NULL, ZVAL_PTR_DTOR, 0);      \
-		} else if ((intern)->properties) {                                \
-			(props) = (intern)->properties;                               \
+			(props) = zend_array_dup((intern)->php_properties);           \
 		} else {                                                          \
-			ALLOC_HASHTABLE(props);                                       \
-			zend_hash_init((props), (size), NULL, ZVAL_PTR_DTOR, 0);      \
+			if ((intern)->properties) {                                   \
+				zend_hash_release(intern->properties);                    \
+			}                                                             \
+			(props) = zend_array_dup((intern)->php_properties);           \
 			(intern)->properties = (props);                               \
 		}                                                                 \
 	} while (0)
