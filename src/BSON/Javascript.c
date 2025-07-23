@@ -262,11 +262,16 @@ static void php_phongo_javascript_free_object(zend_object* object)
 		intern->scope = NULL;
 	}
 
+
 	if (intern->properties) {
-		zend_hash_release(intern->properties);
+		HashTable* props = intern->properties;
+		intern->properties = NULL;
+		zend_hash_release(props);
 	}
 	if (intern->php_properties) {
-		zend_hash_release(intern->php_properties);
+		HashTable* props = intern->php_properties;
+		intern->php_properties = NULL;
+		zend_hash_release(props);
 	}
 }
 

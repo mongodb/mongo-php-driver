@@ -96,6 +96,9 @@ static HashTable* php_phongo_objectid_get_properties_hash(zend_object* object, b
 		ZVAL_STRING(&zv, intern->oid);
 		zend_hash_str_update(props, "oid", sizeof("oid") - 1, &zv);
 	}
+	if (!is_temp) {
+		GC_ADDREF(props);
+	}
 
 	return props;
 }
@@ -202,11 +205,16 @@ static void php_phongo_objectid_free_object(zend_object* object)
 
 	zend_object_std_dtor(&intern->std);
 
+
 	if (intern->properties) {
-		zend_hash_release(intern->properties);
+		HashTable* props = intern->properties;
+		intern->properties = NULL;
+		zend_hash_release(props);
 	}
 	if (intern->php_properties) {
-		zend_hash_release(intern->php_properties);
+		HashTable* props = intern->php_properties;
+		intern->php_properties = NULL;
+		zend_hash_release(props);
 	}
 }
 

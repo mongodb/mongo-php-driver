@@ -70,7 +70,9 @@ zend_object_handlers* phongo_get_std_object_handlers(void);
 			(props) = zend_array_dup((intern)->php_properties);           \
 		} else {                                                          \
 			if ((intern)->properties) {                                   \
-				zend_hash_release(intern->properties);                    \
+				(props) = (intern)->properties; \
+				(intern)->properties = NULL; \
+				zend_hash_release(props);                    \
 			}                                                             \
 			(props) = zend_array_dup((intern)->php_properties);           \
 			(intern)->properties = (props);                               \
