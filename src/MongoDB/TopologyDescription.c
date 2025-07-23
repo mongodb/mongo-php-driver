@@ -182,6 +182,8 @@ static HashTable* php_phongo_topologydescription_get_properties(zend_object* obj
 	return php_phongo_topologydescription_get_properties_hash(object, false);
 }
 
+PHONGO_GET_PROPERTY_HANDLERS(topologydescription, Z_OBJ_TOPOLOGYDESCRIPTION);
+
 void php_phongo_topologydescription_init_ce(INIT_FUNC_ARGS)
 {
 	php_phongo_topologydescription_ce                = register_class_MongoDB_Driver_TopologyDescription();
@@ -190,6 +192,11 @@ void php_phongo_topologydescription_init_ce(INIT_FUNC_ARGS)
 	memcpy(&php_phongo_handler_topologydescription, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	php_phongo_handler_topologydescription.get_debug_info = php_phongo_topologydescription_get_debug_info;
 	php_phongo_handler_topologydescription.get_properties = php_phongo_topologydescription_get_properties;
+	php_phongo_handler_topologydescription.read_property  = php_phongo_topologydescription_read_property;
+	php_phongo_handler_topologydescription.write_property = php_phongo_topologydescription_write_property;
+	php_phongo_handler_topologydescription.has_property   = php_phongo_topologydescription_has_property;
+	php_phongo_handler_topologydescription.unset_property = php_phongo_topologydescription_unset_property;
+	php_phongo_handler_topologydescription.get_property_ptr_ptr = php_phongo_topologydescription_get_property_ptr_ptr;
 	php_phongo_handler_topologydescription.free_obj       = php_phongo_topologydescription_free_object;
 	php_phongo_handler_topologydescription.offset         = XtOffsetOf(php_phongo_topologydescription_t, std);
 }

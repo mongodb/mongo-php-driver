@@ -379,6 +379,7 @@ static zend_object_iterator* php_phongo_iterator_get_iterator(zend_class_entry* 
 
 	return iterator;
 }
+PHONGO_GET_PROPERTY_HANDLERS(iterator, Z_OBJ_ITERATOR);
 
 void php_phongo_iterator_init_ce(INIT_FUNC_ARGS)
 {
@@ -390,6 +391,11 @@ void php_phongo_iterator_init_ce(INIT_FUNC_ARGS)
 	php_phongo_handler_iterator.clone_obj      = php_phongo_iterator_clone_object;
 	php_phongo_handler_iterator.get_debug_info = php_phongo_iterator_get_debug_info;
 	php_phongo_handler_iterator.get_properties = php_phongo_iterator_get_properties;
+	php_phongo_handler_iterator.read_property  = php_phongo_iterator_read_property;
+	php_phongo_handler_iterator.write_property = php_phongo_iterator_write_property;
+	php_phongo_handler_iterator.has_property   = php_phongo_iterator_has_property;
+	php_phongo_handler_iterator.unset_property = php_phongo_iterator_unset_property;
+	php_phongo_handler_iterator.get_property_ptr_ptr = php_phongo_iterator_get_property_ptr_ptr;
 	php_phongo_handler_iterator.free_obj       = php_phongo_iterator_free_object;
 	php_phongo_handler_iterator.offset         = XtOffsetOf(php_phongo_iterator_t, std);
 }

@@ -218,6 +218,8 @@ static HashTable* php_phongo_readconcern_get_properties(zend_object* object)
 	return php_phongo_readconcern_get_properties_hash(object, false);
 }
 
+PHONGO_GET_PROPERTY_HANDLERS(read_concern, Z_OBJ_READCONCERN);
+
 void php_phongo_readconcern_init_ce(INIT_FUNC_ARGS)
 {
 	php_phongo_readconcern_ce                = register_class_MongoDB_Driver_ReadConcern(php_phongo_serializable_ce);
@@ -226,6 +228,11 @@ void php_phongo_readconcern_init_ce(INIT_FUNC_ARGS)
 	memcpy(&php_phongo_handler_readconcern, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	php_phongo_handler_readconcern.get_debug_info = php_phongo_readconcern_get_debug_info;
 	php_phongo_handler_readconcern.get_properties = php_phongo_readconcern_get_properties;
+	php_phongo_handler_readconcern.read_property  = php_phongo_readconcern_read_property;
+	php_phongo_handler_readconcern.write_property = php_phongo_readconcern_write_property;
+	php_phongo_handler_readconcern.has_property   = php_phongo_readconcern_has_property;
+	php_phongo_handler_readconcern.unset_property = php_phongo_readconcern_unset_property;
+	php_phongo_handler_readconcern.get_property_ptr_ptr = php_phongo_readconcern_get_property_ptr_ptr;
 	php_phongo_handler_readconcern.free_obj       = php_phongo_readconcern_free_object;
 	php_phongo_handler_readconcern.offset         = XtOffsetOf(php_phongo_readconcern_t, std);
 }

@@ -556,6 +556,8 @@ static HashTable* php_phongo_int64_get_properties(zend_object* object)
 	return php_phongo_int64_get_properties_hash(object, false);
 }
 
+PHONGO_GET_PROPERTY_HANDLERS(int64, Z_OBJ_INT64);
+
 void php_phongo_int64_init_ce(INIT_FUNC_ARGS)
 {
 	php_phongo_int64_ce                = register_class_MongoDB_BSON_Int64(php_phongo_json_serializable_ce, php_phongo_type_ce, zend_ce_stringable);
@@ -566,6 +568,11 @@ void php_phongo_int64_init_ce(INIT_FUNC_ARGS)
 	php_phongo_handler_int64.clone_obj      = php_phongo_int64_clone_object;
 	php_phongo_handler_int64.get_debug_info = php_phongo_int64_get_debug_info;
 	php_phongo_handler_int64.get_properties = php_phongo_int64_get_properties;
+	php_phongo_handler_int64.read_property  = php_phongo_int64_read_property;
+	php_phongo_handler_int64.write_property = php_phongo_int64_write_property;
+	php_phongo_handler_int64.has_property   = php_phongo_int64_has_property;
+	php_phongo_handler_int64.unset_property = php_phongo_int64_unset_property;
+	php_phongo_handler_int64.get_property_ptr_ptr = php_phongo_int64_get_property_ptr_ptr;
 	php_phongo_handler_int64.free_obj       = php_phongo_int64_free_object;
 	php_phongo_handler_int64.offset         = XtOffsetOf(php_phongo_int64_t, std);
 	php_phongo_handler_int64.cast_object    = php_phongo_int64_cast_object;

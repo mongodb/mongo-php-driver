@@ -365,6 +365,8 @@ static HashTable* php_phongo_utcdatetime_get_properties(zend_object* object)
 	return php_phongo_utcdatetime_get_properties_hash(object, false);
 }
 
+PHONGO_GET_PROPERTY_HANDLERS(utc_datetime, Z_OBJ_UTCDATETIME);
+
 void php_phongo_utcdatetime_init_ce(INIT_FUNC_ARGS)
 {
 	php_phongo_utcdatetime_ce                = register_class_MongoDB_BSON_UTCDateTime(php_phongo_utcdatetime_interface_ce, php_phongo_json_serializable_ce, php_phongo_type_ce, zend_ce_stringable);
@@ -375,6 +377,11 @@ void php_phongo_utcdatetime_init_ce(INIT_FUNC_ARGS)
 	php_phongo_handler_utcdatetime.clone_obj      = php_phongo_utcdatetime_clone_object;
 	php_phongo_handler_utcdatetime.get_debug_info = php_phongo_utcdatetime_get_debug_info;
 	php_phongo_handler_utcdatetime.get_properties = php_phongo_utcdatetime_get_properties;
+	php_phongo_handler_utcdatetime.read_property  = php_phongo_utcdatetime_read_property;
+	php_phongo_handler_utcdatetime.write_property = php_phongo_utcdatetime_write_property;
+	php_phongo_handler_utcdatetime.has_property   = php_phongo_utcdatetime_has_property;
+	php_phongo_handler_utcdatetime.unset_property = php_phongo_utcdatetime_unset_property;
+	php_phongo_handler_utcdatetime.get_property_ptr_ptr = php_phongo_utcdatetime_get_property_ptr_ptr;
 	php_phongo_handler_utcdatetime.free_obj       = php_phongo_utcdatetime_free_object;
 	php_phongo_handler_utcdatetime.offset         = XtOffsetOf(php_phongo_utcdatetime_t, std);
 }

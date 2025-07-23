@@ -246,6 +246,8 @@ static HashTable* php_phongo_serverapi_get_properties(zend_object* object)
 	return php_phongo_serverapi_get_properties_hash(object, false, true);
 }
 
+PHONGO_GET_PROPERTY_HANDLERS(serverapi, Z_OBJ_SERVERAPI);
+
 void php_phongo_serverapi_init_ce(INIT_FUNC_ARGS)
 {
 	php_phongo_serverapi_ce                = register_class_MongoDB_Driver_ServerApi(php_phongo_serializable_ce);
@@ -254,6 +256,11 @@ void php_phongo_serverapi_init_ce(INIT_FUNC_ARGS)
 	memcpy(&php_phongo_handler_serverapi, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	php_phongo_handler_serverapi.get_debug_info = php_phongo_serverapi_get_debug_info;
 	php_phongo_handler_serverapi.get_properties = php_phongo_serverapi_get_properties;
+	php_phongo_handler_serverapi.read_property  = php_phongo_serverapi_read_property;
+	php_phongo_handler_serverapi.write_property = php_phongo_serverapi_write_property;
+	php_phongo_handler_serverapi.has_property   = php_phongo_serverapi_has_property;
+	php_phongo_handler_serverapi.unset_property = php_phongo_serverapi_unset_property;
+	php_phongo_handler_serverapi.get_property_ptr_ptr = php_phongo_serverapi_get_property_ptr_ptr;
 	php_phongo_handler_serverapi.free_obj       = php_phongo_serverapi_free_object;
 	php_phongo_handler_serverapi.offset         = XtOffsetOf(php_phongo_serverapi_t, std);
 }

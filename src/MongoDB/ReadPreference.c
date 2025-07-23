@@ -518,6 +518,8 @@ static HashTable* php_phongo_readpreference_get_properties(zend_object* object)
 	return php_phongo_readpreference_get_properties_hash(object, false);
 }
 
+PHONGO_GET_PROPERTY_HANDLERS(readpreference, Z_OBJ_READPREFERENCE);
+
 void php_phongo_readpreference_init_ce(INIT_FUNC_ARGS)
 {
 	php_phongo_readpreference_ce                = register_class_MongoDB_Driver_ReadPreference(php_phongo_serializable_ce);
@@ -526,6 +528,11 @@ void php_phongo_readpreference_init_ce(INIT_FUNC_ARGS)
 	memcpy(&php_phongo_handler_readpreference, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	php_phongo_handler_readpreference.get_debug_info = php_phongo_readpreference_get_debug_info;
 	php_phongo_handler_readpreference.get_properties = php_phongo_readpreference_get_properties;
+	php_phongo_handler_readpreference.read_property  = php_phongo_readpreference_read_property;
+	php_phongo_handler_readpreference.write_property = php_phongo_readpreference_write_property;
+	php_phongo_handler_readpreference.has_property   = php_phongo_readpreference_has_property;
+	php_phongo_handler_readpreference.unset_property = php_phongo_readpreference_unset_property;
+	php_phongo_handler_readpreference.get_property_ptr_ptr = php_phongo_readpreference_get_property_ptr_ptr;
 	php_phongo_handler_readpreference.free_obj       = php_phongo_readpreference_free_object;
 	php_phongo_handler_readpreference.offset         = XtOffsetOf(php_phongo_readpreference_t, std);
 }
