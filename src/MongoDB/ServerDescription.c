@@ -161,6 +161,9 @@ static void php_phongo_serverdescription_free_object(zend_object* object)
 	if (intern->properties) {
 		zend_hash_release(intern->properties);
 	}
+	if (intern->php_properties) {
+		zend_hash_release(intern->php_properties);
+	}
 
 	if (intern->server_description) {
 		mongoc_server_description_destroy(intern->server_description);

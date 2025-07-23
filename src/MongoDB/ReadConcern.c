@@ -186,6 +186,9 @@ static void php_phongo_readconcern_free_object(zend_object* object)
 	if (intern->properties) {
 		zend_hash_release(intern->properties);
 	}
+	if (intern->php_properties) {
+		zend_hash_release(intern->php_properties);
+	}
 
 	if (intern->read_concern) {
 		mongoc_read_concern_destroy(intern->read_concern);

@@ -63,8 +63,8 @@ zend_object_handlers* phongo_get_std_object_handlers(void);
 #define PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_temp, intern, props, size) \
 	do {                                                                  \
 		if (!(intern)->php_properties) {                                  \
-			ALLOC_HASHTABLE(props);                                       \
-			zend_hash_init((props), (size), NULL, ZVAL_PTR_DTOR, 0);      \
+			ALLOC_HASHTABLE((intern)->php_properties);                    \
+			zend_hash_init((intern)->php_properties, 0, NULL, ZVAL_PTR_DTOR, 0); \
 		}                                                                 \
 		if (is_temp) {                                                    \
 			(props) = zend_array_dup((intern)->php_properties);           \

@@ -214,6 +214,9 @@ static void php_phongo_serverapi_free_object(zend_object* object)
 	if (intern->properties) {
 		zend_hash_release(intern->properties);
 	}
+	if (intern->php_properties) {
+		zend_hash_release(intern->php_properties);
+	}
 
 	if (intern->server_api) {
 		mongoc_server_api_destroy(intern->server_api);

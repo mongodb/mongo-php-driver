@@ -153,6 +153,9 @@ static void php_phongo_symbol_free_object(zend_object* object)
 	if (intern->properties) {
 		zend_hash_release(intern->properties);
 	}
+	if (intern->php_properties) {
+		zend_hash_release(intern->php_properties);
+	}
 }
 
 zend_object* php_phongo_symbol_create_object(zend_class_entry* class_type)
