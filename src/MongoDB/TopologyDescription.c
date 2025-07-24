@@ -146,7 +146,7 @@ HashTable* php_phongo_topologydescription_get_properties_hash(zend_object* objec
 	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_debug, intern, props, 2);
 
 	if (!intern->topology_description) {
-		PHONGO_RETURN_PROPS(is_temp, props);
+		PHONGO_RETURN_PROPS(is_debug, props);
 	}
 
 	{
@@ -173,7 +173,7 @@ HashTable* php_phongo_topologydescription_get_properties_hash(zend_object* objec
 		zend_hash_str_update(props, "type", sizeof("type") - 1, &type);
 	}
 
-	PHONGO_RETURN_PROPS(is_temp, props);
+	PHONGO_RETURN_PROPS(is_debug, props);
 }
 
 static HashTable* php_phongo_topologydescription_get_debug_info(zend_object* object, int* is_temp)
