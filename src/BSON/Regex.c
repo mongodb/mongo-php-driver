@@ -318,6 +318,7 @@ void php_phongo_regex_init_ce(INIT_FUNC_ARGS)
 	php_phongo_handler_regex.has_property   = php_phongo_regex_has_property;
 	php_phongo_handler_regex.unset_property = php_phongo_regex_unset_property;
 	php_phongo_handler_regex.get_property_ptr_ptr = php_phongo_regex_get_property_ptr_ptr;
+	php_phongo_handler_regex.get_gc = php_phongo_regex_get_gc;
 	php_phongo_handler_regex.free_obj       = php_phongo_regex_free_object;
 	php_phongo_handler_regex.offset         = XtOffsetOf(php_phongo_regex_t, std);
 }

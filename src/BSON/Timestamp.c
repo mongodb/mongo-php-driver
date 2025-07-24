@@ -352,6 +352,7 @@ void php_phongo_timestamp_init_ce(INIT_FUNC_ARGS)
 	php_phongo_handler_timestamp.has_property   = php_phongo_timestamp_has_property;
 	php_phongo_handler_timestamp.unset_property = php_phongo_timestamp_unset_property;
 	php_phongo_handler_timestamp.get_property_ptr_ptr = php_phongo_timestamp_get_property_ptr_ptr;
+	php_phongo_handler_timestamp.get_gc = php_phongo_timestamp_get_gc;
 	php_phongo_handler_timestamp.free_obj       = php_phongo_timestamp_free_object;
 	php_phongo_handler_timestamp.offset         = XtOffsetOf(php_phongo_timestamp_t, std);
 }

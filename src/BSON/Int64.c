@@ -578,6 +578,7 @@ void php_phongo_int64_init_ce(INIT_FUNC_ARGS)
 	php_phongo_handler_int64.has_property   = php_phongo_int64_has_property;
 	php_phongo_handler_int64.unset_property = php_phongo_int64_unset_property;
 	php_phongo_handler_int64.get_property_ptr_ptr = php_phongo_int64_get_property_ptr_ptr;
+	php_phongo_handler_int64.get_gc = php_phongo_int64_get_gc;
 	php_phongo_handler_int64.free_obj       = php_phongo_int64_free_object;
 	php_phongo_handler_int64.offset         = XtOffsetOf(php_phongo_int64_t, std);
 	php_phongo_handler_int64.cast_object    = php_phongo_int64_cast_object;

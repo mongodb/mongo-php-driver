@@ -287,6 +287,7 @@ void php_phongo_objectid_init_ce(INIT_FUNC_ARGS)
 	php_phongo_handler_objectid.has_property   = php_phongo_objectid_has_property;
 	php_phongo_handler_objectid.unset_property = php_phongo_objectid_unset_property;
 	php_phongo_handler_objectid.get_property_ptr_ptr = php_phongo_objectid_get_property_ptr_ptr;
+	php_phongo_handler_objectid.get_gc = php_phongo_objectid_get_gc;
 	php_phongo_handler_objectid.free_obj       = php_phongo_objectid_free_object;
 	php_phongo_handler_objectid.offset         = XtOffsetOf(php_phongo_objectid_t, std);
 }

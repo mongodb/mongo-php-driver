@@ -401,6 +401,7 @@ void php_phongo_iterator_init_ce(INIT_FUNC_ARGS)
 	php_phongo_handler_iterator.has_property   = php_phongo_iterator_has_property;
 	php_phongo_handler_iterator.unset_property = php_phongo_iterator_unset_property;
 	php_phongo_handler_iterator.get_property_ptr_ptr = php_phongo_iterator_get_property_ptr_ptr;
+	php_phongo_handler_iterator.get_gc = php_phongo_iterator_get_gc;
 	php_phongo_handler_iterator.free_obj       = php_phongo_iterator_free_object;
 	php_phongo_handler_iterator.offset         = XtOffsetOf(php_phongo_iterator_t, std);
 }

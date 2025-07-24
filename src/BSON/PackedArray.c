@@ -588,6 +588,7 @@ void php_phongo_packedarray_init_ce(INIT_FUNC_ARGS)
 	php_phongo_handler_packedarray.has_property    = php_phongo_packedarray_has_property;
 	php_phongo_handler_packedarray.unset_property  = php_phongo_packedarray_unset_property;
 	php_phongo_handler_packedarray.get_property_ptr_ptr = php_phongo_packedarray_get_property_ptr_ptr;
+	php_phongo_handler_packedarray.get_gc = php_phongo_packedarray_get_gc;
 	php_phongo_handler_packedarray.free_obj        = php_phongo_packedarray_free_object;
 	php_phongo_handler_packedarray.read_dimension  = php_phongo_packedarray_read_dimension;
 	php_phongo_handler_packedarray.write_dimension = php_phongo_packedarray_write_dimension;

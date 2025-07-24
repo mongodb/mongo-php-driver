@@ -387,6 +387,7 @@ void php_phongo_utcdatetime_init_ce(INIT_FUNC_ARGS)
 	php_phongo_handler_utcdatetime.has_property   = php_phongo_utcdatetime_has_property;
 	php_phongo_handler_utcdatetime.unset_property = php_phongo_utcdatetime_unset_property;
 	php_phongo_handler_utcdatetime.get_property_ptr_ptr = php_phongo_utcdatetime_get_property_ptr_ptr;
+	php_phongo_handler_utcdatetime.get_gc = php_phongo_utcdatetime_get_gc;
 	php_phongo_handler_utcdatetime.free_obj       = php_phongo_utcdatetime_free_object;
 	php_phongo_handler_utcdatetime.offset         = XtOffsetOf(php_phongo_utcdatetime_t, std);
 }

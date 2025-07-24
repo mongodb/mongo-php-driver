@@ -346,6 +346,7 @@ void php_phongo_javascript_init_ce(INIT_FUNC_ARGS)
 	php_phongo_handler_javascript.has_property   = php_phongo_javascript_has_property;
 	php_phongo_handler_javascript.unset_property = php_phongo_javascript_unset_property;
 	php_phongo_handler_javascript.get_property_ptr_ptr = php_phongo_javascript_get_property_ptr_ptr;
+	php_phongo_handler_javascript.get_gc = php_phongo_javascript_get_gc;
 	php_phongo_handler_javascript.free_obj       = php_phongo_javascript_free_object;
 	php_phongo_handler_javascript.offset         = XtOffsetOf(php_phongo_javascript_t, std);
 }

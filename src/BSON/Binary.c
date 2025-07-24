@@ -305,6 +305,7 @@ void php_phongo_binary_init_ce(INIT_FUNC_ARGS)
 	php_phongo_handler_binary.has_property   = php_phongo_binary_has_property;
 	php_phongo_handler_binary.unset_property = php_phongo_binary_unset_property;
 	php_phongo_handler_binary.get_property_ptr_ptr = php_phongo_binary_get_property_ptr_ptr;
+	php_phongo_handler_binary.get_gc = php_phongo_binary_get_gc;
 	php_phongo_handler_binary.free_obj       = php_phongo_binary_free_object;
 	php_phongo_handler_binary.offset         = XtOffsetOf(php_phongo_binary_t, std);
 }

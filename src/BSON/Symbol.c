@@ -232,6 +232,7 @@ void php_phongo_symbol_init_ce(INIT_FUNC_ARGS)
 	php_phongo_handler_symbol.has_property   = php_phongo_symbol_has_property;
 	php_phongo_handler_symbol.unset_property = php_phongo_symbol_unset_property;
 	php_phongo_handler_symbol.get_property_ptr_ptr = php_phongo_symbol_get_property_ptr_ptr;
+	php_phongo_handler_symbol.get_gc = php_phongo_symbol_get_gc;
 	php_phongo_handler_symbol.free_obj       = php_phongo_symbol_free_object;
 	php_phongo_handler_symbol.offset         = XtOffsetOf(php_phongo_symbol_t, std);
 }

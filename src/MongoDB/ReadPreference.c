@@ -538,6 +538,7 @@ void php_phongo_readpreference_init_ce(INIT_FUNC_ARGS)
 	php_phongo_handler_readpreference.has_property   = php_phongo_readpreference_has_property;
 	php_phongo_handler_readpreference.unset_property = php_phongo_readpreference_unset_property;
 	php_phongo_handler_readpreference.get_property_ptr_ptr = php_phongo_readpreference_get_property_ptr_ptr;
+	php_phongo_handler_readpreference.get_gc = php_phongo_readpreference_get_gc;
 	php_phongo_handler_readpreference.free_obj       = php_phongo_readpreference_free_object;
 	php_phongo_handler_readpreference.offset         = XtOffsetOf(php_phongo_readpreference_t, std);
 }

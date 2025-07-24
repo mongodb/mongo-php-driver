@@ -202,6 +202,7 @@ void php_phongo_topologydescription_init_ce(INIT_FUNC_ARGS)
 	php_phongo_handler_topologydescription.has_property   = php_phongo_topologydescription_has_property;
 	php_phongo_handler_topologydescription.unset_property = php_phongo_topologydescription_unset_property;
 	php_phongo_handler_topologydescription.get_property_ptr_ptr = php_phongo_topologydescription_get_property_ptr_ptr;
+	php_phongo_handler_topologydescription.get_gc = php_phongo_topologydescription_get_gc;
 	php_phongo_handler_topologydescription.free_obj       = php_phongo_topologydescription_free_object;
 	php_phongo_handler_topologydescription.offset         = XtOffsetOf(php_phongo_topologydescription_t, std);
 }

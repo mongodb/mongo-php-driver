@@ -423,6 +423,7 @@ void php_phongo_writeconcern_init_ce(INIT_FUNC_ARGS)
 	php_phongo_handler_writeconcern.has_property   = php_phongo_writeconcern_has_property;
 	php_phongo_handler_writeconcern.unset_property = php_phongo_writeconcern_unset_property;
 	php_phongo_handler_writeconcern.get_property_ptr_ptr = php_phongo_writeconcern_get_property_ptr_ptr;
+	php_phongo_handler_writeconcern.get_gc = php_phongo_writeconcern_get_gc;
 	php_phongo_handler_writeconcern.free_obj       = php_phongo_writeconcern_free_object;
 	php_phongo_handler_writeconcern.offset         = XtOffsetOf(php_phongo_writeconcern_t, std);
 }

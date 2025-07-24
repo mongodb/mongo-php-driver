@@ -266,6 +266,7 @@ void php_phongo_serverapi_init_ce(INIT_FUNC_ARGS)
 	php_phongo_handler_serverapi.has_property   = php_phongo_serverapi_has_property;
 	php_phongo_handler_serverapi.unset_property = php_phongo_serverapi_unset_property;
 	php_phongo_handler_serverapi.get_property_ptr_ptr = php_phongo_serverapi_get_property_ptr_ptr;
+	php_phongo_handler_serverapi.get_gc = php_phongo_serverapi_get_gc;
 	php_phongo_handler_serverapi.free_obj       = php_phongo_serverapi_free_object;
 	php_phongo_handler_serverapi.offset         = XtOffsetOf(php_phongo_serverapi_t, std);
 }

@@ -289,6 +289,7 @@ void php_phongo_serverdescription_init_ce(INIT_FUNC_ARGS)
 	php_phongo_handler_serverdescription.has_property   = php_phongo_serverdescription_has_property;
 	php_phongo_handler_serverdescription.unset_property = php_phongo_serverdescription_unset_property;
 	php_phongo_handler_serverdescription.get_property_ptr_ptr = php_phongo_serverdescription_get_property_ptr_ptr;
+	php_phongo_handler_serverdescription.get_gc = php_phongo_serverdescription_get_gc;
 	php_phongo_handler_serverdescription.free_obj       = php_phongo_serverdescription_free_object;
 	php_phongo_handler_serverdescription.offset         = XtOffsetOf(php_phongo_serverdescription_t, std);
 }

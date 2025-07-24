@@ -93,6 +93,16 @@ zend_object_handlers* phongo_get_std_object_handlers(void);
 	} while (0)
 
 #define PHONGO_GET_PROPERTY_HANDLERS(_name, _intern_extractor) \
+	PHONGO_GET_PROPERTY_HANDLERS_NO_GC(_name, _intern_extractor) \
+	\
+	static HashTable* php_phongo_##_name##_get_gc(zend_object* zobj, zval** table, int* n) \
+	{ \
+		*table = NULL; \
+		*n     = 0; \
+		return _intern_extractor(zobj)->php_properties; \
+	}
+
+#define PHONGO_GET_PROPERTY_HANDLERS_NO_GC(_name, _intern_extractor) \
 	static zval* php_phongo_##_name##_read_property(zend_object *zobj, zend_string *member, int type, void **cache_slot, zval *rv) \
 	{ \
 		HashTable *props = _intern_extractor(zobj)->php_properties; \
