@@ -173,7 +173,7 @@ static HashTable* php_phongo_serverapi_get_properties_hash(zend_object* object, 
 		zend_hash_str_add(props, "deprecationErrors", sizeof("deprecationErrors") - 1, &deprecation_errors);
 	}
 
-	return props;
+	PHONGO_RETURN_PROPS(is_temp, props);
 }
 
 static PHP_METHOD(MongoDB_Driver_ServerApi, bsonSerialize)

@@ -62,7 +62,7 @@ HashTable* php_phongo_symbol_get_properties_hash(zend_object* object, bool is_te
 	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_temp, intern, props, 2);
 
 	if (!intern->symbol) {
-		return props;
+		PHONGO_RETURN_PROPS(is_temp, props);
 	}
 
 	{
@@ -72,7 +72,7 @@ HashTable* php_phongo_symbol_get_properties_hash(zend_object* object, bool is_te
 		zend_hash_str_update(props, "symbol", sizeof("symbol") - 1, &symbol);
 	}
 
-	return props;
+	PHONGO_RETURN_PROPS(is_temp, props);
 }
 
 PHONGO_DISABLED_CONSTRUCTOR(MongoDB_BSON_Symbol)

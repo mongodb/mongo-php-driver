@@ -64,7 +64,7 @@ static HashTable* php_phongo_decimal128_get_properties_hash(zend_object* object,
 	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_temp, intern, props, 1);
 
 	if (!intern->initialized) {
-		return props;
+		PHONGO_RETURN_PROPS(is_temp, props);
 	}
 
 	bson_decimal128_to_string(&intern->decimal, outbuf);
@@ -76,7 +76,7 @@ static HashTable* php_phongo_decimal128_get_properties_hash(zend_object* object,
 		zend_hash_str_update(props, "dec", sizeof("dec") - 1, &dec);
 	}
 
-	return props;
+	PHONGO_RETURN_PROPS(is_temp, props);
 }
 
 /* Construct a new BSON Decimal128 type */

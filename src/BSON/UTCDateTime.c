@@ -131,7 +131,7 @@ static HashTable* php_phongo_utcdatetime_get_properties_hash(zend_object* object
 	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_temp, intern, props, 1);
 
 	if (!intern->initialized) {
-		return props;
+		PHONGO_RETURN_PROPS(is_temp, props);
 	}
 
 	{
@@ -141,7 +141,7 @@ static HashTable* php_phongo_utcdatetime_get_properties_hash(zend_object* object
 		zend_hash_str_update(props, "milliseconds", sizeof("milliseconds") - 1, &milliseconds);
 	}
 
-	return props;
+	PHONGO_RETURN_PROPS(is_temp, props);
 }
 
 static void php_phongo_utcdatetime_to_php_date(zval* return_value, const zval* this, zend_class_entry* ce)

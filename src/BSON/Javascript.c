@@ -79,7 +79,7 @@ HashTable* php_phongo_javascript_get_properties_hash(zend_object* object, bool i
 	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_temp, intern, props, 2);
 
 	if (!intern->code) {
-		return props;
+		PHONGO_RETURN_PROPS(is_temp, props);
 	}
 
 	{
@@ -106,7 +106,7 @@ HashTable* php_phongo_javascript_get_properties_hash(zend_object* object, bool i
 		}
 	}
 
-	return props;
+	PHONGO_RETURN_PROPS(is_temp, props);
 
 failure:
 	PHONGO_GET_PROPERTY_HASH_FREE_PROPS(is_temp, props);

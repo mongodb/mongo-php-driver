@@ -165,7 +165,7 @@ static HashTable* php_phongo_iterator_get_properties_hash(zend_object* object, b
 	zend_hash_str_update(props, "bson", sizeof("bson") - 1, &intern->bson);
 	Z_TRY_ADDREF(intern->bson);
 
-	return props;
+	PHONGO_RETURN_PROPS(is_temp, props);
 }
 
 PHONGO_DISABLED_CONSTRUCTOR(MongoDB_BSON_Iterator)

@@ -392,7 +392,7 @@ static HashTable* php_phongo_readpreference_get_properties_hash(zend_object* obj
 	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_temp, intern, props, 4);
 
 	if (!intern->read_preference) {
-		return props;
+		PHONGO_RETURN_PROPS(is_temp, props);
 	}
 
 	tags  = mongoc_read_prefs_get_tags(intern->read_preference);
@@ -445,7 +445,7 @@ static HashTable* php_phongo_readpreference_get_properties_hash(zend_object* obj
 	}
 
 done:
-	return props;
+	PHONGO_RETURN_PROPS(is_temp, props);
 }
 
 static PHP_METHOD(MongoDB_Driver_ReadPreference, bsonSerialize)

@@ -133,7 +133,7 @@ static HashTable* php_phongo_readconcern_get_properties_hash(zend_object* object
 	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_temp, intern, props, 1);
 
 	if (!intern->read_concern) {
-		return props;
+		PHONGO_RETURN_PROPS(is_temp, props);
 	}
 
 	level = mongoc_read_concern_get_level(intern->read_concern);
@@ -145,7 +145,7 @@ static HashTable* php_phongo_readconcern_get_properties_hash(zend_object* object
 		zend_hash_str_update(props, "level", sizeof("level") - 1, &z_level);
 	}
 
-	return props;
+	PHONGO_RETURN_PROPS(is_temp, props);
 }
 
 static PHP_METHOD(MongoDB_Driver_ReadConcern, bsonSerialize)
