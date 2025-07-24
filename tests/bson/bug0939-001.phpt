@@ -38,14 +38,14 @@ object(MongoDB\BSON\Binary)#%d (%d) {
   ["type"]=>
   int(0)
 }
-MongoDB\BSON\Binary::$data exists: no
-MongoDB\BSON\Binary::$type exists: no
+MongoDB\BSON\Binary::$data exists: yes
+MongoDB\BSON\Binary::$type exists: yes
 
 object(MongoDB\BSON\Decimal128)#%d (%d) {
   ["dec"]=>
   string(4) "3.14"
 }
-MongoDB\BSON\Decimal128::$dec exists: no
+MongoDB\BSON\Decimal128::$dec exists: yes
 
 object(MongoDB\BSON\Javascript)#%d (%d) {
   ["code"]=>
@@ -56,8 +56,8 @@ object(MongoDB\BSON\Javascript)#%d (%d) {
     int(42)
   }
 }
-MongoDB\BSON\Javascript::$code exists: no
-MongoDB\BSON\Javascript::$scope exists: no
+MongoDB\BSON\Javascript::$code exists: yes
+MongoDB\BSON\Javascript::$scope exists: yes
 
 object(MongoDB\BSON\MaxKey)#%d (%d) {
 }
@@ -69,7 +69,7 @@ object(MongoDB\BSON\ObjectId)#%d (%d) {
   ["oid"]=>
   string(24) "%x"
 }
-MongoDB\BSON\ObjectId::$oid exists: no
+MongoDB\BSON\ObjectId::$oid exists: yes
 
 object(MongoDB\BSON\Regex)#%d (%d) {
   ["pattern"]=>
@@ -77,8 +77,8 @@ object(MongoDB\BSON\Regex)#%d (%d) {
   ["flags"]=>
   string(1) "i"
 }
-MongoDB\BSON\Regex::$pattern exists: no
-MongoDB\BSON\Regex::$flags exists: no
+MongoDB\BSON\Regex::$pattern exists: yes
+MongoDB\BSON\Regex::$flags exists: yes
 
 object(MongoDB\BSON\Timestamp)#%d (%d) {
   ["increment"]=>
@@ -86,13 +86,13 @@ object(MongoDB\BSON\Timestamp)#%d (%d) {
   ["timestamp"]=>
   string(4) "5678"
 }
-MongoDB\BSON\Timestamp::$increment exists: no
-MongoDB\BSON\Timestamp::$timestamp exists: no
+MongoDB\BSON\Timestamp::$increment exists: yes
+MongoDB\BSON\Timestamp::$timestamp exists: yes
 
 object(MongoDB\BSON\UTCDateTime)#%d (%d) {
   ["milliseconds"]=>
   string(%d) "%d"
 }
-MongoDB\BSON\UTCDateTime::$milliseconds exists: no
+MongoDB\BSON\UTCDateTime::$milliseconds exists: yes
 
 ===DONE===

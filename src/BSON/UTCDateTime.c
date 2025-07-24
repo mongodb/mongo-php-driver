@@ -131,7 +131,7 @@ static HashTable* php_phongo_utcdatetime_get_properties_hash(zend_object* object
 	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_temp, intern, props, 1);
 
 	if (!intern->initialized) {
-		return props;
+		PHONGO_RETURN_PROPS(is_temp, props);
 	}
 
 	{
@@ -141,7 +141,7 @@ static HashTable* php_phongo_utcdatetime_get_properties_hash(zend_object* object
 		zend_hash_str_update(props, "milliseconds", sizeof("milliseconds") - 1, &milliseconds);
 	}
 
-	return props;
+	PHONGO_RETURN_PROPS(is_temp, props);
 }
 
 static void php_phongo_utcdatetime_to_php_date(zval* return_value, const zval* this, zend_class_entry* ce)
@@ -301,9 +301,16 @@ static void php_phongo_utcdatetime_free_object(zend_object* object)
 
 	zend_object_std_dtor(&intern->std);
 
+
 	if (intern->properties) {
-		zend_hash_destroy(intern->properties);
-		FREE_HASHTABLE(intern->properties);
+		HashTable* props = intern->properties;
+		intern->properties = NULL;
+		zend_hash_release(props);
+	}
+	if (intern->php_properties) {
+		HashTable* props = intern->php_properties;
+		intern->php_properties = NULL;
+		zend_hash_release(props);
 	}
 }
 
@@ -363,6 +370,8 @@ static HashTable* php_phongo_utcdatetime_get_properties(zend_object* object)
 	return php_phongo_utcdatetime_get_properties_hash(object, false);
 }
 
+PHONGO_GET_PROPERTY_HANDLERS(utcdatetime, Z_OBJ_UTCDATETIME);
+
 void php_phongo_utcdatetime_init_ce(INIT_FUNC_ARGS)
 {
 	php_phongo_utcdatetime_ce                = register_class_MongoDB_BSON_UTCDateTime(php_phongo_utcdatetime_interface_ce, php_phongo_json_serializable_ce, php_phongo_type_ce, zend_ce_stringable);
@@ -373,6 +382,11 @@ void php_phongo_utcdatetime_init_ce(INIT_FUNC_ARGS)
 	php_phongo_handler_utcdatetime.clone_obj      = php_phongo_utcdatetime_clone_object;
 	php_phongo_handler_utcdatetime.get_debug_info = php_phongo_utcdatetime_get_debug_info;
 	php_phongo_handler_utcdatetime.get_properties = php_phongo_utcdatetime_get_properties;
+	php_phongo_handler_utcdatetime.read_property  = php_phongo_utcdatetime_read_property;
+	php_phongo_handler_utcdatetime.write_property = php_phongo_utcdatetime_write_property;
+	php_phongo_handler_utcdatetime.has_property   = php_phongo_utcdatetime_has_property;
+	php_phongo_handler_utcdatetime.unset_property = php_phongo_utcdatetime_unset_property;
+	php_phongo_handler_utcdatetime.get_property_ptr_ptr = php_phongo_utcdatetime_get_property_ptr_ptr;
 	php_phongo_handler_utcdatetime.free_obj       = php_phongo_utcdatetime_free_object;
 	php_phongo_handler_utcdatetime.offset         = XtOffsetOf(php_phongo_utcdatetime_t, std);
 }

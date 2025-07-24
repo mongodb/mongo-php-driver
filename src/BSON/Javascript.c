@@ -79,7 +79,7 @@ HashTable* php_phongo_javascript_get_properties_hash(zend_object* object, bool i
 	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_temp, intern, props, 2);
 
 	if (!intern->code) {
-		return props;
+		PHONGO_RETURN_PROPS(is_temp, props);
 	}
 
 	{
@@ -106,7 +106,7 @@ HashTable* php_phongo_javascript_get_properties_hash(zend_object* object, bool i
 		}
 	}
 
-	return props;
+	PHONGO_RETURN_PROPS(is_temp, props);
 
 failure:
 	PHONGO_GET_PROPERTY_HASH_FREE_PROPS(is_temp, props);
@@ -262,9 +262,16 @@ static void php_phongo_javascript_free_object(zend_object* object)
 		intern->scope = NULL;
 	}
 
+
 	if (intern->properties) {
-		zend_hash_destroy(intern->properties);
-		FREE_HASHTABLE(intern->properties);
+		HashTable* props = intern->properties;
+		intern->properties = NULL;
+		zend_hash_release(props);
+	}
+	if (intern->php_properties) {
+		HashTable* props = intern->php_properties;
+		intern->php_properties = NULL;
+		zend_hash_release(props);
 	}
 }
 
@@ -322,6 +329,8 @@ static HashTable* php_phongo_javascript_get_properties(zend_object* object)
 	return php_phongo_javascript_get_properties_hash(object, false);
 }
 
+PHONGO_GET_PROPERTY_HANDLERS(javascript, Z_OBJ_JAVASCRIPT);
+
 void php_phongo_javascript_init_ce(INIT_FUNC_ARGS)
 {
 	php_phongo_javascript_ce                = register_class_MongoDB_BSON_Javascript(php_phongo_javascript_interface_ce, php_phongo_json_serializable_ce, php_phongo_type_ce, zend_ce_stringable);
@@ -332,6 +341,11 @@ void php_phongo_javascript_init_ce(INIT_FUNC_ARGS)
 	php_phongo_handler_javascript.clone_obj      = php_phongo_javascript_clone_object;
 	php_phongo_handler_javascript.get_debug_info = php_phongo_javascript_get_debug_info;
 	php_phongo_handler_javascript.get_properties = php_phongo_javascript_get_properties;
+	php_phongo_handler_javascript.read_property  = php_phongo_javascript_read_property;
+	php_phongo_handler_javascript.write_property = php_phongo_javascript_write_property;
+	php_phongo_handler_javascript.has_property   = php_phongo_javascript_has_property;
+	php_phongo_handler_javascript.unset_property = php_phongo_javascript_unset_property;
+	php_phongo_handler_javascript.get_property_ptr_ptr = php_phongo_javascript_get_property_ptr_ptr;
 	php_phongo_handler_javascript.free_obj       = php_phongo_javascript_free_object;
 	php_phongo_handler_javascript.offset         = XtOffsetOf(php_phongo_javascript_t, std);
 }

@@ -65,7 +65,7 @@ static HashTable* php_phongo_document_get_properties_hash(zend_object* object, b
 	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_temp, intern, props, size);
 
 	if (!intern->bson) {
-		return props;
+		PHONGO_RETURN_PROPS(is_temp, props);
 	}
 
 	{
@@ -75,7 +75,7 @@ static HashTable* php_phongo_document_get_properties_hash(zend_object* object, b
 		zend_hash_str_update(props, "data", sizeof("data") - 1, &data);
 	}
 
-	return props;
+	PHONGO_RETURN_PROPS(is_temp, props);
 }
 
 PHONGO_DISABLED_CONSTRUCTOR(MongoDB_BSON_Document)
@@ -446,9 +446,16 @@ static void php_phongo_document_free_object(zend_object* object)
 		bson_destroy(intern->bson);
 	}
 
+
 	if (intern->properties) {
-		zend_hash_destroy(intern->properties);
-		FREE_HASHTABLE(intern->properties);
+		HashTable* props = intern->properties;
+		intern->properties = NULL;
+		zend_hash_release(props);
+	}
+	if (intern->php_properties) {
+		HashTable* props = intern->php_properties;
+		intern->php_properties = NULL;
+		zend_hash_release(props);
 	}
 }
 
@@ -520,7 +527,7 @@ static HashTable* php_phongo_document_get_debug_info(zend_object* object, int* i
 		zend_hash_str_update(props, "value", sizeof("value") - 1, &state.zchild);
 	}
 
-	return props;
+	PHONGO_RETURN_PROPS(is_temp, props);
 
 failure:
 	PHONGO_GET_PROPERTY_HASH_FREE_PROPS(is_temp, props);

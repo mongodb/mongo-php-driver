@@ -62,7 +62,7 @@ HashTable* php_phongo_symbol_get_properties_hash(zend_object* object, bool is_te
 	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_temp, intern, props, 2);
 
 	if (!intern->symbol) {
-		return props;
+		PHONGO_RETURN_PROPS(is_temp, props);
 	}
 
 	{
@@ -72,7 +72,7 @@ HashTable* php_phongo_symbol_get_properties_hash(zend_object* object, bool is_te
 		zend_hash_str_update(props, "symbol", sizeof("symbol") - 1, &symbol);
 	}
 
-	return props;
+	PHONGO_RETURN_PROPS(is_temp, props);
 }
 
 PHONGO_DISABLED_CONSTRUCTOR(MongoDB_BSON_Symbol)
@@ -150,9 +150,16 @@ static void php_phongo_symbol_free_object(zend_object* object)
 		efree(intern->symbol);
 	}
 
+
 	if (intern->properties) {
-		zend_hash_destroy(intern->properties);
-		FREE_HASHTABLE(intern->properties);
+		HashTable* props = intern->properties;
+		intern->properties = NULL;
+		zend_hash_release(props);
+	}
+	if (intern->php_properties) {
+		HashTable* props = intern->php_properties;
+		intern->php_properties = NULL;
+		zend_hash_release(props);
 	}
 }
 
@@ -208,6 +215,8 @@ static HashTable* php_phongo_symbol_get_properties(zend_object* object)
 	return php_phongo_symbol_get_properties_hash(object, false);
 }
 
+PHONGO_GET_PROPERTY_HANDLERS(symbol, Z_OBJ_SYMBOL);
+
 void php_phongo_symbol_init_ce(INIT_FUNC_ARGS)
 {
 	php_phongo_symbol_ce                = register_class_MongoDB_BSON_Symbol(php_phongo_json_serializable_ce, php_phongo_type_ce, zend_ce_stringable);
@@ -218,6 +227,11 @@ void php_phongo_symbol_init_ce(INIT_FUNC_ARGS)
 	php_phongo_handler_symbol.clone_obj      = php_phongo_symbol_clone_object;
 	php_phongo_handler_symbol.get_debug_info = php_phongo_symbol_get_debug_info;
 	php_phongo_handler_symbol.get_properties = php_phongo_symbol_get_properties;
+	php_phongo_handler_symbol.read_property  = php_phongo_symbol_read_property;
+	php_phongo_handler_symbol.write_property = php_phongo_symbol_write_property;
+	php_phongo_handler_symbol.has_property   = php_phongo_symbol_has_property;
+	php_phongo_handler_symbol.unset_property = php_phongo_symbol_unset_property;
+	php_phongo_handler_symbol.get_property_ptr_ptr = php_phongo_symbol_get_property_ptr_ptr;
 	php_phongo_handler_symbol.free_obj       = php_phongo_symbol_free_object;
 	php_phongo_handler_symbol.offset         = XtOffsetOf(php_phongo_symbol_t, std);
 }

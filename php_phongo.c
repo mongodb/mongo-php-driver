@@ -159,8 +159,9 @@ static HashTable* php_phongo_std_get_gc(zend_object* object, zval** table, int* 
 {
 	*table = NULL;
 	*n     = 0;
-	return zend_std_get_properties(object);
+	return object->handlers->get_properties(object);
 }
+
 
 PHP_MINIT_FUNCTION(mongodb) /* {{{ */
 {
@@ -197,8 +198,6 @@ PHP_MINIT_FUNCTION(mongodb) /* {{{ */
 	/* Disable cloning by default. Individual classes can opt in if they need to
 	 * support this (e.g. BSON objects). */
 	phongo_std_object_handlers.clone_obj = NULL;
-	/* Ensure that get_gc delegates to zend_std_get_properties directly in case
-	 * our class defines a get_properties handler for debugging purposes. */
 	phongo_std_object_handlers.get_gc = php_phongo_std_get_gc;
 
 	/* Initialize zend_class_entry dependencies.

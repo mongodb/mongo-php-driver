@@ -99,7 +99,7 @@ static HashTable* php_phongo_timestamp_get_properties_hash(zend_object* object, 
 	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_temp, intern, props, 2);
 
 	if (!intern->initialized) {
-		return props;
+		PHONGO_RETURN_PROPS(is_temp, props);
 	}
 
 	s_increment_len = snprintf(s_increment, sizeof(s_increment), "%" PRIu32, intern->increment);
@@ -115,7 +115,7 @@ static HashTable* php_phongo_timestamp_get_properties_hash(zend_object* object, 
 		zend_hash_str_update(props, "timestamp", sizeof("timestamp") - 1, &timestamp);
 	}
 
-	return props;
+	PHONGO_RETURN_PROPS(is_temp, props);
 }
 
 /* Construct a new BSON timestamp type, which consists of a 4-byte increment and
@@ -261,9 +261,16 @@ static void php_phongo_timestamp_free_object(zend_object* object)
 
 	zend_object_std_dtor(&intern->std);
 
+
 	if (intern->properties) {
-		zend_hash_destroy(intern->properties);
-		FREE_HASHTABLE(intern->properties);
+		HashTable* props = intern->properties;
+		intern->properties = NULL;
+		zend_hash_release(props);
+	}
+	if (intern->php_properties) {
+		HashTable* props = intern->php_properties;
+		intern->php_properties = NULL;
+		zend_hash_release(props);
 	}
 }
 
@@ -328,6 +335,8 @@ static HashTable* php_phongo_timestamp_get_properties(zend_object* object)
 	return php_phongo_timestamp_get_properties_hash(object, false);
 }
 
+PHONGO_GET_PROPERTY_HANDLERS(timestamp, Z_OBJ_TIMESTAMP);
+
 void php_phongo_timestamp_init_ce(INIT_FUNC_ARGS)
 {
 	php_phongo_timestamp_ce                = register_class_MongoDB_BSON_Timestamp(php_phongo_timestamp_interface_ce, php_phongo_json_serializable_ce, php_phongo_type_ce, zend_ce_stringable);
@@ -338,6 +347,11 @@ void php_phongo_timestamp_init_ce(INIT_FUNC_ARGS)
 	php_phongo_handler_timestamp.clone_obj      = php_phongo_timestamp_clone_object;
 	php_phongo_handler_timestamp.get_debug_info = php_phongo_timestamp_get_debug_info;
 	php_phongo_handler_timestamp.get_properties = php_phongo_timestamp_get_properties;
+	php_phongo_handler_timestamp.read_property  = php_phongo_timestamp_read_property;
+	php_phongo_handler_timestamp.write_property = php_phongo_timestamp_write_property;
+	php_phongo_handler_timestamp.has_property   = php_phongo_timestamp_has_property;
+	php_phongo_handler_timestamp.unset_property = php_phongo_timestamp_unset_property;
+	php_phongo_handler_timestamp.get_property_ptr_ptr = php_phongo_timestamp_get_property_ptr_ptr;
 	php_phongo_handler_timestamp.free_obj       = php_phongo_timestamp_free_object;
 	php_phongo_handler_timestamp.offset         = XtOffsetOf(php_phongo_timestamp_t, std);
 }

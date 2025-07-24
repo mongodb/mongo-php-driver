@@ -275,7 +275,7 @@ static HashTable* php_phongo_writeconcern_get_properties_hash(zend_object* objec
 	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_temp, intern, props, 4);
 
 	if (!intern->write_concern) {
-		return props;
+		PHONGO_RETURN_PROPS(is_temp, props);
 	}
 
 	wtag     = mongoc_write_concern_get_wtag(intern->write_concern);
@@ -330,7 +330,7 @@ static HashTable* php_phongo_writeconcern_get_properties_hash(zend_object* objec
 		}
 	}
 
-	return props;
+	PHONGO_RETURN_PROPS(is_temp, props);
 }
 
 static PHP_METHOD(MongoDB_Driver_WriteConcern, bsonSerialize)
@@ -368,9 +368,16 @@ static void php_phongo_writeconcern_free_object(zend_object* object)
 
 	zend_object_std_dtor(&intern->std);
 
+
 	if (intern->properties) {
-		zend_hash_destroy(intern->properties);
-		FREE_HASHTABLE(intern->properties);
+		HashTable* props = intern->properties;
+		intern->properties = NULL;
+		zend_hash_release(props);
+	}
+	if (intern->php_properties) {
+		HashTable* props = intern->php_properties;
+		intern->php_properties = NULL;
+		zend_hash_release(props);
 	}
 
 	if (intern->write_concern) {
@@ -401,6 +408,8 @@ static HashTable* php_phongo_writeconcern_get_properties(zend_object* object)
 	return php_phongo_writeconcern_get_properties_hash(object, false, false, false);
 }
 
+PHONGO_GET_PROPERTY_HANDLERS(writeconcern, Z_OBJ_WRITECONCERN);
+
 void php_phongo_writeconcern_init_ce(INIT_FUNC_ARGS)
 {
 	php_phongo_writeconcern_ce                = register_class_MongoDB_Driver_WriteConcern(php_phongo_serializable_ce);
@@ -409,6 +418,11 @@ void php_phongo_writeconcern_init_ce(INIT_FUNC_ARGS)
 	memcpy(&php_phongo_handler_writeconcern, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	php_phongo_handler_writeconcern.get_debug_info = php_phongo_writeconcern_get_debug_info;
 	php_phongo_handler_writeconcern.get_properties = php_phongo_writeconcern_get_properties;
+	php_phongo_handler_writeconcern.read_property  = php_phongo_writeconcern_read_property;
+	php_phongo_handler_writeconcern.write_property = php_phongo_writeconcern_write_property;
+	php_phongo_handler_writeconcern.has_property   = php_phongo_writeconcern_has_property;
+	php_phongo_handler_writeconcern.unset_property = php_phongo_writeconcern_unset_property;
+	php_phongo_handler_writeconcern.get_property_ptr_ptr = php_phongo_writeconcern_get_property_ptr_ptr;
 	php_phongo_handler_writeconcern.free_obj       = php_phongo_writeconcern_free_object;
 	php_phongo_handler_writeconcern.offset         = XtOffsetOf(php_phongo_writeconcern_t, std);
 }

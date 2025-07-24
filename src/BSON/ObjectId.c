@@ -87,7 +87,7 @@ static HashTable* php_phongo_objectid_get_properties_hash(zend_object* object, b
 	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_temp, intern, props, 1);
 
 	if (!intern->initialized) {
-		return props;
+		PHONGO_RETURN_PROPS(is_temp, props);
 	}
 
 	{
@@ -97,7 +97,7 @@ static HashTable* php_phongo_objectid_get_properties_hash(zend_object* object, b
 		zend_hash_str_update(props, "oid", sizeof("oid") - 1, &zv);
 	}
 
-	return props;
+	PHONGO_RETURN_PROPS(is_temp, props);
 }
 
 /* Constructs a new BSON ObjectId type, optionally from a hex string. */
@@ -202,9 +202,16 @@ static void php_phongo_objectid_free_object(zend_object* object)
 
 	zend_object_std_dtor(&intern->std);
 
+
 	if (intern->properties) {
-		zend_hash_destroy(intern->properties);
-		FREE_HASHTABLE(intern->properties);
+		HashTable* props = intern->properties;
+		intern->properties = NULL;
+		zend_hash_release(props);
+	}
+	if (intern->php_properties) {
+		HashTable* props = intern->php_properties;
+		intern->php_properties = NULL;
+		zend_hash_release(props);
 	}
 }
 
@@ -263,6 +270,8 @@ static HashTable* php_phongo_objectid_get_properties(zend_object* object)
 	return php_phongo_objectid_get_properties_hash(object, false);
 }
 
+PHONGO_GET_PROPERTY_HANDLERS(objectid, Z_OBJ_OBJECTID);
+
 void php_phongo_objectid_init_ce(INIT_FUNC_ARGS)
 {
 	php_phongo_objectid_ce                = register_class_MongoDB_BSON_ObjectId(php_phongo_objectid_interface_ce, php_phongo_json_serializable_ce, php_phongo_type_ce, zend_ce_stringable);
@@ -273,6 +282,11 @@ void php_phongo_objectid_init_ce(INIT_FUNC_ARGS)
 	php_phongo_handler_objectid.clone_obj      = php_phongo_objectid_clone_object;
 	php_phongo_handler_objectid.get_debug_info = php_phongo_objectid_get_debug_info;
 	php_phongo_handler_objectid.get_properties = php_phongo_objectid_get_properties;
+	php_phongo_handler_objectid.read_property  = php_phongo_objectid_read_property;
+	php_phongo_handler_objectid.write_property = php_phongo_objectid_write_property;
+	php_phongo_handler_objectid.has_property   = php_phongo_objectid_has_property;
+	php_phongo_handler_objectid.unset_property = php_phongo_objectid_unset_property;
+	php_phongo_handler_objectid.get_property_ptr_ptr = php_phongo_objectid_get_property_ptr_ptr;
 	php_phongo_handler_objectid.free_obj       = php_phongo_objectid_free_object;
 	php_phongo_handler_objectid.offset         = XtOffsetOf(php_phongo_objectid_t, std);
 }
