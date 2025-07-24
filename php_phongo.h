@@ -65,16 +65,17 @@ zend_object_handlers* phongo_get_std_object_handlers(void);
 		if (!(intern)->php_properties) {                                  \
 			ALLOC_HASHTABLE((intern)->php_properties);                    \
 			zend_hash_init((intern)->php_properties, 0, NULL, ZVAL_PTR_DTOR, 0); \
+			GC_ADDREF((intern)->php_properties); \
 		}                                                                 \
 		if (is_temp) {                                                    \
 			(props) = zend_array_dup((intern)->php_properties);           \
 		} else {                                                          \
-			if ((intern)->properties) {                                   \
-				(props) = (intern)->properties; \
-				(intern)->properties = NULL; \
-				zend_hash_release(props);                    \
-			}                                                             \
 			(props) = zend_array_dup((intern)->php_properties);           \
+			if ((intern)->properties) {                                   \
+				HashTable *__tmp = (intern)->properties; \
+				(intern)->properties = NULL; \
+				zend_hash_release(__tmp);                    \
+			}                                                             \
 			(intern)->properties = (props);                               \
 		}                                                                 \
 	} while (0)
