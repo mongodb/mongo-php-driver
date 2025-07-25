@@ -275,7 +275,7 @@ static HashTable* php_phongo_writeconcern_get_properties_hash(zend_object* objec
 	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_temp, intern, props, 4);
 
 	if (!intern->write_concern) {
-		PHONGO_RETURN_PROPS(is_temp, props);
+		return props;
 	}
 
 	wtag     = mongoc_write_concern_get_wtag(intern->write_concern);
@@ -330,7 +330,7 @@ static HashTable* php_phongo_writeconcern_get_properties_hash(zend_object* objec
 		}
 	}
 
-	PHONGO_RETURN_PROPS(is_temp, props);
+	return props;
 }
 
 static PHP_METHOD(MongoDB_Driver_WriteConcern, bsonSerialize)

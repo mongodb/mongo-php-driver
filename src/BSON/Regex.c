@@ -88,7 +88,7 @@ static HashTable* php_phongo_regex_get_properties_hash(zend_object* object, bool
 	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_temp, intern, props, 2);
 
 	if (!intern->pattern) {
-		PHONGO_RETURN_PROPS(is_temp, props);
+		return props;
 	}
 
 	{
@@ -101,7 +101,7 @@ static HashTable* php_phongo_regex_get_properties_hash(zend_object* object, bool
 		zend_hash_str_update(props, "flags", sizeof("flags") - 1, &flags);
 	}
 
-	PHONGO_RETURN_PROPS(is_temp, props);
+	return props;
 }
 
 /* Constructs a new BSON regular expression type. */

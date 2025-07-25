@@ -72,7 +72,7 @@ HashTable* php_phongo_int64_get_properties_hash(zend_object* object, bool is_tem
 	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_temp, intern, props, 2);
 
 	if (!intern->initialized) {
-		PHONGO_RETURN_PROPS(is_temp, props);
+		return props;
 	}
 
 	{
@@ -82,7 +82,7 @@ HashTable* php_phongo_int64_get_properties_hash(zend_object* object, bool is_tem
 		zend_hash_str_update(props, "integer", sizeof("integer") - 1, &value);
 	}
 
-	PHONGO_RETURN_PROPS(is_temp, props);
+	return props;
 }
 
 static PHP_METHOD(MongoDB_BSON_Int64, __construct)

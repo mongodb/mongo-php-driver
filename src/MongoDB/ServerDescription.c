@@ -196,7 +196,7 @@ HashTable* php_phongo_serverdescription_get_properties_hash(zend_object* object,
 	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_debug, intern, props, 6);
 
 	if (!intern->server_description) {
-		PHONGO_RETURN_PROPS(is_debug, props);
+		return props;
 	}
 
 	{
@@ -259,7 +259,7 @@ HashTable* php_phongo_serverdescription_get_properties_hash(zend_object* object,
 	}
 
 done:
-	PHONGO_RETURN_PROPS(is_debug, props);
+	return props;
 }
 
 static HashTable* php_phongo_serverdescription_get_debug_info(zend_object* object, int* is_temp)

@@ -74,7 +74,7 @@ HashTable* php_phongo_dbpointer_get_properties_hash(zend_object* object, bool is
 	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_temp, intern, props, 2);
 
 	if (!intern->ref) {
-		PHONGO_RETURN_PROPS(is_temp, props);
+		return props;
 	}
 
 	{
@@ -86,7 +86,7 @@ HashTable* php_phongo_dbpointer_get_properties_hash(zend_object* object, bool is
 		zend_hash_str_update(props, "id", sizeof("id") - 1, &id);
 	}
 
-	PHONGO_RETURN_PROPS(is_temp, props);
+	return props;
 }
 
 PHONGO_DISABLED_CONSTRUCTOR(MongoDB_BSON_DBPointer)

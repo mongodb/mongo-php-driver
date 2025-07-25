@@ -60,29 +60,18 @@ ZEND_TSRMLS_CACHE_EXTERN()
 
 zend_object_handlers* phongo_get_std_object_handlers(void);
 
-#define PHONGO_RETURN_PROPS(is_temp, props) \
-	if (!(is_temp)) {                       \
-		GC_ADDREF(props);                   \
-	}                                       \
-	return props;
-
-#define PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_temp, intern, props, size)        \
-	do {                                                                         \
-		if (!(intern)->php_properties) {                                         \
-			ALLOC_HASHTABLE((intern)->php_properties);                           \
-			zend_hash_init((intern)->php_properties, 0, NULL, ZVAL_PTR_DTOR, 0); \
-		}                                                                        \
-		if (is_temp) {                                                           \
-			(props) = zend_array_dup((intern)->php_properties);                  \
-		} else {                                                                 \
-			(props) = zend_array_dup((intern)->php_properties);                  \
-			if ((intern)->properties) {                                          \
-				HashTable* __tmp     = (intern)->properties;                     \
-				(intern)->properties = NULL;                                     \
-				zend_hash_release(__tmp);                                        \
-			}                                                                    \
-			(intern)->properties = (props);                                      \
-		}                                                                        \
+#define PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_temp, intern, props, size) \
+	do {                                                                  \
+		if (is_temp) {                                                    \
+			ALLOC_HASHTABLE(props);                                       \
+			zend_hash_init((props), (size), NULL, ZVAL_PTR_DTOR, 0);      \
+		} else if ((intern)->properties) {                                \
+			(props) = (intern)->properties;                               \
+		} else {                                                          \
+			ALLOC_HASHTABLE(props);                                       \
+			zend_hash_init((props), (size), NULL, ZVAL_PTR_DTOR, 0);      \
+			(intern)->properties = (props);                               \
+		}                                                                 \
 	} while (0)
 
 #define PHONGO_GET_PROPERTY_HASH_FREE_PROPS(is_temp, props) \

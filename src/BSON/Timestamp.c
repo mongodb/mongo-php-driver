@@ -99,7 +99,7 @@ static HashTable* php_phongo_timestamp_get_properties_hash(zend_object* object, 
 	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_temp, intern, props, 2);
 
 	if (!intern->initialized) {
-		PHONGO_RETURN_PROPS(is_temp, props);
+		return props;
 	}
 
 	s_increment_len = snprintf(s_increment, sizeof(s_increment), "%" PRIu32, intern->increment);
@@ -115,7 +115,7 @@ static HashTable* php_phongo_timestamp_get_properties_hash(zend_object* object, 
 		zend_hash_str_update(props, "timestamp", sizeof("timestamp") - 1, &timestamp);
 	}
 
-	PHONGO_RETURN_PROPS(is_temp, props);
+	return props;
 }
 
 /* Construct a new BSON timestamp type, which consists of a 4-byte increment and

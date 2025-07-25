@@ -66,7 +66,7 @@ static HashTable* php_phongo_packedarray_get_properties_hash(zend_object* object
 	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_temp, intern, props, size);
 
 	if (!intern->bson) {
-		PHONGO_RETURN_PROPS(is_temp, props);
+		return props;
 	}
 
 	{
@@ -76,7 +76,7 @@ static HashTable* php_phongo_packedarray_get_properties_hash(zend_object* object
 		zend_hash_str_update(props, "data", sizeof("data") - 1, &data);
 	}
 
-	PHONGO_RETURN_PROPS(is_temp, props);
+	return props;
 }
 
 static bool php_phongo_packedarray_to_json(zval* return_value, bson_json_mode_t mode, const bson_t* bson)
@@ -511,7 +511,7 @@ static HashTable* php_phongo_packedarray_get_debug_info(zend_object* object, int
 		zend_hash_str_update(props, "value", sizeof("value") - 1, &state.zchild);
 	}
 
-	PHONGO_RETURN_PROPS(is_temp, props);
+	return props;
 
 failure:
 	PHONGO_GET_PROPERTY_HASH_FREE_PROPS(is_temp, props);
