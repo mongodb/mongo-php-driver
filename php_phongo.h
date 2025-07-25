@@ -111,7 +111,11 @@ zend_object_handlers* phongo_get_std_object_handlers(void);
 			zend_hash_init(props, 0, NULL, ZVAL_PTR_DTOR, 0);                                                                      \
 			_intern_extractor(zobj)->php_properties = props;                                                                       \
 		}                                                                                                                          \
-		return zend_hash_find(props, member);                                                                                      \
+		zval* ret = zend_hash_find(props, member);                                                                                 \
+		if (ret) {                                                                                                                 \
+			return ret;                                                                                                            \
+		}                                                                                                                          \
+		return &EG(uninitialized_zval);                                                                                            \
 	}                                                                                                                              \
                                                                                                                                    \
 	static zval* php_phongo_##_name##_write_property(zend_object* zobj, zend_string* name, zval* value, void** cache_slot)         \
