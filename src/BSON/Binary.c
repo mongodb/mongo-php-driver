@@ -73,7 +73,7 @@ static HashTable* php_phongo_binary_get_properties_hash(zend_object* object, boo
 	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_temp, intern, props, 2);
 
 	if (!intern->data) {
-		PHONGO_RETURN_PROPS(is_temp, props);
+		return props;
 	}
 
 	{
@@ -86,7 +86,7 @@ static HashTable* php_phongo_binary_get_properties_hash(zend_object* object, boo
 		zend_hash_str_update(props, "type", sizeof("type") - 1, &type);
 	}
 
-	PHONGO_RETURN_PROPS(is_temp, props);
+	return props;
 }
 
 /* Construct a new BSON binary type */

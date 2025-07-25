@@ -4,6 +4,8 @@ PHPC-2505: Setting and unsetting a property may interfere with using foreach to 
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
 
+ini_set("error_reporting", E_ALL & ~E_DEPRECATED);
+
 $tests = [
     [ 'binary' => new MongoDB\BSON\Binary('foo', MongoDB\BSON\Binary::TYPE_GENERIC) ],
     [ 'dbpointer' => createDBPointer() ],

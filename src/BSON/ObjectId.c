@@ -87,7 +87,7 @@ static HashTable* php_phongo_objectid_get_properties_hash(zend_object* object, b
 	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_temp, intern, props, 1);
 
 	if (!intern->initialized) {
-		PHONGO_RETURN_PROPS(is_temp, props);
+		return props;
 	}
 
 	{
@@ -97,7 +97,7 @@ static HashTable* php_phongo_objectid_get_properties_hash(zend_object* object, b
 		zend_hash_str_update(props, "oid", sizeof("oid") - 1, &zv);
 	}
 
-	PHONGO_RETURN_PROPS(is_temp, props);
+	return props;
 }
 
 /* Constructs a new BSON ObjectId type, optionally from a hex string. */
