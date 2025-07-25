@@ -430,14 +430,13 @@ static void php_phongo_packedarray_free_object(zend_object* object)
 		bson_destroy(intern->bson);
 	}
 
-
 	if (intern->properties) {
-		HashTable* props = intern->properties;
+		HashTable* props   = intern->properties;
 		intern->properties = NULL;
 		zend_hash_release(props);
 	}
 	if (intern->php_properties) {
-		HashTable* props = intern->php_properties;
+		HashTable* props       = intern->php_properties;
 		intern->php_properties = NULL;
 		zend_hash_release(props);
 	}
@@ -579,22 +578,22 @@ void php_phongo_packedarray_init_ce(INIT_FUNC_ARGS)
 	php_phongo_packedarray_ce->create_object = php_phongo_packedarray_create_object;
 
 	memcpy(&php_phongo_handler_packedarray, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
-	php_phongo_handler_packedarray.compare         = php_phongo_packedarray_compare_objects;
-	php_phongo_handler_packedarray.clone_obj       = php_phongo_packedarray_clone_object;
-	php_phongo_handler_packedarray.get_debug_info  = php_phongo_packedarray_get_debug_info;
-	php_phongo_handler_packedarray.get_properties  = php_phongo_packedarray_get_properties;
-	php_phongo_handler_packedarray.read_property   = php_phongo_packedarray_read_property;
-	php_phongo_handler_packedarray.write_property  = php_phongo_packedarray_write_property;
-	php_phongo_handler_packedarray.has_property    = php_phongo_packedarray_has_property;
-	php_phongo_handler_packedarray.unset_property  = php_phongo_packedarray_unset_property;
+	php_phongo_handler_packedarray.compare              = php_phongo_packedarray_compare_objects;
+	php_phongo_handler_packedarray.clone_obj            = php_phongo_packedarray_clone_object;
+	php_phongo_handler_packedarray.get_debug_info       = php_phongo_packedarray_get_debug_info;
+	php_phongo_handler_packedarray.get_properties       = php_phongo_packedarray_get_properties;
+	php_phongo_handler_packedarray.read_property        = php_phongo_packedarray_read_property;
+	php_phongo_handler_packedarray.write_property       = php_phongo_packedarray_write_property;
+	php_phongo_handler_packedarray.has_property         = php_phongo_packedarray_has_property;
+	php_phongo_handler_packedarray.unset_property       = php_phongo_packedarray_unset_property;
 	php_phongo_handler_packedarray.get_property_ptr_ptr = php_phongo_packedarray_get_property_ptr_ptr;
-	php_phongo_handler_packedarray.get_gc = php_phongo_packedarray_get_gc;
-	php_phongo_handler_packedarray.free_obj        = php_phongo_packedarray_free_object;
-	php_phongo_handler_packedarray.read_dimension  = php_phongo_packedarray_read_dimension;
-	php_phongo_handler_packedarray.write_dimension = php_phongo_packedarray_write_dimension;
-	php_phongo_handler_packedarray.has_dimension   = php_phongo_packedarray_has_dimension;
-	php_phongo_handler_packedarray.unset_dimension = php_phongo_packedarray_unset_dimension;
-	php_phongo_handler_packedarray.offset          = XtOffsetOf(php_phongo_packedarray_t, std);
+	php_phongo_handler_packedarray.get_gc               = php_phongo_packedarray_get_gc;
+	php_phongo_handler_packedarray.free_obj             = php_phongo_packedarray_free_object;
+	php_phongo_handler_packedarray.read_dimension       = php_phongo_packedarray_read_dimension;
+	php_phongo_handler_packedarray.write_dimension      = php_phongo_packedarray_write_dimension;
+	php_phongo_handler_packedarray.has_dimension        = php_phongo_packedarray_has_dimension;
+	php_phongo_handler_packedarray.unset_dimension      = php_phongo_packedarray_unset_dimension;
+	php_phongo_handler_packedarray.offset               = XtOffsetOf(php_phongo_packedarray_t, std);
 }
 
 bool phongo_packedarray_new(zval* object, bson_t* bson, bool copy)

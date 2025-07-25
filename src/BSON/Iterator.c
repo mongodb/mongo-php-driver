@@ -248,14 +248,13 @@ static void php_phongo_iterator_free_object(zend_object* object)
 
 	zend_object_std_dtor(&intern->std);
 
-
 	if (intern->properties) {
-		HashTable* props = intern->properties;
+		HashTable* props   = intern->properties;
 		intern->properties = NULL;
 		zend_hash_release(props);
 	}
 	if (intern->php_properties) {
-		HashTable* props = intern->php_properties;
+		HashTable* props       = intern->php_properties;
 		intern->php_properties = NULL;
 		zend_hash_release(props);
 	}
@@ -393,15 +392,15 @@ void php_phongo_iterator_init_ce(INIT_FUNC_ARGS)
 	php_phongo_iterator_ce->get_iterator  = php_phongo_iterator_get_iterator;
 
 	memcpy(&php_phongo_handler_iterator, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
-	php_phongo_handler_iterator.clone_obj      = php_phongo_iterator_clone_object;
-	php_phongo_handler_iterator.get_debug_info = php_phongo_iterator_get_debug_info;
-	php_phongo_handler_iterator.get_properties = php_phongo_iterator_get_properties;
-	php_phongo_handler_iterator.read_property  = php_phongo_iterator_read_property;
-	php_phongo_handler_iterator.write_property = php_phongo_iterator_write_property;
-	php_phongo_handler_iterator.has_property   = php_phongo_iterator_has_property;
-	php_phongo_handler_iterator.unset_property = php_phongo_iterator_unset_property;
+	php_phongo_handler_iterator.clone_obj            = php_phongo_iterator_clone_object;
+	php_phongo_handler_iterator.get_debug_info       = php_phongo_iterator_get_debug_info;
+	php_phongo_handler_iterator.get_properties       = php_phongo_iterator_get_properties;
+	php_phongo_handler_iterator.read_property        = php_phongo_iterator_read_property;
+	php_phongo_handler_iterator.write_property       = php_phongo_iterator_write_property;
+	php_phongo_handler_iterator.has_property         = php_phongo_iterator_has_property;
+	php_phongo_handler_iterator.unset_property       = php_phongo_iterator_unset_property;
 	php_phongo_handler_iterator.get_property_ptr_ptr = php_phongo_iterator_get_property_ptr_ptr;
-	php_phongo_handler_iterator.get_gc = php_phongo_iterator_get_gc;
-	php_phongo_handler_iterator.free_obj       = php_phongo_iterator_free_object;
-	php_phongo_handler_iterator.offset         = XtOffsetOf(php_phongo_iterator_t, std);
+	php_phongo_handler_iterator.get_gc               = php_phongo_iterator_get_gc;
+	php_phongo_handler_iterator.free_obj             = php_phongo_iterator_free_object;
+	php_phongo_handler_iterator.offset               = XtOffsetOf(php_phongo_iterator_t, std);
 }

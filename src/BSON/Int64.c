@@ -175,14 +175,13 @@ static void php_phongo_int64_free_object(zend_object* object)
 
 	zend_object_std_dtor(&intern->std);
 
-
 	if (intern->properties) {
-		HashTable* props = intern->properties;
+		HashTable* props   = intern->properties;
 		intern->properties = NULL;
 		zend_hash_release(props);
 	}
 	if (intern->php_properties) {
-		HashTable* props = intern->php_properties;
+		HashTable* props       = intern->php_properties;
 		intern->php_properties = NULL;
 		zend_hash_release(props);
 	}
@@ -569,20 +568,20 @@ void php_phongo_int64_init_ce(INIT_FUNC_ARGS)
 	php_phongo_int64_ce->create_object = php_phongo_int64_create_object;
 
 	memcpy(&php_phongo_handler_int64, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
-	php_phongo_handler_int64.compare        = php_phongo_int64_compare_objects;
-	php_phongo_handler_int64.clone_obj      = php_phongo_int64_clone_object;
-	php_phongo_handler_int64.get_debug_info = php_phongo_int64_get_debug_info;
-	php_phongo_handler_int64.get_properties = php_phongo_int64_get_properties;
-	php_phongo_handler_int64.read_property  = php_phongo_int64_read_property;
-	php_phongo_handler_int64.write_property = php_phongo_int64_write_property;
-	php_phongo_handler_int64.has_property   = php_phongo_int64_has_property;
-	php_phongo_handler_int64.unset_property = php_phongo_int64_unset_property;
+	php_phongo_handler_int64.compare              = php_phongo_int64_compare_objects;
+	php_phongo_handler_int64.clone_obj            = php_phongo_int64_clone_object;
+	php_phongo_handler_int64.get_debug_info       = php_phongo_int64_get_debug_info;
+	php_phongo_handler_int64.get_properties       = php_phongo_int64_get_properties;
+	php_phongo_handler_int64.read_property        = php_phongo_int64_read_property;
+	php_phongo_handler_int64.write_property       = php_phongo_int64_write_property;
+	php_phongo_handler_int64.has_property         = php_phongo_int64_has_property;
+	php_phongo_handler_int64.unset_property       = php_phongo_int64_unset_property;
 	php_phongo_handler_int64.get_property_ptr_ptr = php_phongo_int64_get_property_ptr_ptr;
-	php_phongo_handler_int64.get_gc = php_phongo_int64_get_gc;
-	php_phongo_handler_int64.free_obj       = php_phongo_int64_free_object;
-	php_phongo_handler_int64.offset         = XtOffsetOf(php_phongo_int64_t, std);
-	php_phongo_handler_int64.cast_object    = php_phongo_int64_cast_object;
-	php_phongo_handler_int64.do_operation   = php_phongo_int64_do_operation;
+	php_phongo_handler_int64.get_gc               = php_phongo_int64_get_gc;
+	php_phongo_handler_int64.free_obj             = php_phongo_int64_free_object;
+	php_phongo_handler_int64.offset               = XtOffsetOf(php_phongo_int64_t, std);
+	php_phongo_handler_int64.cast_object          = php_phongo_int64_cast_object;
+	php_phongo_handler_int64.do_operation         = php_phongo_int64_do_operation;
 }
 
 bool phongo_int64_new(zval* object, int64_t integer)

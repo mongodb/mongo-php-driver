@@ -155,7 +155,6 @@ static zend_class_entry* php_phongo_fetch_internal_class(const char* class_name,
 	return NULL;
 }
 
-
 PHP_MINIT_FUNCTION(mongodb) /* {{{ */
 {
 	bson_mem_vtable_t bson_mem_vtable = {
