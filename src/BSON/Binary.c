@@ -213,14 +213,13 @@ static void php_phongo_binary_free_object(zend_object* object)
 		efree(intern->data);
 	}
 
-
 	if (intern->properties) {
-		HashTable* props = intern->properties;
+		HashTable* props   = intern->properties;
 		intern->properties = NULL;
 		zend_hash_release(props);
 	}
 	if (intern->php_properties) {
-		HashTable* props = intern->php_properties;
+		HashTable* props       = intern->php_properties;
 		intern->php_properties = NULL;
 		zend_hash_release(props);
 	}
@@ -296,17 +295,18 @@ void php_phongo_binary_init_ce(INIT_FUNC_ARGS)
 	php_phongo_binary_ce->create_object = php_phongo_binary_create_object;
 
 	memcpy(&php_phongo_handler_binary, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
-	php_phongo_handler_binary.compare        = php_phongo_binary_compare_objects;
-	php_phongo_handler_binary.clone_obj      = php_phongo_binary_clone_object;
-	php_phongo_handler_binary.get_debug_info = php_phongo_binary_get_debug_info;
-	php_phongo_handler_binary.get_properties = php_phongo_binary_get_properties;
-	php_phongo_handler_binary.read_property  = php_phongo_binary_read_property;
-	php_phongo_handler_binary.write_property = php_phongo_binary_write_property;
-	php_phongo_handler_binary.has_property   = php_phongo_binary_has_property;
-	php_phongo_handler_binary.unset_property = php_phongo_binary_unset_property;
+	php_phongo_handler_binary.compare              = php_phongo_binary_compare_objects;
+	php_phongo_handler_binary.clone_obj            = php_phongo_binary_clone_object;
+	php_phongo_handler_binary.get_debug_info       = php_phongo_binary_get_debug_info;
+	php_phongo_handler_binary.get_properties       = php_phongo_binary_get_properties;
+	php_phongo_handler_binary.read_property        = php_phongo_binary_read_property;
+	php_phongo_handler_binary.write_property       = php_phongo_binary_write_property;
+	php_phongo_handler_binary.has_property         = php_phongo_binary_has_property;
+	php_phongo_handler_binary.unset_property       = php_phongo_binary_unset_property;
 	php_phongo_handler_binary.get_property_ptr_ptr = php_phongo_binary_get_property_ptr_ptr;
-	php_phongo_handler_binary.free_obj       = php_phongo_binary_free_object;
-	php_phongo_handler_binary.offset         = XtOffsetOf(php_phongo_binary_t, std);
+	php_phongo_handler_binary.get_gc               = php_phongo_binary_get_gc;
+	php_phongo_handler_binary.free_obj             = php_phongo_binary_free_object;
+	php_phongo_handler_binary.offset               = XtOffsetOf(php_phongo_binary_t, std);
 }
 
 bool phongo_binary_new(zval* object, const char* data, size_t data_len, bson_subtype_t type)

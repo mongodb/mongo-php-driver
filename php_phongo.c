@@ -155,14 +155,6 @@ static zend_class_entry* php_phongo_fetch_internal_class(const char* class_name,
 	return NULL;
 }
 
-static HashTable* php_phongo_std_get_gc(zend_object* object, zval** table, int* n)
-{
-	*table = NULL;
-	*n     = 0;
-	return object->handlers->get_properties(object);
-}
-
-
 PHP_MINIT_FUNCTION(mongodb) /* {{{ */
 {
 	bson_mem_vtable_t bson_mem_vtable = {
@@ -198,7 +190,6 @@ PHP_MINIT_FUNCTION(mongodb) /* {{{ */
 	/* Disable cloning by default. Individual classes can opt in if they need to
 	 * support this (e.g. BSON objects). */
 	phongo_std_object_handlers.clone_obj = NULL;
-	phongo_std_object_handlers.get_gc = php_phongo_std_get_gc;
 
 	/* Initialize zend_class_entry dependencies.
 	 *
