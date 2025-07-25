@@ -68,20 +68,14 @@ zend_object_handlers* phongo_get_std_object_handlers(void);
 
 #define PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_temp, intern, props, size) \
 	do {                                                                  \
-		if (!(intern)->php_properties) {                                  \
-			ALLOC_HASHTABLE((intern)->php_properties);                    \
-			zend_hash_init((intern)->php_properties, 0, NULL, ZVAL_PTR_DTOR, 0); \
-			GC_ADDREF((intern)->php_properties); \
-		}                                                                 \
 		if (is_temp) {                                                    \
-			(props) = zend_array_dup((intern)->php_properties);           \
+			ALLOC_HASHTABLE(props);                                       \
+			zend_hash_init((props), (size), NULL, ZVAL_PTR_DTOR, 0);      \
+		} else if ((intern)->properties) {                                \
+			(props) = (intern)->properties;                               \
 		} else {                                                          \
-			(props) = zend_array_dup((intern)->php_properties);           \
-			if ((intern)->properties) {                                   \
-				HashTable *__tmp = (intern)->properties; \
-				(intern)->properties = NULL; \
-				zend_hash_release(__tmp);                    \
-			}                                                             \
+			ALLOC_HASHTABLE(props);                                       \
+			zend_hash_init((props), (size), NULL, ZVAL_PTR_DTOR, 0);      \
 			(intern)->properties = (props);                               \
 		}                                                                 \
 	} while (0)
@@ -102,7 +96,11 @@ zend_object_handlers* phongo_get_std_object_handlers(void);
 			zend_hash_init(props, 0, NULL, ZVAL_PTR_DTOR, 0); \
 			_intern_extractor(zobj)->php_properties = props; \
 		} \
-		return zend_hash_find(props, member); \
+		zval *ret = zend_hash_find(props, member); \
+		if (ret) { \
+			return ret; \
+		} \
+		return &EG(uninitialized_zval); \
 	} \
 	\
 	static zval *php_phongo_##_name##_write_property(zend_object *zobj, zend_string *name, zval *value, void **cache_slot) \
