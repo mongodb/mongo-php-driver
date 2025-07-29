@@ -72,8 +72,9 @@ jobs:
           version: ${{ matrix.php-version }}
 
       - name: "Run Tests"
-        run: TEST_PHP_ARGS="-q -x --show-diff -g FAIL,XFAIL,BORK,WARN,LEAK,SKIP" make test
+        run: make test
         env:
+          TEST_PHP_ARGS: "-q -x --show-diff -g FAIL,XFAIL,BORK,WARN,LEAK,SKIP"
           MONGODB_URI: ${{ steps.setup-mongodb.outputs.cluster-uri }}
 
   pecl-test:
@@ -177,6 +178,7 @@ jobs:
           topology: "server"
 
       - name: "Run Tests"
-        run: TEST_PHP_ARGS="-q -x --show-diff -g FAIL,XFAIL,BORK,WARN,LEAK,SKIP" make test
+        run: make test
         env:
+          TEST_PHP_ARGS: "-q -x --show-diff -g FAIL,XFAIL,BORK,WARN,LEAK,SKIP"
           MONGODB_URI: ${{ steps.setup-mongodb.outputs.cluster-uri }}
