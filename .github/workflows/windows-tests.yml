@@ -95,5 +95,14 @@ jobs:
           NO_INTERACTION: 1
           REPORT_EXIT_STATUS: 1
           TESTS: --show-diff
+          TEST_PHP_JUNIT: "test-results.xml"
           MONGODB_URI: ${{ steps.setup-mongodb.outputs.cluster-uri }}
           CRYPT_SHARED_LIB_PATH: ${{ steps.setup-mongodb.outputs.crypt-shared-lib-path }}
+
+      - name: Upload test results to Codecov
+        uses: codecov/test-results-action@v1
+        with:
+          disable_search: true
+          files: test-results.xml
+          flags: "${{ matrix.mongodb-version }}-${{ matrix.topology }}"
+          token: ${{ secrets.CODECOV_TOKEN }}
