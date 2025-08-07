@@ -7,6 +7,47 @@ Atlas Connectivity Tests
 <?php
 require_once __DIR__ . "/utils/basic.inc";
 
+function extractUri(string $env): ?string
+{
+	return getenv($env) ?: null;
+}
+
+function extractUriWithCertificate(string $env): ?string
+{
+	$uri = getenv($env);
+	if (! is_string($uri)) {
+		return null;
+	}
+
+	$cert = getenv($env . '_CERT_BASE64');
+	if (! is_string($cert)) {
+		return null;
+	}
+
+	$certPath = '/tmp/cert.pem';
+	file_put_contents($certPath, base64_decode($cert));
+
+	return $uri . '&tlsCertificateKeyFile=' . $certPath;
+}
+
+function testConnection(string $uri): void
+{
+	try {
+		$m = new \MongoDB\Driver\Manager($uri);
+		$m->executeCommand(
+			'admin',
+			new \MongoDB\Driver\Command(['ping' => 1]),
+		);
+		iterator_to_array($m->executeQuery(
+			'test.test',
+			new \MongoDB\Driver\Query([]),
+		));
+		echo "PASS\n";
+	} catch(Exception $e) {
+		echo "FAIL: ", $e->getMessage(), "\n";
+	}
+}
+
 $envs = [
 	'ATLAS_SERVERLESS',
 	'ATLAS_SRV_SERVERLESS',
@@ -22,57 +63,32 @@ $envs = [
 	'ATLAS_SRV_TLS12',
 ];
 $x509Envs = [
-    'ATLAS_X509',
-    'ATLAS_X509_DEV',
+	'ATLAS_X509',
+	'ATLAS_X509_DEV',
 ];
-
-$command = new \MongoDB\Driver\Command(['ping' => 1]);
-$query = new \MongoDB\Driver\Query([]);
 
 foreach ($envs as $env) {
 	echo $env, ': ';
-	$uri = getenv($env);
+	$uri = extractUri($env);
 
 	if (! is_string($uri)) {
 		echo "FAIL: env var is undefined\n";
 		continue;
 	}
 
-	try {
-		$m = new \MongoDB\Driver\Manager($uri);
-		$m->executeCommand('admin', $command);
-		iterator_to_array($m->executeQuery('test.test', $query));
-		echo "PASS\n";
-	} catch(Exception $e) {
-		echo "FAIL: ", $e->getMessage(), "\n";
-	}
+	testConnection($uri);
 }
 
 foreach ($x509Envs as $env) {
 	echo $env, ': ';
-	$uri = getenv($env);
-	$cert = getenv($env . '_CERT_BASE64');
+	$uri = extractUriWithCertificate($env);
 
 	if (! is_string($uri)) {
 		echo "FAIL: env var is undefined\n";
 		continue;
 	}
 
-	if (! is_string($cert)) {
-		echo "FAIL: cert env var is undefined\n";
-		continue;
-	}
-
-	file_put_contents('/tmp/cert.pem', base64_decode($cert));
-
-	try {
-		$m = new \MongoDB\Driver\Manager($uri . '&tlsCertificateKeyFile=/tmp/cert.pem');
-		$m->executeCommand('admin', $command);
-		iterator_to_array($m->executeQuery('test.test', $query));
-		echo "PASS\n";
-	} catch(Exception $e) {
-		echo "FAIL: ", $e->getMessage(), "\n";
-	}
+	testConnection($uri);
 }
 
 ?>
