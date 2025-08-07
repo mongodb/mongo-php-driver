@@ -21,6 +21,10 @@ $envs = [
 	'ATLAS_TLS12',
 	'ATLAS_SRV_TLS12',
 ];
+$x509Envs = [
+    'ATLAS_X509',
+    'ATLAS_X509_DEV',
+];
 
 $command = new \MongoDB\Driver\Command(['ping' => 1]);
 $query = new \MongoDB\Driver\Query([]);
@@ -43,6 +47,34 @@ foreach ($envs as $env) {
 		echo "FAIL: ", $e->getMessage(), "\n";
 	}
 }
+
+foreach ($x509Envs as $env) {
+	echo $env, ': ';
+	$uri = getenv($env);
+	$cert = getenv($env . '_CERT_BASE64');
+
+	if (! is_string($uri)) {
+		echo "FAIL: env var is undefined\n";
+		continue;
+	}
+
+	if (! is_string($cert)) {
+		echo "FAIL: cert env var is undefined\n";
+		continue;
+	}
+
+	file_put_contents('/tmp/cert.pem', base64_decode($cert));
+
+	try {
+		$m = new \MongoDB\Driver\Manager($uri . '&tlsCertificateKeyFile=/tmp/cert.pem');
+		$m->executeCommand('admin', $command);
+		iterator_to_array($m->executeQuery('test.test', $query));
+		echo "PASS\n";
+	} catch(Exception $e) {
+		echo "FAIL: ", $e->getMessage(), "\n";
+	}
+}
+
 ?>
 ===DONE===
 <?php exit(0); ?>
@@ -59,4 +91,6 @@ ATLAS_TLS11: PASS
 ATLAS_SRV_TLS11: PASS
 ATLAS_TLS12: PASS
 ATLAS_SRV_TLS12: PASS
+ATLAS_X509: PASS
+ATLAS_X509_DEV: PASS
 ===DONE===
