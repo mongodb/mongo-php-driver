@@ -12,7 +12,7 @@ function extractUri(string $env): ?string
 	return getenv($env) ?: null;
 }
 
-function extractUriWithCertificate(string $env): ?string
+function extractUriWithCertificate(string $env): ?array
 {
 	$uri = getenv($env);
 	if (! is_string($uri)) {
@@ -24,10 +24,19 @@ function extractUriWithCertificate(string $env): ?string
 		return null;
 	}
 
-	$certPath = '/tmp/cert.pem';
-	file_put_contents($certPath, base64_decode($cert));
+	$certPath = tempnam(sys_get_temp_dir(), 'cert_');
+	$certContents = base64_decode($cert);
+	if (! $certPath || ! $certContents) {
+		return null;
+	}
 
-	return $uri . '&tlsCertificateKeyFile=' . $certPath;
+	file_put_contents($certPath, $certContents);
+	chmod($certPath, 0600);
+
+	return [
+		'uri' => $uri . '&tlsCertificateKeyFile=' . $certPath,
+		'certPath' => $certPath,
+	];
 }
 
 function testConnection(string $uri): void
@@ -81,14 +90,20 @@ foreach ($envs as $env) {
 
 foreach ($x509Envs as $env) {
 	echo $env, ': ';
-	$uri = extractUriWithCertificate($env);
+	$uriWithCertificate = extractUriWithCertificate($env);
 
-	if (! is_string($uri)) {
+	if (! is_array($uriWithCertificate)) {
 		echo "FAIL: env var is undefined\n";
 		continue;
 	}
 
-	testConnection($uri);
+	['uri' => $uri, 'certPath' => $certPath] = $uriWithCertificate;
+
+	try {
+		testConnection($uri);
+	} finally {
+		@unlink($certPath);
+	}
 }
 
 ?>
