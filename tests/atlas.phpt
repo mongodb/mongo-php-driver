@@ -26,7 +26,6 @@ function extractUriWithCertificate(string $env): ?array
 	}
 
 	file_put_contents($certPath, $certContents);
-	chmod($certPath, 0600);
 
 	return [
 		'uri' => $uri . '&tlsCertificateKeyFile=' . $certPath,
