@@ -7,6 +7,50 @@ Atlas Connectivity Tests
 <?php
 require_once __DIR__ . "/utils/basic.inc";
 
+function extractUriWithCertificate(string $env): ?array
+{
+	$uri = getenv($env);
+	if (! is_string($uri)) {
+		return null;
+	}
+
+	$cert = getenv($env . '_CERT_BASE64');
+	if (! is_string($cert)) {
+		return null;
+	}
+
+	$certPath = tempnam(sys_get_temp_dir(), 'cert_');
+	$certContents = base64_decode($cert);
+	if (! $certPath || ! $certContents) {
+		return null;
+	}
+
+	file_put_contents($certPath, $certContents);
+
+	return [
+		'uri' => $uri . '&tlsCertificateKeyFile=' . $certPath,
+		'certPath' => $certPath,
+	];
+}
+
+function testConnection(string $uri): void
+{
+	try {
+		$m = new \MongoDB\Driver\Manager($uri);
+		$m->executeCommand(
+			'admin',
+			new \MongoDB\Driver\Command(['ping' => 1]),
+		);
+		iterator_to_array($m->executeQuery(
+			'test.test',
+			new \MongoDB\Driver\Query([]),
+		));
+		echo "PASS\n";
+	} catch(Exception $e) {
+		echo "FAIL: ", $e->getMessage(), "\n";
+	}
+}
+
 $envs = [
 	'ATLAS_SERVERLESS',
 	'ATLAS_SRV_SERVERLESS',
@@ -21,9 +65,10 @@ $envs = [
 	'ATLAS_TLS12',
 	'ATLAS_SRV_TLS12',
 ];
-
-$command = new \MongoDB\Driver\Command(['ping' => 1]);
-$query = new \MongoDB\Driver\Query([]);
+$x509Envs = [
+	'ATLAS_X509',
+	'ATLAS_X509_DEV',
+];
 
 foreach ($envs as $env) {
 	echo $env, ': ';
@@ -34,15 +79,27 @@ foreach ($envs as $env) {
 		continue;
 	}
 
+	testConnection($uri);
+}
+
+foreach ($x509Envs as $env) {
+	echo $env, ': ';
+	$uriWithCertificate = extractUriWithCertificate($env);
+
+	if (! is_array($uriWithCertificate)) {
+		echo "FAIL: env var is undefined\n";
+		continue;
+	}
+
+	['uri' => $uri, 'certPath' => $certPath] = $uriWithCertificate;
+
 	try {
-		$m = new \MongoDB\Driver\Manager($uri);
-		$m->executeCommand('admin', $command);
-		iterator_to_array($m->executeQuery('test.test', $query));
-		echo "PASS\n";
-	} catch(Exception $e) {
-		echo "FAIL: ", $e->getMessage(), "\n";
+		testConnection($uri);
+	} finally {
+		@unlink($certPath);
 	}
 }
+
 ?>
 ===DONE===
 <?php exit(0); ?>
@@ -59,4 +116,6 @@ ATLAS_TLS11: PASS
 ATLAS_SRV_TLS11: PASS
 ATLAS_TLS12: PASS
 ATLAS_SRV_TLS12: PASS
+ATLAS_X509: PASS
+ATLAS_X509_DEV: PASS
 ===DONE===
