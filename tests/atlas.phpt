@@ -7,11 +7,6 @@ Atlas Connectivity Tests
 <?php
 require_once __DIR__ . "/utils/basic.inc";
 
-function extractUri(string $env): ?string
-{
-	return getenv($env) ?: null;
-}
-
 function extractUriWithCertificate(string $env): ?array
 {
 	$uri = getenv($env);
@@ -78,7 +73,7 @@ $x509Envs = [
 
 foreach ($envs as $env) {
 	echo $env, ': ';
-	$uri = extractUri($env);
+	$uri = getenv($env);
 
 	if (! is_string($uri)) {
 		echo "FAIL: env var is undefined\n";
