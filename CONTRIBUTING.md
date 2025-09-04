@@ -138,7 +138,7 @@ The test suite references the following environment variables:
    [drivers-evergreen-tools](https://github.com/mongodb-labs/drivers-evergreen-tools).
    If undefined or inaccessible, tests requiring certificates will be skipped.
 
-The following environment variable is used for [stable API testing](https://github.com/mongodb/specifications/blob/master/source/versioned-api/tests/README.rst):
+The following environment variable is used for [stable API testing](https://github.com/mongodb/specifications/blob/master/source/versioned-api/tests/README.md):
 
  * `API_VERSION`: If defined, this value will be used to construct a
    [`MongoDB\Driver\ServerApi`](https://www.php.net/manual/en/mongodb-driver-serverapi.construct.php),
@@ -146,7 +146,7 @@ The following environment variable is used for [stable API testing](https://gith
    [`MongoDB\Driver\Manager`](https://www.php.net/manual/en/class.mongodb-driver-manager.php)
    objects created by the test suite.
 
-The following environment variables are used for [CSFLE testing](https://github.com/mongodb/specifications/blob/master/source/client-side-encryption/tests/README.rst):
+The following environment variables are used for [CSFLE testing](https://github.com/mongodb/specifications/blob/master/source/client-side-encryption/tests/README.md):
 
  * `CRYPT_SHARED_LIB_PATH`: If defined, this value will be used to set the
    `cryptSharedLibPath` autoEncryption driver option for
