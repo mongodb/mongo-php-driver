@@ -2,7 +2,7 @@
 MongoDB\Driver\WriteError::getInfo() exposes writeError.errInfo
 --DESCRIPTION--
 CRUD spec prose test #2
-https://github.com/mongodb/specifications/blob/master/source/crud/tests/README.md#writeerror-details-exposes-writeerrors-errinfo
+https://github.com/mongodb/specifications/blob/master/source/crud/tests/README.md#2-writeerrordetails-exposes-writeerrorserrinfo
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_server_version('<', '5.0'); ?>

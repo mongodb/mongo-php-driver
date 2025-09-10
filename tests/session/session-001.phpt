@@ -2,7 +2,7 @@
 MongoDB\Driver\Session spec test: Pool is LIFO
 --DESCRIPTION--
 Session spec prose test #2: Pool is LIFO
-https://github.com/mongodb/specifications/blob/master/source/sessions/tests/README.md#pool-is-lifo
+https://github.com/mongodb/specifications/blob/master/source/sessions/tests/README.md#2-pool-is-lifo
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_libmongoc_crypto(); ?>
