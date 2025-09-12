@@ -266,7 +266,7 @@ if test "$PHP_MONGODB" != "no"; then
     ])
 
     if test "$PHP_MONGODB_CLIENT_SIDE_ENCRYPTION" != "no"; then
-      PKG_CHECK_MODULES([PHP_MONGODB_MONGOCRYPT], [libmongocrypt >= 1.14.1], [
+      PKG_CHECK_MODULES([PHP_MONGODB_MONGOCRYPT], [libmongocrypt >= 1.16.0], [
         PHP_MONGODB_MONGOCRYPT_VERSION=`$PKG_CONFIG libmongocrypt --modversion`
         PHP_MONGODB_MONGOCRYPT_VERSION_STRING="System ($PHP_MONGODB_MONGOCRYPT_VERSION)"
 
@@ -274,7 +274,7 @@ if test "$PHP_MONGODB" != "no"; then
         PHP_EVAL_LIBLINE($PHP_MONGODB_MONGOCRYPT_LIBS, MONGODB_SHARED_LIBADD)
         AC_DEFINE(HAVE_SYSTEM_LIBMONGOCRYPT, 1, [Use system libmongocrypt])
       ],[
-        AC_MSG_ERROR(Could not find system library for libmongocrypt >= 1.14.1)
+        AC_MSG_ERROR(Could not find system library for libmongocrypt >= 1.16.0)
       ])
     fi
   fi
@@ -426,7 +426,7 @@ if test "$PHP_MONGODB" != "no"; then
       AC_SUBST(MONGOCRYPT_ENABLE_TRACE, 1)
 
       dnl Sources below are updated by scripts/update-submodule-sources.php
-      PHP_MONGODB_MONGOCRYPT_SOURCES="mc-array.c mc-efc.c mc-fle2-encryption-placeholder.c mc-fle2-find-equality-payload.c mc-fle2-find-equality-payload-v2.c mc-fle2-find-range-payload.c mc-fle2-find-range-payload-v2.c mc-fle2-find-text-payload.c mc-fle2-insert-update-payload.c mc-fle2-insert-update-payload-v2.c mc-fle2-payload-iev.c mc-fle2-payload-iev-v2.c mc-fle2-payload-uev.c mc-fle2-payload-uev-common.c mc-fle2-payload-uev-v2.c mc-fle2-rfds.c mc-fle2-tag-and-encrypted-metadata-block.c mc-parse-utils.c mc-range-edge-generation.c mc-range-encoding.c mc-range-mincover.c mc-rangeopts.c mc-reader.c mc-schema-broker.c mc-str-encode-string-sets.c mc-text-search-str-encode.c mc-tokens.c mc-writer.c mongocrypt-binary.c mongocrypt-buffer.c mongocrypt.c mongocrypt-cache.c mongocrypt-cache-collinfo.c mongocrypt-cache-key.c mongocrypt-cache-oauth.c mongocrypt-ciphertext.c mongocrypt-crypto.c mongocrypt-ctx.c mongocrypt-ctx-datakey.c mongocrypt-ctx-decrypt.c mongocrypt-ctx-encrypt.c mongocrypt-ctx-rewrap-many-datakey.c mongocrypt-endpoint.c mongocrypt-kek.c mongocrypt-key-broker.c mongocrypt-key.c mongocrypt-kms-ctx.c mongocrypt-log.c mongocrypt-marking.c mongocrypt-opts.c mongocrypt-status.c mongocrypt-traverse-util.c mongocrypt-util.c"
+      PHP_MONGODB_MONGOCRYPT_SOURCES="mc-array.c mc-efc.c mc-fle2-encryption-placeholder.c mc-fle2-find-equality-payload.c mc-fle2-find-equality-payload-v2.c mc-fle2-find-range-payload.c mc-fle2-find-range-payload-v2.c mc-fle2-find-text-payload.c mc-fle2-insert-update-payload.c mc-fle2-insert-update-payload-v2.c mc-fle2-payload-iev.c mc-fle2-payload-iev-v2.c mc-fle2-payload-uev.c mc-fle2-payload-uev-common.c mc-fle2-payload-uev-v2.c mc-fle2-rfds.c mc-fle2-tag-and-encrypted-metadata-block.c mc-parse-utils.c mc-range-edge-generation.c mc-range-encoding.c mc-range-mincover.c mc-rangeopts.c mc-reader.c mc-schema-broker.c mc-str-encode-string-sets.c mc-textopts.c mc-text-search-str-encode.c mc-tokens.c mc-writer.c mongocrypt-binary.c mongocrypt-buffer.c mongocrypt.c mongocrypt-cache.c mongocrypt-cache-collinfo.c mongocrypt-cache-key.c mongocrypt-cache-oauth.c mongocrypt-ciphertext.c mongocrypt-crypto.c mongocrypt-ctx.c mongocrypt-ctx-datakey.c mongocrypt-ctx-decrypt.c mongocrypt-ctx-encrypt.c mongocrypt-ctx-rewrap-many-datakey.c mongocrypt-endpoint.c mongocrypt-kek.c mongocrypt-key-broker.c mongocrypt-key.c mongocrypt-kms-ctx.c mongocrypt-log.c mongocrypt-marking.c mongocrypt-opts.c mongocrypt-status.c mongocrypt-traverse-util.c mongocrypt-util.c"
       PHP_MONGODB_MONGOCRYPT_CRYPTO_SOURCES="cng.c commoncrypto.c libcrypto.c none.c"
       PHP_MONGODB_MONGOCRYPT_OS_POSIX_SOURCES="os_dll.c os_mutex.c"
       PHP_MONGODB_MONGOCRYPT_OS_WIN_SOURCES="os_dll.c os_mutex.c"
