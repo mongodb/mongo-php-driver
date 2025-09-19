@@ -22,7 +22,7 @@ runs:
   steps:
     - name: Setup PHP SDK
       id: setup-php
-      uses: php/setup-php-sdk@v0.10
+      uses: php/setup-php-sdk@v0.11
       with:
         version: ${{ inputs.version }}
         arch: ${{ inputs.arch }}
