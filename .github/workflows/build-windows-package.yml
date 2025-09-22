@@ -83,14 +83,14 @@ jobs:
 
     steps:
       - name: "Generate token and checkout repository"
-        uses: mongodb-labs/drivers-github-tools/secure-checkout@v2
+        uses: mongodb-labs/drivers-github-tools/secure-checkout@v3
         with:
           app_id: ${{ vars.APP_ID }}
           private_key: ${{ secrets.APP_PRIVATE_KEY }}
           ref: ${{ inputs.ref }}
 
       - name: "Set up drivers-github-tools"
-        uses: mongodb-labs/drivers-github-tools/setup@v2
+        uses: mongodb-labs/drivers-github-tools/setup@v3
         with:
           aws_role_arn: ${{ secrets.AWS_ROLE_ARN }}
           aws_region_name: ${{ vars.AWS_REGION_NAME }}
@@ -108,7 +108,7 @@ jobs:
             php_mongodb.pdb
 
       - name: "Create detached DLL signature"
-        uses: mongodb-labs/drivers-github-tools/gpg-sign@v2
+        uses: mongodb-labs/drivers-github-tools/gpg-sign@v3
         with:
           filenames: php_mongodb.dll
 
