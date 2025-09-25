@@ -72,9 +72,19 @@ jobs:
           version: ${{ matrix.php-version }}
 
       - name: "Run Tests"
-        run: TEST_PHP_ARGS="-q -x --show-diff -g FAIL,XFAIL,BORK,WARN,LEAK,SKIP" make test
+        run: make test
         env:
+          TEST_PHP_ARGS: "-q -x --show-diff -g FAIL,XFAIL,BORK,WARN,LEAK,SKIP"
+          TEST_PHP_JUNIT: "test-results.xml"
           MONGODB_URI: ${{ steps.setup-mongodb.outputs.cluster-uri }}
+
+      - name: Upload test results to Codecov
+        uses: codecov/test-results-action@v1
+        with:
+          disable_search: true
+          files: test-results.xml
+          flags: "${{ matrix.mongodb-version }}-${{ matrix.topology }}"
+          token: ${{ secrets.CODECOV_TOKEN }}
 
   pecl-test:
     name: "Test PECL package"
@@ -177,6 +187,16 @@ jobs:
           topology: "server"
 
       - name: "Run Tests"
-        run: TEST_PHP_ARGS="-q -x --show-diff -g FAIL,XFAIL,BORK,WARN,LEAK,SKIP" make test
+        run: make test
         env:
+          TEST_PHP_ARGS: "-q -x --show-diff -g FAIL,XFAIL,BORK,WARN,LEAK,SKIP"
+          TEST_PHP_JUNIT: "test-results.xml"
           MONGODB_URI: ${{ steps.setup-mongodb.outputs.cluster-uri }}
+
+      - name: Upload test results to Codecov
+        uses: codecov/test-results-action@v1
+        with:
+          disable_search: true
+          files: test-results.xml
+          flags: "${{ ENV.SERVER_VERSION }}-server"
+          token: ${{ secrets.CODECOV_TOKEN }}
