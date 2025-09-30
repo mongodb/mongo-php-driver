@@ -4,7 +4,7 @@ MongoDB\BSON\Binary::fromVector() construction of various vector types
 <?php
 
 var_dump(MongoDB\BSON\Binary::fromVector([1.0, -1.0, 0.5, -0.5], MongoDB\BSON\VectorType::Float32));
-var_dump(MongoDB\BSON\Binary::fromVector([1, 2, 3, 4], MongoDB\BSON\VectorType::Int8));
+var_dump(MongoDB\BSON\Binary::fromVector([-128, 0, 1, 127], MongoDB\BSON\VectorType::Int8));
 var_dump(MongoDB\BSON\Binary::fromVector([1, 0, true, false], MongoDB\BSON\VectorType::PackedBit));
 
 ?>
@@ -38,13 +38,13 @@ object(MongoDB\BSON\Binary)#%d (%d) {
   ["vector"]=>
   array(4) {
     [0]=>
-    int(1)
+    int(-128)
     [1]=>
-    int(2)
+    int(0)
     [2]=>
-    int(3)
+    int(1)
     [3]=>
-    int(4)
+    int(127)
   }
   ["vectorType"]=>
   int(3)

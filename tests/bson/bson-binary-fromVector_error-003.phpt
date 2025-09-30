@@ -24,7 +24,7 @@ echo throws(function() {
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Expected vector to be a list
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected vector[1] to be an integer or boolean, float given
+Expected vector[1] to be 0, 1, or a boolean, float given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Expected vector[1] to be 0 or 1, 2 given
 ===DONE===

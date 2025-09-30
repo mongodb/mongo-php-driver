@@ -24,6 +24,7 @@
 #include "phongo_error.h"
 #include "Binary.h"
 #include "Binary_arginfo.h"
+#include "VectorType.h"
 
 zend_class_entry* php_phongo_binary_ce;
 
@@ -45,7 +46,7 @@ static bool php_phongo_binary_init(php_phongo_binary_t* intern, const char* data
 		return false;
 	}
 
-	if ((type == BSON_SUBTYPE_VECTOR) && phongo_binary_get_vector_type_from_data((const uint8_t*) data, data_len) == PHONGO_BSON_VECTOR_TYPE_INVALID) {
+	if ((type == BSON_SUBTYPE_VECTOR) && phongo_binary_get_vector_type_from_data((const uint8_t*) data, data_len) == PHONGO_BSON_VECTOR_TYPE_UNKNOWN) {
 		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Binary vector data is invalid");
 		return false;
 	}
@@ -459,11 +460,11 @@ static void phongo_binary_init_vector_from_packed_bit_array(php_phongo_binary_t*
 	ZEND_HASH_FOREACH_VAL_IND(vector, val)
 	{
 		if (Z_TYPE_P(val) != IS_LONG && Z_TYPE_P(val) != IS_TRUE && Z_TYPE_P(val) != IS_FALSE) {
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected vector[%zu] to be an integer or boolean, %s given", i, zend_zval_type_name(val));
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected vector[%zu] to be 0, 1, or a boolean, %s given", i, zend_zval_type_name(val));
 			return;
 		}
 
-		if (Z_TYPE_P(val) == IS_LONG && (Z_LVAL_P(val) < 0 || Z_LVAL_P(val) > 1)) {
+		if (Z_TYPE_P(val) == IS_LONG && Z_LVAL_P(val) != 0 && Z_LVAL_P(val) != 1) {
 			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected vector[%zu] to be 0 or 1, %" PHONGO_LONG_FORMAT " given", i, Z_LVAL_P(val));
 			return;
 		}
@@ -484,8 +485,8 @@ static void phongo_binary_init_vector_from_packed_bit_array(php_phongo_binary_t*
 
 static PHP_METHOD(MongoDB_BSON_Binary, fromVector)
 {
-	HashTable*           vector;
-	zend_object*         type;
+	HashTable*   vector;
+	zend_object* type;
 
 	object_init_ex(return_value, php_phongo_binary_ce);
 	php_phongo_binary_t* intern = Z_BINARY_OBJ_P(return_value);
@@ -495,25 +496,20 @@ static PHP_METHOD(MongoDB_BSON_Binary, fromVector)
 	Z_PARAM_OBJ_OF_CLASS(type, php_phongo_vectortype_ce)
 	PHONGO_PARSE_PARAMETERS_END();
 
-	zval *type_name = zend_enum_fetch_case_name(type);
-
-	if (zend_string_equals_literal(Z_STR_P(type_name), "Float32")) {
-		phongo_binary_init_vector_from_float32_array(intern, vector);
-		return;
+	switch (phongo_bson_vector_type_from_name(Z_STRVAL_P(zend_enum_fetch_case_name(type)))) {
+		case PHONGO_BSON_VECTOR_TYPE_FLOAT32:
+			phongo_binary_init_vector_from_float32_array(intern, vector);
+			return;
+		case PHONGO_BSON_VECTOR_TYPE_INT8:
+			phongo_binary_init_vector_from_int8_array(intern, vector);
+			return;
+		case PHONGO_BSON_VECTOR_TYPE_PACKED_BIT:
+			phongo_binary_init_vector_from_packed_bit_array(intern, vector);
+			return;
+		default:
+			phongo_throw_exception(PHONGO_ERROR_LOGIC, "Unsupported binary vector type: %s", Z_STRVAL_P(zend_enum_fetch_case_name(type)));
+			RETURN_THROWS();
 	}
-
-	if (zend_string_equals_literal(Z_STR_P(type_name), "Int8")) {
-		phongo_binary_init_vector_from_int8_array(intern, vector);
-		return;
-	}
-
-	if (zend_string_equals_literal(Z_STR_P(type_name), "PackedBit")) {
-		phongo_binary_init_vector_from_packed_bit_array(intern, vector);
-		return;
-	}
-
-	phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Unsupported binary vector type: %s", Z_STR_P(type_name));
-	RETURN_THROWS();
 }
 
 static phongo_bson_vector_type_t phongo_binary_get_vector_type_from_data(const uint8_t* data, uint32_t data_len)
@@ -530,7 +526,7 @@ static phongo_bson_vector_type_t phongo_binary_get_vector_type_from_data(const u
 		return PHONGO_BSON_VECTOR_TYPE_PACKED_BIT;
 	}
 
-	return PHONGO_BSON_VECTOR_TYPE_INVALID;
+	return PHONGO_BSON_VECTOR_TYPE_UNKNOWN;
 }
 
 static phongo_bson_vector_type_t phongo_binary_get_vector_type(const php_phongo_binary_t* intern)
@@ -549,23 +545,12 @@ static PHP_METHOD(MongoDB_BSON_Binary, getVectorType)
 		RETURN_THROWS();
 	}
 
-	phongo_bson_vector_type_t type = phongo_binary_get_vector_type(Z_BINARY_OBJ_P(getThis()));
-	const char *type_case;
+	const char* type_case = phongo_bson_vector_type_to_name(phongo_binary_get_vector_type(Z_BINARY_OBJ_P(getThis())));
 
-	switch (type) {
-		case PHONGO_BSON_VECTOR_TYPE_FLOAT32:
-			type_case = "Float32";
-			break;
-		case PHONGO_BSON_VECTOR_TYPE_INT8:
-			type_case = "Int8";
-			break;
-		case PHONGO_BSON_VECTOR_TYPE_PACKED_BIT:
-			type_case = "PackedBit";
-			break;
-		default:
-			// The vector should always be valid by this point, but check for an error
-			phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Binary vector data is invalid");
-			RETURN_THROWS();
+	// The vector should always be valid by this point, but check for an error
+	if (!type_case) {
+		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Binary vector data is invalid");
+		RETURN_THROWS();
 	}
 
 	RETVAL_OBJ_COPY(zend_enum_get_case_cstr(php_phongo_vectortype_ce, type_case));
@@ -576,7 +561,7 @@ static void phongo_binary_get_vector_as_array(const php_phongo_binary_t* intern,
 	phongo_bson_vector_type_t type = phongo_binary_get_vector_type(intern);
 
 	// The vector should always be valid by this point, but check for an error
-	if (type == PHONGO_BSON_VECTOR_TYPE_INVALID) {
+	if (type == PHONGO_BSON_VECTOR_TYPE_UNKNOWN) {
 		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Binary vector data is invalid");
 		RETURN_THROWS();
 	}

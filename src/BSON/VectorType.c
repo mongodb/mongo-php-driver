@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-present MongoDB, Inc.
+ * Copyright 2025-present MongoDB, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,9 +18,41 @@
 #include <Zend/zend_enum.h>
 
 #include "php_phongo.h"
+#include "VectorType.h"
 #include "VectorType_arginfo.h"
 
 zend_class_entry* php_phongo_vectortype_ce;
+
+phongo_bson_vector_type_t phongo_bson_vector_type_from_name(const char* name)
+{
+	if (!strcmp(name, PHONGO_BSON_VECTOR_TYPE_FLOAT32_NAME)) {
+		return PHONGO_BSON_VECTOR_TYPE_FLOAT32;
+	}
+
+	if (!strcmp(name, PHONGO_BSON_VECTOR_TYPE_INT8_NAME)) {
+		return PHONGO_BSON_VECTOR_TYPE_INT8;
+	}
+
+	if (!strcmp(name, PHONGO_BSON_VECTOR_TYPE_PACKED_BIT_NAME)) {
+		return PHONGO_BSON_VECTOR_TYPE_PACKED_BIT;
+	}
+
+	return PHONGO_BSON_VECTOR_TYPE_UNKNOWN;
+}
+
+const char* phongo_bson_vector_type_to_name(phongo_bson_vector_type_t type)
+{
+	switch (type) {
+		case PHONGO_BSON_VECTOR_TYPE_FLOAT32:
+			return PHONGO_BSON_VECTOR_TYPE_FLOAT32_NAME;
+		case PHONGO_BSON_VECTOR_TYPE_INT8:
+			return PHONGO_BSON_VECTOR_TYPE_INT8_NAME;
+		case PHONGO_BSON_VECTOR_TYPE_PACKED_BIT:
+			return PHONGO_BSON_VECTOR_TYPE_PACKED_BIT_NAME;
+		default:
+			return NULL;
+	}
+}
 
 void php_phongo_vectortype_init_ce(INIT_FUNC_ARGS)
 {

@@ -19,13 +19,6 @@
 
 #define PHONGO_BINARY_UUID_SIZE 16
 
-typedef enum {
-	PHONGO_BSON_VECTOR_TYPE_INVALID    = 0,
-	PHONGO_BSON_VECTOR_TYPE_INT8       = 0x03,
-	PHONGO_BSON_VECTOR_TYPE_FLOAT32    = 0x27,
-	PHONGO_BSON_VECTOR_TYPE_PACKED_BIT = 0x10,
-} phongo_bson_vector_type_t;
-
 bool phongo_binary_new(zval* object, const char* data, size_t data_len, bson_subtype_t type);
 
 #endif /* PHONGO_BSON_BINARY_H */
