@@ -112,7 +112,7 @@ object(MongoDB\BSON\Binary)#%d (%d) {
     int(4)
   }
   ["vectorType"]=>
-  int(3)
+  enum(MongoDB\BSON\VectorType::Int8)
 }
 string(70) "O:19:"MongoDB\BSON\Binary":2:{s:4:"data";s:6:"%a";s:4:"type";i:9;}"
 object(MongoDB\BSON\Binary)#%d (%d) {
@@ -132,7 +132,7 @@ object(MongoDB\BSON\Binary)#%d (%d) {
     int(4)
   }
   ["vectorType"]=>
-  int(3)
+  enum(MongoDB\BSON\VectorType::Int8)
 }
 
 ===DONE===

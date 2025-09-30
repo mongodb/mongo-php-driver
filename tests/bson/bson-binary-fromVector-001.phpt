@@ -28,7 +28,7 @@ object(MongoDB\BSON\Binary)#%d (%d) {
     float(-0.5)
   }
   ["vectorType"]=>
-  int(39)
+  enum(MongoDB\BSON\VectorType::Float32)
 }
 object(MongoDB\BSON\Binary)#%d (%d) {
   ["data"]=>
@@ -47,7 +47,7 @@ object(MongoDB\BSON\Binary)#%d (%d) {
     int(127)
   }
   ["vectorType"]=>
-  int(3)
+  enum(MongoDB\BSON\VectorType::Int8)
 }
 object(MongoDB\BSON\Binary)#%d (%d) {
   ["data"]=>
@@ -66,6 +66,6 @@ object(MongoDB\BSON\Binary)#%d (%d) {
     int(0)
   }
   ["vectorType"]=>
-  int(16)
+  enum(MongoDB\BSON\VectorType::PackedBit)
 }
 ===DONE===

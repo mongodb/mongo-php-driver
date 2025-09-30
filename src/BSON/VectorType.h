@@ -30,5 +30,7 @@ typedef enum {
 
 phongo_bson_vector_type_t phongo_bson_vector_type_from_name(const char* name);
 const char*               phongo_bson_vector_type_to_name(phongo_bson_vector_type_t type);
+phongo_bson_vector_type_t phongo_bson_vector_type_from_case(zend_object* case_obj);
+zend_object*              phongo_bson_vector_type_to_case(phongo_bson_vector_type_t type);
 
 #endif /* PHONGO_BSON_VECTORTYPE_H */

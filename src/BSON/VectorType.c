@@ -54,6 +54,22 @@ const char* phongo_bson_vector_type_to_name(phongo_bson_vector_type_t type)
 	}
 }
 
+phongo_bson_vector_type_t phongo_bson_vector_type_from_case(zend_object* case_obj)
+{
+	return phongo_bson_vector_type_from_name(Z_STRVAL_P(zend_enum_fetch_case_name(case_obj)));
+}
+
+zend_object* phongo_bson_vector_type_to_case(phongo_bson_vector_type_t type)
+{
+	const char* name = phongo_bson_vector_type_to_name(type);
+
+	if (!name) {
+		return NULL;
+	}
+
+	return zend_enum_get_case_cstr(php_phongo_vectortype_ce, name);
+}
+
 void php_phongo_vectortype_init_ce(INIT_FUNC_ARGS)
 {
 	php_phongo_vectortype_ce = register_class_MongoDB_BSON_VectorType();
