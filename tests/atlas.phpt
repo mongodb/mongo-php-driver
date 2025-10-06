@@ -8,8 +8,6 @@ Atlas Connectivity Tests
 require_once __DIR__ . "/utils/basic.inc";
 
 $envs = [
-	'ATLAS_SERVERLESS',
-	'ATLAS_SRV_SERVERLESS',
 	'ATLAS_FREE',
 	'ATLAS_SRV_FREE',
 	'ATLAS_REPL',
@@ -47,8 +45,6 @@ foreach ($envs as $env) {
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-ATLAS_SERVERLESS: PASS
-ATLAS_SRV_SERVERLESS: PASS
 ATLAS_FREE: PASS
 ATLAS_SRV_FREE: PASS
 ATLAS_REPL: PASS
