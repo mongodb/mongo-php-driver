@@ -9,6 +9,7 @@ $tests = [
     ["\0foo", MongoDB\BSON\Binary::TYPE_GENERIC],
     [hex2bin('123e4567e89b12d3a456426655440000'), MongoDB\BSON\Binary::TYPE_UUID],
     [md5('foobar', true), MongoDB\BSON\Binary::TYPE_MD5],
+    [hex2bin('030001020304'), MongoDB\BSON\Binary::TYPE_VECTOR],
 ];
 
 foreach ($tests as $test) {
@@ -92,6 +93,46 @@ object(MongoDB\BSON\Binary)#%d (%d) {
   string(16) "%s"
   ["type"]=>
   int(5)
+}
+
+object(MongoDB\BSON\Binary)#%d (%d) {
+  ["data"]=>
+  string(6) "%a"
+  ["type"]=>
+  int(9)
+  ["vector"]=>
+  array(4) {
+    [0]=>
+    int(1)
+    [1]=>
+    int(2)
+    [2]=>
+    int(3)
+    [3]=>
+    int(4)
+  }
+  ["vectorType"]=>
+  enum(MongoDB\BSON\VectorType::Int8)
+}
+string(70) "O:19:"MongoDB\BSON\Binary":2:{s:4:"data";s:6:"%a";s:4:"type";i:9;}"
+object(MongoDB\BSON\Binary)#%d (%d) {
+  ["data"]=>
+  string(6) "%a"
+  ["type"]=>
+  int(9)
+  ["vector"]=>
+  array(4) {
+    [0]=>
+    int(1)
+    [1]=>
+    int(2)
+    [2]=>
+    int(3)
+    [3]=>
+    int(4)
+  }
+  ["vectorType"]=>
+  enum(MongoDB\BSON\VectorType::Int8)
 }
 
 ===DONE===
