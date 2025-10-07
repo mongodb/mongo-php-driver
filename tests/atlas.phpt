@@ -52,8 +52,6 @@ function testConnection(string $uri): void
 }
 
 $envs = [
-	'ATLAS_SERVERLESS',
-	'ATLAS_SRV_SERVERLESS',
 	'ATLAS_FREE',
 	'ATLAS_SRV_FREE',
 	'ATLAS_REPL',
@@ -104,8 +102,6 @@ foreach ($x509Envs as $env) {
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-ATLAS_SERVERLESS: PASS
-ATLAS_SRV_SERVERLESS: PASS
 ATLAS_FREE: PASS
 ATLAS_SRV_FREE: PASS
 ATLAS_REPL: PASS
