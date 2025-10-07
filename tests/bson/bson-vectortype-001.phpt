@@ -1,11 +1,11 @@
 --TEST--
-MongoDB\BSON\VectorType
+MongoDB\BSON\VectorType cases
 --FILE--
 <?php
 
-var_dump(MongoDB\BSON\VectorType::Float32);
-var_dump(MongoDB\BSON\VectorType::Int8);
-var_dump(MongoDB\BSON\VectorType::PackedBit);
+foreach (MongoDB\BSON\VectorType::cases() as $case) {
+    var_dump($case);
+}
 
 ?>
 ===DONE===
