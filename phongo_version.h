@@ -22,9 +22,9 @@
  * publishing a release. */
 
 /* clang-format off */
-#define PHP_MONGODB_VERSION "2.1.4"
-#define PHP_MONGODB_STABILITY "stable"
-#define PHP_MONGODB_VERSION_DESC 2,1,4,0
+#define PHP_MONGODB_VERSION "2.1.5dev"
+#define PHP_MONGODB_STABILITY "devel"
+#define PHP_MONGODB_VERSION_DESC 2,1,5,0
 /* clang-format on */
 
 #endif /* PHONGO_VERSION_H */
