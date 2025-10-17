@@ -272,6 +272,12 @@ against two additional versions of libmongoc:
   `r2.x` branch)
 - The upcoming minor release of libmongoc (e.g. the `master` branch)
 
+#### Update tested system library versions in GitHub Actions
+
+GitHub Actions tests against libmongoc and libmongocrypt system libraries. When
+updating the version number for each dependency in `config.m4` you must also
+update environment variables for the `test-system-libs` job in `tests.yml`.
+
 #### Update sources in PECL package generation script
 
 If a new version of a submodule introduces a new source directory, that may also

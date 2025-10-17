@@ -65,8 +65,8 @@ function get_files() {
         "src/libmongocrypt-compat/mongocrypt/*.{c,h}",
         "src/libmongocrypt/src/*.{c,h,h.in}",
         "src/libmongocrypt/src/crypto/*.{c,h}",
-        // Note: src/libmongocrypt/src/mlib/ does not contain source files (as of libmongocrypt 1.14.0)
-        "src/libmongocrypt/src/mlib/*.h",
+        // Note: src/libmongocrypt/src/mc-mlib/ does not contain source files (as of libmongocrypt 1.14.0)
+        "src/libmongocrypt/src/mc-mlib/*.h",
         "src/libmongocrypt/src/os_posix/*.{c,h}",
         "src/libmongocrypt/src/os_win/*.{c,h}",
         "src/libmongocrypt/src/unicode/*.{c,h}",
