@@ -370,7 +370,8 @@ if test "$PHP_MONGODB" != "no"; then
     PHP_MONGODB_ADD_SOURCES([src/libmongoc/src/libbson/src/jsonsl/], $PHP_MONGODB_JSONSL_SOURCES, $PHP_MONGODB_BUNDLED_CFLAGS)
     PHP_MONGODB_ADD_SOURCES([src/libmongoc/src/libmongoc/src/mongoc/], $PHP_MONGODB_MONGOC_SOURCES, $PHP_MONGODB_BUNDLED_CFLAGS)
 
-    # Add the build directories as include paths to some generated files
+    dnl Add the build directories as include paths to some generated files
+    PHP_ADD_INCLUDE([$PWD/src/libmongoc/src/common/src])
     PHP_ADD_INCLUDE([$PWD/src/libmongoc/src/libbson/src])
     PHP_ADD_INCLUDE([$PWD/src/libmongoc/src/libmongoc/src])
 
