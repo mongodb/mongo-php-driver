@@ -11,13 +11,18 @@ require_once __DIR__ . '/../utils/basic.inc';
 /* Although PHPC does not allow constructing a vector with non-zero, padded
  * bits, we can still test comparisons between two valid vector objects
  * constructed from raw data and a PHP array, respectively. */
+
+// PackedBit vector with padding:7 and all-zero bits
 $b1 = new MongoDB\BSON\Binary("\x10\x07\x80", MongoDB\BSON\Binary::TYPE_VECTOR);
+$v1 = $b1->toArray();
 
 // PackedBit vector with padding:7 and all-zero bits (constructed from PHP array)
-$b2 = MongoDB\BSON\Binary::fromVector([1], MongoDB\BSON\VectorType::PackedBit);
+$b3 = MongoDB\BSON\Binary::fromVector([1], MongoDB\BSON\VectorType::PackedBit);
+$v3 = $b3->toArray();
 
-var_dump($b1 == $b2);
-var_dump($b1->toArray() === $b2->toArray());
+// Assert that both Binary and array representations are equal
+var_dump($b1 == $b3);
+var_dump($b1 === $v3);
 
 ?>
 ===DONE===
