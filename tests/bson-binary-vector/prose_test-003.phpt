@@ -22,7 +22,7 @@ $v3 = $b3->toArray();
 
 // Assert that both Binary and array representations are equal
 var_dump($b1 == $b3);
-var_dump($b1 === $v3);
+var_dump($v1 === $v3);
 
 ?>
 ===DONE===
