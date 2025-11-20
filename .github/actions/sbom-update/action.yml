@@ -1,0 +1,38 @@
+name: Update the SBOM
+description: Updates the SBOM for the project
+inputs:
+  sbom_in_path:
+    description: The path of the input sbom file.
+    default: ./sbom.json
+  sbom_file_name:
+    description: The name of the output sbom file.
+    default: ./sbom.json
+  container_image:
+    description: "The container image to use"
+    default: "artifactory.corp.mongodb.com/release-tools-container-registry-public-local/silkbomb:1.0"
+
+runs:
+  using: composite
+  steps:
+    - name: Updates the SBOM file and writes it to the release assets and s3 assets folders
+      shell: bash
+      env:
+        SBOM_IN_PATH: ${{ inputs.sbom_in_path }}
+        CONTAINER_IMAGE: ${{ inputs.container_image }}
+        SBOM_FILE_NAME: ${{ inputs.sbom_file_name }}
+        PURLS_FILE: "${{ github.workspace }}/purls.txt"
+      run: |
+        set -eu
+
+        LIBMONGOC_VERSION=$(cat ${PWD}/src/LIBMONGOC_VERSION_CURRENT | tr -d '[:space:]')
+        LIBMONGOCRYPT_VERSION=$(cat ${PWD}/src/LIBMONGOCRYPT_VERSION_CURRENT | tr -d '[:space:]')
+
+        # Generate purls file from stored versions
+        echo "pkg:github/mongodb/mongo-c-driver@${LIBMONGOC_VERSION}" > $PURLS_FILE
+        echo "pkg:github/mongodb/libmongocrypt@${LIBMONGOCRYPT_VERSION}" >> $PURLS_FILE
+
+        # Use silkbomb to update the sbom.json file
+        docker run --platform="linux/amd64" -i --rm -v $PWD:/pwd ${CONTAINER_IMAGE} \
+        update --sbom-in /pwd/${SBOM_IN_PATH} --purls /pwd/purls.txt --sbom-out /pwd/${SBOM_FILE_NAME}
+
+        echo "Generating SBOM file done."

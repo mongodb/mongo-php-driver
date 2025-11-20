@@ -1,0 +1,100 @@
+name: Post-Merge SBOM Update
+
+on:
+  push:
+    branches:
+      - v1.21
+    paths:
+      - 'src/libmongoc/**'
+      - 'src/libmongocrypt/**'
+
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  sbom:
+    name: Generate SBOM and Create PR
+    runs-on: ubuntu-latest
+
+    concurrency:
+      group: sbom-${{ github.ref }}
+      cancel-in-progress: false
+    env:
+      SBOM_FILE: sbom.json
+    steps:
+      - name: Checkout repository (Base Branch)
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.base.ref }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          
+      - name: Run SBOM Updater
+        uses: ./.github/actions/sbom-update
+
+      - name: Check for Changes in sbom.json
+        id: git_status
+        run: |
+          set -e
+          
+          # Validate current SBOM is valid JSON
+          if ! jq empty "$SBOM_FILE" 2>/dev/null; then
+            echo "Error: $SBOM_FILE is not valid JSON"
+            cat "$SBOM_FILE"
+            exit 1
+          fi
+          
+          # JQ filter to normalize timestamps and serialNumber
+          JQ_NORMALIZER='del(.serialNumber, .metadata.timestamp) | walk(if type == "object" and has("timestamp") then .timestamp = "NORMALIZED" else . end)'
+          
+          # Check if the file exists in Git
+          if ! git show HEAD:"$SBOM_FILE" > /dev/null 2>&1; then
+            echo "File is new - marking as changed"
+            echo "HAS_CHANGES=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          
+          # Normalize both versions and compare
+          NORMALIZED_OLD=$(git show HEAD:"$SBOM_FILE" | jq --sort-keys "$JQ_NORMALIZER")
+          NORMALIZED_NEW=$(jq --sort-keys "$JQ_NORMALIZER" "$SBOM_FILE")
+          
+          if [ "$NORMALIZED_OLD" = "$NORMALIZED_NEW" ]; then
+            echo "No changes detected in $SBOM_FILE"
+            echo "HAS_CHANGES=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "Changes detected in $SBOM_FILE"
+            echo "HAS_CHANGES=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Create Pull Request
+        if: steps.git_status.outputs.HAS_CHANGES == 'true'
+        uses: peter-evans/create-pull-request@b4733b9419fd47bbfa1807b15627e17cd70b5b22
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: 'chore: Update SBOM after dependency changes'
+          branch: auto-update-sbom-${{ github.run_id }}
+          delete-branch: true
+          title: 'chore: Update SBOM'
+          body: |
+            ## Automated SBOM Update
+            
+            This PR was automatically generated because dependency manifest files changed.
+            
+            ### Changes
+            - Updated `sbom.json` to reflect current dependencies
+            
+            ### Verification
+            The SBOM was generated using SilkBomb v1.0.
+
+            ### Triggered by
+            - Commit: ${{ github.sha }}
+            - Workflow run: ${{ github.run_id }}
+            
+            ---
+            _This PR was created automatically by the [SBOM workflow](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})_
+          labels: |
+            sbom
+            automated
+            dependencies
