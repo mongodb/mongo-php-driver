@@ -398,6 +398,7 @@ if test "$PHP_MONGODB" != "no"; then
       ${ac_config_dir}/src/libmongoc/src/libbson/src/bson/config.h
       ${ac_config_dir}/src/libmongoc/src/libbson/src/bson/version.h
       ${ac_config_dir}/src/libmongoc/src/libmongoc/src/mongoc/mongoc-config.h
+      ${ac_config_dir}/src/libmongoc/src/libmongoc/src/mongoc/mongoc-config-private.h
       ${ac_config_dir}/src/libmongoc/src/libmongoc/src/mongoc/mongoc-version.h
     ])
 

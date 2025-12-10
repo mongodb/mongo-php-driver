@@ -194,7 +194,9 @@ if (PHP_MONGODB != "no") {
     MONGOC_HAVE_SS_FAMILY: 0,
     MONGOC_CC: "",
     MONGOC_USER_SET_CFLAGS: "",
-    MONGOC_USER_SET_LDFLAGS: ""
+    MONGOC_USER_SET_LDFLAGS: "",
+    MONGOC_CXX_COMPILER_ID: "",
+    MONGOC_CXX_COMPILER_VERSION: ""
   };
 
   var mongoc_ssl_path_to_check = PHP_MONGODB;
@@ -332,6 +334,12 @@ if (PHP_MONGODB != "no") {
   mongodb_generate_header(
     configure_module_dirname + "/src/libmongoc/src/libmongoc/src/mongoc/mongoc-config.h.in",
     configure_module_dirname + "/src/libmongoc/src/libmongoc/src/mongoc/mongoc-config.h",
+    mongoc_opts
+  );
+
+  mongodb_generate_header(
+    configure_module_dirname + "/src/libmongoc/src/libmongoc/src/mongoc/mongoc-config-private.h.in",
+    configure_module_dirname + "/src/libmongoc/src/libmongoc/src/mongoc/mongoc-config-private.h",
     mongoc_opts
   );
 
