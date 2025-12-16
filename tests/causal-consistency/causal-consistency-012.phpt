@@ -1,5 +1,7 @@
 --TEST--
 Causal consistency: $clusterTime is sent in commands to supported deployments
+--XFAIL--
+Cluster time is not sent in first command sent out on single-threaded connections (PHPC-2655)
 --DESCRIPTION--
 Causal consistency spec prose test #12
 https://github.com/mongodb/specifications/blob/master/source/causal-consistency/causal-consistency.md#test-plan

@@ -1,5 +1,7 @@
 --TEST--
 MongoDB\Driver\Session spec test: $clusterTime in commands
+--XFAIL--
+Cluster time is not sent in first command sent out on single-threaded connections (PHPC-2655)
 --DESCRIPTION--
 Session spec prose test #3: $clusterTime in commands
 https://github.com/mongodb/specifications/blob/master/source/sessions/tests/README.md#3-clustertime-in-commands
