@@ -146,7 +146,7 @@ jobs:
     env:
       PHP_VERSION: "8.3"
       # Note: omit the patch version when referring to the libmongocrypt package
-      LIBMONGOCRYPT_VERSION: "1.16"
+      LIBMONGOCRYPT_VERSION: "1.17"
       # Note: include the patch version when referring to a libmongoc release tarball
       LIBMONGOC_VERSION: "2.2.1"
       SERVER_VERSION: "8.0"
