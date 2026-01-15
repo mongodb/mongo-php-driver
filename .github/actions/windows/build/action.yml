@@ -10,24 +10,21 @@ inputs:
   ts:
     description: "Thread-safety (nts or ts)"
     required: true
-outputs:
-  vs:
-    description: "The Visual Studio version"
-    value: ${{ steps.prepare-build-env.outputs.vs }}
-  build-dir:
-    description: "The build directory to be used"
-    value: ${{ steps.prepare-build-env.outputs.build-dir }}
+  run-tests:
+    description: "Whether to run tests after building"
+    required: false
+    default: "false"
 runs:
   using: composite
   steps:
-    - name: Prepare build environment
-      id: prepare-build-env
-      uses: ./.github/actions/windows/prepare-build
+    - name: Build extension
+      uses: php/php-windows-builder/extension@1.6.0
       with:
-        version: ${{ inputs.version }}
+        php-version: ${{ inputs.version }}
         arch: ${{ inputs.arch }}
         ts: ${{ inputs.ts }}
-
-    - name: Build driver
-      shell: cmd
-      run: nmake /nologo
+        run-tests: ${{ inputs.run-tests == 'true' && true || false }}
+        test-runner-args: "--show-diff"
+        args: "--enable-mongodb --with-mongodb-sasl=yes --with-mongodb-client-side-encryption=yes"
+        libs: "openssl"
+        test-workers: 1
