@@ -1,0 +1,98 @@
+name: "Build Windows Package"
+run-name: "Build Windows Package for ${{ inputs.ref }} (PHP ${{ inputs.php }} ${{ inputs.arch }} ${{ inputs.ts }})"
+
+on:
+  workflow_call:
+    inputs:
+      version:
+        description: "The version being built"
+        type: string
+        required: true
+      ref:
+        description: "The git reference to build"
+        type: string
+        required: true
+      upload_release_assets:
+        description: "Whether to upload assets to a GitHub release"
+        type: boolean
+        default: false
+
+jobs:
+  build:
+    name: "Build DLL"
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: cmd
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ "windows-2022" ]
+        # Note: keep this in sync with the Windows matrix in tests.yml
+        php-version:
+          - "8.1"
+          - "8.2"
+          - "8.3"
+          - "8.4"
+        arch: [ x64, x86 ]
+        ts: [ ts, nts ]
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+          ref: ${{ inputs.ref }}
+
+      - name: "Build Driver"
+        id: build-driver
+        uses: ./.github/actions/windows/build
+        with:
+          version: ${{ matrix.php-version }}
+          arch: ${{ matrix.arch }}
+          ts: ${{ matrix.ts }}
+          run-tests: false
+
+  sign-and-upload:
+    environment: release
+    name: "Sign and create package"
+    needs: build
+    runs-on: "ubuntu-latest"
+    permissions:
+      id-token: write
+
+    steps:
+      - name: "Generate token and checkout repository"
+        uses: mongodb-labs/drivers-github-tools/secure-checkout@v2
+        with:
+          app_id: ${{ vars.APP_ID }}
+          private_key: ${{ secrets.APP_PRIVATE_KEY }}
+          ref: ${{ inputs.ref }}
+
+      - name: "Set up drivers-github-tools"
+        uses: mongodb-labs/drivers-github-tools/setup@v2
+        with:
+          aws_role_arn: ${{ secrets.AWS_ROLE_ARN }}
+          aws_region_name: ${{ vars.AWS_REGION_NAME }}
+          aws_secret_id: ${{ secrets.AWS_SECRET_ID }}
+
+      - name: Get artifacts
+        uses: actions/download-artifact@v5
+        with:
+          path: artifacts
+          pattern: php_mongodb-*.zip
+          merge-multiple: true
+
+      - name: "Create detached signatures for packages"
+        uses: mongodb-labs/drivers-github-tools/gpg-sign@v2
+        with:
+          filenames: php_mongodb.dll
+
+      - name: "Move signatures from release assets folder"
+        run: |
+          mv ${RELEASE_ASSETS}/php_mongodb*.sig artifacts/
+
+      - name: "Upload assets to release"
+        if: ${{ inputs.upload_release_assets }}
+        run: |
+          gh release upload ${{ inputs.version }} artifacts/php_mongodb* --clobber
