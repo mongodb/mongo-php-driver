@@ -1,7 +1,7 @@
 name: "Build DLL files for Windows"
 description: "Prepares the PHP build environment for the MongoDB driver"
 inputs:
-  version:
+  php-version:
     description: "PHP version to build for"
     required: true
   arch:
@@ -20,7 +20,7 @@ runs:
     - name: Build extension
       uses: php/php-windows-builder/extension@1.6.0
       with:
-        php-version: ${{ inputs.version }}
+        php-version: ${{ inputs.php-version }}
         arch: ${{ inputs.arch }}
         ts: ${{ inputs.ts }}
         run-tests: ${{ inputs.run-tests == 'true' && true || false }}
