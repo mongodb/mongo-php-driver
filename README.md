@@ -71,12 +71,12 @@ gpg --verify mongodb-X.Y.Z.tgz.sig mongodb-X.Y.Z.tgz
 
 ### Windows
 
-Windows binaries distributed through GitHub releases contain a detached
-signature for the `php_mongodb.dll` file named `php_mongodb.dll.sig`. To verify
-the integrity of the DLL, run the following command:
+Windows binaries are distributed through GitHub releases in the form of a ZIP
+package. The GitHub release will also contain a detached signature file for the
+PECL package. To verify the integrity of the package, run the following command:
 
 ```shell
-gpg --verify php_mongodb.dll.sig php_mongodb.dll.tgz
+gpg --verify php_mongodb-X.Y.Z.zip.sig php_mongodb-X.Y.Z.zip
 ```
 
 > [!NOTE]
