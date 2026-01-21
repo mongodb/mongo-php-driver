@@ -11,8 +11,8 @@ on:
       - "feature/*"
 
 jobs:
-  tests:
-    name: "Tests"
+  linux-test:
+    name: "Linux Tests"
     runs-on: "${{ matrix.os }}"
 
     strategy:
@@ -112,18 +112,47 @@ jobs:
       - name: "Install release archive to verify correctness"
         run: sudo pecl install ${{ env.PACKAGE_FILE }}
 
-  test-windows:
+  windows-test:
     name: "Windows Tests"
-    uses: ./.github/workflows/windows-tests.yml
-    with:
-      php: ${{ matrix.php }}
-      arch: ${{ matrix.arch }}
-      ts: ${{ matrix.ts }}
-    secrets: inherit
+    runs-on: "${{ matrix.os }}"
+    defaults:
+      run:
+        shell: cmd
+
     strategy:
       fail-fast: false
       matrix:
-        # Note: keep this in sync with the Windows matrix in package-release.yml
-        php: [ "8.1", "8.2", "8.3", "8.4" ]
+        os: [ "windows-2022" ]
+        # Note: keep this in sync with the Windows matrix in build-windows-package.yml
+        php-version:
+          - "8.1"
+          - "8.2"
+          - "8.3"
+          - "8.4"
         arch: [ x64, x86 ]
         ts: [ ts, nts ]
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - id: setup-mongodb
+        uses: mongodb-labs/drivers-evergreen-tools@master
+        with:
+          version: "7.0"
+          topology: "server"
+
+      - name: "Build and Test"
+        id: build-driver
+        uses: ./.github/actions/windows/build
+        with:
+          php-version: ${{ matrix.php-version }}
+          arch: ${{ matrix.arch }}
+          ts: ${{ matrix.ts }}
+          run-tests: true
+        env:
+          NO_INTERACTION: 1
+          REPORT_EXIT_STATUS: 1
+          MONGODB_URI: ${{ steps.setup-mongodb.outputs.cluster-uri }}
+          CRYPT_SHARED_LIB_PATH: ${{ steps.setup-mongodb.outputs.crypt-shared-lib-path }}
