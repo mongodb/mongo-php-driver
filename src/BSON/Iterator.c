@@ -303,7 +303,7 @@ static void php_phongo_iterator_it_dtor(zend_object_iterator* iter)
 	zval_ptr_dtor(&iter->data);
 }
 
-static int php_phongo_iterator_it_valid(zend_object_iterator* iter)
+static PHONGO_ITERATOR_VALID_RESULT php_phongo_iterator_it_valid(zend_object_iterator* iter)
 {
 	php_phongo_iterator_t* intern = Z_ITERATOR_OBJ_P(&iter->data);
 

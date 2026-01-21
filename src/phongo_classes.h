@@ -364,6 +364,7 @@ extern zend_class_entry* php_phongo_symbol_ce;
 extern zend_class_entry* php_phongo_timestamp_ce;
 extern zend_class_entry* php_phongo_undefined_ce;
 extern zend_class_entry* php_phongo_utcdatetime_ce;
+extern zend_class_entry* php_phongo_vectortype_ce;
 
 extern zend_class_entry* php_phongo_binary_interface_ce;
 extern zend_class_entry* php_phongo_decimal128_interface_ce;
@@ -412,6 +413,7 @@ extern void php_phongo_type_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_undefined_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_unserializable_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_utcdatetime_init_ce(INIT_FUNC_ARGS);
+extern void php_phongo_vectortype_init_ce(INIT_FUNC_ARGS);
 
 extern void php_phongo_binary_interface_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_decimal128_interface_init_ce(INIT_FUNC_ARGS);

@@ -39,7 +39,6 @@ function get_files() {
         "scripts/autotools/*/*.{m4}",
 
         "src/*.{c,h}",
-        "src/LIBMONGOC_VERSION_CURRENT",
         "src/LIBMONGOCRYPT_VERSION_CURRENT",
 
         "src/MongoDB/*.{c,h}",
@@ -49,6 +48,8 @@ function get_files() {
         "src/contrib/*.{c,h}",
 
         "src/libmongoc/src/common/src/*.{c,h,h.in}",
+        // Note: src/libmongoc/src/common/src/mlib/ does not contain source files (as of libmongoc 2.0.1)
+        "src/libmongoc/src/common/src/mlib/*.h",
         "src/libmongoc/src/kms-message/src/*.{c,h}",
         "src/libmongoc/src/kms-message/src/kms_message/*.{c,h}",
         "src/libmongoc/src/libbson/src/bson/*.{c,h,h.in}",
@@ -64,10 +65,11 @@ function get_files() {
         "src/libmongocrypt-compat/mongocrypt/*.{c,h}",
         "src/libmongocrypt/src/*.{c,h,h.in}",
         "src/libmongocrypt/src/crypto/*.{c,h}",
-        // Note: src/libmongocrypt/src/mlib/ does not contain source files (as of libmongocrypt 1.3.1)
-        "src/libmongocrypt/src/mlib/*.h",
+        // Note: src/libmongocrypt/src/mc-mlib/ does not contain source files (as of libmongocrypt 1.14.0)
+        "src/libmongocrypt/src/mc-mlib/*.h",
         "src/libmongocrypt/src/os_posix/*.{c,h}",
         "src/libmongocrypt/src/os_win/*.{c,h}",
+        "src/libmongocrypt/src/unicode/*.{c,h}",
         "src/libmongocrypt/kms-message/src/*.{c,h}",
         "src/libmongocrypt/kms-message/src/kms_message/*.{c,h}",
       ),

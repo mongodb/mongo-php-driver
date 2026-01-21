@@ -4,6 +4,10 @@ inputs:
   version:
     description: "PHP version to build for"
     required: true
+  configureOpts:
+    description: "Extra options to use for the call to ./configure"
+    default: ""
+
 runs:
   using: composite
   steps:
@@ -17,6 +21,8 @@ runs:
     - name: "Configure driver"
       run: .github/workflows/configure.sh
       shell: bash
+      env:
+        CONFIGURE_OPTS: ${{ inputs.configureOpts }}
 
     - name: "Build driver"
       run: "make all"

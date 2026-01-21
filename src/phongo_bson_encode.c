@@ -213,6 +213,7 @@ static void php_phongo_bson_append_object(bson_t* bson, php_phongo_field_path* f
 			bson_append_date_time(bson, key, key_len, intern->milliseconds);
 			return;
 		}
+		// TODO: confirm that this handles binary vector
 		if (instanceof_function(Z_OBJCE_P(object), php_phongo_binary_ce)) {
 			php_phongo_binary_t* intern = Z_BINARY_OBJ_P(object);
 

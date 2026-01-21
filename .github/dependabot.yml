@@ -5,6 +5,8 @@ updates:
     schedule:
       interval: "weekly"
   - package-ecosystem: "gitsubmodule"
-    directory: "/tests/drivers-evergreen-tools"
+    directory: "/"
     schedule:
       interval: "weekly"
+    allow:
+      - dependency-name: "tests/drivers-evergreen-tools"
