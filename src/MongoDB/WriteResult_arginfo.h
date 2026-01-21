@@ -1,10 +1,10 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 84f1690181585d88c4e7233a4c959d5f50dc1b40 */
+ * Stub hash: 217742ba620620cfaee2758070ff13e651620f87 */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_Driver_WriteResult___construct, 0, 0, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_Driver_WriteResult_getInsertedCount, 0, 0, IS_LONG, 1)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_Driver_WriteResult_getInsertedCount, 0, 0, IS_LONG, 0)
 ZEND_END_ARG_INFO()
 
 #define arginfo_class_MongoDB_Driver_WriteResult_getMatchedCount arginfo_class_MongoDB_Driver_WriteResult_getInsertedCount

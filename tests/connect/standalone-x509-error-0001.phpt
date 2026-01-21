@@ -1,6 +1,7 @@
 --TEST--
 X509 connection should not reuse previous stream after an auth failure
 --XFAIL--
+X509 tests must be reimplemented (PHPC-1262)
 parse_url() tests must be reimplemented (PHPC-1177)
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
@@ -12,11 +13,11 @@ parse_url() tests must be reimplemented (PHPC-1177)
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
 
-$driverOptions = [
+$uriOptions = [
     // libmongoc does not allow the hostname to be overridden as "server"
-    'allow_invalid_hostname' => true,
-    'ca_file' => SSL_DIR . '/ca.pem',
-    'pem_file' => SSL_DIR . '/client.pem',
+    'tlsAllowInvalidHostnames' => true,
+    'tlsCAFile' => SSL_DIR . '/ca.pem',
+    'tlsCertificateKeyFile' => SSL_DIR . '/client.pem',
 ];
 
 // Wrong username for X509 authentication
@@ -25,8 +26,8 @@ $dsn = sprintf('mongodb://username@%s:%d/?ssl=true&authMechanism=MONGODB-X509', 
 
 // Both should fail with auth failure, without reusing the previous stream
 for ($i = 0; $i < 2; $i++) {
-    echo throws(function() use ($dsn, $driverOptions) {
-        $manager = create_test_manager($dsn, [], $driverOptions);
+    echo throws(function() use ($dsn, $uriOptions) {
+        $manager = create_test_manager($dsn, $uriOptions);
         $cursor = $manager->executeCommand(DATABASE_NAME, new MongoDB\Driver\Command(['ping' => 1]));
         var_dump($cursor->toArray()[0]);
     }, 'MongoDB\Driver\Exception\AuthenticationException', 'executeCommand'), "\n";
