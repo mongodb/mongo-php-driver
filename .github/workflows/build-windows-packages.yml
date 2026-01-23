@@ -36,7 +36,6 @@ jobs:
           - "8.3"
           - "8.4"
           - "8.5"
-        arch: [ x64, x86 ]
         ts: [ ts, nts ]
 
     steps:
@@ -51,7 +50,6 @@ jobs:
         with:
           ref: ${{ inputs.ref }}
           php-version: ${{ matrix.php-version }}
-          arch: ${{ matrix.arch }}
           ts: ${{ matrix.ts }}
           run-tests: false
 
