@@ -828,7 +828,7 @@ static HashTable* php_phongo_manager_get_debug_info(zend_object* object, int* is
 	*is_temp = 1;
 	intern   = Z_OBJ_MANAGER(object);
 
-	array_init_size(&retval, 2);
+	array_init_size(&retval, 3);
 
 	ADD_ASSOC_STRING(&retval, "uri", mongoc_uri_get_string(mongoc_client_get_uri(intern->client)));
 
@@ -850,6 +850,16 @@ static HashTable* php_phongo_manager_get_debug_info(zend_object* object, int* is
 	}
 
 	ADD_ASSOC_ZVAL_EX(&retval, "cluster", &cluster);
+
+	{
+		const char* crypt_shared_version = mongoc_client_get_crypt_shared_version(intern->client);
+
+		if (crypt_shared_version) {
+			ADD_ASSOC_STRING(&retval, "cryptSharedVersion", crypt_shared_version);
+		} else {
+			ADD_ASSOC_NULL_EX(&retval, "cryptSharedVersion");
+		}
+	}
 
 done:
 	mongoc_server_descriptions_destroy_all(sds, n);

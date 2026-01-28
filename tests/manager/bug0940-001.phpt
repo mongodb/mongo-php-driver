@@ -20,5 +20,7 @@ object(MongoDB\Driver\Manager)#%d (%d) {
   ["cluster"]=>
   array(0) {
   }
+  ["cryptSharedVersion"]=>
+  NULL
 }
 ===DONE===

@@ -194,8 +194,8 @@ HashTable* php_phongo_serverdescription_get_properties_hash(zend_object* object,
 	}
 
 	{
-		zval                host, port, type;
-		mongoc_host_list_t* host_list = mongoc_server_description_host(intern->server_description);
+		zval                      host, port, type;
+		const mongoc_host_list_t* host_list = mongoc_server_description_host(intern->server_description);
 
 		ZVAL_STRING(&host, host_list->host);
 		zend_hash_str_update(props, "host", sizeof("host") - 1, &host);
