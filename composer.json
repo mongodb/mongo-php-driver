@@ -61,7 +61,7 @@
       },
       {
         "name": "with-mongodb-ssl",
-        "description": "Enable crypto and TLS (auto/openssl/libressl/darwin/no)",
+        "description": "Enable crypto and TLS (auto/openssl/darwin/no)",
         "needs-value": true
       },
       {

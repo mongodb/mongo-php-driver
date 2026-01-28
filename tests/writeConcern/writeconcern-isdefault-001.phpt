@@ -14,17 +14,14 @@ $tests = [
     new MongoDB\Driver\WriteConcern(MongoDB\Driver\WriteConcern::MAJORITY),
     // mongoc_uri_parse_option() ignores empty string for w
     (new MongoDB\Driver\Manager('mongodb://127.0.0.1/?w='))->getWriteConcern(),
-    // Cannot test "w=-3" since libmongoc URI parsing expects integers >= -1
-    // Cannot test "w=-2" since libmongoc URI parsing expects integers >= -1, and throws an error otherwise
-    (new MongoDB\Driver\Manager('mongodb://127.0.0.1/?w=-1'))->getWriteConcern(),
+    // Cannot test "w=-3", "w=-2", and "w=-1" since libmongoc URI parsing expects integers > -1
     (new MongoDB\Driver\Manager('mongodb://127.0.0.1/?w=0'))->getWriteConcern(),
     (new MongoDB\Driver\Manager('mongodb://127.0.0.1/?w=1'))->getWriteConcern(),
     (new MongoDB\Driver\Manager('mongodb://127.0.0.1/?w=2'))->getWriteConcern(),
     (new MongoDB\Driver\Manager('mongodb://127.0.0.1/?w=tag'))->getWriteConcern(),
     (new MongoDB\Driver\Manager('mongodb://127.0.0.1/?w=majority'))->getWriteConcern(),
     // Cannot test ['w' => null] since an integer or string type is expected (PHPC-887)
-    // Cannot test ['w' => -3] or ['w' => -2] since php_phongo_apply_wc_options_to_uri() expects integers >= -1
-    (new MongoDB\Driver\Manager(null, ['w' => -1]))->getWriteConcern(),
+    // Cannot test ['w' => -3], ['w' => -2], and ['w' => -1] since php_phongo_apply_wc_options_to_uri() expects integers > -1
     (new MongoDB\Driver\Manager(null, ['w' => 0]))->getWriteConcern(),
     (new MongoDB\Driver\Manager(null, ['w' => 1]))->getWriteConcern(),
     (new MongoDB\Driver\Manager(null, ['w' => 2]))->getWriteConcern(),
@@ -50,8 +47,6 @@ bool(false)
 bool(false)
 bool(false)
 bool(true)
-bool(false)
-bool(false)
 bool(false)
 bool(false)
 bool(false)

@@ -248,6 +248,7 @@ PHP_MINIT_FUNCTION(mongodb) /* {{{ */
 	php_phongo_timestamp_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 	php_phongo_undefined_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 	php_phongo_utcdatetime_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	php_phongo_vectortype_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 
 	php_phongo_cursor_interface_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 
@@ -408,8 +409,6 @@ PHP_MINFO_FUNCTION(mongodb) /* {{{ */
 	php_info_print_table_row(2, "libmongoc SSL", "enabled");
 #if defined(MONGOC_ENABLE_SSL_OPENSSL)
 	php_info_print_table_row(2, "libmongoc SSL library", "OpenSSL");
-#elif defined(MONGOC_ENABLE_SSL_LIBRESSL)
-	php_info_print_table_row(2, "libmongoc SSL library", "LibreSSL");
 #elif defined(MONGOC_ENABLE_SSL_SECURE_TRANSPORT)
 	php_info_print_table_row(2, "libmongoc SSL library", "Secure Transport");
 #elif defined(MONGOC_ENABLE_SSL_SECURE_CHANNEL)

@@ -36,11 +36,10 @@ jobs:
           - "8.3"
           - "8.4"
           - "8.5"
-        arch: [ x64, x86 ]
         ts: [ ts, nts ]
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           submodules: true
           ref: ${{ inputs.ref }}
@@ -50,7 +49,6 @@ jobs:
         uses: ./.github/actions/windows/build
         with:
           php-version: ${{ matrix.php-version }}
-          arch: ${{ matrix.arch }}
           ts: ${{ matrix.ts }}
           run-tests: false
 
@@ -64,14 +62,14 @@ jobs:
 
     steps:
       - name: "Generate token and checkout repository"
-        uses: mongodb-labs/drivers-github-tools/secure-checkout@v2
+        uses: mongodb-labs/drivers-github-tools/secure-checkout@v3
         with:
           app_id: ${{ vars.APP_ID }}
           private_key: ${{ secrets.APP_PRIVATE_KEY }}
           ref: ${{ inputs.ref }}
 
       - name: "Set up drivers-github-tools"
-        uses: mongodb-labs/drivers-github-tools/setup@v2
+        uses: mongodb-labs/drivers-github-tools/setup@v3
         with:
           aws_role_arn: ${{ secrets.AWS_ROLE_ARN }}
           aws_region_name: ${{ vars.AWS_REGION_NAME }}
@@ -85,7 +83,7 @@ jobs:
           merge-multiple: true
 
       - name: "Create detached signatures for packages"
-        uses: mongodb-labs/drivers-github-tools/gpg-sign@v2
+        uses: mongodb-labs/drivers-github-tools/gpg-sign@v3
         with:
           filenames: artifacts/php_mongodb*.zip
 

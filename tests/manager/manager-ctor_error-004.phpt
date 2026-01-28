@@ -19,7 +19,7 @@ echo throws(function () {
 <?php exit(0); ?>
 --EXPECT--
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Failed to parse MongoDB URI: 'mongodb://localhost:27017/?replicaSet='. Value for URI option "replicaset" cannot be empty string.
+Failed to parse MongoDB URI: 'mongodb://localhost:27017/?replicaSet='. Value for URI option "replicaSet" cannot be empty string.
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Value for URI option "replicaSet" cannot be empty string.
 ===DONE===

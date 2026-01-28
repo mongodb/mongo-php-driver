@@ -218,4 +218,11 @@ const char* zend_get_object_type_case(const zend_class_entry* ce, zend_bool uppe
 #define zend_get_object_type_uc(ce) zend_get_object_type_case((ce), true)
 #endif /* PHP_VERSION_ID < 80200 */
 
+/* zend_object_iterator_funcs.valid return type changed to zend_result in PHP 8.4 */
+#if PHP_VERSION_ID < 80400
+#define PHONGO_ITERATOR_VALID_RESULT int
+#else
+#define PHONGO_ITERATOR_VALID_RESULT zend_result
+#endif
+
 #endif /* PHONGO_COMPAT_H */

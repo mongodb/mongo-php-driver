@@ -138,7 +138,7 @@ The test suite references the following environment variables:
    [drivers-evergreen-tools](https://github.com/mongodb-labs/drivers-evergreen-tools).
    If undefined or inaccessible, tests requiring certificates will be skipped.
 
-The following environment variable is used for [stable API testing](https://github.com/mongodb/specifications/blob/master/source/versioned-api/tests/README.rst):
+The following environment variable is used for [stable API testing](https://github.com/mongodb/specifications/blob/master/source/versioned-api/tests/README.md):
 
  * `API_VERSION`: If defined, this value will be used to construct a
    [`MongoDB\Driver\ServerApi`](https://www.php.net/manual/en/mongodb-driver-serverapi.construct.php),
@@ -146,7 +146,7 @@ The following environment variable is used for [stable API testing](https://gith
    [`MongoDB\Driver\Manager`](https://www.php.net/manual/en/class.mongodb-driver-manager.php)
    objects created by the test suite.
 
-The following environment variables are used for [CSFLE testing](https://github.com/mongodb/specifications/blob/master/source/client-side-encryption/tests/README.rst):
+The following environment variables are used for [CSFLE testing](https://github.com/mongodb/specifications/blob/master/source/client-side-encryption/tests/README.md):
 
  * `CRYPT_SHARED_LIB_PATH`: If defined, this value will be used to set the
    `cryptSharedLibPath` autoEncryption driver option for
@@ -203,38 +203,30 @@ always refer to libmongoc.
 ```shell
 cd src/libmongoc
 git fetch
-git checkout 1.20.0
+git checkout 2.1.0
 ```
 
 During development, it may be necessary to temporarily point the submodule to a
 commit on the developer's fork. For instance, the developer may be working on a
 PHP driver feature that depends on unmerged or unreleased changes. In this case,
-the submodule path can be updated using the `git submodules set-url` command can
-be used to change the URL, and `git submodules set-branch` can be used to point
+the submodule path can be updated using the `git submodule set-url` command can
+be used to change the URL, and `git submodule set-branch` can be used to point
 the submodule to a development branch:
 
 ```shell
-git submodules set-url src/libmongoc https://github.com/<owner>/<repo>.git
-git submodules set-branch -b <branch> src/libmongoc
+git submodule set-url src/libmongoc https://github.com/<owner>/<repo>.git
+git submodule set-branch -b <branch> src/libmongoc
 ```
 
-#### Ensure version information is correct
+#### Ensure version information is correct (libmongocrypt only)
 
-Various build processes and tools rely on the version files to infer version
-information. This file can be regenerated using Makefile targets:
+For libmongocrypt, version information needs to be updated after updating to
+a newer submodule version. This can be done by running the corresponding make
+target:
 
 ```shell
-make libmongoc-version-current
+make libmongocrypt-version-current
 ```
-
-Alternatively, the `build/calc_release_version.py` script in the submodule can
-be executed directly.
-
-Note: If the submodule points to a non-release, non-master branch, the script
-may fail to correctly detect the version. This issue is being tracked in
-[CDRIVER-3315](https://jira.mongodb.org/browse/CDRIVER-3315) and can be safely ignored since this should only happen
-during development (any PHP driver release should point to a tagged submodule
-version).
 
 #### Update sources in build configurations
 
@@ -261,11 +253,11 @@ libmongoc and libbson.
 For example, the following lines might be updated for libmongoc:
 
 ```
-if $PKG_CONFIG libmongoc-1.0 --atleast-version 1.20.0; then
+if $PKG_CONFIG mongoc2 --atleast-version 2.1.0; then
 
 ...
 
-AC_MSG_ERROR(system libmongoc must be upgraded to version >= 1.20.0)
+AC_MSG_ERROR(system libmongoc must be upgraded to version >= 2.1.0)
 ```
 
 #### Update tested versions in Evergreen configuration (libmongoc only)
@@ -277,8 +269,14 @@ information about the build tasks and where they are used. In general, we test
 against two additional versions of libmongoc:
 
 - The upcoming patch release of the current libmongoc minor version (e.g. the
-  `r1.x` branch)
+  `r2.x` branch)
 - The upcoming minor release of libmongoc (e.g. the `master` branch)
+
+#### Update tested system library versions in GitHub Actions
+
+GitHub Actions tests against libmongoc and libmongocrypt system libraries. When
+updating the version number for each dependency in `config.m4` you must also
+update environment variables for the `test-system-libs` job in `tests.yml`.
 
 #### Update sources in PECL package generation script
 
@@ -307,5 +305,6 @@ test suite passes. Once done, commit the changes to all of the above
 files/paths. For example:
 
 ```shell
-git commit -m "Bump libmongoc to 1.20.0" config.m4 config.w32 src/libmongoc src/LIBMONGOC_VERSION_CURRENT sbom.json
+git commit -m "Bump libmongoc to 2.1.0" config.m4 config.w32 src/libmongoc sbom.
+json
 ```
