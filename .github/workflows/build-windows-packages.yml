@@ -48,7 +48,6 @@ jobs:
         id: build-driver
         uses: ./.github/actions/windows/build
         with:
-          ref: ${{ inputs.ref }}
           php-version: ${{ matrix.php-version }}
           arch: ${{ matrix.arch }}
           ts: ${{ matrix.ts }}
