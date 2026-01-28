@@ -76,7 +76,7 @@ jobs:
           aws_secret_id: ${{ secrets.AWS_SECRET_ID }}
 
       - name: Get artifacts
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v7
         with:
           path: artifacts
           pattern: php_mongodb-*.zip
