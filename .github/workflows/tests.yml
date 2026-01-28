@@ -25,6 +25,7 @@ jobs:
           - "8.2"
           - "8.3"
           - "8.4"
+          - "8.5"
         mongodb-version:
           - "6.0"
         topology:
@@ -57,8 +58,9 @@ jobs:
         with:
           python-version: '3.13'
 
-      - id: setup-mongodb
-        uses: mongodb-labs/drivers-evergreen-tools@master
+      - name: Setup MongoDB
+        id: setup-mongodb
+        uses: ./tests/drivers-evergreen-tools
         with:
           version: ${{ matrix.mongodb-version }}
           topology: ${{ matrix.topology }}
@@ -129,6 +131,7 @@ jobs:
           - "8.2"
           - "8.3"
           - "8.4"
+          - "8.5"
         arch: [ x64, x86 ]
         ts: [ ts, nts ]
 

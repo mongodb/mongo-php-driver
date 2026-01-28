@@ -17,8 +17,6 @@
 #include "mongoc/mongoc.h"
 
 #include <php.h>
-#include <zend_smart_str.h>
-#include <ext/standard/php_var.h>
 #include <Zend/zend_interfaces.h>
 
 #include "php_phongo.h"
@@ -343,93 +341,6 @@ static PHP_METHOD(MongoDB_Driver_WriteConcern, bsonSerialize)
 	convert_to_object(return_value);
 }
 
-static PHP_METHOD(MongoDB_Driver_WriteConcern, serialize)
-{
-	php_phongo_writeconcern_t* intern;
-	zval                       retval;
-	php_serialize_data_t       var_hash;
-	smart_str                  buf = { 0 };
-	const char*                wtag;
-	int32_t                    w;
-	int64_t                    wtimeout;
-
-	intern = Z_WRITECONCERN_OBJ_P(getThis());
-
-	PHONGO_PARSE_PARAMETERS_NONE();
-
-	if (!intern->write_concern) {
-		return;
-	}
-
-	wtag     = mongoc_write_concern_get_wtag(intern->write_concern);
-	w        = mongoc_write_concern_get_w(intern->write_concern);
-	wtimeout = mongoc_write_concern_get_wtimeout_int64(intern->write_concern);
-
-	array_init_size(&retval, 3);
-
-	if (wtag) {
-		ADD_ASSOC_STRING(&retval, "w", wtag);
-	} else if (mongoc_write_concern_get_wmajority(intern->write_concern)) {
-		ADD_ASSOC_STRING(&retval, "w", PHONGO_WRITE_CONCERN_W_MAJORITY);
-	} else if (w != MONGOC_WRITE_CONCERN_W_DEFAULT) {
-		ADD_ASSOC_LONG_EX(&retval, "w", w);
-	}
-
-	if (mongoc_write_concern_journal_is_set(intern->write_concern)) {
-		ADD_ASSOC_BOOL_EX(&retval, "j", mongoc_write_concern_get_journal(intern->write_concern));
-	}
-
-	if (wtimeout != 0) {
-		if (wtimeout > INT32_MAX || wtimeout < INT32_MIN) {
-			ADD_ASSOC_INT64_AS_STRING(&retval, "wtimeout", wtimeout);
-		} else {
-			ADD_ASSOC_LONG_EX(&retval, "wtimeout", wtimeout);
-		}
-	}
-
-	PHP_VAR_SERIALIZE_INIT(var_hash);
-	php_var_serialize(&buf, &retval, &var_hash);
-	smart_str_0(&buf);
-	PHP_VAR_SERIALIZE_DESTROY(var_hash);
-
-	PHONGO_RETVAL_SMART_STR(buf);
-
-	smart_str_free(&buf);
-	zval_ptr_dtor(&retval);
-}
-
-static PHP_METHOD(MongoDB_Driver_WriteConcern, unserialize)
-{
-	php_phongo_writeconcern_t* intern;
-	char*                      serialized;
-	size_t                     serialized_len;
-	zval                       props;
-	php_unserialize_data_t     var_hash;
-
-	intern = Z_WRITECONCERN_OBJ_P(getThis());
-
-	PHONGO_PARSE_PARAMETERS_START(1, 1)
-	Z_PARAM_STRING(serialized, serialized_len)
-	PHONGO_PARSE_PARAMETERS_END();
-
-	if (!serialized_len) {
-		return;
-	}
-
-	PHP_VAR_UNSERIALIZE_INIT(var_hash);
-	if (!php_var_unserialize(&props, (const unsigned char**) &serialized, (unsigned char*) serialized + serialized_len, &var_hash)) {
-		zval_ptr_dtor(&props);
-		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "%s unserialization failed", ZSTR_VAL(php_phongo_writeconcern_ce->name));
-
-		PHP_VAR_UNSERIALIZE_DESTROY(var_hash);
-		return;
-	}
-	PHP_VAR_UNSERIALIZE_DESTROY(var_hash);
-
-	php_phongo_writeconcern_init_from_hash(intern, HASH_OF(&props));
-	zval_ptr_dtor(&props);
-}
-
 static PHP_METHOD(MongoDB_Driver_WriteConcern, __serialize)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
@@ -492,7 +403,7 @@ static HashTable* php_phongo_writeconcern_get_properties(zend_object* object)
 
 void php_phongo_writeconcern_init_ce(INIT_FUNC_ARGS)
 {
-	php_phongo_writeconcern_ce                = register_class_MongoDB_Driver_WriteConcern(php_phongo_serializable_ce, zend_ce_serializable);
+	php_phongo_writeconcern_ce                = register_class_MongoDB_Driver_WriteConcern(php_phongo_serializable_ce);
 	php_phongo_writeconcern_ce->create_object = php_phongo_writeconcern_create_object;
 
 	memcpy(&php_phongo_handler_writeconcern, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));

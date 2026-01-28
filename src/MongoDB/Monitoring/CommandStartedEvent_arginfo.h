@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: f3b8360ca99550f786be74dde8a245a544e49286 */
+ * Stub hash: c52ae0c5f78d5a61839b24517cc7823f7d9701ad */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_Driver_Monitoring_CommandStartedEvent___construct, 0, 0, 0)
 ZEND_END_ARG_INFO()
@@ -21,9 +21,6 @@ ZEND_END_ARG_INFO()
 
 #define arginfo_class_MongoDB_Driver_Monitoring_CommandStartedEvent_getRequestId arginfo_class_MongoDB_Driver_Monitoring_CommandStartedEvent_getCommandName
 
-ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_MongoDB_Driver_Monitoring_CommandStartedEvent_getServer, 0, 0, MongoDB\\Driver\\Server, 0)
-ZEND_END_ARG_INFO()
-
 ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_MongoDB_Driver_Monitoring_CommandStartedEvent_getServiceId, 0, 0, MongoDB\\BSON\\ObjectId, 1)
 ZEND_END_ARG_INFO()
 
@@ -39,7 +36,6 @@ static ZEND_METHOD(MongoDB_Driver_Monitoring_CommandStartedEvent, getHost);
 static ZEND_METHOD(MongoDB_Driver_Monitoring_CommandStartedEvent, getOperationId);
 static ZEND_METHOD(MongoDB_Driver_Monitoring_CommandStartedEvent, getPort);
 static ZEND_METHOD(MongoDB_Driver_Monitoring_CommandStartedEvent, getRequestId);
-static ZEND_METHOD(MongoDB_Driver_Monitoring_CommandStartedEvent, getServer);
 static ZEND_METHOD(MongoDB_Driver_Monitoring_CommandStartedEvent, getServiceId);
 static ZEND_METHOD(MongoDB_Driver_Monitoring_CommandStartedEvent, getServerConnectionId);
 
@@ -53,7 +49,6 @@ static const zend_function_entry class_MongoDB_Driver_Monitoring_CommandStartedE
 	ZEND_ME(MongoDB_Driver_Monitoring_CommandStartedEvent, getOperationId, arginfo_class_MongoDB_Driver_Monitoring_CommandStartedEvent_getOperationId, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_Driver_Monitoring_CommandStartedEvent, getPort, arginfo_class_MongoDB_Driver_Monitoring_CommandStartedEvent_getPort, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_Driver_Monitoring_CommandStartedEvent, getRequestId, arginfo_class_MongoDB_Driver_Monitoring_CommandStartedEvent_getRequestId, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	ZEND_ME(MongoDB_Driver_Monitoring_CommandStartedEvent, getServer, arginfo_class_MongoDB_Driver_Monitoring_CommandStartedEvent_getServer, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL|ZEND_ACC_DEPRECATED)
 	ZEND_ME(MongoDB_Driver_Monitoring_CommandStartedEvent, getServiceId, arginfo_class_MongoDB_Driver_Monitoring_CommandStartedEvent_getServiceId, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_Driver_Monitoring_CommandStartedEvent, getServerConnectionId, arginfo_class_MongoDB_Driver_Monitoring_CommandStartedEvent_getServerConnectionId, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_FE_END

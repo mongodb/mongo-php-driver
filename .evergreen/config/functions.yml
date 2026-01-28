@@ -4,7 +4,7 @@ functions:
     - command: git.get_project
       params:
         directory: "src"
-    # Fetch the libmongoc submodule
+    # Fetch the submodules
     - command: shell.exec
       params:
         working_dir: "src"
@@ -22,7 +22,7 @@ functions:
              CURRENT_VERSION=latest
           fi
           
-          export DRIVERS_TOOLS="$(pwd)/../drivers-tools"
+          export DRIVERS_TOOLS="$(pwd)/tests/drivers-evergreen-tools"
           export PROJECT_DIRECTORY="$(pwd)"
           
           # Python has cygwin path problems on Windows. Detect prospective mongo-orchestration home directory
@@ -72,15 +72,9 @@ functions:
   "prepare resources":
     - command: shell.exec
       params:
+        working_dir: src
         script: |
           ${PREPARE_SHELL}
-          rm -rf $DRIVERS_TOOLS
-          if [ "${project}" = "drivers-tools" ]; then
-            # If this was a patch build, doing a fresh clone would not actually test the patch
-            cp -R ${PROJECT_DIRECTORY}/ $DRIVERS_TOOLS
-          else
-            git clone https://github.com/mongodb-labs/drivers-evergreen-tools.git $DRIVERS_TOOLS
-          fi
           echo "{ \"releases\": { \"default\": \"$MONGODB_BINARIES\" }}" > $MONGO_ORCHESTRATION_HOME/orchestration.config
 
 
@@ -132,6 +126,9 @@ functions:
         script: |
           ${PREPARE_SHELL}
           perl -p -i -e "s|/data/mci/[0-9a-z]+/src|${PROJECT_DIRECTORY}|g" Makefile
+          for filename in $(find ${DRIVERS_TOOLS} -name \*.json); do
+            perl -p -i -e "s|/data/mci/[0-9a-z]+/src|${PROJECT_DIRECTORY}|g" $filename
+          done
 
   "compile driver" :
     - command: shell.exec
@@ -192,17 +189,23 @@ functions:
           ${PREPARE_SHELL}
           bash ${DRIVERS_TOOLS}/.evergreen/stop-orchestration.sh
 
-  "run OCSP responder":
+  "start OCSP responder":
+    - command: subprocess.exec
+      params:
+        binary: bash
+        background: true
+        include_expansions_in_env:
+          - SERVER_TYPE
+          - OCSP_ALGORITHM
+        args:
+          - ${DRIVERS_TOOLS}/.evergreen/ocsp/setup.sh
+
+  "stop OCSP responder":
     - command: shell.exec
       params:
-        include_expansions_in_env:
-          - TEST_COLUMN
-          - CERT_TYPE
-          - USE_DELEGATE
-        shell: bash
         script: |
           ${PREPARE_SHELL}
-          bash ${PROJECT_DIRECTORY}/.evergreen/run-ocsp-responder.sh
+          bash ${DRIVERS_TOOLS}/.evergreen/ocsp/teardown.sh
 
   "run tests":
     - command: shell.exec

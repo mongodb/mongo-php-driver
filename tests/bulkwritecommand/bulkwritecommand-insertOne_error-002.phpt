@@ -1,0 +1,20 @@
+--TEST--
+MongoDB\Driver\BulkWriteCommand::insertOne() with BSON encoding error (invalid UTF-8 string)
+--FILE--
+<?php
+
+require_once __DIR__ . '/../utils/basic.inc';
+
+$bulk = new MongoDB\Driver\BulkWriteCommand;
+
+echo throws(function() use ($bulk) {
+    $bulk->insertOne(NS, ['x' => "\xc3\x28"]);
+}, 'MongoDB\Driver\Exception\UnexpectedValueException'), "\n";
+
+?>
+===DONE===
+<?php exit(0); ?>
+--EXPECTF--
+OK: Got MongoDB\Driver\Exception\UnexpectedValueException
+Detected invalid UTF-8 for field path "x": %s
+===DONE===
