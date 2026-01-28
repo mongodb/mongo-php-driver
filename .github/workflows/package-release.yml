@@ -88,6 +88,6 @@ jobs:
     uses: ./.github/workflows/build-windows-packages.yml
     with:
       version: ${{ inputs.version }}
-      ref: refs/tags/${{ inputs.version }}
+      ref: ${{ inputs.ref }}
       upload_release_assets: true
     secrets: inherit

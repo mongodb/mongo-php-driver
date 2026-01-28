@@ -1,9 +1,6 @@
 name: "Build DLL files for Windows"
 description: "Prepares the PHP build environment for the MongoDB driver"
 inputs:
-  ref:
-    description: Git reference to build
-    required: false
   php-version:
     description: "PHP version to build for"
     required: true
@@ -20,7 +17,6 @@ runs:
     - name: Build extension
       uses: php/php-windows-builder/extension@1.6.0
       with:
-        extension-ref: ${{ inputs.ref }}
         php-version: ${{ inputs.php-version }}
         arch: x64
         ts: ${{ inputs.ts }}

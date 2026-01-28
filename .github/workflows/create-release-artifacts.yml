@@ -1,0 +1,78 @@
+name: Create Release Artifacts
+run-name: Create Release artifacts for ${{ github.ref_name }}
+on:
+  push:
+    tags:
+      - "*"
+
+jobs:
+  static-analysis:
+    name: "Run Static Analysis"
+    uses: ./.github/workflows/static-analysis.yml
+    with:
+      ref: ${{ github.ref }}
+    permissions:
+      security-events: write
+      id-token: write
+
+  package-release:
+    name: "Create Release Packages"
+    uses: ./.github/workflows/create-release-packages.yml
+    with:
+      version: ${{ github.ref_name }}
+      ref: ${{ github.ref }}
+    secrets: inherit
+    permissions:
+      id-token: write
+      contents: write
+
+  publish-ssdlc-assets:
+    needs:
+      - static-analysis
+      - package-release
+    environment: release
+    name: "Publish SSDLC Assets"
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: read
+      id-token: write
+      contents: write
+
+    steps:
+      - name: "Generate token and checkout repository"
+        uses: mongodb-labs/drivers-github-tools/secure-checkout@v2
+        with:
+          app_id: ${{ vars.APP_ID }}
+          private_key: ${{ secrets.APP_PRIVATE_KEY }}
+
+      # Sets the S3_ASSETS environment variable used later
+      - name: "Set up drivers-github-tools"
+        uses: mongodb-labs/drivers-github-tools/setup@v2
+        with:
+          aws_role_arn: ${{ secrets.AWS_ROLE_ARN }}
+          aws_region_name: ${{ vars.AWS_REGION_NAME }}
+          aws_secret_id: ${{ secrets.AWS_SECRET_ID }}
+
+      - name: "Remove unnecessary files"
+        run: rm -f ${RELEASE_ASSETS}/release_run_id.txt
+        shell: bash
+
+      - name: Download all release artifacts
+        run: gh release download ${{ github.ref_name }} --dir ${{ env.RELEASE_ASSETS }}
+
+      - name: "Generate SSDLC Reports"
+        uses: mongodb-labs/drivers-github-tools/full-report@v2
+        with:
+          product_name: "MongoDB PHP Driver (extension)"
+          release_version: ${{ github.ref_name }}
+          dist_filenames: "${{ env.RELEASE_ASSETS }}/*"
+          silk_asset_group: mongodb-php-driver-extension
+
+      - name: "Upload SBOM as release artifact"
+        run: gh release upload ${{ github.ref_name }} ${{ env.S3_ASSETS }}/cyclonedx.sbom.json
+
+      - name: Upload S3 assets
+        uses: mongodb-labs/drivers-github-tools/upload-s3-assets@v2
+        with:
+          version: ${{ github.ref_name }}
+          product_name: mongo-php-driver
