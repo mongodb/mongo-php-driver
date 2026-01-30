@@ -98,14 +98,23 @@ char* phongo_field_path_as_string(phongo_field_path* field_path)
 	ptr  = path;
 
 	for (i = 0; i <= field_path->size; i++) {
+		size_t element_len;
+
 		if (!field_path->elements[i]) {
 			continue;
 		}
+
+		element_len = strlen(field_path->elements[i]);
+
+		/* Assert that we have enough space in the buffer for this element plus separator */
+		BSON_ASSERT((size_t)(ptr - path) + element_len + 1 < length);
+
 		strcpy(ptr, field_path->elements[i]);
-		ptr += strlen(field_path->elements[i]);
+		ptr += element_len;
 		ptr[0] = '.';
 		ptr++;
 	}
+
 	ptr[-1] = '\0';
 
 	return path;
