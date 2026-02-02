@@ -14,6 +14,7 @@ jobs:
   linux-test:
     name: "Linux Tests"
     runs-on: "${{ matrix.os }}"
+    continue-on-error: ${{ matrix.allow_failures || false }}
 
     strategy:
       fail-fast: true
@@ -47,6 +48,11 @@ jobs:
             php-version: "8.1"
             mongodb-version: "6.0"
             topology: "sharded_cluster"
+          - os: "ubuntu-24.04"
+            php-version: "8.6"
+            mongodb-version: "8.0"
+            topology: "replica_set"
+            allow_failures: true
 
     steps:
       - name: "Checkout"
