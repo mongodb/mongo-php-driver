@@ -123,7 +123,7 @@ static PHP_METHOD(MongoDB_Driver_Cursor, toArray)
 	array_init(return_value);
 
 	if (spl_iterator_apply(getThis(), php_phongo_cursor_to_array_apply, (void*) return_value) != SUCCESS) {
-		zval_dtor(return_value);
+		zval_ptr_dtor_nogc(return_value);
 		RETURN_NULL();
 	}
 }
