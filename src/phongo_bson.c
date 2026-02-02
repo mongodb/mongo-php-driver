@@ -131,11 +131,13 @@ phongo_field_path* phongo_field_path_alloc(bool owns_elements)
 
 void phongo_field_path_free(phongo_field_path* field_path)
 {
-	if (field_path->owns_elements) {
+	if (field_path->owns_elements && field_path->elements) {
 		size_t i;
 
 		for (i = 0; i < field_path->size; i++) {
-			efree(field_path->elements[i]);
+			if (field_path->elements[i]) {
+				efree(field_path->elements[i]);
+			}
 		}
 	}
 	if (field_path->elements) {
