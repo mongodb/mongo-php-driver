@@ -67,14 +67,14 @@ static bool php_phongo_serverapi_init_from_hash(php_phongo_serverapi_t* intern, 
 		return false;
 	}
 
-	if ((strict = zend_hash_str_find(props, ZEND_STRL("strict"))) && !ZVAL_IS_NULL(strict)) {
+	if ((strict = zend_hash_str_find(props, ZEND_STRL("strict"))) && !Z_ISNULL_P(strict)) {
 		if (Z_TYPE_P(strict) != IS_TRUE && Z_TYPE_P(strict) != IS_FALSE) {
 			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "%s initialization requires \"strict\" field to be bool or null", ZSTR_VAL(php_phongo_serverapi_ce->name));
 			return false;
 		}
 	}
 
-	if ((deprecation_errors = zend_hash_str_find(props, ZEND_STRL("deprecationErrors"))) && !ZVAL_IS_NULL(deprecation_errors)) {
+	if ((deprecation_errors = zend_hash_str_find(props, ZEND_STRL("deprecationErrors"))) && !Z_ISNULL_P(deprecation_errors)) {
 		if (Z_TYPE_P(deprecation_errors) != IS_TRUE && Z_TYPE_P(deprecation_errors) != IS_FALSE) {
 			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "%s initialization requires \"deprecationErrors\" field to be bool or null", ZSTR_VAL(php_phongo_serverapi_ce->name));
 			return false;
@@ -84,10 +84,10 @@ static bool php_phongo_serverapi_init_from_hash(php_phongo_serverapi_t* intern, 
 	return php_phongo_serverapi_create_libmongoc_object(
 		&intern->server_api,
 		Z_STR_P(version),
-		strict && !ZVAL_IS_NULL(strict),
-		strict && zval_is_true(strict),
-		deprecation_errors && !ZVAL_IS_NULL(deprecation_errors),
-		deprecation_errors && zval_is_true(deprecation_errors));
+		strict && !Z_ISNULL_P(strict),
+		strict && zend_is_true(strict),
+		deprecation_errors && !Z_ISNULL_P(deprecation_errors),
+		deprecation_errors && zend_is_true(deprecation_errors));
 }
 
 /* Constructs a new ServerApi object */
