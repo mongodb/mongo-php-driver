@@ -181,12 +181,15 @@ void php_phongo_field_path_write_type_at_current_level(php_phongo_field_path* fi
 
 bool php_phongo_field_path_push(php_phongo_field_path* field_path, const char* element, php_phongo_bson_field_path_item_types element_type)
 {
-	php_phongo_field_path_write_item_at_current_level(field_path, element);
+	if (element) {
+		php_phongo_field_path_write_item_at_current_level(field_path, element);
+	}
+
 	php_phongo_field_path_write_type_at_current_level(field_path, element_type);
 
 	field_path->size++;
 
-	return true;
+	return field_path->size <= BSON_MAX_NESTING_LEVEL;
 }
 
 bool php_phongo_field_path_pop(php_phongo_field_path* field_path)
