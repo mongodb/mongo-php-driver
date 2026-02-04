@@ -362,11 +362,15 @@ try_again:
 					break;
 				}
 
+				if (!php_phongo_field_path_push(field_path, NULL, PHONGO_FIELD_PATH_ITEM_ARRAY)) {
+					phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Nesting level too deep");
+					php_phongo_zend_hash_apply_protection_end(tmp_ht);
+					break;
+				}
+
 				bson_append_array_begin(bson, key, key_len, &child);
-				php_phongo_field_path_write_type_at_current_level(field_path, PHONGO_FIELD_PATH_ITEM_ARRAY);
-				field_path->size++;
 				php_phongo_zval_to_bson_internal(entry, field_path, flags, &child, NULL);
-				field_path->size--;
+				php_phongo_field_path_pop(field_path);
 				bson_append_array_end(bson, &child);
 
 				php_phongo_zend_hash_apply_protection_end(tmp_ht);
@@ -385,14 +389,21 @@ try_again:
 			}
 
 			if (Z_TYPE_P(entry) == IS_OBJECT && instanceof_function(Z_OBJCE_P(entry), php_phongo_packedarray_ce)) {
-				php_phongo_field_path_write_type_at_current_level(field_path, PHONGO_FIELD_PATH_ITEM_ARRAY);
+				if (!php_phongo_field_path_push(field_path, NULL, PHONGO_FIELD_PATH_ITEM_ARRAY)) {
+					phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Nesting level too deep");
+					php_phongo_zend_hash_apply_protection_end(tmp_ht);
+					break;
+				}
 			} else {
-				php_phongo_field_path_write_type_at_current_level(field_path, PHONGO_FIELD_PATH_ITEM_DOCUMENT);
+				if (!php_phongo_field_path_push(field_path, NULL, PHONGO_FIELD_PATH_ITEM_DOCUMENT)) {
+					phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Nesting level too deep");
+					php_phongo_zend_hash_apply_protection_end(tmp_ht);
+					break;
+				}
 			}
 
-			field_path->size++;
 			php_phongo_bson_append_object(bson, field_path, flags, key, key_len, entry);
-			field_path->size--;
+			php_phongo_field_path_pop(field_path);
 
 			php_phongo_zend_hash_apply_protection_end(tmp_ht);
 			break;

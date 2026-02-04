@@ -24,6 +24,7 @@
 #define BSON_UNSERIALIZE_FUNC_NAME "bsonUnserialize"
 #define BSON_SERIALIZE_FUNC_NAME "bsonSerialize"
 #define PHONGO_ODM_FIELD_NAME "__pclass"
+#define BSON_MAX_NESTING_LEVEL 100
 
 typedef enum {
 	PHONGO_FIELD_PATH_ITEM_NONE,
