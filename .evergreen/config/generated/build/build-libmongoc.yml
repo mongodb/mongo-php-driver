@@ -6,29 +6,29 @@ tasks:
 # These tasks are used in the build task group "build-php-libmongoc" defined in .evergreen/config/templates/build-task-groups.yml,
 # where the "max_hosts" setting must be set to the number of enabled tasks.
 # Last but not least, make sure the corresponding test variants are enabled in .evergreen/config/templates/test-variant/libmongoc.yml
-  - name: "build-php-8.4-libmongoc-lowest-supported"
-    tags: ["build-libmongoc", "php8.4"]
+  - name: "build-php-8.5-libmongoc-lowest-supported"
+    tags: ["build-libmongoc", "php8.5"]
     commands:
       - func: "compile driver"
         vars:
-          PHP_VERSION: "8.4"
+          PHP_VERSION: "8.5"
           LIBMONGOC_VERSION: "2.2.2"
       - func: "upload build"
 
-  - name: "build-php-8.4-libmongoc-next-stable"
-    tags: ["build-libmongoc", "php8.4"]
+  - name: "build-php-8.5-libmongoc-next-stable"
+    tags: ["build-libmongoc", "php8.5"]
     commands:
       - func: "compile driver"
         vars:
-          PHP_VERSION: "8.4"
+          PHP_VERSION: "8.5"
           LIBMONGOC_VERSION: "r2.2"
       - func: "upload build"
 
-  - name: "build-php-8.4-libmongoc-latest"
-    tags: ["build-libmongoc", "php8.4"]
+  - name: "build-php-8.5-libmongoc-latest"
+    tags: ["build-libmongoc", "php8.5"]
     commands:
       - func: "compile driver"
         vars:
-          PHP_VERSION: "8.4"
+          PHP_VERSION: "8.5"
           LIBMONGOC_VERSION: "master"
       - func: "upload build"
