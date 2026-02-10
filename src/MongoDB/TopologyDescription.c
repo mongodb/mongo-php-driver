@@ -107,13 +107,16 @@ static void php_phongo_topologydescription_free_object(zend_object* object)
 
 	zend_object_std_dtor(&intern->std);
 
-	if (intern->properties) {
-		zend_hash_destroy(intern->properties);
-		FREE_HASHTABLE(intern->properties);
-	}
-
 	if (intern->topology_description) {
 		mongoc_topology_description_destroy(intern->topology_description);
+	}
+
+	if (intern->properties) {
+		zend_hash_release(intern->properties);
+	}
+
+	if (intern->php_properties) {
+		zend_hash_release(intern->php_properties);
 	}
 }
 
@@ -180,6 +183,8 @@ static HashTable* php_phongo_topologydescription_get_properties(zend_object* obj
 	return php_phongo_topologydescription_get_properties_hash(object, false);
 }
 
+PHONGO_DEFINE_PROPERTY_HANDLERS(topologydescription, Z_OBJ_TOPOLOGYDESCRIPTION)
+
 void php_phongo_topologydescription_init_ce(INIT_FUNC_ARGS)
 {
 	php_phongo_topologydescription_ce                = register_class_MongoDB_Driver_TopologyDescription();
@@ -190,6 +195,8 @@ void php_phongo_topologydescription_init_ce(INIT_FUNC_ARGS)
 	php_phongo_handler_topologydescription.get_properties = php_phongo_topologydescription_get_properties;
 	php_phongo_handler_topologydescription.free_obj       = php_phongo_topologydescription_free_object;
 	php_phongo_handler_topologydescription.offset         = XtOffsetOf(php_phongo_topologydescription_t, std);
+
+	PHONGO_ASSIGN_PROPERTY_HANDLERS(topologydescription);
 }
 
 void phongo_topologydescription_init(zval* return_value, mongoc_topology_description_t* topology_description)

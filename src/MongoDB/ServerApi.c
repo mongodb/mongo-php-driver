@@ -211,13 +211,16 @@ static void php_phongo_serverapi_free_object(zend_object* object)
 
 	zend_object_std_dtor(&intern->std);
 
-	if (intern->properties) {
-		zend_hash_destroy(intern->properties);
-		FREE_HASHTABLE(intern->properties);
-	}
-
 	if (intern->server_api) {
 		mongoc_server_api_destroy(intern->server_api);
+	}
+
+	if (intern->properties) {
+		zend_hash_release(intern->properties);
+	}
+
+	if (intern->php_properties) {
+		zend_hash_release(intern->php_properties);
 	}
 }
 
@@ -244,6 +247,8 @@ static HashTable* php_phongo_serverapi_get_properties(zend_object* object)
 	return php_phongo_serverapi_get_properties_hash(object, false, true);
 }
 
+PHONGO_DEFINE_PROPERTY_HANDLERS(serverapi, Z_OBJ_SERVERAPI)
+
 void php_phongo_serverapi_init_ce(INIT_FUNC_ARGS)
 {
 	php_phongo_serverapi_ce                = register_class_MongoDB_Driver_ServerApi(php_phongo_serializable_ce);
@@ -254,4 +259,6 @@ void php_phongo_serverapi_init_ce(INIT_FUNC_ARGS)
 	php_phongo_handler_serverapi.get_properties = php_phongo_serverapi_get_properties;
 	php_phongo_handler_serverapi.free_obj       = php_phongo_serverapi_free_object;
 	php_phongo_handler_serverapi.offset         = XtOffsetOf(php_phongo_serverapi_t, std);
+
+	PHONGO_ASSIGN_PROPERTY_HANDLERS(serverapi);
 }

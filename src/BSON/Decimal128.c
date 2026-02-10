@@ -169,8 +169,11 @@ static void php_phongo_decimal128_free_object(zend_object* object)
 	zend_object_std_dtor(&intern->std);
 
 	if (intern->properties) {
-		zend_hash_destroy(intern->properties);
-		FREE_HASHTABLE(intern->properties);
+		zend_hash_release(intern->properties);
+	}
+
+	if (intern->php_properties) {
+		zend_hash_release(intern->php_properties);
 	}
 }
 
@@ -216,6 +219,8 @@ static HashTable* php_phongo_decimal128_get_properties(zend_object* object)
 	return php_phongo_decimal128_get_properties_hash(object, false);
 }
 
+PHONGO_DEFINE_PROPERTY_HANDLERS(decimal128, Z_OBJ_DECIMAL128)
+
 void php_phongo_decimal128_init_ce(INIT_FUNC_ARGS)
 {
 	php_phongo_decimal128_ce                = register_class_MongoDB_BSON_Decimal128(php_phongo_decimal128_interface_ce, php_phongo_json_serializable_ce, php_phongo_type_ce, zend_ce_stringable);
@@ -227,6 +232,8 @@ void php_phongo_decimal128_init_ce(INIT_FUNC_ARGS)
 	php_phongo_handler_decimal128.get_properties = php_phongo_decimal128_get_properties;
 	php_phongo_handler_decimal128.free_obj       = php_phongo_decimal128_free_object;
 	php_phongo_handler_decimal128.offset         = XtOffsetOf(php_phongo_decimal128_t, std);
+
+	PHONGO_ASSIGN_PROPERTY_HANDLERS(decimal128);
 }
 
 bool phongo_decimal128_new(zval* object, const bson_decimal128_t* decimal)

@@ -151,8 +151,11 @@ static void php_phongo_symbol_free_object(zend_object* object)
 	}
 
 	if (intern->properties) {
-		zend_hash_destroy(intern->properties);
-		FREE_HASHTABLE(intern->properties);
+		zend_hash_release(intern->properties);
+	}
+
+	if (intern->php_properties) {
+		zend_hash_release(intern->php_properties);
 	}
 }
 
@@ -208,6 +211,8 @@ static HashTable* php_phongo_symbol_get_properties(zend_object* object)
 	return php_phongo_symbol_get_properties_hash(object, false);
 }
 
+PHONGO_DEFINE_PROPERTY_HANDLERS(symbol, Z_OBJ_SYMBOL)
+
 void php_phongo_symbol_init_ce(INIT_FUNC_ARGS)
 {
 	php_phongo_symbol_ce                = register_class_MongoDB_BSON_Symbol(php_phongo_json_serializable_ce, php_phongo_type_ce, zend_ce_stringable);
@@ -220,6 +225,8 @@ void php_phongo_symbol_init_ce(INIT_FUNC_ARGS)
 	php_phongo_handler_symbol.get_properties = php_phongo_symbol_get_properties;
 	php_phongo_handler_symbol.free_obj       = php_phongo_symbol_free_object;
 	php_phongo_handler_symbol.offset         = XtOffsetOf(php_phongo_symbol_t, std);
+
+	PHONGO_ASSIGN_PROPERTY_HANDLERS(symbol);
 }
 
 bool phongo_symbol_new(zval* object, const char* symbol, size_t symbol_len)

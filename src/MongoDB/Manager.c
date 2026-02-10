@@ -798,8 +798,7 @@ static void php_phongo_manager_free_object(zend_object* object)
 	}
 
 	if (intern->subscribers) {
-		zend_hash_destroy(intern->subscribers);
-		FREE_HASHTABLE(intern->subscribers);
+		zend_hash_release(intern->subscribers);
 	}
 }
 
