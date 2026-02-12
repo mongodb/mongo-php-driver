@@ -548,7 +548,7 @@ static PHP_METHOD(MongoDB_BSON_Binary, getVectorType)
 	php_phongo_binary_t* intern = Z_BINARY_OBJ_P(getThis());
 
 	if (intern->type != BSON_SUBTYPE_VECTOR) {
-		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected Binary of type vector (%" PRId8 ") but it is %" PHONGO_LONG_FORMAT, BSON_SUBTYPE_VECTOR, intern->type);
+		phongo_throw_exception(PHONGO_ERROR_LOGIC, "Expected Binary of type vector (%" PRId8 ") but it is %" PHONGO_LONG_FORMAT, BSON_SUBTYPE_VECTOR, intern->type);
 		RETURN_THROWS();
 	}
 
@@ -655,7 +655,7 @@ static PHP_METHOD(MongoDB_BSON_Binary, toArray)
 	php_phongo_binary_t* intern = Z_BINARY_OBJ_P(getThis());
 
 	if (intern->type != BSON_SUBTYPE_VECTOR) {
-		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected Binary of type vector (%" PRId8 ") but it is %" PHONGO_LONG_FORMAT, BSON_SUBTYPE_VECTOR, intern->type);
+		phongo_throw_exception(PHONGO_ERROR_LOGIC, "Expected Binary of type vector (%" PRId8 ") but it is %" PHONGO_LONG_FORMAT, BSON_SUBTYPE_VECTOR, intern->type);
 		RETURN_THROWS();
 	}
 
