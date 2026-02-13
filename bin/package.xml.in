@@ -18,7 +18,7 @@ necessary to build a fully-functional MongoDB driver.
   <name>Jeremy Mikola</name>
   <user>jmikola</user>
   <email>jmikola@php.net</email>
-  <active>yes</active>
+  <active>no</active>
  </lead>
  <lead>
   <name>Derick Rethans</name>
