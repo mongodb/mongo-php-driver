@@ -1,16 +1,16 @@
 # This file is generated automatically - please edit the "templates/test-variant/libmongoc.yml" template file instead.
 buildvariants:
   # Variants with different libmongoc
-  - name: test-debian12-php-8.4-libmongoc-lowest-supported
-    tags: ["test", "libmongoc", "debian", "x64", "php8.4", "pr", "tag"]
-    display_name: "Test: Debian 12, PHP 8.4, libmongoc lowest"
+  - name: test-debian12-php-8.5-libmongoc-lowest-supported
+    tags: ["test", "libmongoc", "debian", "x64", "php8.5", "pr", "tag"]
+    display_name: "Test: Debian 12, PHP 8.5, libmongoc lowest"
     run_on: debian12-small
     expansions:
       FETCH_BUILD_VARIANT: "build-debian12"
-      FETCH_BUILD_TASK: "build-php-8.4-libmongoc-lowest-supported"
+      FETCH_BUILD_TASK: "build-php-8.5-libmongoc-lowest-supported"
     depends_on:
       - variant: "build-debian12"
-        name: "build-php-8.4-libmongoc-lowest-supported"
+        name: "build-php-8.5-libmongoc-lowest-supported"
     tasks:
       - ".standalone .local !.4.2 !.4.4 !.5.0 !.6.0"
       - ".replicaset .local !.4.2 !.4.4 !.5.0 !.6.0"
@@ -32,16 +32,16 @@ buildvariants:
         execution_tasks:
           - ".ocsp .7.0"
 
-  - name: test-debian12-php-8.4-libmongoc-next-stable
-    tags: ["test", "libmongoc", "debian", "x64", "php8.4", "pr", "tag"]
-    display_name: "Test: Debian 12, PHP 8.4, libmongoc next stable"
+  - name: test-debian12-php-8.5-libmongoc-next-stable
+    tags: ["test", "libmongoc", "debian", "x64", "php8.5", "pr", "tag"]
+    display_name: "Test: Debian 12, PHP 8.5, libmongoc next stable"
     run_on: debian12-small
     expansions:
       FETCH_BUILD_VARIANT: "build-debian12"
-      FETCH_BUILD_TASK: "build-php-8.4-libmongoc-next-stable"
+      FETCH_BUILD_TASK: "build-php-8.5-libmongoc-next-stable"
     depends_on:
       - variant: "build-debian12"
-        name: "build-php-8.4-libmongoc-next-stable"
+        name: "build-php-8.5-libmongoc-next-stable"
     tasks:
       - ".standalone .local !.4.2 !.4.4 !.5.0 !.6.0"
       - ".replicaset .local !.4.2 !.4.4 !.5.0 !.6.0"
@@ -63,16 +63,16 @@ buildvariants:
         execution_tasks:
           - ".ocsp .7.0"
 
-  - name: test-debian12-php-8.4-libmongoc-latest
-    tags: ["test", "libmongoc", "debian", "x64", "php8.4"]
-    display_name: "Test: Debian 12, PHP 8.4, libmongoc latest"
+  - name: test-debian12-php-8.5-libmongoc-latest
+    tags: ["test", "libmongoc", "debian", "x64", "php8.5"]
+    display_name: "Test: Debian 12, PHP 8.5, libmongoc latest"
     run_on: debian12-small
     expansions:
       FETCH_BUILD_VARIANT: "build-debian12"
-      FETCH_BUILD_TASK: "build-php-8.4-libmongoc-latest"
+      FETCH_BUILD_TASK: "build-php-8.5-libmongoc-latest"
     depends_on:
       - variant: "build-debian12"
-        name: "build-php-8.4-libmongoc-latest"
+        name: "build-php-8.5-libmongoc-latest"
     tasks:
       - ".standalone .local !.4.2 !.4.4 !.5.0 !.6.0"
       - ".replicaset .local !.4.2 !.4.4 !.5.0 !.6.0"
