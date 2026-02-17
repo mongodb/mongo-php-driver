@@ -370,6 +370,11 @@ if test "$PHP_MONGODB" != "no"; then
     PHP_MONGODB_ADD_SOURCES([src/libmongoc/src/libbson/src/jsonsl/], $PHP_MONGODB_JSONSL_SOURCES, $PHP_MONGODB_BUNDLED_CFLAGS)
     PHP_MONGODB_ADD_SOURCES([src/libmongoc/src/libmongoc/src/mongoc/], $PHP_MONGODB_MONGOC_SOURCES, $PHP_MONGODB_BUNDLED_CFLAGS)
 
+    dnl Add the build directories as include paths to some generated files
+    PHP_ADD_INCLUDE([$PWD/src/libmongoc/src/common/src])
+    PHP_ADD_INCLUDE([$PWD/src/libmongoc/src/libbson/src])
+    PHP_ADD_INCLUDE([$PWD/src/libmongoc/src/libmongoc/src])
+
     PHP_MONGODB_ADD_INCLUDE([src/libmongoc/src/common/src/])
     PHP_MONGODB_ADD_INCLUDE([src/libmongoc/src/uthash/])
     PHP_MONGODB_ADD_INCLUDE([src/libmongoc/src/libbson/src/])
@@ -394,12 +399,12 @@ if test "$PHP_MONGODB" != "no"; then
     ac_config_dir=PHP_EXT_SRCDIR(mongodb)
 
     AC_CONFIG_FILES([
-      ${ac_config_dir}/src/libmongoc/src/common/src/common-config.h
-      ${ac_config_dir}/src/libmongoc/src/libbson/src/bson/config.h
-      ${ac_config_dir}/src/libmongoc/src/libbson/src/bson/version.h
-      ${ac_config_dir}/src/libmongoc/src/libmongoc/src/mongoc/mongoc-config.h
-      ${ac_config_dir}/src/libmongoc/src/libmongoc/src/mongoc/mongoc-config-private.h
-      ${ac_config_dir}/src/libmongoc/src/libmongoc/src/mongoc/mongoc-version.h
+      src/libmongoc/src/common/src/common-config.h
+      src/libmongoc/src/libbson/src/bson/config.h
+      src/libmongoc/src/libbson/src/bson/version.h
+      src/libmongoc/src/libmongoc/src/mongoc/mongoc-config.h
+      src/libmongoc/src/libmongoc/src/mongoc/mongoc-config-private.h
+      src/libmongoc/src/libmongoc/src/mongoc/mongoc-version.h
     ])
 
     if test "x$bundled_utf8proc" = "xyes"; then
