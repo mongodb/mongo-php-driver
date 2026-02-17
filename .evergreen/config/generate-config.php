@@ -1,8 +1,9 @@
-#!/bin/env php
+#!/usr/bin/env php
 <?php
 
 // Supported PHP versions. Add new versions to the beginning of the list
 $phpVersions = [
+    '8.5',
     '8.4',
     '8.3',
     '8.2',
