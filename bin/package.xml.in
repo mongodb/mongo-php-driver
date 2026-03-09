@@ -15,6 +15,18 @@ necessary to build a fully-functional MongoDB driver.
   <active>yes</active>
  </lead>
  <lead>
+  <name>Jérôme Tamarelle</name>
+  <user>gromnan</user>
+  <email>jerome.tamarelle@mongodb.com</email>
+  <active>yes</active>
+ </lead>
+ <lead>
+  <name>Pauline Vos</name>
+  <user>synon</user>
+  <email>info@pauline-vos.nl</email>
+  <active>yes</active>
+ </lead>
+ <lead>
   <name>Jeremy Mikola</name>
   <user>jmikola</user>
   <email>jmikola@php.net</email>
