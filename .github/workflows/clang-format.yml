@@ -27,7 +27,7 @@ jobs:
       - name: "Install PHP"
         uses: "shivammathur/setup-php@v2"
         with:
-          php-version: "${{ env.PHP_VERSION }}"
+          php-version: "${{ env.PHP_VERSION }}-debug"
 
       - name: "Configure driver"
         run: .github/workflows/configure.sh
