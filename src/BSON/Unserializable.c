@@ -24,7 +24,15 @@ zend_class_entry* php_phongo_unserializable_ce;
 static int php_phongo_implement_unserializable(zend_class_entry* interface, zend_class_entry* class_type)
 {
 	if (class_type->ce_flags & ZEND_ACC_ENUM) {
-		zend_error_noreturn(E_ERROR, "Enum class %s cannot implement interface %s", ZSTR_VAL(class_type->name), ZSTR_VAL(interface->name));
+		zend_class_entry* error_interface = interface;
+
+		/* Persistable extends Unserializable, so this handler may be called for
+		 * Persistable enums; prefer Persistable in the fatal message when applicable. */
+		if (interface == php_phongo_unserializable_ce && php_phongo_persistable_ce && instanceof_function(class_type, php_phongo_persistable_ce)) {
+			error_interface = php_phongo_persistable_ce;
+		}
+
+		zend_error_noreturn(E_ERROR, "Enum class %s cannot implement interface %s", ZSTR_VAL(class_type->name), ZSTR_VAL(error_interface->name));
 		return FAILURE;
 	}
 
