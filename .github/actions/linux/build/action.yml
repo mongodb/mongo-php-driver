@@ -14,7 +14,7 @@ runs:
     - name: "Install PHP"
       uses: "shivammathur/setup-php@v2"
       with:
-        php-version: "${{ inputs.version }}"
+        php-version: "${{ inputs.version }}-debug"
         # Only install required extensions
         extensions: "none,date,json,spl,standard,xml"
 
