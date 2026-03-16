@@ -177,8 +177,14 @@ static void php_phongo_dbpointer_free_object(zend_object* object)
 	}
 
 	if (intern->properties) {
-		zend_hash_destroy(intern->properties);
-		FREE_HASHTABLE(intern->properties);
+		HashTable* props   = intern->properties;
+		intern->properties = NULL;
+		zend_hash_release(props);
+	}
+	if (intern->php_properties) {
+		HashTable* props       = intern->php_properties;
+		intern->php_properties = NULL;
+		zend_hash_release(props);
 	}
 }
 
@@ -241,18 +247,26 @@ static HashTable* php_phongo_dbpointer_get_properties(zend_object* object)
 	return php_phongo_dbpointer_get_properties_hash(object, false);
 }
 
+PHONGO_GET_PROPERTY_HANDLERS(dbpointer, Z_OBJ_DBPOINTER);
+
 void php_phongo_dbpointer_init_ce(INIT_FUNC_ARGS)
 {
 	php_phongo_dbpointer_ce                = register_class_MongoDB_BSON_DBPointer(php_phongo_json_serializable_ce, php_phongo_type_ce, zend_ce_stringable);
 	php_phongo_dbpointer_ce->create_object = php_phongo_dbpointer_create_object;
 
 	memcpy(&php_phongo_handler_dbpointer, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
-	php_phongo_handler_dbpointer.compare        = php_phongo_dbpointer_compare_objects;
-	php_phongo_handler_dbpointer.clone_obj      = php_phongo_dbpointer_clone_object;
-	php_phongo_handler_dbpointer.get_debug_info = php_phongo_dbpointer_get_debug_info;
-	php_phongo_handler_dbpointer.get_properties = php_phongo_dbpointer_get_properties;
-	php_phongo_handler_dbpointer.free_obj       = php_phongo_dbpointer_free_object;
-	php_phongo_handler_dbpointer.offset         = XtOffsetOf(php_phongo_dbpointer_t, std);
+	php_phongo_handler_dbpointer.compare              = php_phongo_dbpointer_compare_objects;
+	php_phongo_handler_dbpointer.clone_obj            = php_phongo_dbpointer_clone_object;
+	php_phongo_handler_dbpointer.get_debug_info       = php_phongo_dbpointer_get_debug_info;
+	php_phongo_handler_dbpointer.get_properties       = php_phongo_dbpointer_get_properties;
+	php_phongo_handler_dbpointer.read_property        = php_phongo_dbpointer_read_property;
+	php_phongo_handler_dbpointer.write_property       = php_phongo_dbpointer_write_property;
+	php_phongo_handler_dbpointer.has_property         = php_phongo_dbpointer_has_property;
+	php_phongo_handler_dbpointer.unset_property       = php_phongo_dbpointer_unset_property;
+	php_phongo_handler_dbpointer.get_property_ptr_ptr = php_phongo_dbpointer_get_property_ptr_ptr;
+	php_phongo_handler_dbpointer.get_gc               = php_phongo_dbpointer_get_gc;
+	php_phongo_handler_dbpointer.free_obj             = php_phongo_dbpointer_free_object;
+	php_phongo_handler_dbpointer.offset               = XtOffsetOf(php_phongo_dbpointer_t, std);
 }
 
 bool phongo_dbpointer_new(zval* object, const char* ref, size_t ref_len, const bson_oid_t* oid)

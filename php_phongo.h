@@ -77,10 +77,96 @@ zend_object_handlers* phongo_get_std_object_handlers(void);
 #define PHONGO_GET_PROPERTY_HASH_FREE_PROPS(is_temp, props) \
 	do {                                                    \
 		if (is_temp) {                                      \
-			zend_hash_destroy((props));                     \
-			FREE_HASHTABLE(props);                          \
+			zend_hash_release((props));                     \
 		}                                                   \
 	} while (0)
+
+#define PHONGO_GET_PROPERTY_HANDLERS(_name, _intern_extractor)                             \
+	PHONGO_GET_PROPERTY_HANDLERS_NO_GC(_name, _intern_extractor)                           \
+                                                                                           \
+	static HashTable* php_phongo_##_name##_get_gc(zend_object* zobj, zval** table, int* n) \
+	{                                                                                      \
+		*table = NULL;                                                                     \
+		*n     = 0;                                                                        \
+		return _intern_extractor(zobj)->php_properties;                                    \
+	}
+
+#define PHONGO_GET_PROPERTY_HANDLERS_NO_GC(_name, _intern_extractor)                                                               \
+	static zval* php_phongo_##_name##_read_property(zend_object* zobj, zend_string* member, int type, void** cache_slot, zval* rv) \
+	{                                                                                                                              \
+		HashTable* props = _intern_extractor(zobj)->php_properties;                                                                \
+		if (!props) {                                                                                                              \
+			ALLOC_HASHTABLE(props);                                                                                                \
+			zend_hash_init(props, 0, NULL, ZVAL_PTR_DTOR, 0);                                                                      \
+			_intern_extractor(zobj)->php_properties = props;                                                                       \
+		}                                                                                                                          \
+		zval* ret = zend_hash_find(props, member);                                                                                 \
+		if (ret) {                                                                                                                 \
+			return ret;                                                                                                            \
+		}                                                                                                                          \
+		return &EG(uninitialized_zval);                                                                                            \
+	}                                                                                                                              \
+                                                                                                                                   \
+	static zval* php_phongo_##_name##_write_property(zend_object* zobj, zend_string* name, zval* value, void** cache_slot)         \
+	{                                                                                                                              \
+		Z_TRY_ADDREF_P(value);                                                                                                     \
+		HashTable* props = _intern_extractor(zobj)->php_properties;                                                                \
+		if (!props) {                                                                                                              \
+			ALLOC_HASHTABLE(props);                                                                                                \
+			zend_hash_init(props, 0, NULL, ZVAL_PTR_DTOR, 0);                                                                      \
+			_intern_extractor(zobj)->php_properties = props;                                                                       \
+		}                                                                                                                          \
+		return zend_hash_add_new(props, name, value);                                                                              \
+	}                                                                                                                              \
+	static int php_phongo_##_name##_has_property(zend_object* zobj, zend_string* name, int has_set_exists, void** cache_slot)      \
+	{                                                                                                                              \
+		HashTable* props = _intern_extractor(zobj)->php_properties;                                                                \
+		if (!props) {                                                                                                              \
+			ALLOC_HASHTABLE(props);                                                                                                \
+			zend_hash_init(props, 0, NULL, ZVAL_PTR_DTOR, 0);                                                                      \
+			_intern_extractor(zobj)->php_properties = props;                                                                       \
+		}                                                                                                                          \
+		zval* value = zend_hash_find(props, name);                                                                                 \
+		if (value) {                                                                                                               \
+			if (has_set_exists == ZEND_PROPERTY_NOT_EMPTY) {                                                                       \
+				return zend_is_true(value);                                                                                        \
+			}                                                                                                                      \
+			if (has_set_exists < ZEND_PROPERTY_NOT_EMPTY) {                                                                        \
+				ZEND_ASSERT(has_set_exists == ZEND_PROPERTY_ISSET);                                                                \
+				ZVAL_DEREF(value);                                                                                                 \
+				return (Z_TYPE_P(value) != IS_NULL);                                                                               \
+			}                                                                                                                      \
+			ZEND_ASSERT(has_set_exists == ZEND_PROPERTY_EXISTS);                                                                   \
+			return true;                                                                                                           \
+		}                                                                                                                          \
+		return false;                                                                                                              \
+	}                                                                                                                              \
+	static void php_phongo_##_name##_unset_property(zend_object* zobj, zend_string* name, void** cache_slot)                       \
+	{                                                                                                                              \
+		HashTable* props = _intern_extractor(zobj)->php_properties;                                                                \
+		if (!props) {                                                                                                              \
+			ALLOC_HASHTABLE(props);                                                                                                \
+			zend_hash_init(props, 0, NULL, ZVAL_PTR_DTOR, 0);                                                                      \
+			_intern_extractor(zobj)->php_properties = props;                                                                       \
+		}                                                                                                                          \
+		zend_hash_del(props, name);                                                                                                \
+	}                                                                                                                              \
+                                                                                                                                   \
+	static zval* php_phongo_##_name##_get_property_ptr_ptr(zend_object* zobj, zend_string* name, int type, void** cache_slot)      \
+	{                                                                                                                              \
+		HashTable* props = _intern_extractor(zobj)->php_properties;                                                                \
+		if (!props) {                                                                                                              \
+			ALLOC_HASHTABLE(props);                                                                                                \
+			zend_hash_init(props, 0, NULL, ZVAL_PTR_DTOR, 0);                                                                      \
+			_intern_extractor(zobj)->php_properties = props;                                                                       \
+		}                                                                                                                          \
+                                                                                                                                   \
+		zval* value = zend_hash_find(props, name);                                                                                 \
+		if (value) {                                                                                                               \
+			return value;                                                                                                          \
+		}                                                                                                                          \
+		return zend_hash_add(props, name, &EG(uninitialized_zval));                                                                \
+	}
 
 #define PHONGO_ZVAL_EXCEPTION_NAME(e) (ZSTR_VAL(e->ce->name))
 

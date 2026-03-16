@@ -1,8 +1,5 @@
 --TEST--
 PHPC-1598: ReadPreference get_gc should delegate to zend_std_get_properties
---SKIPIF--
-<?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
-<?php skip_if_php_version('>=', '8.1.99'); ?>
 --FILE--
 <?php
 

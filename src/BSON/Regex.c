@@ -229,8 +229,14 @@ static void php_phongo_regex_free_object(zend_object* object)
 	}
 
 	if (intern->properties) {
-		zend_hash_destroy(intern->properties);
-		FREE_HASHTABLE(intern->properties);
+		HashTable* props   = intern->properties;
+		intern->properties = NULL;
+		zend_hash_release(props);
+	}
+	if (intern->php_properties) {
+		HashTable* props       = intern->php_properties;
+		intern->php_properties = NULL;
+		zend_hash_release(props);
 	}
 }
 
@@ -294,18 +300,26 @@ static HashTable* php_phongo_regex_get_properties(zend_object* object)
 	return php_phongo_regex_get_properties_hash(object, false);
 }
 
+PHONGO_GET_PROPERTY_HANDLERS(regex, Z_OBJ_REGEX);
+
 void php_phongo_regex_init_ce(INIT_FUNC_ARGS)
 {
 	php_phongo_regex_ce                = register_class_MongoDB_BSON_Regex(php_phongo_regex_interface_ce, php_phongo_json_serializable_ce, php_phongo_type_ce, zend_ce_stringable);
 	php_phongo_regex_ce->create_object = php_phongo_regex_create_object;
 
 	memcpy(&php_phongo_handler_regex, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
-	php_phongo_handler_regex.compare        = php_phongo_regex_compare_objects;
-	php_phongo_handler_regex.clone_obj      = php_phongo_regex_clone_object;
-	php_phongo_handler_regex.get_debug_info = php_phongo_regex_get_debug_info;
-	php_phongo_handler_regex.get_properties = php_phongo_regex_get_properties;
-	php_phongo_handler_regex.free_obj       = php_phongo_regex_free_object;
-	php_phongo_handler_regex.offset         = XtOffsetOf(php_phongo_regex_t, std);
+	php_phongo_handler_regex.compare              = php_phongo_regex_compare_objects;
+	php_phongo_handler_regex.clone_obj            = php_phongo_regex_clone_object;
+	php_phongo_handler_regex.get_debug_info       = php_phongo_regex_get_debug_info;
+	php_phongo_handler_regex.get_properties       = php_phongo_regex_get_properties;
+	php_phongo_handler_regex.read_property        = php_phongo_regex_read_property;
+	php_phongo_handler_regex.write_property       = php_phongo_regex_write_property;
+	php_phongo_handler_regex.has_property         = php_phongo_regex_has_property;
+	php_phongo_handler_regex.unset_property       = php_phongo_regex_unset_property;
+	php_phongo_handler_regex.get_property_ptr_ptr = php_phongo_regex_get_property_ptr_ptr;
+	php_phongo_handler_regex.get_gc               = php_phongo_regex_get_gc;
+	php_phongo_handler_regex.free_obj             = php_phongo_regex_free_object;
+	php_phongo_handler_regex.offset               = XtOffsetOf(php_phongo_regex_t, std);
 }
 
 bool phongo_regex_new(zval* object, const char* pattern, const char* flags)
