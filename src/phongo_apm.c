@@ -65,7 +65,7 @@ static HashTable* phongo_apm_get_subscribers_to_notify(zend_class_entry* subscri
 	}
 
 	if (MONGODB_G(managers)) {
-		php_phongo_manager_t* manager;
+		phongo_manager_t* manager;
 
 		ZEND_HASH_FOREACH_PTR(MONGODB_G(managers), manager)
 		{
@@ -100,20 +100,20 @@ static void phongo_apm_dispatch_event(HashTable* subscribers, const char* functi
 
 static void phongo_apm_command_started(const mongoc_apm_command_started_t* event)
 {
-	mongoc_client_t*                  client;
-	HashTable*                        subscribers;
-	php_phongo_commandstartedevent_t* p_event;
-	zval                              z_event;
+	mongoc_client_t*              client;
+	HashTable*                    subscribers;
+	phongo_commandstartedevent_t* p_event;
+	zval                          z_event;
 
 	client      = mongoc_apm_command_started_get_context(event);
-	subscribers = phongo_apm_get_subscribers_to_notify(php_phongo_commandsubscriber_ce, client);
+	subscribers = phongo_apm_get_subscribers_to_notify(phongo_commandsubscriber_ce, client);
 
 	/* Return early if there are no APM subscribers to notify */
 	if (zend_hash_num_elements(subscribers) == 0) {
 		goto cleanup;
 	}
 
-	object_init_ex(&z_event, php_phongo_commandstartedevent_ce);
+	object_init_ex(&z_event, phongo_commandstartedevent_ce);
 	p_event = Z_COMMANDSTARTEDEVENT_OBJ_P(&z_event);
 
 	memcpy(&p_event->host, mongoc_apm_command_started_get_host(event), sizeof(mongoc_host_list_t));
@@ -141,20 +141,20 @@ cleanup:
 
 static void phongo_apm_command_succeeded(const mongoc_apm_command_succeeded_t* event)
 {
-	mongoc_client_t*                    client;
-	HashTable*                          subscribers;
-	php_phongo_commandsucceededevent_t* p_event;
-	zval                                z_event;
+	mongoc_client_t*                client;
+	HashTable*                      subscribers;
+	phongo_commandsucceededevent_t* p_event;
+	zval                            z_event;
 
 	client      = mongoc_apm_command_succeeded_get_context(event);
-	subscribers = phongo_apm_get_subscribers_to_notify(php_phongo_commandsubscriber_ce, client);
+	subscribers = phongo_apm_get_subscribers_to_notify(phongo_commandsubscriber_ce, client);
 
 	/* Return early if there are no APM subscribers to notify */
 	if (zend_hash_num_elements(subscribers) == 0) {
 		goto cleanup;
 	}
 
-	object_init_ex(&z_event, php_phongo_commandsucceededevent_ce);
+	object_init_ex(&z_event, phongo_commandsucceededevent_ce);
 	p_event = Z_COMMANDSUCCEEDEDEVENT_OBJ_P(&z_event);
 
 	memcpy(&p_event->host, mongoc_apm_command_succeeded_get_host(event), sizeof(mongoc_host_list_t));
@@ -183,21 +183,21 @@ cleanup:
 
 static void phongo_apm_command_failed(const mongoc_apm_command_failed_t* event)
 {
-	mongoc_client_t*                 client;
-	HashTable*                       subscribers;
-	php_phongo_commandfailedevent_t* p_event;
-	zval                             z_event;
-	bson_error_t                     tmp_error = { 0 };
+	mongoc_client_t*             client;
+	HashTable*                   subscribers;
+	phongo_commandfailedevent_t* p_event;
+	zval                         z_event;
+	bson_error_t                 tmp_error = { 0 };
 
 	client      = mongoc_apm_command_failed_get_context(event);
-	subscribers = phongo_apm_get_subscribers_to_notify(php_phongo_commandsubscriber_ce, client);
+	subscribers = phongo_apm_get_subscribers_to_notify(phongo_commandsubscriber_ce, client);
 
 	/* Return early if there are no APM subscribers to notify */
 	if (zend_hash_num_elements(subscribers) == 0) {
 		goto cleanup;
 	}
 
-	object_init_ex(&z_event, php_phongo_commandfailedevent_ce);
+	object_init_ex(&z_event, phongo_commandfailedevent_ce);
 	p_event = Z_COMMANDFAILEDEVENT_OBJ_P(&z_event);
 
 	memcpy(&p_event->host, mongoc_apm_command_failed_get_host(event), sizeof(mongoc_host_list_t));
@@ -235,20 +235,20 @@ cleanup:
 
 static void phongo_apm_server_changed(const mongoc_apm_server_changed_t* event)
 {
-	mongoc_client_t*                 client;
-	HashTable*                       subscribers;
-	php_phongo_serverchangedevent_t* p_event;
-	zval                             z_event;
+	mongoc_client_t*             client;
+	HashTable*                   subscribers;
+	phongo_serverchangedevent_t* p_event;
+	zval                         z_event;
 
 	client      = mongoc_apm_server_changed_get_context(event);
-	subscribers = phongo_apm_get_subscribers_to_notify(php_phongo_sdamsubscriber_ce, client);
+	subscribers = phongo_apm_get_subscribers_to_notify(phongo_sdamsubscriber_ce, client);
 
 	/* Return early if there are no APM subscribers to notify */
 	if (zend_hash_num_elements(subscribers) == 0) {
 		goto cleanup;
 	}
 
-	object_init_ex(&z_event, php_phongo_serverchangedevent_ce);
+	object_init_ex(&z_event, phongo_serverchangedevent_ce);
 	p_event = Z_SERVERCHANGEDEVENT_OBJ_P(&z_event);
 
 	memcpy(&p_event->host, mongoc_apm_server_changed_get_host(event), sizeof(mongoc_host_list_t));
@@ -266,20 +266,20 @@ cleanup:
 
 static void phongo_apm_server_closed(const mongoc_apm_server_closed_t* event)
 {
-	mongoc_client_t*                client;
-	HashTable*                      subscribers;
-	php_phongo_serverclosedevent_t* p_event;
-	zval                            z_event;
+	mongoc_client_t*            client;
+	HashTable*                  subscribers;
+	phongo_serverclosedevent_t* p_event;
+	zval                        z_event;
 
 	client      = mongoc_apm_server_closed_get_context(event);
-	subscribers = phongo_apm_get_subscribers_to_notify(php_phongo_sdamsubscriber_ce, client);
+	subscribers = phongo_apm_get_subscribers_to_notify(phongo_sdamsubscriber_ce, client);
 
 	/* Return early if there are no APM subscribers to notify */
 	if (zend_hash_num_elements(subscribers) == 0) {
 		goto cleanup;
 	}
 
-	object_init_ex(&z_event, php_phongo_serverclosedevent_ce);
+	object_init_ex(&z_event, phongo_serverclosedevent_ce);
 	p_event = Z_SERVERCLOSEDEVENT_OBJ_P(&z_event);
 
 	memcpy(&p_event->host, mongoc_apm_server_closed_get_host(event), sizeof(mongoc_host_list_t));
@@ -295,21 +295,21 @@ cleanup:
 
 static void phongo_apm_server_heartbeat_failed(const mongoc_apm_server_heartbeat_failed_t* event)
 {
-	mongoc_client_t*                         client;
-	HashTable*                               subscribers;
-	php_phongo_serverheartbeatfailedevent_t* p_event;
-	zval                                     z_event;
-	bson_error_t                             tmp_error = { 0 };
+	mongoc_client_t*                     client;
+	HashTable*                           subscribers;
+	phongo_serverheartbeatfailedevent_t* p_event;
+	zval                                 z_event;
+	bson_error_t                         tmp_error = { 0 };
 
 	client      = mongoc_apm_server_heartbeat_failed_get_context(event);
-	subscribers = phongo_apm_get_subscribers_to_notify(php_phongo_sdamsubscriber_ce, client);
+	subscribers = phongo_apm_get_subscribers_to_notify(phongo_sdamsubscriber_ce, client);
 
 	/* Return early if there are no APM subscribers to notify */
 	if (zend_hash_num_elements(subscribers) == 0) {
 		goto cleanup;
 	}
 
-	object_init_ex(&z_event, php_phongo_serverheartbeatfailedevent_ce);
+	object_init_ex(&z_event, phongo_serverheartbeatfailedevent_ce);
 	p_event = Z_SERVERHEARTBEATFAILEDEVENT_OBJ_P(&z_event);
 
 	memcpy(&p_event->host, mongoc_apm_server_heartbeat_failed_get_host(event), sizeof(mongoc_host_list_t));
@@ -335,20 +335,20 @@ cleanup:
 
 static void phongo_apm_server_heartbeat_succeeded(const mongoc_apm_server_heartbeat_succeeded_t* event)
 {
-	mongoc_client_t*                            client;
-	HashTable*                                  subscribers;
-	php_phongo_serverheartbeatsucceededevent_t* p_event;
-	zval                                        z_event;
+	mongoc_client_t*                        client;
+	HashTable*                              subscribers;
+	phongo_serverheartbeatsucceededevent_t* p_event;
+	zval                                    z_event;
 
 	client      = mongoc_apm_server_heartbeat_succeeded_get_context(event);
-	subscribers = phongo_apm_get_subscribers_to_notify(php_phongo_sdamsubscriber_ce, client);
+	subscribers = phongo_apm_get_subscribers_to_notify(phongo_sdamsubscriber_ce, client);
 
 	/* Return early if there are no APM subscribers to notify */
 	if (zend_hash_num_elements(subscribers) == 0) {
 		goto cleanup;
 	}
 
-	object_init_ex(&z_event, php_phongo_serverheartbeatsucceededevent_ce);
+	object_init_ex(&z_event, phongo_serverheartbeatsucceededevent_ce);
 	p_event = Z_SERVERHEARTBEATSUCCEEDEDEVENT_OBJ_P(&z_event);
 
 	memcpy(&p_event->host, mongoc_apm_server_heartbeat_succeeded_get_host(event), sizeof(mongoc_host_list_t));
@@ -366,20 +366,20 @@ cleanup:
 
 static void phongo_apm_server_heartbeat_started(const mongoc_apm_server_heartbeat_started_t* event)
 {
-	mongoc_client_t*                          client;
-	HashTable*                                subscribers;
-	php_phongo_serverheartbeatstartedevent_t* p_event;
-	zval                                      z_event;
+	mongoc_client_t*                      client;
+	HashTable*                            subscribers;
+	phongo_serverheartbeatstartedevent_t* p_event;
+	zval                                  z_event;
 
 	client      = mongoc_apm_server_heartbeat_started_get_context(event);
-	subscribers = phongo_apm_get_subscribers_to_notify(php_phongo_sdamsubscriber_ce, client);
+	subscribers = phongo_apm_get_subscribers_to_notify(phongo_sdamsubscriber_ce, client);
 
 	/* Return early if there are no APM subscribers to notify */
 	if (zend_hash_num_elements(subscribers) == 0) {
 		goto cleanup;
 	}
 
-	object_init_ex(&z_event, php_phongo_serverheartbeatstartedevent_ce);
+	object_init_ex(&z_event, phongo_serverheartbeatstartedevent_ce);
 	p_event = Z_SERVERHEARTBEATSTARTEDEVENT_OBJ_P(&z_event);
 
 	memcpy(&p_event->host, mongoc_apm_server_heartbeat_started_get_host(event), sizeof(mongoc_host_list_t));
@@ -395,20 +395,20 @@ cleanup:
 
 static void phongo_apm_server_opening(const mongoc_apm_server_opening_t* event)
 {
-	mongoc_client_t*                 client;
-	HashTable*                       subscribers;
-	php_phongo_serveropeningevent_t* p_event;
-	zval                             z_event;
+	mongoc_client_t*             client;
+	HashTable*                   subscribers;
+	phongo_serveropeningevent_t* p_event;
+	zval                         z_event;
 
 	client      = mongoc_apm_server_opening_get_context(event);
-	subscribers = phongo_apm_get_subscribers_to_notify(php_phongo_sdamsubscriber_ce, client);
+	subscribers = phongo_apm_get_subscribers_to_notify(phongo_sdamsubscriber_ce, client);
 
 	/* Return early if there are no APM subscribers to notify */
 	if (zend_hash_num_elements(subscribers) == 0) {
 		goto cleanup;
 	}
 
-	object_init_ex(&z_event, php_phongo_serveropeningevent_ce);
+	object_init_ex(&z_event, phongo_serveropeningevent_ce);
 	p_event = Z_SERVEROPENINGEVENT_OBJ_P(&z_event);
 
 	memcpy(&p_event->host, mongoc_apm_server_opening_get_host(event), sizeof(mongoc_host_list_t));
@@ -424,20 +424,20 @@ cleanup:
 
 static void phongo_apm_topology_changed(const mongoc_apm_topology_changed_t* event)
 {
-	mongoc_client_t*                   client;
-	HashTable*                         subscribers;
-	php_phongo_topologychangedevent_t* p_event;
-	zval                               z_event;
+	mongoc_client_t*               client;
+	HashTable*                     subscribers;
+	phongo_topologychangedevent_t* p_event;
+	zval                           z_event;
 
 	client      = mongoc_apm_topology_changed_get_context(event);
-	subscribers = phongo_apm_get_subscribers_to_notify(php_phongo_sdamsubscriber_ce, client);
+	subscribers = phongo_apm_get_subscribers_to_notify(phongo_sdamsubscriber_ce, client);
 
 	/* Return early if there are no APM subscribers to notify */
 	if (zend_hash_num_elements(subscribers) == 0) {
 		goto cleanup;
 	}
 
-	object_init_ex(&z_event, php_phongo_topologychangedevent_ce);
+	object_init_ex(&z_event, phongo_topologychangedevent_ce);
 	p_event = Z_TOPOLOGYCHANGEDEVENT_OBJ_P(&z_event);
 
 	mongoc_apm_topology_changed_get_topology_id(event, &p_event->topology_id);
@@ -454,20 +454,20 @@ cleanup:
 
 static void phongo_apm_topology_closed(const mongoc_apm_topology_closed_t* event)
 {
-	mongoc_client_t*                  client;
-	HashTable*                        subscribers;
-	php_phongo_topologyclosedevent_t* p_event;
-	zval                              z_event;
+	mongoc_client_t*              client;
+	HashTable*                    subscribers;
+	phongo_topologyclosedevent_t* p_event;
+	zval                          z_event;
 
 	client      = mongoc_apm_topology_closed_get_context(event);
-	subscribers = phongo_apm_get_subscribers_to_notify(php_phongo_sdamsubscriber_ce, client);
+	subscribers = phongo_apm_get_subscribers_to_notify(phongo_sdamsubscriber_ce, client);
 
 	/* Return early if there are no APM subscribers to notify */
 	if (zend_hash_num_elements(subscribers) == 0) {
 		goto cleanup;
 	}
 
-	object_init_ex(&z_event, php_phongo_topologyclosedevent_ce);
+	object_init_ex(&z_event, phongo_topologyclosedevent_ce);
 	p_event = Z_TOPOLOGYCLOSEDEVENT_OBJ_P(&z_event);
 
 	mongoc_apm_topology_closed_get_topology_id(event, &p_event->topology_id);
@@ -482,20 +482,20 @@ cleanup:
 
 static void phongo_apm_topology_opening(const mongoc_apm_topology_opening_t* event)
 {
-	mongoc_client_t*                   client;
-	HashTable*                         subscribers;
-	php_phongo_topologyopeningevent_t* p_event;
-	zval                               z_event;
+	mongoc_client_t*               client;
+	HashTable*                     subscribers;
+	phongo_topologyopeningevent_t* p_event;
+	zval                           z_event;
 
 	client      = mongoc_apm_topology_opening_get_context(event);
-	subscribers = phongo_apm_get_subscribers_to_notify(php_phongo_sdamsubscriber_ce, client);
+	subscribers = phongo_apm_get_subscribers_to_notify(phongo_sdamsubscriber_ce, client);
 
 	/* Return early if there are no APM subscribers to notify */
 	if (zend_hash_num_elements(subscribers) == 0) {
 		goto cleanup;
 	}
 
-	object_init_ex(&z_event, php_phongo_topologyopeningevent_ce);
+	object_init_ex(&z_event, phongo_topologyopeningevent_ce);
 	p_event = Z_TOPOLOGYOPENINGEVENT_OBJ_P(&z_event);
 
 	mongoc_apm_topology_opening_get_topology_id(event, &p_event->topology_id);
@@ -550,8 +550,8 @@ static bool phongo_apm_check_args_for_add_and_remove(HashTable* subscribers, zva
 		return false;
 	}
 
-	if (!subscriber || Z_TYPE_P(subscriber) != IS_OBJECT || !instanceof_function(Z_OBJCE_P(subscriber), php_phongo_subscriber_ce)) {
-		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Subscriber is not an instance of %s", ZSTR_VAL(php_phongo_subscriber_ce->name));
+	if (!subscriber || Z_TYPE_P(subscriber) != IS_OBJECT || !instanceof_function(Z_OBJCE_P(subscriber), phongo_subscriber_ce)) {
+		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Subscriber is not an instance of %s", ZSTR_VAL(phongo_subscriber_ce->name));
 		return false;
 	}
 

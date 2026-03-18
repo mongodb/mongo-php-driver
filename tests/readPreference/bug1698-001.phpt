@@ -1,5 +1,5 @@
 --TEST--
-PHPC-1698: php_phongo_read_preference_prep_tagsets may leak in convert_to_object
+PHPC-1698: phongo_read_preference_prep_tagsets may leak in convert_to_object
 --FILE--
 <?php
 

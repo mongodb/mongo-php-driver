@@ -20,9 +20,9 @@
 #include "php_phongo.h"
 #include "CursorInterface_arginfo.h"
 
-zend_class_entry* php_phongo_cursor_interface_ce;
+zend_class_entry* phongo_cursor_interface_ce;
 
-void php_phongo_cursor_interface_init_ce(INIT_FUNC_ARGS)
+void phongo_cursor_interface_init_ce(INIT_FUNC_ARGS)
 {
-	php_phongo_cursor_interface_ce = register_class_MongoDB_Driver_CursorInterface(zend_ce_iterator);
+	phongo_cursor_interface_ce = register_class_MongoDB_Driver_CursorInterface(zend_ce_iterator);
 }

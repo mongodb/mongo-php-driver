@@ -19,9 +19,9 @@
 #include "php_phongo.h"
 #include "Serializable_arginfo.h"
 
-zend_class_entry* php_phongo_serializable_ce;
+zend_class_entry* phongo_serializable_ce;
 
-void php_phongo_serializable_init_ce(INIT_FUNC_ARGS)
+void phongo_serializable_init_ce(INIT_FUNC_ARGS)
 {
-	php_phongo_serializable_ce = register_class_MongoDB_BSON_Serializable(php_phongo_type_ce);
+	phongo_serializable_ce = register_class_MongoDB_BSON_Serializable(phongo_type_ce);
 }

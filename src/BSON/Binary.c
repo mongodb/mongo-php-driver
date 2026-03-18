@@ -26,15 +26,15 @@
 #include "Binary_arginfo.h"
 #include "VectorType.h"
 
-zend_class_entry* php_phongo_binary_ce;
+zend_class_entry* phongo_binary_ce;
 
 static phongo_bson_vector_type_t phongo_binary_get_vector_type_from_data(const uint8_t* data, uint32_t data_len);
-static phongo_bson_vector_type_t phongo_binary_get_vector_type(const php_phongo_binary_t* intern);
-static void                      phongo_binary_get_vector_as_array(const php_phongo_binary_t* intern, zval* return_value);
+static phongo_bson_vector_type_t phongo_binary_get_vector_type(const phongo_binary_t* intern);
+static void                      phongo_binary_get_vector_as_array(const phongo_binary_t* intern, zval* return_value);
 
 /* Initialize the object and return whether it was successful. An exception will
  * be thrown on error. */
-static bool php_phongo_binary_init(php_phongo_binary_t* intern, const char* data, size_t data_len, zend_long type)
+static bool phongo_binary_init(phongo_binary_t* intern, const char* data, size_t data_len, zend_long type)
 {
 	if (type < 0 || type > UINT8_MAX) {
 		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected type to be an unsigned 8-bit integer, %" PHONGO_LONG_FORMAT " given", type);
@@ -60,24 +60,24 @@ static bool php_phongo_binary_init(php_phongo_binary_t* intern, const char* data
 
 /* Initialize the object from a HashTable and return whether it was successful.
  * An exception will be thrown on error. */
-static bool php_phongo_binary_init_from_hash(php_phongo_binary_t* intern, HashTable* props)
+static bool phongo_binary_init_from_hash(phongo_binary_t* intern, HashTable* props)
 {
 	zval *data, *type;
 
 	if ((data = zend_hash_str_find(props, "data", sizeof("data") - 1)) && Z_TYPE_P(data) == IS_STRING &&
 		(type = zend_hash_str_find(props, "type", sizeof("type") - 1)) && Z_TYPE_P(type) == IS_LONG) {
 
-		return php_phongo_binary_init(intern, Z_STRVAL_P(data), Z_STRLEN_P(data), Z_LVAL_P(type));
+		return phongo_binary_init(intern, Z_STRVAL_P(data), Z_STRLEN_P(data), Z_LVAL_P(type));
 	}
 
-	phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "%s initialization requires \"data\" string and \"type\" integer fields", ZSTR_VAL(php_phongo_binary_ce->name));
+	phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "%s initialization requires \"data\" string and \"type\" integer fields", ZSTR_VAL(phongo_binary_ce->name));
 	return false;
 }
 
-static HashTable* php_phongo_binary_get_properties_hash(zend_object* object, bool is_temp)
+static HashTable* phongo_binary_get_properties_hash(zend_object* object, bool is_temp)
 {
-	php_phongo_binary_t* intern;
-	HashTable*           props;
+	phongo_binary_t* intern;
+	HashTable*       props;
 
 	intern = Z_OBJ_BINARY(object);
 
@@ -103,10 +103,10 @@ static HashTable* php_phongo_binary_get_properties_hash(zend_object* object, boo
 /* Construct a new BSON binary type */
 static PHP_METHOD(MongoDB_BSON_Binary, __construct)
 {
-	php_phongo_binary_t* intern;
-	char*                data;
-	size_t               data_len;
-	zend_long            type = BSON_SUBTYPE_BINARY;
+	phongo_binary_t* intern;
+	char*            data;
+	size_t           data_len;
+	zend_long        type = BSON_SUBTYPE_BINARY;
 
 	intern = Z_BINARY_OBJ_P(getThis());
 
@@ -116,31 +116,31 @@ static PHP_METHOD(MongoDB_BSON_Binary, __construct)
 	Z_PARAM_LONG(type)
 	PHONGO_PARSE_PARAMETERS_END();
 
-	php_phongo_binary_init(intern, data, data_len, type);
+	phongo_binary_init(intern, data, data_len, type);
 }
 
 static PHP_METHOD(MongoDB_BSON_Binary, __set_state)
 {
-	php_phongo_binary_t* intern;
-	HashTable*           props;
-	zval*                array;
+	phongo_binary_t* intern;
+	HashTable*       props;
+	zval*            array;
 
 	PHONGO_PARSE_PARAMETERS_START(1, 1)
 	Z_PARAM_ARRAY(array)
 	PHONGO_PARSE_PARAMETERS_END();
 
-	object_init_ex(return_value, php_phongo_binary_ce);
+	object_init_ex(return_value, phongo_binary_ce);
 
 	intern = Z_BINARY_OBJ_P(return_value);
 	props  = Z_ARRVAL_P(array);
 
-	php_phongo_binary_init_from_hash(intern, props);
+	phongo_binary_init_from_hash(intern, props);
 }
 
 /* Return the Binary's data string. */
 static PHP_METHOD(MongoDB_BSON_Binary, __toString)
 {
-	php_phongo_binary_t* intern;
+	phongo_binary_t* intern;
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -151,7 +151,7 @@ static PHP_METHOD(MongoDB_BSON_Binary, __toString)
 
 static PHP_METHOD(MongoDB_BSON_Binary, getData)
 {
-	php_phongo_binary_t* intern;
+	phongo_binary_t* intern;
 
 	intern = Z_BINARY_OBJ_P(getThis());
 
@@ -162,7 +162,7 @@ static PHP_METHOD(MongoDB_BSON_Binary, getData)
 
 static PHP_METHOD(MongoDB_BSON_Binary, getType)
 {
-	php_phongo_binary_t* intern;
+	phongo_binary_t* intern;
 
 	intern = Z_BINARY_OBJ_P(getThis());
 
@@ -173,9 +173,9 @@ static PHP_METHOD(MongoDB_BSON_Binary, getType)
 
 static PHP_METHOD(MongoDB_BSON_Binary, jsonSerialize)
 {
-	php_phongo_binary_t* intern;
-	char                 type[3];
-	int                  type_len;
+	phongo_binary_t* intern;
+	char             type[3];
+	int              type_len;
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -197,7 +197,7 @@ static PHP_METHOD(MongoDB_BSON_Binary, __serialize)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
 
-	RETURN_ARR(php_phongo_binary_get_properties_hash(Z_OBJ_P(getThis()), true));
+	RETURN_ARR(phongo_binary_get_properties_hash(Z_OBJ_P(getThis()), true));
 }
 
 static PHP_METHOD(MongoDB_BSON_Binary, __unserialize)
@@ -208,15 +208,15 @@ static PHP_METHOD(MongoDB_BSON_Binary, __unserialize)
 	Z_PARAM_ARRAY(data)
 	PHONGO_PARSE_PARAMETERS_END();
 
-	php_phongo_binary_init_from_hash(Z_BINARY_OBJ_P(getThis()), Z_ARRVAL_P(data));
+	phongo_binary_init_from_hash(Z_BINARY_OBJ_P(getThis()), Z_ARRVAL_P(data));
 }
 
 /* MongoDB\BSON\Binary object handlers */
-static zend_object_handlers php_phongo_handler_binary;
+static zend_object_handlers phongo_handler_binary;
 
-static void php_phongo_binary_free_object(zend_object* object)
+static void phongo_binary_free_object(zend_object* object)
 {
-	php_phongo_binary_t* intern = Z_OBJ_BINARY(object);
+	phongo_binary_t* intern = Z_OBJ_BINARY(object);
 
 	zend_object_std_dtor(&intern->std);
 
@@ -230,38 +230,38 @@ static void php_phongo_binary_free_object(zend_object* object)
 	}
 }
 
-static zend_object* php_phongo_binary_create_object(zend_class_entry* class_type)
+static zend_object* phongo_binary_create_object(zend_class_entry* class_type)
 {
-	php_phongo_binary_t* intern = zend_object_alloc(sizeof(php_phongo_binary_t), class_type);
+	phongo_binary_t* intern = zend_object_alloc(sizeof(phongo_binary_t), class_type);
 
 	zend_object_std_init(&intern->std, class_type);
 	object_properties_init(&intern->std, class_type);
 
-	intern->std.handlers = &php_phongo_handler_binary;
+	intern->std.handlers = &phongo_handler_binary;
 
 	return &intern->std;
 }
 
-static zend_object* php_phongo_binary_clone_object(zend_object* object)
+static zend_object* phongo_binary_clone_object(zend_object* object)
 {
-	php_phongo_binary_t* intern;
-	php_phongo_binary_t* new_intern;
-	zend_object*         new_object;
+	phongo_binary_t* intern;
+	phongo_binary_t* new_intern;
+	zend_object*     new_object;
 
 	intern     = Z_OBJ_BINARY(object);
-	new_object = php_phongo_binary_create_object(object->ce);
+	new_object = phongo_binary_create_object(object->ce);
 
 	new_intern = Z_OBJ_BINARY(new_object);
 	zend_objects_clone_members(&new_intern->std, &intern->std);
 
-	php_phongo_binary_init(new_intern, intern->data, intern->data_len, intern->type);
+	phongo_binary_init(new_intern, intern->data, intern->data_len, intern->type);
 
 	return new_object;
 }
 
-static int php_phongo_binary_compare_objects(zval* o1, zval* o2)
+static int phongo_binary_compare_objects(zval* o1, zval* o2)
 {
-	php_phongo_binary_t *intern1, *intern2;
+	phongo_binary_t *intern1, *intern2;
 
 	ZEND_COMPARE_OBJECTS_FALLBACK(o1, o2);
 
@@ -281,12 +281,12 @@ static int php_phongo_binary_compare_objects(zval* o1, zval* o2)
 	return zend_binary_strcmp(intern1->data, intern1->data_len, intern2->data, intern2->data_len);
 }
 
-static HashTable* php_phongo_binary_get_debug_info(zend_object* object, int* is_temp)
+static HashTable* phongo_binary_get_debug_info(zend_object* object, int* is_temp)
 {
 	*is_temp         = 1;
-	HashTable* props = php_phongo_binary_get_properties_hash(object, true);
+	HashTable* props = phongo_binary_get_properties_hash(object, true);
 
-	php_phongo_binary_t* intern = Z_OBJ_BINARY(object);
+	phongo_binary_t* intern = Z_OBJ_BINARY(object);
 
 	if (intern->type == BSON_SUBTYPE_VECTOR) {
 		zval vector;
@@ -315,33 +315,33 @@ static HashTable* php_phongo_binary_get_debug_info(zend_object* object, int* is_
 	return props;
 }
 
-static HashTable* php_phongo_binary_get_properties(zend_object* object)
+static HashTable* phongo_binary_get_properties(zend_object* object)
 {
-	return php_phongo_binary_get_properties_hash(object, false);
+	return phongo_binary_get_properties_hash(object, false);
 }
 
-void php_phongo_binary_init_ce(INIT_FUNC_ARGS)
+void phongo_binary_init_ce(INIT_FUNC_ARGS)
 {
-	php_phongo_binary_ce                = register_class_MongoDB_BSON_Binary(php_phongo_binary_interface_ce, php_phongo_json_serializable_ce, php_phongo_type_ce, zend_ce_stringable);
-	php_phongo_binary_ce->create_object = php_phongo_binary_create_object;
+	phongo_binary_ce                = register_class_MongoDB_BSON_Binary(phongo_binary_interface_ce, phongo_json_serializable_ce, phongo_type_ce, zend_ce_stringable);
+	phongo_binary_ce->create_object = phongo_binary_create_object;
 
-	memcpy(&php_phongo_handler_binary, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
-	php_phongo_handler_binary.compare        = php_phongo_binary_compare_objects;
-	php_phongo_handler_binary.clone_obj      = php_phongo_binary_clone_object;
-	php_phongo_handler_binary.get_debug_info = php_phongo_binary_get_debug_info;
-	php_phongo_handler_binary.get_properties = php_phongo_binary_get_properties;
-	php_phongo_handler_binary.free_obj       = php_phongo_binary_free_object;
-	php_phongo_handler_binary.offset         = XtOffsetOf(php_phongo_binary_t, std);
+	memcpy(&phongo_handler_binary, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
+	phongo_handler_binary.compare        = phongo_binary_compare_objects;
+	phongo_handler_binary.clone_obj      = phongo_binary_clone_object;
+	phongo_handler_binary.get_debug_info = phongo_binary_get_debug_info;
+	phongo_handler_binary.get_properties = phongo_binary_get_properties;
+	phongo_handler_binary.free_obj       = phongo_binary_free_object;
+	phongo_handler_binary.offset         = XtOffsetOf(phongo_binary_t, std);
 }
 
 bool phongo_binary_new(zval* object, const char* data, size_t data_len, bson_subtype_t type)
 {
-	object_init_ex(object, php_phongo_binary_ce);
+	object_init_ex(object, phongo_binary_ce);
 
-	return php_phongo_binary_init(Z_BINARY_OBJ_P(object), data, data_len, type);
+	return phongo_binary_init(Z_BINARY_OBJ_P(object), data, data_len, type);
 }
 
-static inline void phongo_binary_init_vector_from_bson_key(php_phongo_binary_t* intern, const bson_t* doc, const char* key)
+static inline void phongo_binary_init_vector_from_bson_key(phongo_binary_t* intern, const bson_t* doc, const char* key)
 {
 	bson_iter_t iter;
 
@@ -354,10 +354,10 @@ static inline void phongo_binary_init_vector_from_bson_key(php_phongo_binary_t* 
 	const uint8_t* data;
 
 	bson_iter_binary(&iter, NULL, &data_len, &data);
-	php_phongo_binary_init(intern, (const char*) data, data_len, BSON_SUBTYPE_VECTOR);
+	phongo_binary_init(intern, (const char*) data, data_len, BSON_SUBTYPE_VECTOR);
 }
 
-static void phongo_binary_init_vector_from_float32_array(php_phongo_binary_t* intern, HashTable* vector)
+static void phongo_binary_init_vector_from_float32_array(phongo_binary_t* intern, HashTable* vector)
 {
 	if (!zend_array_is_list(vector)) {
 		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected vector to be a list");
@@ -398,7 +398,7 @@ static void phongo_binary_init_vector_from_float32_array(php_phongo_binary_t* in
 	phongo_binary_init_vector_from_bson_key(intern, &doc, "vector");
 }
 
-static void phongo_binary_init_vector_from_int8_array(php_phongo_binary_t* intern, HashTable* vector)
+static void phongo_binary_init_vector_from_int8_array(phongo_binary_t* intern, HashTable* vector)
 {
 	if (!zend_array_is_list(vector)) {
 		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected vector to be a list");
@@ -444,7 +444,7 @@ static void phongo_binary_init_vector_from_int8_array(php_phongo_binary_t* inter
 	phongo_binary_init_vector_from_bson_key(intern, &doc, "vector");
 }
 
-static void phongo_binary_init_vector_from_packed_bit_array(php_phongo_binary_t* intern, HashTable* vector)
+static void phongo_binary_init_vector_from_packed_bit_array(phongo_binary_t* intern, HashTable* vector)
 {
 	if (!zend_array_is_list(vector)) {
 		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected vector to be a list");
@@ -495,12 +495,12 @@ static PHP_METHOD(MongoDB_BSON_Binary, fromVector)
 	HashTable*   vector;
 	zend_object* type;
 
-	object_init_ex(return_value, php_phongo_binary_ce);
-	php_phongo_binary_t* intern = Z_BINARY_OBJ_P(return_value);
+	object_init_ex(return_value, phongo_binary_ce);
+	phongo_binary_t* intern = Z_BINARY_OBJ_P(return_value);
 
 	PHONGO_PARSE_PARAMETERS_START(2, 2)
 	Z_PARAM_ARRAY_HT(vector)
-	Z_PARAM_OBJ_OF_CLASS(type, php_phongo_vectortype_ce)
+	Z_PARAM_OBJ_OF_CLASS(type, phongo_vectortype_ce)
 	PHONGO_PARSE_PARAMETERS_END();
 
 	switch (phongo_bson_vector_type_from_case(type)) {
@@ -536,7 +536,7 @@ static phongo_bson_vector_type_t phongo_binary_get_vector_type_from_data(const u
 	return PHONGO_BSON_VECTOR_TYPE_UNKNOWN;
 }
 
-static phongo_bson_vector_type_t phongo_binary_get_vector_type(const php_phongo_binary_t* intern)
+static phongo_bson_vector_type_t phongo_binary_get_vector_type(const phongo_binary_t* intern)
 {
 	return phongo_binary_get_vector_type_from_data((const uint8_t*) intern->data, intern->data_len);
 }
@@ -545,7 +545,7 @@ static PHP_METHOD(MongoDB_BSON_Binary, getVectorType)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
 
-	php_phongo_binary_t* intern = Z_BINARY_OBJ_P(getThis());
+	phongo_binary_t* intern = Z_BINARY_OBJ_P(getThis());
 
 	if (intern->type != BSON_SUBTYPE_VECTOR) {
 		phongo_throw_exception(PHONGO_ERROR_LOGIC, "Expected Binary of type vector (%" PRId8 ") but it is %" PHONGO_LONG_FORMAT, BSON_SUBTYPE_VECTOR, intern->type);
@@ -560,10 +560,10 @@ static PHP_METHOD(MongoDB_BSON_Binary, getVectorType)
 		RETURN_THROWS();
 	}
 
-	RETVAL_OBJ_COPY(zend_enum_get_case_cstr(php_phongo_vectortype_ce, type_case));
+	RETVAL_OBJ_COPY(zend_enum_get_case_cstr(phongo_vectortype_ce, type_case));
 }
 
-static void phongo_binary_get_vector_as_array(const php_phongo_binary_t* intern, zval* return_value)
+static void phongo_binary_get_vector_as_array(const phongo_binary_t* intern, zval* return_value)
 {
 	bson_t tmp_doc = BSON_INITIALIZER;
 
@@ -630,20 +630,20 @@ static void phongo_binary_get_vector_as_array(const php_phongo_binary_t* intern,
 		RETURN_THROWS();
 	}
 
-	php_phongo_bson_state state;
+	phongo_bson_state state;
 	PHONGO_BSON_INIT_STATE(state);
 	state.is_visiting_array = true;
 
-	if (!php_phongo_bson_to_zval_ex(&tmp_vector, &state)) {
+	if (!phongo_bson_to_zval_ex(&tmp_vector, &state)) {
 		// Exception already thrown
 		bson_destroy(&tmp_doc);
 		zval_ptr_dtor(&state.zchild);
-		php_phongo_bson_typemap_dtor(&state.map);
+		phongo_bson_typemap_dtor(&state.map);
 		RETURN_THROWS();
 	}
 
 	bson_destroy(&tmp_doc);
-	php_phongo_bson_typemap_dtor(&state.map);
+	phongo_bson_typemap_dtor(&state.map);
 
 	RETURN_ZVAL(&state.zchild, 0, 1);
 }
@@ -652,7 +652,7 @@ static PHP_METHOD(MongoDB_BSON_Binary, toArray)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
 
-	php_phongo_binary_t* intern = Z_BINARY_OBJ_P(getThis());
+	phongo_binary_t* intern = Z_BINARY_OBJ_P(getThis());
 
 	if (intern->type != BSON_SUBTYPE_VECTOR) {
 		phongo_throw_exception(PHONGO_ERROR_LOGIC, "Expected Binary of type vector (%" PRId8 ") but it is %" PHONGO_LONG_FORMAT, BSON_SUBTYPE_VECTOR, intern->type);

@@ -27,14 +27,14 @@
 #include "MongoDB/Server.h"
 #include "CommandStartedEvent_arginfo.h"
 
-zend_class_entry* php_phongo_commandstartedevent_ce;
+zend_class_entry* phongo_commandstartedevent_ce;
 
 PHONGO_DISABLED_CONSTRUCTOR(MongoDB_Driver_Monitoring_CommandStartedEvent)
 
 static PHP_METHOD(MongoDB_Driver_Monitoring_CommandStartedEvent, getCommand)
 {
-	php_phongo_commandstartedevent_t* intern;
-	php_phongo_bson_state             state;
+	phongo_commandstartedevent_t* intern;
+	phongo_bson_state             state;
 
 	PHONGO_BSON_INIT_STATE(state);
 
@@ -42,7 +42,7 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_CommandStartedEvent, getCommand)
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
-	if (!php_phongo_bson_to_zval_ex(intern->command, &state)) {
+	if (!phongo_bson_to_zval_ex(intern->command, &state)) {
 		zval_ptr_dtor(&state.zchild);
 		return;
 	}
@@ -52,7 +52,7 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_CommandStartedEvent, getCommand)
 
 static PHP_METHOD(MongoDB_Driver_Monitoring_CommandStartedEvent, getCommandName)
 {
-	php_phongo_commandstartedevent_t* intern;
+	phongo_commandstartedevent_t* intern;
 
 	intern = Z_COMMANDSTARTEDEVENT_OBJ_P(getThis());
 
@@ -63,7 +63,7 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_CommandStartedEvent, getCommandName)
 
 static PHP_METHOD(MongoDB_Driver_Monitoring_CommandStartedEvent, getDatabaseName)
 {
-	php_phongo_commandstartedevent_t* intern;
+	phongo_commandstartedevent_t* intern;
 
 	intern = Z_COMMANDSTARTEDEVENT_OBJ_P(getThis());
 
@@ -74,7 +74,7 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_CommandStartedEvent, getDatabaseName
 
 static PHP_METHOD(MongoDB_Driver_Monitoring_CommandStartedEvent, getHost)
 {
-	php_phongo_commandstartedevent_t* intern = Z_COMMANDSTARTEDEVENT_OBJ_P(getThis());
+	phongo_commandstartedevent_t* intern = Z_COMMANDSTARTEDEVENT_OBJ_P(getThis());
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -83,8 +83,8 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_CommandStartedEvent, getHost)
 
 static PHP_METHOD(MongoDB_Driver_Monitoring_CommandStartedEvent, getOperationId)
 {
-	php_phongo_commandstartedevent_t* intern;
-	char                              operation_id[24];
+	phongo_commandstartedevent_t* intern;
+	char                          operation_id[24];
 
 	intern = Z_COMMANDSTARTEDEVENT_OBJ_P(getThis());
 
@@ -96,7 +96,7 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_CommandStartedEvent, getOperationId)
 
 static PHP_METHOD(MongoDB_Driver_Monitoring_CommandStartedEvent, getPort)
 {
-	php_phongo_commandstartedevent_t* intern = Z_COMMANDSTARTEDEVENT_OBJ_P(getThis());
+	phongo_commandstartedevent_t* intern = Z_COMMANDSTARTEDEVENT_OBJ_P(getThis());
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -105,8 +105,8 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_CommandStartedEvent, getPort)
 
 static PHP_METHOD(MongoDB_Driver_Monitoring_CommandStartedEvent, getRequestId)
 {
-	php_phongo_commandstartedevent_t* intern;
-	char                              request_id[24];
+	phongo_commandstartedevent_t* intern;
+	char                          request_id[24];
 
 	intern = Z_COMMANDSTARTEDEVENT_OBJ_P(getThis());
 
@@ -118,7 +118,7 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_CommandStartedEvent, getRequestId)
 
 static PHP_METHOD(MongoDB_Driver_Monitoring_CommandStartedEvent, getServiceId)
 {
-	php_phongo_commandstartedevent_t* intern = Z_COMMANDSTARTEDEVENT_OBJ_P(getThis());
+	phongo_commandstartedevent_t* intern = Z_COMMANDSTARTEDEVENT_OBJ_P(getThis());
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -131,7 +131,7 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_CommandStartedEvent, getServiceId)
 
 static PHP_METHOD(MongoDB_Driver_Monitoring_CommandStartedEvent, getServerConnectionId)
 {
-	php_phongo_commandstartedevent_t* intern = Z_COMMANDSTARTEDEVENT_OBJ_P(getThis());
+	phongo_commandstartedevent_t* intern = Z_COMMANDSTARTEDEVENT_OBJ_P(getThis());
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -150,11 +150,11 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_CommandStartedEvent, getServerConnec
 }
 
 /* MongoDB\Driver\Monitoring\CommandStartedEvent object handlers */
-static zend_object_handlers php_phongo_handler_commandstartedevent;
+static zend_object_handlers phongo_handler_commandstartedevent;
 
-static void php_phongo_commandstartedevent_free_object(zend_object* object)
+static void phongo_commandstartedevent_free_object(zend_object* object)
 {
-	php_phongo_commandstartedevent_t* intern = Z_OBJ_COMMANDSTARTEDEVENT(object);
+	phongo_commandstartedevent_t* intern = Z_OBJ_COMMANDSTARTEDEVENT(object);
 
 	zend_object_std_dtor(&intern->std);
 
@@ -171,24 +171,24 @@ static void php_phongo_commandstartedevent_free_object(zend_object* object)
 	}
 }
 
-static zend_object* php_phongo_commandstartedevent_create_object(zend_class_entry* class_type)
+static zend_object* phongo_commandstartedevent_create_object(zend_class_entry* class_type)
 {
-	php_phongo_commandstartedevent_t* intern = zend_object_alloc(sizeof(php_phongo_commandstartedevent_t), class_type);
+	phongo_commandstartedevent_t* intern = zend_object_alloc(sizeof(phongo_commandstartedevent_t), class_type);
 
 	zend_object_std_init(&intern->std, class_type);
 	object_properties_init(&intern->std, class_type);
 
-	intern->std.handlers = &php_phongo_handler_commandstartedevent;
+	intern->std.handlers = &phongo_handler_commandstartedevent;
 
 	return &intern->std;
 }
 
-static HashTable* php_phongo_commandstartedevent_get_debug_info(zend_object* object, int* is_temp)
+static HashTable* phongo_commandstartedevent_get_debug_info(zend_object* object, int* is_temp)
 {
-	php_phongo_commandstartedevent_t* intern;
-	zval                              retval = ZVAL_STATIC_INIT;
-	char                              operation_id[24], request_id[24];
-	php_phongo_bson_state             command_state;
+	phongo_commandstartedevent_t* intern;
+	zval                          retval = ZVAL_STATIC_INIT;
+	char                          operation_id[24], request_id[24];
+	phongo_bson_state             command_state;
 
 	PHONGO_BSON_INIT_STATE(command_state);
 
@@ -201,7 +201,7 @@ static HashTable* php_phongo_commandstartedevent_get_debug_info(zend_object* obj
 	ADD_ASSOC_STRING(&retval, "commandName", intern->command_name);
 	ADD_ASSOC_STRING(&retval, "databaseName", intern->database_name);
 
-	if (!php_phongo_bson_to_zval_ex(intern->command, &command_state)) {
+	if (!phongo_bson_to_zval_ex(intern->command, &command_state)) {
 		zval_ptr_dtor(&command_state.zchild);
 		goto done;
 	}
@@ -238,13 +238,13 @@ done:
 	return Z_ARRVAL(retval);
 }
 
-void php_phongo_commandstartedevent_init_ce(INIT_FUNC_ARGS)
+void phongo_commandstartedevent_init_ce(INIT_FUNC_ARGS)
 {
-	php_phongo_commandstartedevent_ce                = register_class_MongoDB_Driver_Monitoring_CommandStartedEvent();
-	php_phongo_commandstartedevent_ce->create_object = php_phongo_commandstartedevent_create_object;
+	phongo_commandstartedevent_ce                = register_class_MongoDB_Driver_Monitoring_CommandStartedEvent();
+	phongo_commandstartedevent_ce->create_object = phongo_commandstartedevent_create_object;
 
-	memcpy(&php_phongo_handler_commandstartedevent, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
-	php_phongo_handler_commandstartedevent.get_debug_info = php_phongo_commandstartedevent_get_debug_info;
-	php_phongo_handler_commandstartedevent.free_obj       = php_phongo_commandstartedevent_free_object;
-	php_phongo_handler_commandstartedevent.offset         = XtOffsetOf(php_phongo_commandstartedevent_t, std);
+	memcpy(&phongo_handler_commandstartedevent, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
+	phongo_handler_commandstartedevent.get_debug_info = phongo_commandstartedevent_get_debug_info;
+	phongo_handler_commandstartedevent.free_obj       = phongo_commandstartedevent_free_object;
+	phongo_handler_commandstartedevent.offset         = XtOffsetOf(phongo_commandstartedevent_t, std);
 }

@@ -19,9 +19,9 @@
 
 #include "bson/bson.h"
 
-const char* php_phongo_bson_type_to_string(bson_type_t type);
+const char* phongo_bson_type_to_string(bson_type_t type);
 
-bool php_phongo_parse_int64(int64_t* retval, const char* data, size_t data_len);
+bool phongo_parse_int64(int64_t* retval, const char* data, size_t data_len);
 
 bool phongo_split_namespace(const char* namespace, char** dbname, char** cname);
 

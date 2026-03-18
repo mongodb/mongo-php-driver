@@ -30,16 +30,16 @@ typedef enum {
 	PHONGO_FIELD_PATH_ITEM_NONE,
 	PHONGO_FIELD_PATH_ITEM_ARRAY,
 	PHONGO_FIELD_PATH_ITEM_DOCUMENT
-} php_phongo_bson_field_path_item_types;
+} phongo_bson_field_path_item_types;
 
 typedef struct {
-	char**                                 elements;
-	php_phongo_bson_field_path_item_types* element_types;
-	size_t                                 allocated_size;
-	size_t                                 size;
-	size_t                                 ref_count;
-	bool                                   owns_elements;
-} php_phongo_field_path;
+	char**                             elements;
+	phongo_bson_field_path_item_types* element_types;
+	size_t                             allocated_size;
+	size_t                             size;
+	size_t                             ref_count;
+	bool                               owns_elements;
+} phongo_field_path;
 
 typedef enum {
 	PHONGO_TYPEMAP_NONE,
@@ -47,75 +47,75 @@ typedef enum {
 	PHONGO_TYPEMAP_NATIVE_OBJECT,
 	PHONGO_TYPEMAP_CLASS,
 	PHONGO_TYPEMAP_BSON
-} php_phongo_bson_typemap_types;
+} phongo_bson_typemap_types;
 
 typedef struct {
-	php_phongo_bson_typemap_types type;
-	zend_class_entry*             ce;
-} php_phongo_bson_typemap_element;
+	phongo_bson_typemap_types type;
+	zend_class_entry*         ce;
+} phongo_bson_typemap_element;
 
 typedef struct {
-	php_phongo_field_path*          entry;
-	php_phongo_bson_typemap_element node;
-} php_phongo_field_path_map_element;
+	phongo_field_path*          entry;
+	phongo_bson_typemap_element node;
+} phongo_field_path_map_element;
 
 typedef struct {
-	php_phongo_bson_typemap_element document;
-	php_phongo_bson_typemap_element array;
-	php_phongo_bson_typemap_element root;
-	bool                            int64_as_object;
+	phongo_bson_typemap_element document;
+	phongo_bson_typemap_element array;
+	phongo_bson_typemap_element root;
+	bool                        int64_as_object;
 	struct {
-		php_phongo_field_path_map_element** map;
-		size_t                              allocated_size;
-		size_t                              size;
+		phongo_field_path_map_element** map;
+		size_t                          allocated_size;
+		size_t                          size;
 	} field_paths;
-} php_phongo_bson_typemap;
+} phongo_bson_typemap;
 
 typedef struct {
-	zval                            zchild;
-	php_phongo_bson_typemap         map;
-	zend_class_entry*               odm_ce;
-	bool                            is_visiting_array;
-	php_phongo_field_path*          field_path;
-	php_phongo_bson_typemap_element field_type;
-} php_phongo_bson_state;
+	zval                        zchild;
+	phongo_bson_typemap         map;
+	zend_class_entry*           odm_ce;
+	bool                        is_visiting_array;
+	phongo_field_path*          field_path;
+	phongo_bson_typemap_element field_type;
+} phongo_bson_state;
 
 typedef enum {
 	PHONGO_JSON_MODE_LEGACY,
 	PHONGO_JSON_MODE_CANONICAL,
 	PHONGO_JSON_MODE_RELAXED,
-} php_phongo_json_mode_t;
+} phongo_json_mode_t;
 
-#define PHONGO_BSON_INIT_STATE(s)                       \
-	do {                                                \
-		memset(&(s), 0, sizeof(php_phongo_bson_state)); \
+#define PHONGO_BSON_INIT_STATE(s)                   \
+	do {                                            \
+		memset(&(s), 0, sizeof(phongo_bson_state)); \
 	} while (0)
 
 #define PHONGO_BSON_INIT_DEBUG_STATE(s)                    \
 	do {                                                   \
-		memset(&(s), 0, sizeof(php_phongo_bson_state));    \
+		memset(&(s), 0, sizeof(phongo_bson_state));        \
 		s.map.root.type     = PHONGO_TYPEMAP_NATIVE_ARRAY; \
 		s.map.document.type = PHONGO_TYPEMAP_NATIVE_ARRAY; \
 	} while (0)
 
-char*                  php_phongo_field_path_as_string(php_phongo_field_path* field_path);
-php_phongo_field_path* php_phongo_field_path_alloc(bool owns_elements);
-void                   php_phongo_field_path_free(php_phongo_field_path* field_path);
-void                   php_phongo_field_path_write_item_at_current_level(php_phongo_field_path* field_path, const char* element);
-void                   php_phongo_field_path_write_type_at_current_level(php_phongo_field_path* field_path, php_phongo_bson_field_path_item_types element_type);
-bool                   php_phongo_field_path_push(php_phongo_field_path* field_path, const char* element, php_phongo_bson_field_path_item_types element_type);
-bool                   php_phongo_field_path_pop(php_phongo_field_path* field_path);
+char*              phongo_field_path_as_string(phongo_field_path* field_path);
+phongo_field_path* phongo_field_path_alloc(bool owns_elements);
+void               phongo_field_path_free(phongo_field_path* field_path);
+void               phongo_field_path_write_item_at_current_level(phongo_field_path* field_path, const char* element);
+void               phongo_field_path_write_type_at_current_level(phongo_field_path* field_path, phongo_bson_field_path_item_types element_type);
+bool               phongo_field_path_push(phongo_field_path* field_path, const char* element, phongo_bson_field_path_item_types element_type);
+bool               phongo_field_path_pop(phongo_field_path* field_path);
 
-bool php_phongo_bson_to_json(zval* return_value, const bson_t* bson, php_phongo_json_mode_t mode);
-bool php_phongo_bson_to_zval(const bson_t* b, zval* zv);
-bool php_phongo_bson_to_zval_ex(const bson_t* b, php_phongo_bson_state* state);
-bool php_phongo_bson_data_to_zval(const unsigned char* data, int data_len, zval* zv);
-bool php_phongo_bson_data_to_zval_ex(const unsigned char* data, int data_len, php_phongo_bson_state* state);
+bool phongo_bson_to_json(zval* return_value, const bson_t* bson, phongo_json_mode_t mode);
+bool phongo_bson_to_zval(const bson_t* b, zval* zv);
+bool phongo_bson_to_zval_ex(const bson_t* b, phongo_bson_state* state);
+bool phongo_bson_data_to_zval(const unsigned char* data, int data_len, zval* zv);
+bool phongo_bson_data_to_zval_ex(const unsigned char* data, int data_len, phongo_bson_state* state);
 
 bool phongo_bson_value_to_zval(const bson_value_t* value, zval* zv);
 bool phongo_bson_value_to_zval_legacy(const bson_value_t* value, zval* zv);
 
-bool php_phongo_bson_typemap_to_state(zval* typemap, php_phongo_bson_typemap* map);
-void php_phongo_bson_typemap_dtor(php_phongo_bson_typemap* map);
+bool phongo_bson_typemap_to_state(zval* typemap, phongo_bson_typemap* map);
+void phongo_bson_typemap_dtor(phongo_bson_typemap* map);
 
 #endif /* PHONGO_BSON_H */

@@ -25,14 +25,14 @@
 #include "MongoDB/WriteError.h"
 #include "WriteError_arginfo.h"
 
-zend_class_entry* php_phongo_writeerror_ce;
+zend_class_entry* phongo_writeerror_ce;
 
 PHONGO_DISABLED_CONSTRUCTOR(MongoDB_Driver_WriteError)
 
 /* Returns the MongoDB error code */
 static PHP_METHOD(MongoDB_Driver_WriteError, getCode)
 {
-	php_phongo_writeerror_t* intern;
+	phongo_writeerror_t* intern;
 
 	intern = Z_WRITEERROR_OBJ_P(getThis());
 
@@ -45,7 +45,7 @@ static PHP_METHOD(MongoDB_Driver_WriteError, getCode)
    corresponds. */
 static PHP_METHOD(MongoDB_Driver_WriteError, getIndex)
 {
-	php_phongo_writeerror_t* intern;
+	phongo_writeerror_t* intern;
 
 	intern = Z_WRITEERROR_OBJ_P(getThis());
 
@@ -57,7 +57,7 @@ static PHP_METHOD(MongoDB_Driver_WriteError, getIndex)
 /* Returns the actual error message from the server */
 static PHP_METHOD(MongoDB_Driver_WriteError, getMessage)
 {
-	php_phongo_writeerror_t* intern;
+	phongo_writeerror_t* intern;
 
 	intern = Z_WRITEERROR_OBJ_P(getThis());
 
@@ -69,7 +69,7 @@ static PHP_METHOD(MongoDB_Driver_WriteError, getMessage)
 /* Returns additional metadata for the error */
 static PHP_METHOD(MongoDB_Driver_WriteError, getInfo)
 {
-	php_phongo_writeerror_t* intern;
+	phongo_writeerror_t* intern;
 
 	intern = Z_WRITEERROR_OBJ_P(getThis());
 
@@ -81,11 +81,11 @@ static PHP_METHOD(MongoDB_Driver_WriteError, getInfo)
 }
 
 /* MongoDB\Driver\WriteError object handlers */
-static zend_object_handlers php_phongo_handler_writeerror;
+static zend_object_handlers phongo_handler_writeerror;
 
-static void php_phongo_writeerror_free_object(zend_object* object)
+static void phongo_writeerror_free_object(zend_object* object)
 {
-	php_phongo_writeerror_t* intern = Z_OBJ_WRITEERROR(object);
+	phongo_writeerror_t* intern = Z_OBJ_WRITEERROR(object);
 
 	zend_object_std_dtor(&intern->std);
 
@@ -98,22 +98,22 @@ static void php_phongo_writeerror_free_object(zend_object* object)
 	}
 }
 
-static zend_object* php_phongo_writeerror_create_object(zend_class_entry* class_type)
+static zend_object* phongo_writeerror_create_object(zend_class_entry* class_type)
 {
-	php_phongo_writeerror_t* intern = zend_object_alloc(sizeof(php_phongo_writeerror_t), class_type);
+	phongo_writeerror_t* intern = zend_object_alloc(sizeof(phongo_writeerror_t), class_type);
 
 	zend_object_std_init(&intern->std, class_type);
 	object_properties_init(&intern->std, class_type);
 
-	intern->std.handlers = &php_phongo_handler_writeerror;
+	intern->std.handlers = &phongo_handler_writeerror;
 
 	return &intern->std;
 }
 
-static HashTable* php_phongo_writeerror_get_debug_info(zend_object* object, int* is_temp)
+static HashTable* phongo_writeerror_get_debug_info(zend_object* object, int* is_temp)
 {
-	php_phongo_writeerror_t* intern;
-	zval                     retval = ZVAL_STATIC_INIT;
+	phongo_writeerror_t* intern;
+	zval                 retval = ZVAL_STATIC_INIT;
 
 	*is_temp = 1;
 	intern   = Z_OBJ_WRITEERROR(object);
@@ -132,15 +132,15 @@ static HashTable* php_phongo_writeerror_get_debug_info(zend_object* object, int*
 	return Z_ARRVAL(retval);
 }
 
-void php_phongo_writeerror_init_ce(INIT_FUNC_ARGS)
+void phongo_writeerror_init_ce(INIT_FUNC_ARGS)
 {
-	php_phongo_writeerror_ce                = register_class_MongoDB_Driver_WriteError();
-	php_phongo_writeerror_ce->create_object = php_phongo_writeerror_create_object;
+	phongo_writeerror_ce                = register_class_MongoDB_Driver_WriteError();
+	phongo_writeerror_ce->create_object = phongo_writeerror_create_object;
 
-	memcpy(&php_phongo_handler_writeerror, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
-	php_phongo_handler_writeerror.get_debug_info = php_phongo_writeerror_get_debug_info;
-	php_phongo_handler_writeerror.free_obj       = php_phongo_writeerror_free_object;
-	php_phongo_handler_writeerror.offset         = XtOffsetOf(php_phongo_writeerror_t, std);
+	memcpy(&phongo_handler_writeerror, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
+	phongo_handler_writeerror.get_debug_info = phongo_writeerror_get_debug_info;
+	phongo_handler_writeerror.free_obj       = phongo_writeerror_free_object;
+	phongo_handler_writeerror.offset         = XtOffsetOf(phongo_writeerror_t, std);
 }
 
 bool phongo_writeerror_init(zval* return_value, const bson_t* bson)
@@ -157,10 +157,10 @@ bool phongo_writeerror_init(zval* return_value, const bson_t* bson)
  * provided since the BSON document will not have an "index" field. */
 bool phongo_writeerror_init_ex(zval* return_value, const bson_t* bson, int32_t index)
 {
-	bson_iter_t              iter;
-	php_phongo_writeerror_t* intern;
+	bson_iter_t          iter;
+	phongo_writeerror_t* intern;
 
-	object_init_ex(return_value, php_phongo_writeerror_ce);
+	object_init_ex(return_value, phongo_writeerror_ce);
 
 	intern        = Z_WRITEERROR_OBJ_P(return_value);
 	intern->code  = 0;
@@ -187,7 +187,7 @@ bool phongo_writeerror_init_ex(zval* return_value, const bson_t* bson, int32_t i
 
 		bson_iter_document(&iter, &len, &data);
 
-		if (!php_phongo_bson_data_to_zval(data, len, &intern->info)) {
+		if (!phongo_bson_data_to_zval(data, len, &intern->info)) {
 			/* Exception already thrown */
 			zval_ptr_dtor(&intern->info);
 			ZVAL_UNDEF(&intern->info);

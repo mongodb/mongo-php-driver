@@ -19,9 +19,9 @@
 #include "php_phongo.h"
 #include "Type_arginfo.h"
 
-zend_class_entry* php_phongo_type_ce;
+zend_class_entry* phongo_type_ce;
 
-void php_phongo_type_init_ce(INIT_FUNC_ARGS)
+void phongo_type_init_ce(INIT_FUNC_ARGS)
 {
-	php_phongo_type_ce = register_class_MongoDB_BSON_Type();
+	phongo_type_ce = register_class_MongoDB_BSON_Type();
 }

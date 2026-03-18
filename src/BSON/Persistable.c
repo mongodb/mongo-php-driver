@@ -19,9 +19,9 @@
 #include "php_phongo.h"
 #include "Persistable_arginfo.h"
 
-zend_class_entry* php_phongo_persistable_ce;
+zend_class_entry* phongo_persistable_ce;
 
-void php_phongo_persistable_init_ce(INIT_FUNC_ARGS)
+void phongo_persistable_init_ce(INIT_FUNC_ARGS)
 {
-	php_phongo_persistable_ce = register_class_MongoDB_BSON_Persistable(php_phongo_serializable_ce, php_phongo_unserializable_ce);
+	phongo_persistable_ce = register_class_MongoDB_BSON_Persistable(phongo_serializable_ce, phongo_unserializable_ce);
 }

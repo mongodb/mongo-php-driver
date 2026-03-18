@@ -30,11 +30,11 @@
 #include "MongoDB/ReadConcern.h"
 #include "Query_arginfo.h"
 
-zend_class_entry* php_phongo_query_ce;
+zend_class_entry* phongo_query_ce;
 
 /* Appends a string field into the BSON options. Returns true on success;
  * otherwise, false is returned and an exception is thrown. */
-static bool php_phongo_query_opts_append_string(bson_t* opts, const char* opts_key, zval* zarr, const char* zarr_key)
+static bool phongo_query_opts_append_string(bson_t* opts, const char* opts_key, zval* zarr, const char* zarr_key)
 {
 	zval* value = php_array_fetch_deref(zarr, zarr_key);
 
@@ -53,7 +53,7 @@ static bool php_phongo_query_opts_append_string(bson_t* opts, const char* opts_k
 
 /* Appends a document field for the given opts document and key. Returns true on
  * success; otherwise, false is returned and an exception is thrown. */
-static bool php_phongo_query_opts_append_document(bson_t* opts, const char* opts_key, zval* zarr, const char* zarr_key)
+static bool phongo_query_opts_append_document(bson_t* opts, const char* opts_key, zval* zarr, const char* zarr_key)
 {
 	zval*  value = php_array_fetch_deref(zarr, zarr_key);
 	bson_t b     = BSON_INITIALIZER;
@@ -63,7 +63,7 @@ static bool php_phongo_query_opts_append_document(bson_t* opts, const char* opts
 		return false;
 	}
 
-	php_phongo_zval_to_bson(value, PHONGO_BSON_NONE, &b, NULL);
+	phongo_zval_to_bson(value, PHONGO_BSON_NONE, &b, NULL);
 
 	if (EG(exception)) {
 		bson_destroy(&b);
@@ -88,7 +88,7 @@ static bool php_phongo_query_opts_append_document(bson_t* opts, const char* opts
 
 /* Appends an arbitrary BSON value for the given opts document and key. Returns
  * true on success; otherwise, false is returned and an exception is thrown. */
-static bool php_phongo_query_opts_append_value(bson_t* opts, const char* opts_key, zval* zarr, const char* zarr_key)
+static bool phongo_query_opts_append_value(bson_t* opts, const char* opts_key, zval* zarr, const char* zarr_key)
 {
 	bson_value_t value = { 0 };
 
@@ -118,18 +118,18 @@ static bool php_phongo_query_opts_append_value(bson_t* opts, const char* opts_ke
 		}                                                                                                  \
 	}
 
-#define PHONGO_QUERY_OPT_BSON_VALUE(opt, zarr, key)                                    \
-	if ((zarr) && php_array_existsc((zarr), (key))) {                                  \
-		if (!php_phongo_query_opts_append_value(intern->opts, (opt), (zarr), (key))) { \
-			return false;                                                              \
-		}                                                                              \
+#define PHONGO_QUERY_OPT_BSON_VALUE(opt, zarr, key)                                \
+	if ((zarr) && php_array_existsc((zarr), (key))) {                              \
+		if (!phongo_query_opts_append_value(intern->opts, (opt), (zarr), (key))) { \
+			return false;                                                          \
+		}                                                                          \
 	}
 
-#define PHONGO_QUERY_OPT_DOCUMENT(opt, zarr, key)                                         \
-	if ((zarr) && php_array_existsc((zarr), (key))) {                                     \
-		if (!php_phongo_query_opts_append_document(intern->opts, (opt), (zarr), (key))) { \
-			return false;                                                                 \
-		}                                                                                 \
+#define PHONGO_QUERY_OPT_DOCUMENT(opt, zarr, key)                                     \
+	if ((zarr) && php_array_existsc((zarr), (key))) {                                 \
+		if (!phongo_query_opts_append_document(intern->opts, (opt), (zarr), (key))) { \
+			return false;                                                             \
+		}                                                                             \
 	}
 
 /* Note: handling of integer options will depend on SIZEOF_ZEND_LONG and we
@@ -142,11 +142,11 @@ static bool php_phongo_query_opts_append_value(bson_t* opts, const char* opts_ke
 		}                                                                                                  \
 	}
 
-#define PHONGO_QUERY_OPT_STRING(opt, zarr, key)                                         \
-	if ((zarr) && php_array_existsc((zarr), (key))) {                                   \
-		if (!php_phongo_query_opts_append_string(intern->opts, (opt), (zarr), (key))) { \
-			return false;                                                               \
-		}                                                                               \
+#define PHONGO_QUERY_OPT_STRING(opt, zarr, key)                                     \
+	if ((zarr) && php_array_existsc((zarr), (key))) {                               \
+		if (!phongo_query_opts_append_string(intern->opts, (opt), (zarr), (key))) { \
+			return false;                                                           \
+		}                                                                           \
 	}
 
 /* Initialize the "hint" option. Returns true on success; otherwise, false is
@@ -154,7 +154,7 @@ static bool php_phongo_query_opts_append_value(bson_t* opts, const char* opts_ke
  *
  * The "hint" option must be a string or document. Check for both types and
  * merge into BSON options accordingly. */
-static bool php_phongo_query_init_hint(php_phongo_query_t* intern, zval* options)
+static bool phongo_query_init_hint(phongo_query_t* intern, zval* options)
 {
 	if (php_array_existsc(options, "hint")) {
 		zend_uchar type = Z_TYPE_P(php_array_fetchc_deref(options, "hint"));
@@ -177,7 +177,7 @@ static bool php_phongo_query_init_hint(php_phongo_query_t* intern, zval* options
  *
  * The "readConcern" option should be a MongoDB\Driver\ReadConcern instance,
  * which must be converted to a mongoc_read_concern_t. */
-static bool php_phongo_query_init_readconcern(php_phongo_query_t* intern, zval* options)
+static bool phongo_query_init_readconcern(phongo_query_t* intern, zval* options)
 {
 	zval* read_concern;
 
@@ -187,8 +187,8 @@ static bool php_phongo_query_init_readconcern(php_phongo_query_t* intern, zval* 
 
 	read_concern = php_array_fetchc_deref(options, "readConcern");
 
-	if (Z_TYPE_P(read_concern) != IS_OBJECT || !instanceof_function(Z_OBJCE_P(read_concern), php_phongo_readconcern_ce)) {
-		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"readConcern\" option to be %s, %s given", ZSTR_VAL(php_phongo_readconcern_ce->name), zend_zval_type_name(read_concern));
+	if (Z_TYPE_P(read_concern) != IS_OBJECT || !instanceof_function(Z_OBJCE_P(read_concern), phongo_readconcern_ce)) {
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"readConcern\" option to be %s, %s given", ZSTR_VAL(phongo_readconcern_ce->name), zend_zval_type_name(read_concern));
 		return false;
 	}
 
@@ -202,7 +202,7 @@ static bool php_phongo_query_init_readconcern(php_phongo_query_t* intern, zval* 
  *
  * The "maxAwaitTimeMS" option is assigned to the cursor after query execution
  * via mongoc_cursor_set_max_await_time_ms(). */
-static bool php_phongo_query_init_max_await_time_ms(php_phongo_query_t* intern, zval* options)
+static bool phongo_query_init_max_await_time_ms(phongo_query_t* intern, zval* options)
 {
 	int64_t max_await_time_ms;
 
@@ -231,14 +231,14 @@ static bool php_phongo_query_init_max_await_time_ms(php_phongo_query_t* intern, 
  * an error occurred. If query is undefined, it will be initialized. */
 bool phongo_query_init(zval* return_value, zval* filter, zval* options)
 {
-	php_phongo_query_t* intern;
+	phongo_query_t* intern;
 
 	if (Z_ISUNDEF_P(return_value)) {
-		object_init_ex(return_value, php_phongo_query_ce);
+		object_init_ex(return_value, phongo_query_ce);
 	}
 
-	if (Z_TYPE_P(return_value) != IS_OBJECT || !instanceof_function(Z_OBJCE_P(return_value), php_phongo_query_ce)) {
-		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Expected initialization object to be %s, %s given", ZSTR_VAL(php_phongo_query_ce->name), zend_zval_type_name(return_value));
+	if (Z_TYPE_P(return_value) != IS_OBJECT || !instanceof_function(Z_OBJCE_P(return_value), phongo_query_ce)) {
+		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Expected initialization object to be %s, %s given", ZSTR_VAL(phongo_query_ce->name), zend_zval_type_name(return_value));
 		return false;
 	}
 
@@ -249,11 +249,11 @@ bool phongo_query_init(zval* return_value, zval* filter, zval* options)
 	intern->max_await_time_ms = 0;
 
 	if (filter) {
-		php_phongo_zval_to_bson(filter, PHONGO_BSON_NONE, intern->filter, NULL);
+		phongo_zval_to_bson(filter, PHONGO_BSON_NONE, intern->filter, NULL);
 	}
 
 	/* Note: if any exceptions are thrown, we can simply return as PHP will
-	 * invoke php_phongo_query_free_object to destruct the object. */
+	 * invoke phongo_query_free_object to destruct the object. */
 	if (EG(exception)) {
 		return false;
 	}
@@ -288,15 +288,15 @@ bool phongo_query_init(zval* return_value, zval* filter, zval* options)
 	PHONGO_QUERY_OPT_DOCUMENT("sort", options, "sort");
 	PHONGO_QUERY_OPT_BOOL("tailable", options, "tailable");
 
-	if (!php_phongo_query_init_hint(intern, options)) {
+	if (!phongo_query_init_hint(intern, options)) {
 		return false;
 	}
 
-	if (!php_phongo_query_init_readconcern(intern, options)) {
+	if (!phongo_query_init_readconcern(intern, options)) {
 		return false;
 	}
 
-	if (!php_phongo_query_init_max_await_time_ms(intern, options)) {
+	if (!phongo_query_init_max_await_time_ms(intern, options)) {
 		return false;
 	}
 
@@ -325,11 +325,11 @@ static PHP_METHOD(MongoDB_Driver_Query, __construct)
 }
 
 /* MongoDB\Driver\Query object handlers */
-static zend_object_handlers php_phongo_handler_query;
+static zend_object_handlers phongo_handler_query;
 
-static void php_phongo_query_free_object(zend_object* object)
+static void phongo_query_free_object(zend_object* object)
 {
-	php_phongo_query_t* intern = Z_OBJ_QUERY(object);
+	phongo_query_t* intern = Z_OBJ_QUERY(object);
 
 	zend_object_std_dtor(&intern->std);
 
@@ -346,22 +346,22 @@ static void php_phongo_query_free_object(zend_object* object)
 	}
 }
 
-static zend_object* php_phongo_query_create_object(zend_class_entry* class_type)
+static zend_object* phongo_query_create_object(zend_class_entry* class_type)
 {
-	php_phongo_query_t* intern = zend_object_alloc(sizeof(php_phongo_query_t), class_type);
+	phongo_query_t* intern = zend_object_alloc(sizeof(phongo_query_t), class_type);
 
 	zend_object_std_init(&intern->std, class_type);
 	object_properties_init(&intern->std, class_type);
 
-	intern->std.handlers = &php_phongo_handler_query;
+	intern->std.handlers = &phongo_handler_query;
 
 	return &intern->std;
 }
 
-static HashTable* php_phongo_query_get_debug_info(zend_object* object, int* is_temp)
+static HashTable* phongo_query_get_debug_info(zend_object* object, int* is_temp)
 {
-	php_phongo_query_t* intern;
-	zval                retval = ZVAL_STATIC_INIT;
+	phongo_query_t* intern;
+	zval            retval = ZVAL_STATIC_INIT;
 
 	*is_temp = 1;
 	intern   = Z_OBJ_QUERY(object);
@@ -373,7 +373,7 @@ static HashTable* php_phongo_query_get_debug_info(zend_object* object, int* is_t
 	if (intern->filter) {
 		zval zv;
 
-		if (!php_phongo_bson_to_zval(intern->filter, &zv)) {
+		if (!phongo_bson_to_zval(intern->filter, &zv)) {
 			zval_ptr_dtor(&zv);
 			goto done;
 		}
@@ -386,7 +386,7 @@ static HashTable* php_phongo_query_get_debug_info(zend_object* object, int* is_t
 	if (intern->opts) {
 		zval zv;
 
-		if (!php_phongo_bson_to_zval(intern->opts, &zv)) {
+		if (!phongo_bson_to_zval(intern->opts, &zv)) {
 			zval_ptr_dtor(&zv);
 			goto done;
 		}
@@ -399,7 +399,7 @@ static HashTable* php_phongo_query_get_debug_info(zend_object* object, int* is_t
 	if (intern->read_concern) {
 		zval read_concern;
 
-		php_phongo_read_concern_to_zval(&read_concern, intern->read_concern);
+		phongo_read_concern_to_zval(&read_concern, intern->read_concern);
 		ADD_ASSOC_ZVAL_EX(&retval, "readConcern", &read_concern);
 	} else {
 		ADD_ASSOC_NULL_EX(&retval, "readConcern");
@@ -409,13 +409,13 @@ done:
 	return Z_ARRVAL(retval);
 }
 
-void php_phongo_query_init_ce(INIT_FUNC_ARGS)
+void phongo_query_init_ce(INIT_FUNC_ARGS)
 {
-	php_phongo_query_ce                = register_class_MongoDB_Driver_Query();
-	php_phongo_query_ce->create_object = php_phongo_query_create_object;
+	phongo_query_ce                = register_class_MongoDB_Driver_Query();
+	phongo_query_ce->create_object = phongo_query_create_object;
 
-	memcpy(&php_phongo_handler_query, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
-	php_phongo_handler_query.get_debug_info = php_phongo_query_get_debug_info;
-	php_phongo_handler_query.free_obj       = php_phongo_query_free_object;
-	php_phongo_handler_query.offset         = XtOffsetOf(php_phongo_query_t, std);
+	memcpy(&phongo_handler_query, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
+	phongo_handler_query.get_debug_info = phongo_query_get_debug_info;
+	phongo_handler_query.free_obj       = phongo_query_free_object;
+	phongo_handler_query.offset         = XtOffsetOf(phongo_query_t, std);
 }

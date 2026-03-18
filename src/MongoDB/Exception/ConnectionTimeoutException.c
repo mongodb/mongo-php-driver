@@ -19,9 +19,9 @@
 #include "php_phongo.h"
 #include "ConnectionTimeoutException_arginfo.h"
 
-zend_class_entry* php_phongo_connectiontimeoutexception_ce;
+zend_class_entry* phongo_connectiontimeoutexception_ce;
 
-void php_phongo_connectiontimeoutexception_init_ce(INIT_FUNC_ARGS)
+void phongo_connectiontimeoutexception_init_ce(INIT_FUNC_ARGS)
 {
-	php_phongo_connectiontimeoutexception_ce = register_class_MongoDB_Driver_Exception_ConnectionTimeoutException(php_phongo_connectionexception_ce);
+	phongo_connectiontimeoutexception_ce = register_class_MongoDB_Driver_Exception_ConnectionTimeoutException(phongo_connectionexception_ce);
 }

@@ -26,10 +26,10 @@ typedef enum {
 	PHONGO_BSON_ADD_ID           = (1 << 0),
 	PHONGO_BSON_RETURN_ID        = (1 << 1),
 	PHONGO_BSON_ALLOW_ROOT_ARRAY = (1 << 2)
-} php_phongo_bson_flags_t;
+} phongo_bson_flags_t;
 
-void php_phongo_zval_to_bson(zval* data, php_phongo_bson_flags_t flags, bson_t* bson, bson_t** bson_out);
+void phongo_zval_to_bson(zval* data, phongo_bson_flags_t flags, bson_t* bson, bson_t** bson_out);
 bool phongo_zval_to_bson_value(zval* data, bson_value_t* value);
-void php_phongo_bson_append_zval(bson_t* bson, const char* key, long key_len, zval* value);
+void phongo_bson_append_zval(bson_t* bson, const char* key, long key_len, zval* value);
 
 #endif /* PHONGO_BSON_ENCODE_H */

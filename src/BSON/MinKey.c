@@ -21,7 +21,7 @@
 #include "phongo_error.h"
 #include "MinKey_arginfo.h"
 
-zend_class_entry* php_phongo_minkey_ce;
+zend_class_entry* phongo_minkey_ce;
 
 static PHP_METHOD(MongoDB_BSON_MinKey, __set_state)
 {
@@ -31,7 +31,7 @@ static PHP_METHOD(MongoDB_BSON_MinKey, __set_state)
 	Z_PARAM_ARRAY(array)
 	PHONGO_PARSE_PARAMETERS_END();
 
-	object_init_ex(return_value, php_phongo_minkey_ce);
+	object_init_ex(return_value, phongo_minkey_ce);
 }
 
 static PHP_METHOD(MongoDB_BSON_MinKey, jsonSerialize)
@@ -59,35 +59,35 @@ static PHP_METHOD(MongoDB_BSON_MinKey, __unserialize)
 }
 
 /* MongoDB\BSON\MinKey object handlers */
-static zend_object_handlers php_phongo_handler_minkey;
+static zend_object_handlers phongo_handler_minkey;
 
-static void php_phongo_minkey_free_object(zend_object* object)
+static void phongo_minkey_free_object(zend_object* object)
 {
-	php_phongo_minkey_t* intern = Z_OBJ_MINKEY(object);
+	phongo_minkey_t* intern = Z_OBJ_MINKEY(object);
 
 	zend_object_std_dtor(&intern->std);
 }
 
-static zend_object* php_phongo_minkey_create_object(zend_class_entry* class_type)
+static zend_object* phongo_minkey_create_object(zend_class_entry* class_type)
 {
-	php_phongo_minkey_t* intern = zend_object_alloc(sizeof(php_phongo_minkey_t), class_type);
+	phongo_minkey_t* intern = zend_object_alloc(sizeof(phongo_minkey_t), class_type);
 
 	zend_object_std_init(&intern->std, class_type);
 	object_properties_init(&intern->std, class_type);
 
-	intern->std.handlers = &php_phongo_handler_minkey;
+	intern->std.handlers = &phongo_handler_minkey;
 
 	return &intern->std;
 }
 
-void php_phongo_minkey_init_ce(INIT_FUNC_ARGS)
+void phongo_minkey_init_ce(INIT_FUNC_ARGS)
 {
-	php_phongo_minkey_ce                = register_class_MongoDB_BSON_MinKey(php_phongo_minkey_interface_ce, php_phongo_json_serializable_ce, php_phongo_type_ce);
-	php_phongo_minkey_ce->create_object = php_phongo_minkey_create_object;
+	phongo_minkey_ce                = register_class_MongoDB_BSON_MinKey(phongo_minkey_interface_ce, phongo_json_serializable_ce, phongo_type_ce);
+	phongo_minkey_ce->create_object = phongo_minkey_create_object;
 
-	memcpy(&php_phongo_handler_minkey, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
+	memcpy(&phongo_handler_minkey, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	/* Re-assign default handler previously removed in php_phongo.c */
-	php_phongo_handler_minkey.clone_obj = zend_objects_clone_obj;
-	php_phongo_handler_minkey.free_obj  = php_phongo_minkey_free_object;
-	php_phongo_handler_minkey.offset    = XtOffsetOf(php_phongo_minkey_t, std);
+	phongo_handler_minkey.clone_obj = zend_objects_clone_obj;
+	phongo_handler_minkey.free_obj  = phongo_minkey_free_object;
+	phongo_handler_minkey.offset    = XtOffsetOf(phongo_minkey_t, std);
 }

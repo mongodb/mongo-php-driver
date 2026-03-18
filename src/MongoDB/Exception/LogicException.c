@@ -20,9 +20,9 @@
 #include "php_phongo.h"
 #include "LogicException_arginfo.h"
 
-zend_class_entry* php_phongo_logicexception_ce;
+zend_class_entry* phongo_logicexception_ce;
 
-void php_phongo_logicexception_init_ce(INIT_FUNC_ARGS)
+void phongo_logicexception_init_ce(INIT_FUNC_ARGS)
 {
-	php_phongo_logicexception_ce = register_class_MongoDB_Driver_Exception_LogicException(spl_ce_LogicException, php_phongo_exception_ce);
+	phongo_logicexception_ce = register_class_MongoDB_Driver_Exception_LogicException(spl_ce_LogicException, phongo_exception_ce);
 }

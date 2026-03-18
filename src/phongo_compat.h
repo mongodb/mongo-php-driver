@@ -208,8 +208,8 @@
 	} while (0)
 #endif
 
-zend_bool php_phongo_zend_hash_apply_protection_begin(HashTable* ht);
-zend_bool php_phongo_zend_hash_apply_protection_end(HashTable* ht);
+zend_bool phongo_zend_hash_apply_protection_begin(HashTable* ht);
+zend_bool phongo_zend_hash_apply_protection_end(HashTable* ht);
 
 /* zend_get_object_type_case functions were introduced in PHP 8.2 */
 #if PHP_VERSION_ID < 80200

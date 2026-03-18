@@ -23,9 +23,9 @@
 #include "phongo_error.h"
 #include "RuntimeException_arginfo.h"
 
-zend_class_entry* php_phongo_runtimeexception_ce;
+zend_class_entry* phongo_runtimeexception_ce;
 
-static bool php_phongo_has_string_array_element(zval* labels, char* label)
+static bool phongo_has_string_array_element(zval* labels, char* label)
 {
 	HashTable* ht_data;
 
@@ -62,12 +62,12 @@ static PHP_METHOD(MongoDB_Driver_Exception_RuntimeException, hasErrorLabel)
 	Z_PARAM_STRING(label, label_len)
 	PHONGO_PARSE_PARAMETERS_END();
 
-	error_labels = zend_read_property(php_phongo_runtimeexception_ce, Z_OBJ_P(getThis()), ZEND_STRL("errorLabels"), 0, &rv);
+	error_labels = zend_read_property(phongo_runtimeexception_ce, Z_OBJ_P(getThis()), ZEND_STRL("errorLabels"), 0, &rv);
 
-	RETURN_BOOL(php_phongo_has_string_array_element(error_labels, label));
+	RETURN_BOOL(phongo_has_string_array_element(error_labels, label));
 }
 
-void php_phongo_runtimeexception_init_ce(INIT_FUNC_ARGS)
+void phongo_runtimeexception_init_ce(INIT_FUNC_ARGS)
 {
-	php_phongo_runtimeexception_ce = register_class_MongoDB_Driver_Exception_RuntimeException(spl_ce_RuntimeException, php_phongo_exception_ce);
+	phongo_runtimeexception_ce = register_class_MongoDB_Driver_Exception_RuntimeException(spl_ce_RuntimeException, phongo_exception_ce);
 }

@@ -130,8 +130,8 @@ static bool phongo_log_check_args_for_add_and_remove(HashTable* loggers, zval* l
 		return false;
 	}
 
-	if (!logger || Z_TYPE_P(logger) != IS_OBJECT || !instanceof_function(Z_OBJCE_P(logger), php_phongo_logsubscriber_ce)) {
-		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Logger is not an instance of %s", ZSTR_VAL(php_phongo_logsubscriber_ce->name));
+	if (!logger || Z_TYPE_P(logger) != IS_OBJECT || !instanceof_function(Z_OBJCE_P(logger), phongo_logsubscriber_ce)) {
+		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Logger is not an instance of %s", ZSTR_VAL(phongo_logsubscriber_ce->name));
 		return false;
 	}
 

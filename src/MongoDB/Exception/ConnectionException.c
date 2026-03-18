@@ -19,9 +19,9 @@
 #include "php_phongo.h"
 #include "ConnectionException_arginfo.h"
 
-zend_class_entry* php_phongo_connectionexception_ce;
+zend_class_entry* phongo_connectionexception_ce;
 
-void php_phongo_connectionexception_init_ce(INIT_FUNC_ARGS)
+void phongo_connectionexception_init_ce(INIT_FUNC_ARGS)
 {
-	php_phongo_connectionexception_ce = register_class_MongoDB_Driver_Exception_ConnectionException(php_phongo_runtimeexception_ce);
+	phongo_connectionexception_ce = register_class_MongoDB_Driver_Exception_ConnectionException(phongo_runtimeexception_ce);
 }

@@ -45,7 +45,7 @@ ZEND_TSRMLS_CACHE_DEFINE();
 static int32_t phongo_num_threads = 0;
 
 /* Declare zend_class_entry dependencies, which are initialized in MINIT */
-zend_class_entry* php_phongo_json_serializable_ce;
+zend_class_entry* phongo_json_serializable_ce;
 
 /* {{{ phongo_std_object_handlers */
 zend_object_handlers phongo_std_object_handlers;
@@ -57,22 +57,22 @@ zend_object_handlers* phongo_get_std_object_handlers(void)
 /* }}} */
 
 /* {{{ Memory allocation wrappers */
-static void* php_phongo_malloc(size_t num_bytes)
+static void* phongo_malloc(size_t num_bytes)
 {
 	return pemalloc(num_bytes, 1);
 }
 
-static void* php_phongo_calloc(size_t num_members, size_t num_bytes)
+static void* phongo_calloc(size_t num_members, size_t num_bytes)
 {
 	return pecalloc(num_members, num_bytes, 1);
 }
 
-static void* php_phongo_realloc(void* mem, size_t num_bytes)
+static void* phongo_realloc(void* mem, size_t num_bytes)
 {
 	return perealloc(mem, num_bytes, 1);
 }
 
-static void php_phongo_free(void* mem)
+static void phongo_free(void* mem)
 {
 	if (mem) {
 		pefree(mem, 1);
@@ -89,7 +89,7 @@ PHP_RINIT_FUNCTION(mongodb) /* {{{ */
 	 * the time it is destroyed in RSHUTDOWN). */
 	if (MONGODB_G(request_clients) == NULL) {
 		ALLOC_HASHTABLE(MONGODB_G(request_clients));
-		zend_hash_init(MONGODB_G(request_clients), 0, NULL, php_phongo_pclient_destroy_ptr, 0);
+		zend_hash_init(MONGODB_G(request_clients), 0, NULL, phongo_pclient_destroy_ptr, 0);
 	}
 
 	/* Initialize HashTable for loggers, which is initialized to NULL in GINIT
@@ -114,7 +114,7 @@ PHP_RINIT_FUNCTION(mongodb) /* {{{ */
 
 	/* Initialize HashTable for registering Manager objects. This is initialized
 	 * to NULL in GINIT and destroyed and reset to NULL in RSHUTDOWN. Since this
-	 * HashTable stores pointers to existing php_phongo_manager_t objects (not
+	 * HashTable stores pointers to existing phongo_manager_t objects (not
 	 * counted references), the element destructor is intentionally NULL. */
 	if (MONGODB_G(managers) == NULL) {
 		ALLOC_HASHTABLE(MONGODB_G(managers));
@@ -141,10 +141,10 @@ PHP_GINIT_FUNCTION(mongodb) /* {{{ */
 	 * can be destroyed along with the HashTable. The HashTable's struct is
 	 * nested within globals, so no allocation is needed (unlike the HashTables
 	 * allocated in RINIT). */
-	zend_hash_init(&mongodb_globals->persistent_clients, 0, NULL, php_phongo_pclient_destroy_ptr, 1);
+	zend_hash_init(&mongodb_globals->persistent_clients, 0, NULL, phongo_pclient_destroy_ptr, 1);
 } /* }}} */
 
-static zend_class_entry* php_phongo_fetch_internal_class(const char* class_name, size_t class_name_len)
+static zend_class_entry* phongo_fetch_internal_class(const char* class_name, size_t class_name_len)
 {
 	zend_class_entry* pce;
 
@@ -155,7 +155,7 @@ static zend_class_entry* php_phongo_fetch_internal_class(const char* class_name,
 	return NULL;
 }
 
-static HashTable* php_phongo_std_get_gc(zend_object* object, zval** table, int* n)
+static HashTable* phongo_std_get_gc(zend_object* object, zval** table, int* n)
 {
 	*table = NULL;
 	*n     = 0;
@@ -165,10 +165,10 @@ static HashTable* php_phongo_std_get_gc(zend_object* object, zval** table, int* 
 PHP_MINIT_FUNCTION(mongodb) /* {{{ */
 {
 	bson_mem_vtable_t bson_mem_vtable = {
-		php_phongo_malloc,
-		php_phongo_calloc,
-		php_phongo_realloc,
-		php_phongo_free,
+		phongo_malloc,
+		phongo_calloc,
+		phongo_realloc,
+		phongo_free,
 	};
 
 	(void) type; /* We don't care if we are loaded via dl() or extension= */
@@ -199,7 +199,7 @@ PHP_MINIT_FUNCTION(mongodb) /* {{{ */
 	phongo_std_object_handlers.clone_obj = NULL;
 	/* Ensure that get_gc delegates to zend_std_get_properties directly in case
 	 * our class defines a get_properties handler for debugging purposes. */
-	phongo_std_object_handlers.get_gc = php_phongo_std_get_gc;
+	phongo_std_object_handlers.get_gc = phongo_std_get_gc;
 
 	/* Initialize zend_class_entry dependencies.
 	 *
@@ -208,104 +208,104 @@ PHP_MINIT_FUNCTION(mongodb) /* {{{ */
 	 * and 5.5.10. For later PHP versions, looking up the class manually also
 	 * helps with distros that disable LTDL_LAZY for dlopen() (e.g. Fedora).
 	 */
-	php_phongo_json_serializable_ce = php_phongo_fetch_internal_class(ZEND_STRL("jsonserializable"));
+	phongo_json_serializable_ce = phongo_fetch_internal_class(ZEND_STRL("jsonserializable"));
 
-	if (php_phongo_json_serializable_ce == NULL) {
+	if (phongo_json_serializable_ce == NULL) {
 		zend_error(E_ERROR, "JsonSerializable class is not defined. Please ensure that the 'json' module is loaded before the 'mongodb' module.");
 		return FAILURE;
 	}
 
 	/* Register base BSON classes first */
-	php_phongo_type_init_ce(INIT_FUNC_ARGS_PASSTHRU);
-	php_phongo_serializable_init_ce(INIT_FUNC_ARGS_PASSTHRU);
-	php_phongo_unserializable_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	phongo_type_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	phongo_serializable_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	phongo_unserializable_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 
-	php_phongo_binary_interface_init_ce(INIT_FUNC_ARGS_PASSTHRU);
-	php_phongo_decimal128_interface_init_ce(INIT_FUNC_ARGS_PASSTHRU);
-	php_phongo_javascript_interface_init_ce(INIT_FUNC_ARGS_PASSTHRU);
-	php_phongo_maxkey_interface_init_ce(INIT_FUNC_ARGS_PASSTHRU);
-	php_phongo_minkey_interface_init_ce(INIT_FUNC_ARGS_PASSTHRU);
-	php_phongo_objectid_interface_init_ce(INIT_FUNC_ARGS_PASSTHRU);
-	php_phongo_regex_interface_init_ce(INIT_FUNC_ARGS_PASSTHRU);
-	php_phongo_timestamp_interface_init_ce(INIT_FUNC_ARGS_PASSTHRU);
-	php_phongo_utcdatetime_interface_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	phongo_binary_interface_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	phongo_decimal128_interface_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	phongo_javascript_interface_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	phongo_maxkey_interface_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	phongo_minkey_interface_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	phongo_objectid_interface_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	phongo_regex_interface_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	phongo_timestamp_interface_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	phongo_utcdatetime_interface_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 
-	php_phongo_iterator_init_ce(INIT_FUNC_ARGS_PASSTHRU);
-	php_phongo_packedarray_init_ce(INIT_FUNC_ARGS_PASSTHRU);
-	php_phongo_document_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	phongo_iterator_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	phongo_packedarray_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	phongo_document_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 
-	php_phongo_binary_init_ce(INIT_FUNC_ARGS_PASSTHRU);
-	php_phongo_dbpointer_init_ce(INIT_FUNC_ARGS_PASSTHRU);
-	php_phongo_decimal128_init_ce(INIT_FUNC_ARGS_PASSTHRU);
-	php_phongo_int64_init_ce(INIT_FUNC_ARGS_PASSTHRU);
-	php_phongo_javascript_init_ce(INIT_FUNC_ARGS_PASSTHRU);
-	php_phongo_maxkey_init_ce(INIT_FUNC_ARGS_PASSTHRU);
-	php_phongo_minkey_init_ce(INIT_FUNC_ARGS_PASSTHRU);
-	php_phongo_objectid_init_ce(INIT_FUNC_ARGS_PASSTHRU);
-	php_phongo_persistable_init_ce(INIT_FUNC_ARGS_PASSTHRU);
-	php_phongo_regex_init_ce(INIT_FUNC_ARGS_PASSTHRU);
-	php_phongo_symbol_init_ce(INIT_FUNC_ARGS_PASSTHRU);
-	php_phongo_timestamp_init_ce(INIT_FUNC_ARGS_PASSTHRU);
-	php_phongo_undefined_init_ce(INIT_FUNC_ARGS_PASSTHRU);
-	php_phongo_utcdatetime_init_ce(INIT_FUNC_ARGS_PASSTHRU);
-	php_phongo_vectortype_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	phongo_binary_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	phongo_dbpointer_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	phongo_decimal128_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	phongo_int64_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	phongo_javascript_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	phongo_maxkey_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	phongo_minkey_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	phongo_objectid_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	phongo_persistable_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	phongo_regex_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	phongo_symbol_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	phongo_timestamp_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	phongo_undefined_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	phongo_utcdatetime_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	phongo_vectortype_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 
-	php_phongo_cursor_interface_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	phongo_cursor_interface_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 
-	php_phongo_bulkwrite_init_ce(INIT_FUNC_ARGS_PASSTHRU);
-	php_phongo_bulkwritecommand_init_ce(INIT_FUNC_ARGS_PASSTHRU);
-	php_phongo_bulkwritecommandresult_init_ce(INIT_FUNC_ARGS_PASSTHRU);
-	php_phongo_clientencryption_init_ce(INIT_FUNC_ARGS_PASSTHRU);
-	php_phongo_command_init_ce(INIT_FUNC_ARGS_PASSTHRU);
-	php_phongo_cursor_init_ce(INIT_FUNC_ARGS_PASSTHRU);
-	php_phongo_manager_init_ce(INIT_FUNC_ARGS_PASSTHRU);
-	php_phongo_query_init_ce(INIT_FUNC_ARGS_PASSTHRU);
-	php_phongo_readconcern_init_ce(INIT_FUNC_ARGS_PASSTHRU);
-	php_phongo_readpreference_init_ce(INIT_FUNC_ARGS_PASSTHRU);
-	php_phongo_server_init_ce(INIT_FUNC_ARGS_PASSTHRU);
-	php_phongo_serverapi_init_ce(INIT_FUNC_ARGS_PASSTHRU);
-	php_phongo_serverdescription_init_ce(INIT_FUNC_ARGS_PASSTHRU);
-	php_phongo_topologydescription_init_ce(INIT_FUNC_ARGS_PASSTHRU);
-	php_phongo_session_init_ce(INIT_FUNC_ARGS_PASSTHRU);
-	php_phongo_writeconcern_init_ce(INIT_FUNC_ARGS_PASSTHRU);
-	php_phongo_writeconcernerror_init_ce(INIT_FUNC_ARGS_PASSTHRU);
-	php_phongo_writeerror_init_ce(INIT_FUNC_ARGS_PASSTHRU);
-	php_phongo_writeresult_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	phongo_bulkwrite_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	phongo_bulkwritecommand_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	phongo_bulkwritecommandresult_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	phongo_clientencryption_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	phongo_command_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	phongo_cursor_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	phongo_manager_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	phongo_query_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	phongo_readconcern_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	phongo_readpreference_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	phongo_server_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	phongo_serverapi_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	phongo_serverdescription_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	phongo_topologydescription_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	phongo_session_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	phongo_writeconcern_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	phongo_writeconcernerror_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	phongo_writeerror_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	phongo_writeresult_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 
 	/* Register base exception classes first */
-	php_phongo_exception_init_ce(INIT_FUNC_ARGS_PASSTHRU);
-	php_phongo_runtimeexception_init_ce(INIT_FUNC_ARGS_PASSTHRU);
-	php_phongo_serverexception_init_ce(INIT_FUNC_ARGS_PASSTHRU);
-	php_phongo_connectionexception_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	phongo_exception_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	phongo_runtimeexception_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	phongo_serverexception_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	phongo_connectionexception_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 
-	php_phongo_authenticationexception_init_ce(INIT_FUNC_ARGS_PASSTHRU);
-	php_phongo_bulkwriteexception_init_ce(INIT_FUNC_ARGS_PASSTHRU);
-	php_phongo_bulkwritecommandexception_init_ce(INIT_FUNC_ARGS_PASSTHRU);
-	php_phongo_commandexception_init_ce(INIT_FUNC_ARGS_PASSTHRU);
-	php_phongo_connectiontimeoutexception_init_ce(INIT_FUNC_ARGS_PASSTHRU);
-	php_phongo_encryptionexception_init_ce(INIT_FUNC_ARGS_PASSTHRU);
-	php_phongo_executiontimeoutexception_init_ce(INIT_FUNC_ARGS_PASSTHRU);
-	php_phongo_invalidargumentexception_init_ce(INIT_FUNC_ARGS_PASSTHRU);
-	php_phongo_logicexception_init_ce(INIT_FUNC_ARGS_PASSTHRU);
-	php_phongo_unexpectedvalueexception_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	phongo_authenticationexception_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	phongo_bulkwriteexception_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	phongo_bulkwritecommandexception_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	phongo_commandexception_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	phongo_connectiontimeoutexception_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	phongo_encryptionexception_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	phongo_executiontimeoutexception_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	phongo_invalidargumentexception_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	phongo_logicexception_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	phongo_unexpectedvalueexception_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 
 	/* Register base APM classes first */
-	php_phongo_subscriber_init_ce(INIT_FUNC_ARGS_PASSTHRU);
-	php_phongo_commandsubscriber_init_ce(INIT_FUNC_ARGS_PASSTHRU);
-	php_phongo_commandfailedevent_init_ce(INIT_FUNC_ARGS_PASSTHRU);
-	php_phongo_commandstartedevent_init_ce(INIT_FUNC_ARGS_PASSTHRU);
-	php_phongo_commandsucceededevent_init_ce(INIT_FUNC_ARGS_PASSTHRU);
-	php_phongo_logsubscriber_init_ce(INIT_FUNC_ARGS_PASSTHRU);
-	php_phongo_sdamsubscriber_init_ce(INIT_FUNC_ARGS_PASSTHRU);
-	php_phongo_serverchangedevent_init_ce(INIT_FUNC_ARGS_PASSTHRU);
-	php_phongo_serverclosedevent_init_ce(INIT_FUNC_ARGS_PASSTHRU);
-	php_phongo_serverheartbeatfailedevent_init_ce(INIT_FUNC_ARGS_PASSTHRU);
-	php_phongo_serverheartbeatstartedevent_init_ce(INIT_FUNC_ARGS_PASSTHRU);
-	php_phongo_serverheartbeatsucceededevent_init_ce(INIT_FUNC_ARGS_PASSTHRU);
-	php_phongo_serveropeningevent_init_ce(INIT_FUNC_ARGS_PASSTHRU);
-	php_phongo_topologychangedevent_init_ce(INIT_FUNC_ARGS_PASSTHRU);
-	php_phongo_topologyclosedevent_init_ce(INIT_FUNC_ARGS_PASSTHRU);
-	php_phongo_topologyopeningevent_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	phongo_subscriber_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	phongo_commandsubscriber_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	phongo_commandfailedevent_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	phongo_commandstartedevent_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	phongo_commandsucceededevent_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	phongo_logsubscriber_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	phongo_sdamsubscriber_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	phongo_serverchangedevent_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	phongo_serverclosedevent_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	phongo_serverheartbeatfailedevent_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	phongo_serverheartbeatstartedevent_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	phongo_serverheartbeatsucceededevent_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	phongo_serveropeningevent_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	phongo_topologychangedevent_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	phongo_topologyclosedevent_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	phongo_topologyopeningevent_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 
 	REGISTER_STRING_CONSTANT("MONGODB_VERSION", (char*) PHP_MONGODB_VERSION, CONST_CS | CONST_PERSISTENT);
 	REGISTER_STRING_CONSTANT("MONGODB_STABILITY", (char*) PHP_MONGODB_STABILITY, CONST_CS | CONST_PERSISTENT);
@@ -498,7 +498,7 @@ PHP_MINFO_FUNCTION(mongodb) /* {{{ */
 #endif
 
 	{
-		const char* crypt_shared_version = php_phongo_crypt_shared_version();
+		const char* crypt_shared_version = phongo_crypt_shared_version();
 
 		if (crypt_shared_version) {
 			php_info_print_table_row(2, "crypt_shared library version", crypt_shared_version);
