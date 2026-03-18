@@ -15,5 +15,5 @@ enum MyBackedEnum: int implements MongoDB\BSON\Persistable
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECTREGEX--
-Fatal error: Enum class MyBackedEnum cannot implement interface MongoDB\\BSON\\(Persistable|Unserializable) in .+ on line \d+
+--EXPECTF--
+Fatal error: Enum class MyBackedEnum cannot implement interface MongoDB\BSON\Persistable in %s on line %d
