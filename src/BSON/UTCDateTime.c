@@ -21,7 +21,7 @@
 #include <ext/date/php_date.h>
 #include <Zend/zend_interfaces.h>
 
-#include "php_phongo.h"
+#include "phongo.h"
 #include "phongo_error.h"
 #include "phongo_util.h"
 #include "UTCDateTime_arginfo.h"

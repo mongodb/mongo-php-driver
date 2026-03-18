@@ -16,7 +16,7 @@
 
 #include <php.h>
 
-#include "php_phongo.h"
+#include "phongo.h"
 #include "phongo_error.h"
 #include "CommandException_arginfo.h"
 

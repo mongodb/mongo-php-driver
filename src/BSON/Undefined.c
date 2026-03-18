@@ -17,7 +17,7 @@
 #include <php.h>
 #include <Zend/zend_interfaces.h>
 
-#include "php_phongo.h"
+#include "phongo.h"
 #include "phongo_error.h"
 #include "Undefined_arginfo.h"
 
@@ -96,7 +96,7 @@ void phongo_undefined_init_ce(INIT_FUNC_ARGS)
 	phongo_undefined_ce->create_object = phongo_undefined_create_object;
 
 	memcpy(&phongo_handler_undefined, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
-	/* Re-assign default handler previously removed in php_phongo.c */
+	/* Re-assign default handler previously removed in phongo.c */
 	phongo_handler_undefined.clone_obj = zend_objects_clone_obj;
 	phongo_handler_undefined.free_obj  = phongo_undefined_free_object;
 	phongo_handler_undefined.offset    = XtOffsetOf(phongo_undefined_t, std);

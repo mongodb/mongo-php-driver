@@ -24,7 +24,7 @@
 #include <php.h>
 #include <ext/standard/info.h>
 
-#include "php_phongo.h"
+#include "phongo.h"
 #include "src/phongo_atomic.h"
 #include "src/phongo_client.h"
 #include "src/phongo_error.h"

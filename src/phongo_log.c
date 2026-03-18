@@ -24,7 +24,7 @@
 #include <Zend/zend_exceptions.h>
 #include <Zend/zend_operators.h>
 
-#include "php_phongo.h"
+#include "phongo.h"
 #include "phongo_error.h"
 #include "phongo_log.h"
 

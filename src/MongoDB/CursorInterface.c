@@ -17,7 +17,7 @@
 #include <php.h>
 #include <Zend/zend_interfaces.h>
 
-#include "php_phongo.h"
+#include "phongo.h"
 #include "CursorInterface_arginfo.h"
 
 zend_class_entry* phongo_cursor_interface_ce;

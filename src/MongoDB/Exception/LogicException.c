@@ -17,7 +17,7 @@
 #include <php.h>
 #include <ext/spl/spl_exceptions.h>
 
-#include "php_phongo.h"
+#include "phongo.h"
 #include "LogicException_arginfo.h"
 
 zend_class_entry* phongo_logicexception_ce;

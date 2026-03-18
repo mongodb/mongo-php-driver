@@ -16,7 +16,7 @@
 
 #include <php.h>
 
-#include "php_phongo.h"
+#include "phongo.h"
 #include "TimestampInterface_arginfo.h"
 
 zend_class_entry* phongo_timestamp_interface_ce;

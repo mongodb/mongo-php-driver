@@ -18,7 +18,7 @@
 #include <ext/spl/spl_iterators.h>
 #include <Zend/zend_interfaces.h>
 
-#include "php_phongo.h"
+#include "phongo.h"
 #include "phongo_bson.h"
 #include "phongo_client.h"
 #include "phongo_error.h"

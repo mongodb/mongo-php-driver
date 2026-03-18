@@ -23,7 +23,7 @@
 
 #include "php_array_api.h"
 
-#include "php_phongo.h"
+#include "phongo.h"
 #include "phongo_apm.h"
 #include "phongo_bson_encode.h"
 #include "phongo_client.h"

@@ -18,7 +18,7 @@
 #include <Zend/zend_interfaces.h>
 #include <Zend/zend_exceptions.h>
 
-#include "php_phongo.h"
+#include "phongo.h"
 #include "phongo_error.h"
 #include "phongo_util.h"
 #include "Int64_arginfo.h"

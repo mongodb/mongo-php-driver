@@ -17,7 +17,7 @@
 #include <php.h>
 #include <zend_exceptions.h>
 
-#include "php_phongo.h"
+#include "phongo.h"
 #include "Exception_arginfo.h"
 
 zend_class_entry* phongo_exception_ce;

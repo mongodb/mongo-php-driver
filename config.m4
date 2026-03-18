@@ -127,7 +127,7 @@ if test "$PHP_MONGODB" != "no"; then
   PHP_MONGODB_CFLAGS="$PHP_MONGODB_STD_CFLAGS $PHP_MONGODB_DEV_CFLAGS $PHP_MONGODB_COVERAGE_CFLAGS"
 
   PHP_MONGODB_SOURCES="\
-    php_phongo.c \
+    phongo.c \
     src/phongo_apm.c \
     src/phongo_atomic.c \
     src/phongo_bson.c \

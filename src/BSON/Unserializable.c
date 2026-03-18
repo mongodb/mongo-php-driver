@@ -16,7 +16,7 @@
 
 #include <php.h>
 
-#include "php_phongo.h"
+#include "phongo.h"
 #include "Unserializable_arginfo.h"
 
 zend_class_entry* phongo_unserializable_ce;

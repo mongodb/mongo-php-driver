@@ -31,7 +31,7 @@ function verify_version($version, $stability) {
 function get_files() {
     $dirs = array(
       'src' => array(
-        "php_phongo.{c,h}",
+        "phongo.{c,h}",
         "phongo_version.h",
         "config.{m4,w32}",
         "Makefile.frag",

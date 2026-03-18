@@ -17,7 +17,7 @@
 #include <php.h>
 #include <Zend/zend_interfaces.h>
 
-#include "php_phongo.h"
+#include "phongo.h"
 #include "phongo_error.h"
 #include "MinKey_arginfo.h"
 
@@ -86,7 +86,7 @@ void phongo_minkey_init_ce(INIT_FUNC_ARGS)
 	phongo_minkey_ce->create_object = phongo_minkey_create_object;
 
 	memcpy(&phongo_handler_minkey, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
-	/* Re-assign default handler previously removed in php_phongo.c */
+	/* Re-assign default handler previously removed in phongo.c */
 	phongo_handler_minkey.clone_obj = zend_objects_clone_obj;
 	phongo_handler_minkey.free_obj  = phongo_minkey_free_object;
 	phongo_handler_minkey.offset    = XtOffsetOf(phongo_minkey_t, std);

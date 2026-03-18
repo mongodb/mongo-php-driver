@@ -17,7 +17,7 @@
 #include <php.h>
 #include <Zend/zend_interfaces.h>
 
-#include "php_phongo.h"
+#include "phongo.h"
 #include "phongo_error.h"
 #include "MaxKey_arginfo.h"
 
@@ -86,7 +86,7 @@ void phongo_maxkey_init_ce(INIT_FUNC_ARGS)
 	phongo_maxkey_ce->create_object = phongo_maxkey_create_object;
 
 	memcpy(&phongo_handler_maxkey, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
-	/* Re-assign default handler previously removed in php_phongo.c */
+	/* Re-assign default handler previously removed in phongo.c */
 	phongo_handler_maxkey.clone_obj = zend_objects_clone_obj;
 	phongo_handler_maxkey.free_obj  = phongo_maxkey_free_object;
 	phongo_handler_maxkey.offset    = XtOffsetOf(phongo_maxkey_t, std);

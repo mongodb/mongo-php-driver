@@ -16,7 +16,7 @@
 
 #include <php.h>
 
-#include "php_phongo.h"
+#include "phongo.h"
 #include "Decimal128Interface_arginfo.h"
 
 zend_class_entry* phongo_decimal128_interface_ce;

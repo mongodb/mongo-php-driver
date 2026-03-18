@@ -18,7 +18,7 @@
 #include <ext/standard/php_var.h>
 #include <Zend/zend_interfaces.h>
 
-#include "php_phongo.h"
+#include "phongo.h"
 #include "phongo_error.h"
 #include "Regex_arginfo.h"
 

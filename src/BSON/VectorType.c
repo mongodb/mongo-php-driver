@@ -17,7 +17,7 @@
 #include <php.h>
 #include <Zend/zend_enum.h>
 
-#include "php_phongo.h"
+#include "phongo.h"
 #include "VectorType.h"
 #include "VectorType_arginfo.h"
 

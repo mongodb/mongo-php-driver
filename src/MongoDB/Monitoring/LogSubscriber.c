@@ -18,7 +18,7 @@
 
 #include <php.h>
 
-#include "php_phongo.h"
+#include "phongo.h"
 #include "LogSubscriber_arginfo.h"
 
 zend_class_entry* phongo_logsubscriber_ce;

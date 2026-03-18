@@ -16,7 +16,7 @@
 
 #include <php.h>
 
-#include "php_phongo.h"
+#include "phongo.h"
 #include "UTCDateTimeInterface_arginfo.h"
 
 zend_class_entry* phongo_utcdatetime_interface_ce;

@@ -22,7 +22,7 @@
 #include <Zend/zend_interfaces.h>
 #include <Zend/zend_operators.h>
 
-#include "php_phongo.h"
+#include "phongo.h"
 #include "phongo_apm.h"
 #include "phongo_error.h"
 

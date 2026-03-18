@@ -23,7 +23,7 @@
 #include "config.h"
 #endif
 
-#include "php_phongo.h"
+#include "phongo.h"
 #include "phongo_error.h"
 #include "phongo_bson_encode.h"
 #include "BSON/Document_arginfo.h"

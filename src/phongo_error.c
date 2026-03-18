@@ -20,7 +20,7 @@
 #include <php.h>
 #include <Zend/zend_exceptions.h>
 
-#include "php_phongo.h"
+#include "phongo.h"
 #include "phongo_error.h"
 
 /* This constant is used for determining if a server error for an exceeded query
