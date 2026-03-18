@@ -17,11 +17,11 @@
 #include <php.h>
 #include <Zend/zend_enum.h>
 
-#include "php_phongo.h"
+#include "phongo.h"
 #include "VectorType.h"
 #include "VectorType_arginfo.h"
 
-zend_class_entry* php_phongo_vectortype_ce;
+zend_class_entry* phongo_vectortype_ce;
 
 phongo_bson_vector_type_t phongo_bson_vector_type_from_name(const char* name)
 {
@@ -67,10 +67,10 @@ zend_object* phongo_bson_vector_type_to_case(phongo_bson_vector_type_t type)
 		return NULL;
 	}
 
-	return zend_enum_get_case_cstr(php_phongo_vectortype_ce, name);
+	return zend_enum_get_case_cstr(phongo_vectortype_ce, name);
 }
 
-void php_phongo_vectortype_init_ce(INIT_FUNC_ARGS)
+void phongo_vectortype_init_ce(INIT_FUNC_ARGS)
 {
-	php_phongo_vectortype_ce = register_class_MongoDB_BSON_VectorType();
+	phongo_vectortype_ce = register_class_MongoDB_BSON_VectorType();
 }

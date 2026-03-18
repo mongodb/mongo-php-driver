@@ -36,11 +36,11 @@ typedef enum {
 	PHONGO_COMMAND_READ           = 0x03,
 	PHONGO_COMMAND_WRITE          = 0x04,
 	PHONGO_COMMAND_READ_WRITE     = 0x05,
-} php_phongo_command_type_t;
+} phongo_command_type_t;
 
-bool phongo_execute_bulk_write(zval* manager, const char* namespace, php_phongo_bulkwrite_t* bulk_write, zval* zwriteConcern, uint32_t server_id, zval* return_value);
-bool phongo_execute_bulkwritecommand(zval* manager, php_phongo_bulkwritecommand_t* bwc, zval* zoptions, uint32_t server_id, zval* return_value);
-bool phongo_execute_command(zval* manager, php_phongo_command_type_t type, const char* db, zval* zcommand, zval* zreadPreference, uint32_t server_id, zval* return_value);
+bool phongo_execute_bulk_write(zval* manager, const char* namespace, phongo_bulkwrite_t* bulk_write, zval* zwriteConcern, uint32_t server_id, zval* return_value);
+bool phongo_execute_bulkwritecommand(zval* manager, phongo_bulkwritecommand_t* bwc, zval* zoptions, uint32_t server_id, zval* return_value);
+bool phongo_execute_command(zval* manager, phongo_command_type_t type, const char* db, zval* zcommand, zval* zreadPreference, uint32_t server_id, zval* return_value);
 bool phongo_execute_query(zval* manager, const char* namespace, zval* zquery, zval* zreadPreference, uint32_t server_id, zval* return_value);
 
 bool phongo_parse_read_preference(zval* options, zval** zreadPreference);

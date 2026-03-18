@@ -19,7 +19,7 @@
 #include <php.h>
 #include <Zend/zend_interfaces.h>
 
-#include "php_phongo.h"
+#include "phongo.h"
 #include "phongo_bson_encode.h"
 #include "phongo_error.h"
 
@@ -27,13 +27,13 @@
 #include "MongoDB/Server.h"
 #include "CommandSucceededEvent_arginfo.h"
 
-zend_class_entry* php_phongo_commandsucceededevent_ce;
+zend_class_entry* phongo_commandsucceededevent_ce;
 
 PHONGO_DISABLED_CONSTRUCTOR(MongoDB_Driver_Monitoring_CommandSucceededEvent)
 
 static PHP_METHOD(MongoDB_Driver_Monitoring_CommandSucceededEvent, getCommandName)
 {
-	php_phongo_commandsucceededevent_t* intern;
+	phongo_commandsucceededevent_t* intern;
 
 	intern = Z_COMMANDSUCCEEDEDEVENT_OBJ_P(getThis());
 
@@ -44,7 +44,7 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_CommandSucceededEvent, getCommandNam
 
 static PHP_METHOD(MongoDB_Driver_Monitoring_CommandSucceededEvent, getDatabaseName)
 {
-	php_phongo_commandsucceededevent_t* intern;
+	phongo_commandsucceededevent_t* intern;
 
 	intern = Z_COMMANDSUCCEEDEDEVENT_OBJ_P(getThis());
 
@@ -55,7 +55,7 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_CommandSucceededEvent, getDatabaseNa
 
 static PHP_METHOD(MongoDB_Driver_Monitoring_CommandSucceededEvent, getDurationMicros)
 {
-	php_phongo_commandsucceededevent_t* intern;
+	phongo_commandsucceededevent_t* intern;
 
 	intern = Z_COMMANDSUCCEEDEDEVENT_OBJ_P(getThis());
 
@@ -66,7 +66,7 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_CommandSucceededEvent, getDurationMi
 
 static PHP_METHOD(MongoDB_Driver_Monitoring_CommandSucceededEvent, getHost)
 {
-	php_phongo_commandsucceededevent_t* intern = Z_COMMANDSUCCEEDEDEVENT_OBJ_P(getThis());
+	phongo_commandsucceededevent_t* intern = Z_COMMANDSUCCEEDEDEVENT_OBJ_P(getThis());
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -75,8 +75,8 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_CommandSucceededEvent, getHost)
 
 static PHP_METHOD(MongoDB_Driver_Monitoring_CommandSucceededEvent, getOperationId)
 {
-	php_phongo_commandsucceededevent_t* intern;
-	char                                operation_id[24];
+	phongo_commandsucceededevent_t* intern;
+	char                            operation_id[24];
 
 	intern = Z_COMMANDSUCCEEDEDEVENT_OBJ_P(getThis());
 
@@ -88,7 +88,7 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_CommandSucceededEvent, getOperationI
 
 static PHP_METHOD(MongoDB_Driver_Monitoring_CommandSucceededEvent, getPort)
 {
-	php_phongo_commandsucceededevent_t* intern = Z_COMMANDSUCCEEDEDEVENT_OBJ_P(getThis());
+	phongo_commandsucceededevent_t* intern = Z_COMMANDSUCCEEDEDEVENT_OBJ_P(getThis());
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -97,8 +97,8 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_CommandSucceededEvent, getPort)
 
 static PHP_METHOD(MongoDB_Driver_Monitoring_CommandSucceededEvent, getReply)
 {
-	php_phongo_commandsucceededevent_t* intern;
-	php_phongo_bson_state               state;
+	phongo_commandsucceededevent_t* intern;
+	phongo_bson_state               state;
 
 	PHONGO_BSON_INIT_STATE(state);
 
@@ -106,7 +106,7 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_CommandSucceededEvent, getReply)
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
-	if (!php_phongo_bson_to_zval_ex(intern->reply, &state)) {
+	if (!phongo_bson_to_zval_ex(intern->reply, &state)) {
 		zval_ptr_dtor(&state.zchild);
 		return;
 	}
@@ -116,8 +116,8 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_CommandSucceededEvent, getReply)
 
 static PHP_METHOD(MongoDB_Driver_Monitoring_CommandSucceededEvent, getRequestId)
 {
-	php_phongo_commandsucceededevent_t* intern;
-	char                                request_id[24];
+	phongo_commandsucceededevent_t* intern;
+	char                            request_id[24];
 
 	intern = Z_COMMANDSUCCEEDEDEVENT_OBJ_P(getThis());
 
@@ -129,7 +129,7 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_CommandSucceededEvent, getRequestId)
 
 static PHP_METHOD(MongoDB_Driver_Monitoring_CommandSucceededEvent, getServiceId)
 {
-	php_phongo_commandsucceededevent_t* intern = Z_COMMANDSUCCEEDEDEVENT_OBJ_P(getThis());
+	phongo_commandsucceededevent_t* intern = Z_COMMANDSUCCEEDEDEVENT_OBJ_P(getThis());
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -142,7 +142,7 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_CommandSucceededEvent, getServiceId)
 
 static PHP_METHOD(MongoDB_Driver_Monitoring_CommandSucceededEvent, getServerConnectionId)
 {
-	php_phongo_commandsucceededevent_t* intern = Z_COMMANDSUCCEEDEDEVENT_OBJ_P(getThis());
+	phongo_commandsucceededevent_t* intern = Z_COMMANDSUCCEEDEDEVENT_OBJ_P(getThis());
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -161,11 +161,11 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_CommandSucceededEvent, getServerConn
 }
 
 /* MongoDB\Driver\Monitoring\CommandSucceededEvent object handlers */
-static zend_object_handlers php_phongo_handler_commandsucceededevent;
+static zend_object_handlers phongo_handler_commandsucceededevent;
 
-static void php_phongo_commandsucceededevent_free_object(zend_object* object)
+static void phongo_commandsucceededevent_free_object(zend_object* object)
 {
-	php_phongo_commandsucceededevent_t* intern = Z_OBJ_COMMANDSUCCEEDEDEVENT(object);
+	phongo_commandsucceededevent_t* intern = Z_OBJ_COMMANDSUCCEEDEDEVENT(object);
 
 	zend_object_std_dtor(&intern->std);
 
@@ -182,24 +182,24 @@ static void php_phongo_commandsucceededevent_free_object(zend_object* object)
 	}
 }
 
-static zend_object* php_phongo_commandsucceededevent_create_object(zend_class_entry* class_type)
+static zend_object* phongo_commandsucceededevent_create_object(zend_class_entry* class_type)
 {
-	php_phongo_commandsucceededevent_t* intern = zend_object_alloc(sizeof(php_phongo_commandsucceededevent_t), class_type);
+	phongo_commandsucceededevent_t* intern = zend_object_alloc(sizeof(phongo_commandsucceededevent_t), class_type);
 
 	zend_object_std_init(&intern->std, class_type);
 	object_properties_init(&intern->std, class_type);
 
-	intern->std.handlers = &php_phongo_handler_commandsucceededevent;
+	intern->std.handlers = &phongo_handler_commandsucceededevent;
 
 	return &intern->std;
 }
 
-static HashTable* php_phongo_commandsucceededevent_get_debug_info(zend_object* object, int* is_temp)
+static HashTable* phongo_commandsucceededevent_get_debug_info(zend_object* object, int* is_temp)
 {
-	php_phongo_commandsucceededevent_t* intern;
-	zval                                retval = ZVAL_STATIC_INIT;
-	char                                operation_id[24], request_id[24];
-	php_phongo_bson_state               reply_state;
+	phongo_commandsucceededevent_t* intern;
+	zval                            retval = ZVAL_STATIC_INIT;
+	char                            operation_id[24], request_id[24];
+	phongo_bson_state               reply_state;
 
 	PHONGO_BSON_INIT_STATE(reply_state);
 
@@ -212,7 +212,7 @@ static HashTable* php_phongo_commandsucceededevent_get_debug_info(zend_object* o
 	ADD_ASSOC_STRING(&retval, "commandName", intern->command_name);
 	ADD_ASSOC_INT64(&retval, "durationMicros", intern->duration_micros);
 
-	if (!php_phongo_bson_to_zval_ex(intern->reply, &reply_state)) {
+	if (!phongo_bson_to_zval_ex(intern->reply, &reply_state)) {
 		zval_ptr_dtor(&reply_state.zchild);
 		goto done;
 	}
@@ -249,13 +249,13 @@ done:
 	return Z_ARRVAL(retval);
 }
 
-void php_phongo_commandsucceededevent_init_ce(INIT_FUNC_ARGS)
+void phongo_commandsucceededevent_init_ce(INIT_FUNC_ARGS)
 {
-	php_phongo_commandsucceededevent_ce                = register_class_MongoDB_Driver_Monitoring_CommandSucceededEvent();
-	php_phongo_commandsucceededevent_ce->create_object = php_phongo_commandsucceededevent_create_object;
+	phongo_commandsucceededevent_ce                = register_class_MongoDB_Driver_Monitoring_CommandSucceededEvent();
+	phongo_commandsucceededevent_ce->create_object = phongo_commandsucceededevent_create_object;
 
-	memcpy(&php_phongo_handler_commandsucceededevent, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
-	php_phongo_handler_commandsucceededevent.get_debug_info = php_phongo_commandsucceededevent_get_debug_info;
-	php_phongo_handler_commandsucceededevent.free_obj       = php_phongo_commandsucceededevent_free_object;
-	php_phongo_handler_commandsucceededevent.offset         = XtOffsetOf(php_phongo_commandsucceededevent_t, std);
+	memcpy(&phongo_handler_commandsucceededevent, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
+	phongo_handler_commandsucceededevent.get_debug_info = phongo_commandsucceededevent_get_debug_info;
+	phongo_handler_commandsucceededevent.free_obj       = phongo_commandsucceededevent_free_object;
+	phongo_handler_commandsucceededevent.offset         = XtOffsetOf(phongo_commandsucceededevent_t, std);
 }

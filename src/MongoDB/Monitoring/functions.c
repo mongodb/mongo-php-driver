@@ -18,18 +18,18 @@
 
 #include <php.h>
 
-#include "php_phongo.h"
+#include "phongo.h"
 #include "phongo_apm.h"
 #include "phongo_error.h"
 #include "phongo_log.h"
 
 ZEND_EXTERN_MODULE_GLOBALS(mongodb)
 
-#define IS_APM_SUBSCRIBER(zv)                                              \
-	instanceof_function(Z_OBJCE_P(zv), php_phongo_commandsubscriber_ce) || \
-		instanceof_function(Z_OBJCE_P(zv), php_phongo_sdamsubscriber_ce)
+#define IS_APM_SUBSCRIBER(zv)                                          \
+	instanceof_function(Z_OBJCE_P(zv), phongo_commandsubscriber_ce) || \
+		instanceof_function(Z_OBJCE_P(zv), phongo_sdamsubscriber_ce)
 
-#define IS_LOG_SUBSCRIBER(zv) instanceof_function(Z_OBJCE_P(zv), php_phongo_logsubscriber_ce)
+#define IS_LOG_SUBSCRIBER(zv) instanceof_function(Z_OBJCE_P(zv), phongo_logsubscriber_ce)
 
 /* Registers a global event subscriber */
 PHP_FUNCTION(MongoDB_Driver_Monitoring_addSubscriber)
@@ -37,7 +37,7 @@ PHP_FUNCTION(MongoDB_Driver_Monitoring_addSubscriber)
 	zval* subscriber;
 
 	PHONGO_PARSE_PARAMETERS_START(1, 1)
-	Z_PARAM_OBJECT_OF_CLASS(subscriber, php_phongo_subscriber_ce)
+	Z_PARAM_OBJECT_OF_CLASS(subscriber, phongo_subscriber_ce)
 	PHONGO_PARSE_PARAMETERS_END();
 
 	// TODO: Consider throwing if subscriber is unsupported (see: PHPC-2289)
@@ -57,7 +57,7 @@ PHP_FUNCTION(MongoDB_Driver_Monitoring_removeSubscriber)
 	zval* subscriber;
 
 	PHONGO_PARSE_PARAMETERS_START(1, 1)
-	Z_PARAM_OBJECT_OF_CLASS(subscriber, php_phongo_subscriber_ce)
+	Z_PARAM_OBJECT_OF_CLASS(subscriber, phongo_subscriber_ce)
 	PHONGO_PARSE_PARAMETERS_END();
 
 	if (IS_APM_SUBSCRIBER(subscriber)) {

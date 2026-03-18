@@ -22,7 +22,7 @@
 
 #include "php_array_api.h"
 
-#include "php_phongo.h"
+#include "phongo.h"
 #include "phongo_bson_encode.h"
 #include "phongo_error.h"
 #include "phongo_util.h"
@@ -32,11 +32,11 @@
 
 #define PHONGO_BULKWRITECOMMAND_BYPASS_UNSET -1
 
-zend_class_entry* php_phongo_bulkwritecommand_ce;
+zend_class_entry* phongo_bulkwritecommand_ce;
 
 /* Creates a mongoc_bulkwriteopts_t from internal options, which should be freed
  * by the caller. */
-mongoc_bulkwriteopts_t* phongo_bwc_assemble_opts(php_phongo_bulkwritecommand_t* intern)
+mongoc_bulkwriteopts_t* phongo_bwc_assemble_opts(phongo_bulkwritecommand_t* intern)
 {
 	mongoc_bulkwriteopts_t* opts = mongoc_bulkwriteopts_new();
 
@@ -62,8 +62,8 @@ mongoc_bulkwriteopts_t* phongo_bwc_assemble_opts(php_phongo_bulkwritecommand_t* 
 /* Extracts the "_id" field of a BSON document into a return value. */
 static void phongo_bwc_extract_id(bson_t* doc, zval** return_value)
 {
-	zval*                 id = NULL;
-	php_phongo_bson_state state;
+	zval*             id = NULL;
+	phongo_bson_state state;
 
 	PHONGO_BSON_INIT_STATE(state);
 	state.map.root.type = PHONGO_TYPEMAP_NATIVE_ARRAY;
@@ -71,7 +71,7 @@ static void phongo_bwc_extract_id(bson_t* doc, zval** return_value)
 	/* TODO: Instead of converting the entire document, iterate BSON to obtain
 	 * the bson_value_t of the _id field and then use phongo_bson_value_to_zval
 	 * or phongo_bson_value_to_zval_legacy to populate the return value. */
-	if (!php_phongo_bson_to_zval_ex(doc, &state)) {
+	if (!phongo_bson_to_zval_ex(doc, &state)) {
 		goto cleanup;
 	}
 
@@ -117,8 +117,8 @@ static inline bool phongo_bwc_bson_array_has_valid_keys(bson_t* array)
 /* Constructs a new BulkWriteCommand */
 static PHP_METHOD(MongoDB_Driver_BulkWriteCommand, __construct)
 {
-	php_phongo_bulkwritecommand_t* intern;
-	zval*                          zoptions = NULL;
+	phongo_bulkwritecommand_t* intern;
+	zval*                      zoptions = NULL;
 
 	intern = Z_BULKWRITECOMMAND_OBJ_P(getThis());
 
@@ -163,7 +163,7 @@ static PHP_METHOD(MongoDB_Driver_BulkWriteCommand, __construct)
 		}
 
 		intern->let = bson_new();
-		php_phongo_zval_to_bson(value, PHONGO_BSON_NONE, intern->let, NULL);
+		phongo_zval_to_bson(value, PHONGO_BSON_NONE, intern->let, NULL);
 
 		if (EG(exception)) {
 			return;
@@ -181,7 +181,7 @@ static PHP_METHOD(MongoDB_Driver_BulkWriteCommand, __construct)
 
 static PHP_METHOD(MongoDB_Driver_BulkWriteCommand, count)
 {
-	php_phongo_bulkwritecommand_t* intern;
+	phongo_bulkwritecommand_t* intern;
 
 	intern = Z_BULKWRITECOMMAND_OBJ_P(getThis());
 
@@ -205,7 +205,7 @@ static bool phongo_bwc_parse_hint(zval* zhint, bson_value_t* bhint)
 
 	// Catch the edge case where the option yields a BSON array
 	if (bhint->value_type != BSON_TYPE_UTF8 && bhint->value_type != BSON_TYPE_DOCUMENT) {
-		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"hint\" option to yield string or document but got \"%s\"", php_phongo_bson_type_to_string(bhint->value_type));
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"hint\" option to yield string or document but got \"%s\"", phongo_bson_type_to_string(bhint->value_type));
 		return false;
 	}
 
@@ -219,7 +219,7 @@ static bool phongo_bwc_parse_document(zval* zdocument, bson_t* bdocument, const 
 		return false;
 	}
 
-	php_phongo_zval_to_bson(zdocument, PHONGO_BSON_NONE, bdocument, NULL);
+	phongo_zval_to_bson(zdocument, PHONGO_BSON_NONE, bdocument, NULL);
 
 	if (EG(exception)) {
 		return false;
@@ -236,7 +236,7 @@ static bool phongo_bwc_parse_array(zval* zarray, bson_t* barray, const char* key
 	}
 
 	// Explicitly allow MongoDB\BSON\PackedArray for array values
-	php_phongo_zval_to_bson(zarray, PHONGO_BSON_ALLOW_ROOT_ARRAY, barray, NULL);
+	phongo_zval_to_bson(zarray, PHONGO_BSON_ALLOW_ROOT_ARRAY, barray, NULL);
 
 	if (EG(exception)) {
 		return false;
@@ -252,7 +252,7 @@ static bool phongo_bwc_parse_array(zval* zarray, bson_t* barray, const char* key
 
 static PHP_METHOD(MongoDB_Driver_BulkWriteCommand, deleteMany)
 {
-	php_phongo_bulkwritecommand_t*     intern;
+	phongo_bulkwritecommand_t*         intern;
 	char*                              ns;
 	size_t                             ns_len;
 	zval*                              zfilter;
@@ -275,7 +275,7 @@ static PHP_METHOD(MongoDB_Driver_BulkWriteCommand, deleteMany)
 		return;
 	}
 
-	php_phongo_zval_to_bson(zfilter, PHONGO_BSON_NONE, &bfilter, NULL);
+	phongo_zval_to_bson(zfilter, PHONGO_BSON_NONE, &bfilter, NULL);
 
 	if (EG(exception)) {
 		goto cleanup;
@@ -323,7 +323,7 @@ cleanup:
 
 static PHP_METHOD(MongoDB_Driver_BulkWriteCommand, deleteOne)
 {
-	php_phongo_bulkwritecommand_t*    intern;
+	phongo_bulkwritecommand_t*        intern;
 	char*                             ns;
 	size_t                            ns_len;
 	zval*                             zfilter;
@@ -346,7 +346,7 @@ static PHP_METHOD(MongoDB_Driver_BulkWriteCommand, deleteOne)
 		return;
 	}
 
-	php_phongo_zval_to_bson(zfilter, PHONGO_BSON_NONE, &bfilter, NULL);
+	phongo_zval_to_bson(zfilter, PHONGO_BSON_NONE, &bfilter, NULL);
 
 	if (EG(exception)) {
 		goto cleanup;
@@ -394,13 +394,13 @@ cleanup:
 
 static PHP_METHOD(MongoDB_Driver_BulkWriteCommand, insertOne)
 {
-	php_phongo_bulkwritecommand_t* intern;
-	char*                          ns;
-	size_t                         ns_len;
-	zval*                          zdocument;
-	bson_t                         bdocument = BSON_INITIALIZER;
-	bson_t*                        bson_out  = NULL;
-	bson_error_t                   error     = { 0 };
+	phongo_bulkwritecommand_t* intern;
+	char*                      ns;
+	size_t                     ns_len;
+	zval*                      zdocument;
+	bson_t                     bdocument = BSON_INITIALIZER;
+	bson_t*                    bson_out  = NULL;
+	bson_error_t               error     = { 0 };
 
 	intern = Z_BULKWRITECOMMAND_OBJ_P(getThis());
 
@@ -414,14 +414,14 @@ static PHP_METHOD(MongoDB_Driver_BulkWriteCommand, insertOne)
 		return;
 	}
 
-	php_phongo_zval_to_bson(zdocument, (PHONGO_BSON_ADD_ID | PHONGO_BSON_RETURN_ID), &bdocument, &bson_out);
+	phongo_zval_to_bson(zdocument, (PHONGO_BSON_ADD_ID | PHONGO_BSON_RETURN_ID), &bdocument, &bson_out);
 
 	if (EG(exception)) {
 		goto cleanup;
 	}
 
 	if (!bson_out) {
-		phongo_throw_exception(PHONGO_ERROR_LOGIC, "php_phongo_zval_to_bson() did not return an _id. Please file a bug report.");
+		phongo_throw_exception(PHONGO_ERROR_LOGIC, "phongo_zval_to_bson() did not return an _id. Please file a bug report.");
 		goto cleanup;
 	}
 
@@ -441,7 +441,7 @@ cleanup:
 
 static PHP_METHOD(MongoDB_Driver_BulkWriteCommand, replaceOne)
 {
-	php_phongo_bulkwritecommand_t*     intern;
+	phongo_bulkwritecommand_t*         intern;
 	char*                              ns;
 	size_t                             ns_len;
 	zval*                              zfilter;
@@ -467,13 +467,13 @@ static PHP_METHOD(MongoDB_Driver_BulkWriteCommand, replaceOne)
 		return;
 	}
 
-	php_phongo_zval_to_bson(zfilter, PHONGO_BSON_NONE, &bfilter, NULL);
+	phongo_zval_to_bson(zfilter, PHONGO_BSON_NONE, &bfilter, NULL);
 
 	if (EG(exception)) {
 		goto cleanup;
 	}
 
-	php_phongo_zval_to_bson(zreplacement, PHONGO_BSON_NONE, &breplacement, NULL);
+	phongo_zval_to_bson(zreplacement, PHONGO_BSON_NONE, &breplacement, NULL);
 
 	if (EG(exception)) {
 		goto cleanup;
@@ -538,7 +538,7 @@ cleanup:
 
 static PHP_METHOD(MongoDB_Driver_BulkWriteCommand, updateMany)
 {
-	php_phongo_bulkwritecommand_t*     intern;
+	phongo_bulkwritecommand_t*         intern;
 	char*                              ns;
 	size_t                             ns_len;
 	zval*                              zfilter;
@@ -564,14 +564,14 @@ static PHP_METHOD(MongoDB_Driver_BulkWriteCommand, updateMany)
 		return;
 	}
 
-	php_phongo_zval_to_bson(zfilter, PHONGO_BSON_NONE, &bfilter, NULL);
+	phongo_zval_to_bson(zfilter, PHONGO_BSON_NONE, &bfilter, NULL);
 
 	if (EG(exception)) {
 		goto cleanup;
 	}
 
 	// Explicitly allow MongoDB\BSON\PackedArray for update pipelines
-	php_phongo_zval_to_bson(zupdate, PHONGO_BSON_ALLOW_ROOT_ARRAY, &bupdate, NULL);
+	phongo_zval_to_bson(zupdate, PHONGO_BSON_ALLOW_ROOT_ARRAY, &bupdate, NULL);
 
 	if (EG(exception)) {
 		goto cleanup;
@@ -636,7 +636,7 @@ cleanup:
 
 static PHP_METHOD(MongoDB_Driver_BulkWriteCommand, updateOne)
 {
-	php_phongo_bulkwritecommand_t*    intern;
+	phongo_bulkwritecommand_t*        intern;
 	char*                             ns;
 	size_t                            ns_len;
 	zval*                             zfilter;
@@ -662,14 +662,14 @@ static PHP_METHOD(MongoDB_Driver_BulkWriteCommand, updateOne)
 		return;
 	}
 
-	php_phongo_zval_to_bson(zfilter, PHONGO_BSON_NONE, &bfilter, NULL);
+	phongo_zval_to_bson(zfilter, PHONGO_BSON_NONE, &bfilter, NULL);
 
 	if (EG(exception)) {
 		goto cleanup;
 	}
 
 	// Explicitly allow MongoDB\BSON\PackedArray for update pipelines
-	php_phongo_zval_to_bson(zupdate, PHONGO_BSON_ALLOW_ROOT_ARRAY, &bupdate, NULL);
+	phongo_zval_to_bson(zupdate, PHONGO_BSON_ALLOW_ROOT_ARRAY, &bupdate, NULL);
 
 	if (EG(exception)) {
 		goto cleanup;
@@ -745,11 +745,11 @@ cleanup:
 }
 
 /* MongoDB\Driver\BulkWriteCommand object handlers */
-static zend_object_handlers php_phongo_handler_bulkwritecommand;
+static zend_object_handlers phongo_handler_bulkwritecommand;
 
-static void php_phongo_bulkwritecommand_free_object(zend_object* object)
+static void phongo_bulkwritecommand_free_object(zend_object* object)
 {
-	php_phongo_bulkwritecommand_t* intern = Z_OBJ_BULKWRITECOMMAND(object);
+	phongo_bulkwritecommand_t* intern = Z_OBJ_BULKWRITECOMMAND(object);
 
 	zend_object_std_dtor(&intern->std);
 
@@ -771,22 +771,22 @@ static void php_phongo_bulkwritecommand_free_object(zend_object* object)
 	}
 }
 
-static zend_object* php_phongo_bulkwritecommand_create_object(zend_class_entry* class_type)
+static zend_object* phongo_bulkwritecommand_create_object(zend_class_entry* class_type)
 {
-	php_phongo_bulkwritecommand_t* intern = zend_object_alloc(sizeof(php_phongo_bulkwritecommand_t), class_type);
+	phongo_bulkwritecommand_t* intern = zend_object_alloc(sizeof(phongo_bulkwritecommand_t), class_type);
 
 	zend_object_std_init(&intern->std, class_type);
 	object_properties_init(&intern->std, class_type);
 
-	intern->std.handlers = &php_phongo_handler_bulkwritecommand;
+	intern->std.handlers = &phongo_handler_bulkwritecommand;
 
 	return &intern->std;
 }
 
-static HashTable* php_phongo_bulkwritecommand_get_debug_info(zend_object* object, int* is_temp)
+static HashTable* phongo_bulkwritecommand_get_debug_info(zend_object* object, int* is_temp)
 {
-	zval                           retval = ZVAL_STATIC_INIT;
-	php_phongo_bulkwritecommand_t* intern = NULL;
+	zval                       retval = ZVAL_STATIC_INIT;
+	phongo_bulkwritecommand_t* intern = NULL;
 
 	*is_temp = 1;
 	intern   = Z_OBJ_BULKWRITECOMMAND(object);
@@ -812,7 +812,7 @@ static HashTable* php_phongo_bulkwritecommand_get_debug_info(zend_object* object
 	if (intern->let) {
 		zval zv;
 
-		if (!php_phongo_bson_to_zval(intern->let, &zv)) {
+		if (!phongo_bson_to_zval(intern->let, &zv)) {
 			zval_ptr_dtor(&zv);
 			goto done;
 		}
@@ -834,13 +834,13 @@ done:
 	return Z_ARRVAL(retval);
 }
 
-void php_phongo_bulkwritecommand_init_ce(INIT_FUNC_ARGS)
+void phongo_bulkwritecommand_init_ce(INIT_FUNC_ARGS)
 {
-	php_phongo_bulkwritecommand_ce                = register_class_MongoDB_Driver_BulkWriteCommand(zend_ce_countable);
-	php_phongo_bulkwritecommand_ce->create_object = php_phongo_bulkwritecommand_create_object;
+	phongo_bulkwritecommand_ce                = register_class_MongoDB_Driver_BulkWriteCommand(zend_ce_countable);
+	phongo_bulkwritecommand_ce->create_object = phongo_bulkwritecommand_create_object;
 
-	memcpy(&php_phongo_handler_bulkwritecommand, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
-	php_phongo_handler_bulkwritecommand.get_debug_info = php_phongo_bulkwritecommand_get_debug_info;
-	php_phongo_handler_bulkwritecommand.free_obj       = php_phongo_bulkwritecommand_free_object;
-	php_phongo_handler_bulkwritecommand.offset         = XtOffsetOf(php_phongo_bulkwritecommand_t, std);
+	memcpy(&phongo_handler_bulkwritecommand, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
+	phongo_handler_bulkwritecommand.get_debug_info = phongo_bulkwritecommand_get_debug_info;
+	phongo_handler_bulkwritecommand.free_obj       = phongo_bulkwritecommand_free_object;
+	phongo_handler_bulkwritecommand.offset         = XtOffsetOf(phongo_bulkwritecommand_t, std);
 }

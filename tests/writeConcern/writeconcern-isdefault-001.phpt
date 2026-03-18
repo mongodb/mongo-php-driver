@@ -21,7 +21,7 @@ $tests = [
     (new MongoDB\Driver\Manager('mongodb://127.0.0.1/?w=tag'))->getWriteConcern(),
     (new MongoDB\Driver\Manager('mongodb://127.0.0.1/?w=majority'))->getWriteConcern(),
     // Cannot test ['w' => null] since an integer or string type is expected (PHPC-887)
-    // Cannot test ['w' => -3], ['w' => -2], and ['w' => -1] since php_phongo_apply_wc_options_to_uri() expects integers > -1
+    // Cannot test ['w' => -3], ['w' => -2], and ['w' => -1] since phongo_apply_wc_options_to_uri() expects integers > -1
     (new MongoDB\Driver\Manager(null, ['w' => 0]))->getWriteConcern(),
     (new MongoDB\Driver\Manager(null, ['w' => 1]))->getWriteConcern(),
     (new MongoDB\Driver\Manager(null, ['w' => 2]))->getWriteConcern(),

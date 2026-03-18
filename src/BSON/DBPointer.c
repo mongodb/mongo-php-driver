@@ -19,15 +19,15 @@
 #include <php.h>
 #include <Zend/zend_interfaces.h>
 
-#include "php_phongo.h"
+#include "phongo.h"
 #include "phongo_error.h"
 #include "DBPointer_arginfo.h"
 
-zend_class_entry* php_phongo_dbpointer_ce;
+zend_class_entry* phongo_dbpointer_ce;
 
 /* Initialize the object and return whether it was successful. An exception will
  * be thrown on error. */
-static bool php_phongo_dbpointer_init(php_phongo_dbpointer_t* intern, const char* ref, size_t ref_len, const char* id, size_t id_len)
+static bool phongo_dbpointer_init(phongo_dbpointer_t* intern, const char* ref, size_t ref_len, const char* id, size_t id_len)
 {
 	if (strlen(ref) != (size_t) ref_len) {
 		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Ref cannot contain null bytes");
@@ -50,24 +50,24 @@ static bool php_phongo_dbpointer_init(php_phongo_dbpointer_t* intern, const char
 
 /* Initialize the object from a HashTable and return whether it was successful.
  * An exception will be thrown on error. */
-static bool php_phongo_dbpointer_init_from_hash(php_phongo_dbpointer_t* intern, HashTable* props)
+static bool phongo_dbpointer_init_from_hash(phongo_dbpointer_t* intern, HashTable* props)
 {
 	zval *ref, *id;
 
 	if ((ref = zend_hash_str_find(props, "ref", sizeof("ref") - 1)) && Z_TYPE_P(ref) == IS_STRING &&
 		(id = zend_hash_str_find(props, "id", sizeof("id") - 1)) && Z_TYPE_P(id) == IS_STRING) {
 
-		return php_phongo_dbpointer_init(intern, Z_STRVAL_P(ref), Z_STRLEN_P(ref), Z_STRVAL_P(id), Z_STRLEN_P(id));
+		return phongo_dbpointer_init(intern, Z_STRVAL_P(ref), Z_STRLEN_P(ref), Z_STRVAL_P(id), Z_STRLEN_P(id));
 	}
 
-	phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "%s initialization requires \"ref\" and \"id\" string fields", ZSTR_VAL(php_phongo_dbpointer_ce->name));
+	phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "%s initialization requires \"ref\" and \"id\" string fields", ZSTR_VAL(phongo_dbpointer_ce->name));
 	return false;
 }
 
-HashTable* php_phongo_dbpointer_get_properties_hash(zend_object* object, bool is_temp)
+HashTable* phongo_dbpointer_get_properties_hash(zend_object* object, bool is_temp)
 {
-	php_phongo_dbpointer_t* intern;
-	HashTable*              props;
+	phongo_dbpointer_t* intern;
+	HashTable*          props;
 
 	intern = Z_OBJ_DBPOINTER(object);
 
@@ -94,9 +94,9 @@ PHONGO_DISABLED_CONSTRUCTOR(MongoDB_BSON_DBPointer)
 /* Return the DBPointer's namespace string and ObjectId. */
 static PHP_METHOD(MongoDB_BSON_DBPointer, __toString)
 {
-	php_phongo_dbpointer_t* intern;
-	char*                   retval;
-	int                     retval_len;
+	phongo_dbpointer_t* intern;
+	char*               retval;
+	int                 retval_len;
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -109,27 +109,27 @@ static PHP_METHOD(MongoDB_BSON_DBPointer, __toString)
 
 static PHP_METHOD(MongoDB_BSON_DBPointer, __set_state)
 {
-	php_phongo_dbpointer_t* intern;
-	HashTable*              props;
-	zval*                   array;
+	phongo_dbpointer_t* intern;
+	HashTable*          props;
+	zval*               array;
 
 	PHONGO_PARSE_PARAMETERS_START(1, 1)
 	Z_PARAM_ARRAY(array)
 	PHONGO_PARSE_PARAMETERS_END();
 
-	object_init_ex(return_value, php_phongo_dbpointer_ce);
+	object_init_ex(return_value, phongo_dbpointer_ce);
 
 	intern = Z_DBPOINTER_OBJ_P(return_value);
 	props  = Z_ARRVAL_P(array);
 
-	php_phongo_dbpointer_init_from_hash(intern, props);
+	phongo_dbpointer_init_from_hash(intern, props);
 }
 
 static PHP_METHOD(MongoDB_BSON_DBPointer, jsonSerialize)
 {
-	php_phongo_dbpointer_t* intern;
-	zval                    zdb_pointer;
-	zval                    zoid;
+	phongo_dbpointer_t* intern;
+	zval                zdb_pointer;
+	zval                zoid;
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -149,7 +149,7 @@ static PHP_METHOD(MongoDB_BSON_DBPointer, __serialize)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
 
-	RETURN_ARR(php_phongo_dbpointer_get_properties_hash(Z_OBJ_P(getThis()), true));
+	RETURN_ARR(phongo_dbpointer_get_properties_hash(Z_OBJ_P(getThis()), true));
 }
 
 static PHP_METHOD(MongoDB_BSON_DBPointer, __unserialize)
@@ -160,15 +160,15 @@ static PHP_METHOD(MongoDB_BSON_DBPointer, __unserialize)
 	Z_PARAM_ARRAY(data)
 	PHONGO_PARSE_PARAMETERS_END();
 
-	php_phongo_dbpointer_init_from_hash(Z_DBPOINTER_OBJ_P(getThis()), Z_ARRVAL_P(data));
+	phongo_dbpointer_init_from_hash(Z_DBPOINTER_OBJ_P(getThis()), Z_ARRVAL_P(data));
 }
 
 /* MongoDB\BSON\DBPointer object handlers */
-static zend_object_handlers php_phongo_handler_dbpointer;
+static zend_object_handlers phongo_handler_dbpointer;
 
-static void php_phongo_dbpointer_free_object(zend_object* object)
+static void phongo_dbpointer_free_object(zend_object* object)
 {
-	php_phongo_dbpointer_t* intern = Z_OBJ_DBPOINTER(object);
+	phongo_dbpointer_t* intern = Z_OBJ_DBPOINTER(object);
 
 	zend_object_std_dtor(&intern->std);
 
@@ -182,39 +182,39 @@ static void php_phongo_dbpointer_free_object(zend_object* object)
 	}
 }
 
-zend_object* php_phongo_dbpointer_create_object(zend_class_entry* class_type)
+zend_object* phongo_dbpointer_create_object(zend_class_entry* class_type)
 {
-	php_phongo_dbpointer_t* intern = zend_object_alloc(sizeof(php_phongo_dbpointer_t), class_type);
+	phongo_dbpointer_t* intern = zend_object_alloc(sizeof(phongo_dbpointer_t), class_type);
 
 	zend_object_std_init(&intern->std, class_type);
 	object_properties_init(&intern->std, class_type);
 
-	intern->std.handlers = &php_phongo_handler_dbpointer;
+	intern->std.handlers = &phongo_handler_dbpointer;
 
 	return &intern->std;
 }
 
-static zend_object* php_phongo_dbpointer_clone_object(zend_object* object)
+static zend_object* phongo_dbpointer_clone_object(zend_object* object)
 {
-	php_phongo_dbpointer_t* intern;
-	php_phongo_dbpointer_t* new_intern;
-	zend_object*            new_object;
+	phongo_dbpointer_t* intern;
+	phongo_dbpointer_t* new_intern;
+	zend_object*        new_object;
 
 	intern     = Z_OBJ_DBPOINTER(object);
-	new_object = php_phongo_dbpointer_create_object(object->ce);
+	new_object = phongo_dbpointer_create_object(object->ce);
 
 	new_intern = Z_OBJ_DBPOINTER(new_object);
 	zend_objects_clone_members(&new_intern->std, &intern->std);
 
-	php_phongo_dbpointer_init(new_intern, intern->ref, intern->ref_len, intern->id, 24);
+	phongo_dbpointer_init(new_intern, intern->ref, intern->ref_len, intern->id, 24);
 
 	return new_object;
 }
 
-static int php_phongo_dbpointer_compare_objects(zval* o1, zval* o2)
+static int phongo_dbpointer_compare_objects(zval* o1, zval* o2)
 {
-	php_phongo_dbpointer_t *intern1, *intern2;
-	int                     retval;
+	phongo_dbpointer_t *intern1, *intern2;
+	int                 retval;
 
 	ZEND_COMPARE_OBJECTS_FALLBACK(o1, o2);
 
@@ -230,36 +230,36 @@ static int php_phongo_dbpointer_compare_objects(zval* o1, zval* o2)
 	return strcmp(intern1->id, intern2->id);
 }
 
-static HashTable* php_phongo_dbpointer_get_debug_info(zend_object* object, int* is_temp)
+static HashTable* phongo_dbpointer_get_debug_info(zend_object* object, int* is_temp)
 {
 	*is_temp = 1;
-	return php_phongo_dbpointer_get_properties_hash(object, true);
+	return phongo_dbpointer_get_properties_hash(object, true);
 }
 
-static HashTable* php_phongo_dbpointer_get_properties(zend_object* object)
+static HashTable* phongo_dbpointer_get_properties(zend_object* object)
 {
-	return php_phongo_dbpointer_get_properties_hash(object, false);
+	return phongo_dbpointer_get_properties_hash(object, false);
 }
 
-void php_phongo_dbpointer_init_ce(INIT_FUNC_ARGS)
+void phongo_dbpointer_init_ce(INIT_FUNC_ARGS)
 {
-	php_phongo_dbpointer_ce                = register_class_MongoDB_BSON_DBPointer(php_phongo_json_serializable_ce, php_phongo_type_ce, zend_ce_stringable);
-	php_phongo_dbpointer_ce->create_object = php_phongo_dbpointer_create_object;
+	phongo_dbpointer_ce                = register_class_MongoDB_BSON_DBPointer(phongo_json_serializable_ce, phongo_type_ce, zend_ce_stringable);
+	phongo_dbpointer_ce->create_object = phongo_dbpointer_create_object;
 
-	memcpy(&php_phongo_handler_dbpointer, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
-	php_phongo_handler_dbpointer.compare        = php_phongo_dbpointer_compare_objects;
-	php_phongo_handler_dbpointer.clone_obj      = php_phongo_dbpointer_clone_object;
-	php_phongo_handler_dbpointer.get_debug_info = php_phongo_dbpointer_get_debug_info;
-	php_phongo_handler_dbpointer.get_properties = php_phongo_dbpointer_get_properties;
-	php_phongo_handler_dbpointer.free_obj       = php_phongo_dbpointer_free_object;
-	php_phongo_handler_dbpointer.offset         = XtOffsetOf(php_phongo_dbpointer_t, std);
+	memcpy(&phongo_handler_dbpointer, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
+	phongo_handler_dbpointer.compare        = phongo_dbpointer_compare_objects;
+	phongo_handler_dbpointer.clone_obj      = phongo_dbpointer_clone_object;
+	phongo_handler_dbpointer.get_debug_info = phongo_dbpointer_get_debug_info;
+	phongo_handler_dbpointer.get_properties = phongo_dbpointer_get_properties;
+	phongo_handler_dbpointer.free_obj       = phongo_dbpointer_free_object;
+	phongo_handler_dbpointer.offset         = XtOffsetOf(phongo_dbpointer_t, std);
 }
 
 bool phongo_dbpointer_new(zval* object, const char* ref, size_t ref_len, const bson_oid_t* oid)
 {
-	php_phongo_dbpointer_t* intern;
+	phongo_dbpointer_t* intern;
 
-	object_init_ex(object, php_phongo_dbpointer_ce);
+	object_init_ex(object, phongo_dbpointer_ce);
 
 	intern          = Z_DBPOINTER_OBJ_P(object);
 	intern->ref     = estrndup(ref, ref_len);

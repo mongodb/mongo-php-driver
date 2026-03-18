@@ -23,17 +23,17 @@
 #include "config.h"
 #endif
 
-#include "php_phongo.h"
+#include "phongo.h"
 #include "phongo_error.h"
 #include "phongo_bson_encode.h"
 #include "BSON/Document_arginfo.h"
 #include "BSON/Iterator.h"
 
-zend_class_entry* php_phongo_document_ce;
+zend_class_entry* phongo_document_ce;
 
 /* Initialize the object from a HashTable and return whether it was successful.
  * An exception will be thrown on error. */
-static bool php_phongo_document_init_from_hash(php_phongo_document_t* intern, HashTable* props)
+static bool phongo_document_init_from_hash(phongo_document_t* intern, HashTable* props)
 {
 	zval* data;
 
@@ -44,21 +44,21 @@ static bool php_phongo_document_init_from_hash(php_phongo_document_t* intern, Ha
 		zend_string_free(decoded);
 
 		if (intern->bson == NULL) {
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "%s initialization requires valid BSON", ZSTR_VAL(php_phongo_document_ce->name));
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "%s initialization requires valid BSON", ZSTR_VAL(phongo_document_ce->name));
 			return false;
 		}
 
 		return true;
 	}
 
-	phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "%s initialization requires \"data\" string field", ZSTR_VAL(php_phongo_document_ce->name));
+	phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "%s initialization requires \"data\" string field", ZSTR_VAL(phongo_document_ce->name));
 	return false;
 }
 
-static HashTable* php_phongo_document_get_properties_hash(zend_object* object, bool is_temp, int size)
+static HashTable* phongo_document_get_properties_hash(zend_object* object, bool is_temp, int size)
 {
-	php_phongo_document_t* intern;
-	HashTable*             props;
+	phongo_document_t* intern;
+	HashTable*         props;
 
 	intern = Z_OBJ_DOCUMENT(object);
 
@@ -82,12 +82,12 @@ PHONGO_DISABLED_CONSTRUCTOR(MongoDB_BSON_Document)
 
 static PHP_METHOD(MongoDB_BSON_Document, fromBSON)
 {
-	zval                   zv;
-	php_phongo_document_t* intern = NULL;
-	zend_string*           bson_string;
-	const bson_t*          bson;
-	bson_reader_t*         reader;
-	bool                   eof = false;
+	zval               zv;
+	phongo_document_t* intern = NULL;
+	zend_string*       bson_string;
+	const bson_t*      bson;
+	bson_reader_t*     reader;
+	bool               eof = false;
 
 	PHONGO_PARSE_PARAMETERS_START(1, 1)
 	Z_PARAM_STR(bson_string)
@@ -100,7 +100,7 @@ static PHP_METHOD(MongoDB_BSON_Document, fromBSON)
 		goto cleanup;
 	}
 
-	object_init_ex(&zv, php_phongo_document_ce);
+	object_init_ex(&zv, phongo_document_ce);
 	intern       = Z_DOCUMENT_OBJ_P(&zv);
 	intern->bson = bson_copy(bson);
 
@@ -121,11 +121,11 @@ cleanup:
 
 static PHP_METHOD(MongoDB_BSON_Document, fromJSON)
 {
-	zval                   zv;
-	php_phongo_document_t* intern;
-	zend_string*           json;
-	bson_t*                bson;
-	bson_error_t           error;
+	zval               zv;
+	phongo_document_t* intern;
+	zend_string*       json;
+	bson_t*            bson;
+	bson_error_t       error;
 
 	PHONGO_PARSE_PARAMETERS_START(1, 1)
 	Z_PARAM_STR(json)
@@ -137,7 +137,7 @@ static PHP_METHOD(MongoDB_BSON_Document, fromJSON)
 		return;
 	}
 
-	object_init_ex(&zv, php_phongo_document_ce);
+	object_init_ex(&zv, phongo_document_ce);
 	intern       = Z_DOCUMENT_OBJ_P(&zv);
 	intern->bson = bson;
 
@@ -146,26 +146,26 @@ static PHP_METHOD(MongoDB_BSON_Document, fromJSON)
 
 static PHP_METHOD(MongoDB_BSON_Document, fromPHP)
 {
-	zval                   zv;
-	php_phongo_document_t* intern;
-	zval*                  data;
+	zval               zv;
+	phongo_document_t* intern;
+	zval*              data;
 
 	PHONGO_PARSE_PARAMETERS_START(1, 1)
 	Z_PARAM_ARRAY_OR_OBJECT(data)
 	PHONGO_PARSE_PARAMETERS_END();
 
-	object_init_ex(&zv, php_phongo_document_ce);
+	object_init_ex(&zv, phongo_document_ce);
 	intern = Z_DOCUMENT_OBJ_P(&zv);
 
 	intern->bson = bson_new();
 
 	// Explicitly allow constructing a Document from a PackedArray
-	php_phongo_zval_to_bson(data, PHONGO_BSON_ALLOW_ROOT_ARRAY, intern->bson, NULL);
+	phongo_zval_to_bson(data, PHONGO_BSON_ALLOW_ROOT_ARRAY, intern->bson, NULL);
 
 	RETURN_ZVAL(&zv, 1, 1);
 }
 
-static bool php_phongo_document_get(php_phongo_document_t* intern, char* key, size_t key_len, zval* return_value, bool null_if_missing)
+static bool phongo_document_get(phongo_document_t* intern, char* key, size_t key_len, zval* return_value, bool null_if_missing)
 {
 	bson_iter_t iter;
 
@@ -189,7 +189,7 @@ static bool php_phongo_document_get(php_phongo_document_t* intern, char* key, si
 	return true;
 }
 
-static bool php_phongo_document_get_by_zval(php_phongo_document_t* intern, zval* key, zval* return_value, bool null_if_missing)
+static bool phongo_document_get_by_zval(phongo_document_t* intern, zval* key, zval* return_value, bool null_if_missing)
 {
 	if (Z_TYPE_P(key) != IS_STRING && Z_TYPE_P(key) != IS_LONG) {
 		if (null_if_missing) {
@@ -209,7 +209,7 @@ static bool php_phongo_document_get_by_zval(php_phongo_document_t* intern, zval*
 		return false;
 	}
 
-	if (!php_phongo_document_get(intern, ZSTR_VAL(str), ZSTR_LEN(str), return_value, null_if_missing)) {
+	if (!phongo_document_get(intern, ZSTR_VAL(str), ZSTR_LEN(str), return_value, null_if_missing)) {
 		// Exception already thrown
 		zend_tmp_string_release(tmp_str);
 		return false;
@@ -221,9 +221,9 @@ static bool php_phongo_document_get_by_zval(php_phongo_document_t* intern, zval*
 
 static PHP_METHOD(MongoDB_BSON_Document, get)
 {
-	php_phongo_document_t* intern;
-	char*                  key;
-	size_t                 key_len;
+	phongo_document_t* intern;
+	char*              key;
+	size_t             key_len;
 
 	PHONGO_PARSE_PARAMETERS_START(1, 1)
 	Z_PARAM_STRING(key, key_len)
@@ -232,7 +232,7 @@ static PHP_METHOD(MongoDB_BSON_Document, get)
 	intern = Z_DOCUMENT_OBJ_P(getThis());
 
 	// May throw, in which case we do nothing
-	php_phongo_document_get(intern, key, key_len, return_value, false);
+	phongo_document_get(intern, key, key_len, return_value, false);
 }
 
 static PHP_METHOD(MongoDB_BSON_Document, getIterator)
@@ -242,7 +242,7 @@ static PHP_METHOD(MongoDB_BSON_Document, getIterator)
 	phongo_iterator_init(return_value, getThis());
 }
 
-static bool php_phongo_document_has(php_phongo_document_t* intern, char* key, size_t key_len)
+static bool phongo_document_has(phongo_document_t* intern, char* key, size_t key_len)
 {
 	bson_iter_t iter;
 
@@ -254,7 +254,7 @@ static bool php_phongo_document_has(php_phongo_document_t* intern, char* key, si
 	return bson_iter_find_w_len(&iter, key, key_len);
 }
 
-static bool php_phongo_document_has_by_zval(php_phongo_document_t* intern, zval* key)
+static bool phongo_document_has_by_zval(phongo_document_t* intern, zval* key)
 {
 	if (Z_TYPE_P(key) != IS_STRING && Z_TYPE_P(key) != IS_LONG) {
 		return false;
@@ -268,7 +268,7 @@ static bool php_phongo_document_has_by_zval(php_phongo_document_t* intern, zval*
 		return false;
 	}
 
-	if (!php_phongo_document_has(intern, ZSTR_VAL(str), ZSTR_LEN(str))) {
+	if (!phongo_document_has(intern, ZSTR_VAL(str), ZSTR_LEN(str))) {
 		// Exception may be thrown if BSON iterator could not be initialized
 		zend_tmp_string_release(tmp_str);
 		return false;
@@ -280,9 +280,9 @@ static bool php_phongo_document_has_by_zval(php_phongo_document_t* intern, zval*
 
 static PHP_METHOD(MongoDB_BSON_Document, has)
 {
-	php_phongo_document_t* intern;
-	char*                  key;
-	size_t                 key_len;
+	phongo_document_t* intern;
+	char*              key;
+	size_t             key_len;
 
 	PHONGO_PARSE_PARAMETERS_START(1, 1)
 	Z_PARAM_STRING(key, key_len)
@@ -290,36 +290,36 @@ static PHP_METHOD(MongoDB_BSON_Document, has)
 
 	intern = Z_DOCUMENT_OBJ_P(getThis());
 
-	RETURN_BOOL(php_phongo_document_has(intern, key, key_len));
+	RETURN_BOOL(phongo_document_has(intern, key, key_len));
 }
 
 static PHP_METHOD(MongoDB_BSON_Document, toCanonicalExtendedJSON)
 {
-	php_phongo_document_t* intern;
+	phongo_document_t* intern;
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
 	intern = Z_DOCUMENT_OBJ_P(getThis());
 
-	php_phongo_bson_to_json(return_value, intern->bson, PHONGO_JSON_MODE_CANONICAL);
+	phongo_bson_to_json(return_value, intern->bson, PHONGO_JSON_MODE_CANONICAL);
 }
 
 static PHP_METHOD(MongoDB_BSON_Document, toRelaxedExtendedJSON)
 {
-	php_phongo_document_t* intern;
+	phongo_document_t* intern;
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
 	intern = Z_DOCUMENT_OBJ_P(getThis());
 
-	php_phongo_bson_to_json(return_value, intern->bson, PHONGO_JSON_MODE_RELAXED);
+	phongo_bson_to_json(return_value, intern->bson, PHONGO_JSON_MODE_RELAXED);
 }
 
 static PHP_METHOD(MongoDB_BSON_Document, toPHP)
 {
-	php_phongo_document_t* intern;
-	zval*                  typemap = NULL;
-	php_phongo_bson_state  state;
+	phongo_document_t* intern;
+	zval*              typemap = NULL;
+	phongo_bson_state  state;
 
 	PHONGO_PARSE_PARAMETERS_START(0, 1)
 	Z_PARAM_OPTIONAL
@@ -328,7 +328,7 @@ static PHP_METHOD(MongoDB_BSON_Document, toPHP)
 
 	PHONGO_BSON_INIT_STATE(state);
 
-	if (!php_phongo_bson_typemap_to_state(typemap, &state.map)) {
+	if (!phongo_bson_typemap_to_state(typemap, &state.map)) {
 		return;
 	}
 
@@ -336,21 +336,21 @@ static PHP_METHOD(MongoDB_BSON_Document, toPHP)
 
 	state.map.int64_as_object = true;
 
-	if (!php_phongo_bson_to_zval_ex(intern->bson, &state)) {
+	if (!phongo_bson_to_zval_ex(intern->bson, &state)) {
 		zval_ptr_dtor(&state.zchild);
-		php_phongo_bson_typemap_dtor(&state.map);
+		phongo_bson_typemap_dtor(&state.map);
 		RETURN_NULL();
 	}
 
-	php_phongo_bson_typemap_dtor(&state.map);
+	phongo_bson_typemap_dtor(&state.map);
 
 	RETURN_ZVAL(&state.zchild, 0, 1);
 }
 
 static PHP_METHOD(MongoDB_BSON_Document, offsetExists)
 {
-	php_phongo_document_t* intern;
-	zval*                  offset;
+	phongo_document_t* intern;
+	zval*              offset;
 
 	PHONGO_PARSE_PARAMETERS_START(1, 1)
 	Z_PARAM_ZVAL(offset)
@@ -358,13 +358,13 @@ static PHP_METHOD(MongoDB_BSON_Document, offsetExists)
 
 	intern = Z_DOCUMENT_OBJ_P(getThis());
 
-	RETURN_BOOL(php_phongo_document_has_by_zval(intern, offset));
+	RETURN_BOOL(phongo_document_has_by_zval(intern, offset));
 }
 
 static PHP_METHOD(MongoDB_BSON_Document, offsetGet)
 {
-	php_phongo_document_t* intern;
-	zval*                  offset;
+	phongo_document_t* intern;
+	zval*              offset;
 
 	PHONGO_PARSE_PARAMETERS_START(1, 1)
 	Z_PARAM_ZVAL(offset)
@@ -373,22 +373,22 @@ static PHP_METHOD(MongoDB_BSON_Document, offsetGet)
 	intern = Z_DOCUMENT_OBJ_P(getThis());
 
 	// May throw, in which case we do nothing
-	php_phongo_document_get_by_zval(intern, offset, return_value, false);
+	phongo_document_get_by_zval(intern, offset, return_value, false);
 }
 
 static PHP_METHOD(MongoDB_BSON_Document, offsetSet)
 {
-	phongo_throw_exception(PHONGO_ERROR_LOGIC, "Cannot write to %s property", ZSTR_VAL(php_phongo_document_ce->name));
+	phongo_throw_exception(PHONGO_ERROR_LOGIC, "Cannot write to %s property", ZSTR_VAL(phongo_document_ce->name));
 }
 
 static PHP_METHOD(MongoDB_BSON_Document, offsetUnset)
 {
-	phongo_throw_exception(PHONGO_ERROR_LOGIC, "Cannot unset %s property", ZSTR_VAL(php_phongo_document_ce->name));
+	phongo_throw_exception(PHONGO_ERROR_LOGIC, "Cannot unset %s property", ZSTR_VAL(phongo_document_ce->name));
 }
 
 static PHP_METHOD(MongoDB_BSON_Document, __toString)
 {
-	php_phongo_document_t* intern;
+	phongo_document_t* intern;
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -399,27 +399,27 @@ static PHP_METHOD(MongoDB_BSON_Document, __toString)
 
 static PHP_METHOD(MongoDB_BSON_Document, __set_state)
 {
-	php_phongo_document_t* intern;
-	HashTable*             props;
-	zval*                  array;
+	phongo_document_t* intern;
+	HashTable*         props;
+	zval*              array;
 
 	PHONGO_PARSE_PARAMETERS_START(1, 1)
 	Z_PARAM_ARRAY(array)
 	PHONGO_PARSE_PARAMETERS_END();
 
-	object_init_ex(return_value, php_phongo_document_ce);
+	object_init_ex(return_value, phongo_document_ce);
 
 	intern = Z_DOCUMENT_OBJ_P(return_value);
 	props  = Z_ARRVAL_P(array);
 
-	php_phongo_document_init_from_hash(intern, props);
+	phongo_document_init_from_hash(intern, props);
 }
 
 static PHP_METHOD(MongoDB_BSON_Document, __serialize)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
 
-	RETURN_ARR(php_phongo_document_get_properties_hash(Z_OBJ_P(getThis()), true, 1));
+	RETURN_ARR(phongo_document_get_properties_hash(Z_OBJ_P(getThis()), true, 1));
 }
 
 static PHP_METHOD(MongoDB_BSON_Document, __unserialize)
@@ -430,15 +430,15 @@ static PHP_METHOD(MongoDB_BSON_Document, __unserialize)
 	Z_PARAM_ARRAY(data)
 	PHONGO_PARSE_PARAMETERS_END();
 
-	php_phongo_document_init_from_hash(Z_DOCUMENT_OBJ_P(getThis()), Z_ARRVAL_P(data));
+	phongo_document_init_from_hash(Z_DOCUMENT_OBJ_P(getThis()), Z_ARRVAL_P(data));
 }
 
 /* MongoDB\BSON\BSON object handlers */
-static zend_object_handlers php_phongo_handler_document;
+static zend_object_handlers phongo_handler_document;
 
-static void php_phongo_document_free_object(zend_object* object)
+static void phongo_document_free_object(zend_object* object)
 {
-	php_phongo_document_t* intern = Z_OBJ_DOCUMENT(object);
+	phongo_document_t* intern = Z_OBJ_DOCUMENT(object);
 
 	zend_object_std_dtor(&intern->std);
 
@@ -452,26 +452,26 @@ static void php_phongo_document_free_object(zend_object* object)
 	}
 }
 
-static zend_object* php_phongo_document_create_object(zend_class_entry* class_type)
+static zend_object* phongo_document_create_object(zend_class_entry* class_type)
 {
-	php_phongo_document_t* intern = zend_object_alloc(sizeof(php_phongo_document_t), class_type);
+	phongo_document_t* intern = zend_object_alloc(sizeof(phongo_document_t), class_type);
 
 	zend_object_std_init(&intern->std, class_type);
 	object_properties_init(&intern->std, class_type);
 
-	intern->std.handlers = &php_phongo_handler_document;
+	intern->std.handlers = &phongo_handler_document;
 
 	return &intern->std;
 }
 
-static zend_object* php_phongo_document_clone_object(zend_object* object)
+static zend_object* phongo_document_clone_object(zend_object* object)
 {
-	php_phongo_document_t* intern;
-	php_phongo_document_t* new_intern;
-	zend_object*           new_object;
+	phongo_document_t* intern;
+	phongo_document_t* new_intern;
+	zend_object*       new_object;
 
 	intern     = Z_OBJ_DOCUMENT(object);
-	new_object = php_phongo_document_create_object(object->ce);
+	new_object = phongo_document_create_object(object->ce);
 
 	new_intern = Z_OBJ_DOCUMENT(new_object);
 	zend_objects_clone_members(&new_intern->std, &intern->std);
@@ -481,9 +481,9 @@ static zend_object* php_phongo_document_clone_object(zend_object* object)
 	return new_object;
 }
 
-static int php_phongo_document_compare_objects(zval* o1, zval* o2)
+static int phongo_document_compare_objects(zval* o1, zval* o2)
 {
-	php_phongo_document_t *intern1, *intern2;
+	phongo_document_t *intern1, *intern2;
 
 	ZEND_COMPARE_OBJECTS_FALLBACK(o1, o2);
 
@@ -493,26 +493,26 @@ static int php_phongo_document_compare_objects(zval* o1, zval* o2)
 	return bson_compare(intern1->bson, intern2->bson);
 }
 
-static HashTable* php_phongo_document_get_debug_info(zend_object* object, int* is_temp)
+static HashTable* phongo_document_get_debug_info(zend_object* object, int* is_temp)
 {
-	php_phongo_document_t* intern;
-	HashTable*             props;
+	phongo_document_t* intern;
+	HashTable*         props;
 
 	*is_temp = 1;
 	intern   = Z_OBJ_DOCUMENT(object);
 
 	/* This get_debug_info handler reports an additional property. This does not
-	 * conflict with other uses of php_phongo_document_get_properties_hash since
+	 * conflict with other uses of phongo_document_get_properties_hash since
 	 * we always allocated a new HashTable with is_temp=true. */
-	props = php_phongo_document_get_properties_hash(object, true, 2);
+	props = phongo_document_get_properties_hash(object, true, 2);
 
 	{
-		php_phongo_bson_state state;
+		phongo_bson_state state;
 
 		PHONGO_BSON_INIT_STATE(state);
 		state.map.array.type    = PHONGO_TYPEMAP_BSON;
 		state.map.document.type = PHONGO_TYPEMAP_BSON;
-		if (!php_phongo_bson_to_zval_ex(intern->bson, &state)) {
+		if (!phongo_bson_to_zval_ex(intern->bson, &state)) {
 			zval_ptr_dtor(&state.zchild);
 			goto failure;
 		}
@@ -527,16 +527,16 @@ failure:
 	return NULL;
 }
 
-static HashTable* php_phongo_document_get_properties(zend_object* object)
+static HashTable* phongo_document_get_properties(zend_object* object)
 {
-	return php_phongo_document_get_properties_hash(object, false, 1);
+	return phongo_document_get_properties_hash(object, false, 1);
 }
 
-zval* php_phongo_document_read_property(zend_object* object, zend_string* member, int type, void** cache_slot, zval* rv)
+zval* phongo_document_read_property(zend_object* object, zend_string* member, int type, void** cache_slot, zval* rv)
 {
-	php_phongo_document_t* intern = Z_OBJ_DOCUMENT(object);
+	phongo_document_t* intern = Z_OBJ_DOCUMENT(object);
 
-	if (!php_phongo_document_get(intern, ZSTR_VAL(member), ZSTR_LEN(member), rv, type == BP_VAR_IS)) {
+	if (!phongo_document_get(intern, ZSTR_VAL(member), ZSTR_LEN(member), rv, type == BP_VAR_IS)) {
 		// Exception already thrown
 		return &EG(uninitialized_zval);
 	}
@@ -544,29 +544,29 @@ zval* php_phongo_document_read_property(zend_object* object, zend_string* member
 	return rv;
 }
 
-zval* php_phongo_document_write_property(zend_object* object, zend_string* member, zval* value, void** cache_slot)
+zval* phongo_document_write_property(zend_object* object, zend_string* member, zval* value, void** cache_slot)
 {
-	phongo_throw_exception(PHONGO_ERROR_LOGIC, "Cannot write to %s property", ZSTR_VAL(php_phongo_document_ce->name));
+	phongo_throw_exception(PHONGO_ERROR_LOGIC, "Cannot write to %s property", ZSTR_VAL(phongo_document_ce->name));
 	return value;
 }
 
-int php_phongo_document_has_property(zend_object* object, zend_string* member, int has_set_exists, void** cache_slot)
+int phongo_document_has_property(zend_object* object, zend_string* member, int has_set_exists, void** cache_slot)
 {
-	php_phongo_document_t* intern = Z_OBJ_DOCUMENT(object);
+	phongo_document_t* intern = Z_OBJ_DOCUMENT(object);
 
-	return php_phongo_document_has(intern, ZSTR_VAL(member), ZSTR_LEN(member));
+	return phongo_document_has(intern, ZSTR_VAL(member), ZSTR_LEN(member));
 }
 
-void php_phongo_document_unset_property(zend_object* object, zend_string* member, void** cache_slot)
+void phongo_document_unset_property(zend_object* object, zend_string* member, void** cache_slot)
 {
-	phongo_throw_exception(PHONGO_ERROR_LOGIC, "Cannot unset %s property", ZSTR_VAL(php_phongo_document_ce->name));
+	phongo_throw_exception(PHONGO_ERROR_LOGIC, "Cannot unset %s property", ZSTR_VAL(phongo_document_ce->name));
 }
 
-zval* php_phongo_document_read_dimension(zend_object* object, zval* offset, int type, zval* rv)
+zval* phongo_document_read_dimension(zend_object* object, zval* offset, int type, zval* rv)
 {
-	php_phongo_document_t* intern = Z_OBJ_DOCUMENT(object);
+	phongo_document_t* intern = Z_OBJ_DOCUMENT(object);
 
-	if (!php_phongo_document_get_by_zval(intern, offset, rv, type == BP_VAR_IS)) {
+	if (!phongo_document_get_by_zval(intern, offset, rv, type == BP_VAR_IS)) {
 		// Exception already thrown
 		return &EG(uninitialized_zval);
 	}
@@ -574,50 +574,50 @@ zval* php_phongo_document_read_dimension(zend_object* object, zval* offset, int 
 	return rv;
 }
 
-void php_phongo_document_write_dimension(zend_object* object, zval* offset, zval* value)
+void phongo_document_write_dimension(zend_object* object, zval* offset, zval* value)
 {
-	phongo_throw_exception(PHONGO_ERROR_LOGIC, "Cannot write to %s property", ZSTR_VAL(php_phongo_document_ce->name));
+	phongo_throw_exception(PHONGO_ERROR_LOGIC, "Cannot write to %s property", ZSTR_VAL(phongo_document_ce->name));
 }
 
-int php_phongo_document_has_dimension(zend_object* object, zval* member, int check_empty)
+int phongo_document_has_dimension(zend_object* object, zval* member, int check_empty)
 {
-	php_phongo_document_t* intern = Z_OBJ_DOCUMENT(object);
+	phongo_document_t* intern = Z_OBJ_DOCUMENT(object);
 
-	return php_phongo_document_has_by_zval(intern, member);
+	return phongo_document_has_by_zval(intern, member);
 }
 
-void php_phongo_document_unset_dimension(zend_object* object, zval* offset)
+void phongo_document_unset_dimension(zend_object* object, zval* offset)
 {
-	phongo_throw_exception(PHONGO_ERROR_LOGIC, "Cannot unset %s property", ZSTR_VAL(php_phongo_document_ce->name));
+	phongo_throw_exception(PHONGO_ERROR_LOGIC, "Cannot unset %s property", ZSTR_VAL(phongo_document_ce->name));
 }
 
-void php_phongo_document_init_ce(INIT_FUNC_ARGS)
+void phongo_document_init_ce(INIT_FUNC_ARGS)
 {
-	php_phongo_document_ce                = register_class_MongoDB_BSON_Document(zend_ce_aggregate, zend_ce_arrayaccess, php_phongo_type_ce, zend_ce_stringable);
-	php_phongo_document_ce->create_object = php_phongo_document_create_object;
+	phongo_document_ce                = register_class_MongoDB_BSON_Document(zend_ce_aggregate, zend_ce_arrayaccess, phongo_type_ce, zend_ce_stringable);
+	phongo_document_ce->create_object = phongo_document_create_object;
 
-	memcpy(&php_phongo_handler_document, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
-	php_phongo_handler_document.compare         = php_phongo_document_compare_objects;
-	php_phongo_handler_document.clone_obj       = php_phongo_document_clone_object;
-	php_phongo_handler_document.get_debug_info  = php_phongo_document_get_debug_info;
-	php_phongo_handler_document.get_properties  = php_phongo_document_get_properties;
-	php_phongo_handler_document.free_obj        = php_phongo_document_free_object;
-	php_phongo_handler_document.read_property   = php_phongo_document_read_property;
-	php_phongo_handler_document.write_property  = php_phongo_document_write_property;
-	php_phongo_handler_document.has_property    = php_phongo_document_has_property;
-	php_phongo_handler_document.unset_property  = php_phongo_document_unset_property;
-	php_phongo_handler_document.read_dimension  = php_phongo_document_read_dimension;
-	php_phongo_handler_document.write_dimension = php_phongo_document_write_dimension;
-	php_phongo_handler_document.has_dimension   = php_phongo_document_has_dimension;
-	php_phongo_handler_document.unset_dimension = php_phongo_document_unset_dimension;
-	php_phongo_handler_document.offset          = XtOffsetOf(php_phongo_document_t, std);
+	memcpy(&phongo_handler_document, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
+	phongo_handler_document.compare         = phongo_document_compare_objects;
+	phongo_handler_document.clone_obj       = phongo_document_clone_object;
+	phongo_handler_document.get_debug_info  = phongo_document_get_debug_info;
+	phongo_handler_document.get_properties  = phongo_document_get_properties;
+	phongo_handler_document.free_obj        = phongo_document_free_object;
+	phongo_handler_document.read_property   = phongo_document_read_property;
+	phongo_handler_document.write_property  = phongo_document_write_property;
+	phongo_handler_document.has_property    = phongo_document_has_property;
+	phongo_handler_document.unset_property  = phongo_document_unset_property;
+	phongo_handler_document.read_dimension  = phongo_document_read_dimension;
+	phongo_handler_document.write_dimension = phongo_document_write_dimension;
+	phongo_handler_document.has_dimension   = phongo_document_has_dimension;
+	phongo_handler_document.unset_dimension = phongo_document_unset_dimension;
+	phongo_handler_document.offset          = XtOffsetOf(phongo_document_t, std);
 }
 
 bool phongo_document_new(zval* object, bson_t* bson, bool copy)
 {
-	php_phongo_document_t* intern;
+	phongo_document_t* intern;
 
-	object_init_ex(object, php_phongo_document_ce);
+	object_init_ex(object, phongo_document_ce);
 
 	intern       = Z_DOCUMENT_OBJ_P(object);
 	intern->bson = copy ? bson_copy(bson) : bson;

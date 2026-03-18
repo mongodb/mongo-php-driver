@@ -17,11 +17,11 @@
 #include <php.h>
 #include <Zend/zend_interfaces.h>
 
-#include "php_phongo.h"
+#include "phongo.h"
 #include "phongo_error.h"
 #include "Undefined_arginfo.h"
 
-zend_class_entry* php_phongo_undefined_ce;
+zend_class_entry* phongo_undefined_ce;
 
 PHONGO_DISABLED_CONSTRUCTOR(MongoDB_BSON_Undefined)
 
@@ -41,7 +41,7 @@ static PHP_METHOD(MongoDB_BSON_Undefined, __set_state)
 	Z_PARAM_ARRAY(array)
 	PHONGO_PARSE_PARAMETERS_END();
 
-	object_init_ex(return_value, php_phongo_undefined_ce);
+	object_init_ex(return_value, phongo_undefined_ce);
 }
 
 static PHP_METHOD(MongoDB_BSON_Undefined, jsonSerialize)
@@ -69,35 +69,35 @@ static PHP_METHOD(MongoDB_BSON_Undefined, __unserialize)
 }
 
 /* MongoDB\BSON\Undefined object handlers */
-static zend_object_handlers php_phongo_handler_undefined;
+static zend_object_handlers phongo_handler_undefined;
 
-static void php_phongo_undefined_free_object(zend_object* object)
+static void phongo_undefined_free_object(zend_object* object)
 {
-	php_phongo_undefined_t* intern = Z_OBJ_UNDEFINED(object);
+	phongo_undefined_t* intern = Z_OBJ_UNDEFINED(object);
 
 	zend_object_std_dtor(&intern->std);
 }
 
-static zend_object* php_phongo_undefined_create_object(zend_class_entry* class_type)
+static zend_object* phongo_undefined_create_object(zend_class_entry* class_type)
 {
-	php_phongo_undefined_t* intern = zend_object_alloc(sizeof(php_phongo_undefined_t), class_type);
+	phongo_undefined_t* intern = zend_object_alloc(sizeof(phongo_undefined_t), class_type);
 
 	zend_object_std_init(&intern->std, class_type);
 	object_properties_init(&intern->std, class_type);
 
-	intern->std.handlers = &php_phongo_handler_undefined;
+	intern->std.handlers = &phongo_handler_undefined;
 
 	return &intern->std;
 }
 
-void php_phongo_undefined_init_ce(INIT_FUNC_ARGS)
+void phongo_undefined_init_ce(INIT_FUNC_ARGS)
 {
-	php_phongo_undefined_ce                = register_class_MongoDB_BSON_Undefined(php_phongo_json_serializable_ce, php_phongo_type_ce, zend_ce_stringable);
-	php_phongo_undefined_ce->create_object = php_phongo_undefined_create_object;
+	phongo_undefined_ce                = register_class_MongoDB_BSON_Undefined(phongo_json_serializable_ce, phongo_type_ce, zend_ce_stringable);
+	phongo_undefined_ce->create_object = phongo_undefined_create_object;
 
-	memcpy(&php_phongo_handler_undefined, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
-	/* Re-assign default handler previously removed in php_phongo.c */
-	php_phongo_handler_undefined.clone_obj = zend_objects_clone_obj;
-	php_phongo_handler_undefined.free_obj  = php_phongo_undefined_free_object;
-	php_phongo_handler_undefined.offset    = XtOffsetOf(php_phongo_undefined_t, std);
+	memcpy(&phongo_handler_undefined, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
+	/* Re-assign default handler previously removed in phongo.c */
+	phongo_handler_undefined.clone_obj = zend_objects_clone_obj;
+	phongo_handler_undefined.free_obj  = phongo_undefined_free_object;
+	phongo_handler_undefined.offset    = XtOffsetOf(phongo_undefined_t, std);
 }

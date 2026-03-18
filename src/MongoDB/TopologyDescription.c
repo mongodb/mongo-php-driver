@@ -21,7 +21,7 @@
 #include <ext/standard/php_var.h>
 #include <Zend/zend_interfaces.h>
 
-#include "php_phongo.h"
+#include "phongo.h"
 #include "phongo_error.h"
 
 #include "MongoDB/ReadPreference.h"
@@ -29,16 +29,16 @@
 #include "MongoDB/TopologyDescription.h"
 #include "TopologyDescription_arginfo.h"
 
-zend_class_entry* php_phongo_topologydescription_ce;
+zend_class_entry* phongo_topologydescription_ce;
 
 PHONGO_DISABLED_CONSTRUCTOR(MongoDB_Driver_TopologyDescription)
 
 /* Returns an array of ServerDescription objects for all known servers in the topology */
 static PHP_METHOD(MongoDB_Driver_TopologyDescription, getServers)
 {
-	php_phongo_topologydescription_t* intern;
-	mongoc_server_description_t**     sds;
-	size_t                            i, n = 0;
+	phongo_topologydescription_t* intern;
+	mongoc_server_description_t** sds;
+	size_t                        i, n = 0;
 
 	intern = Z_TOPOLOGYDESCRIPTION_OBJ_P(getThis());
 
@@ -60,15 +60,15 @@ static PHP_METHOD(MongoDB_Driver_TopologyDescription, getServers)
 /* Returns whether the topology has a readable server available */
 static PHP_METHOD(MongoDB_Driver_TopologyDescription, hasReadableServer)
 {
-	php_phongo_topologydescription_t* intern;
-	const mongoc_read_prefs_t*        read_preference   = NULL;
-	zval*                             z_read_preference = NULL;
+	phongo_topologydescription_t* intern;
+	const mongoc_read_prefs_t*    read_preference   = NULL;
+	zval*                         z_read_preference = NULL;
 
 	intern = Z_TOPOLOGYDESCRIPTION_OBJ_P(getThis());
 
 	PHONGO_PARSE_PARAMETERS_START(0, 1)
 	Z_PARAM_OPTIONAL
-	Z_PARAM_OBJECT_OF_CLASS(z_read_preference, php_phongo_readpreference_ce)
+	Z_PARAM_OBJECT_OF_CLASS(z_read_preference, phongo_readpreference_ce)
 	PHONGO_PARSE_PARAMETERS_END();
 
 	if (z_read_preference) {
@@ -81,7 +81,7 @@ static PHP_METHOD(MongoDB_Driver_TopologyDescription, hasReadableServer)
 /* Returns whether the topology has a writable server available */
 static PHP_METHOD(MongoDB_Driver_TopologyDescription, hasWritableServer)
 {
-	php_phongo_topologydescription_t* intern = Z_TOPOLOGYDESCRIPTION_OBJ_P(getThis());
+	phongo_topologydescription_t* intern = Z_TOPOLOGYDESCRIPTION_OBJ_P(getThis());
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -91,7 +91,7 @@ static PHP_METHOD(MongoDB_Driver_TopologyDescription, hasWritableServer)
 /* Returns the topology type */
 static PHP_METHOD(MongoDB_Driver_TopologyDescription, getType)
 {
-	php_phongo_topologydescription_t* intern = Z_TOPOLOGYDESCRIPTION_OBJ_P(getThis());
+	phongo_topologydescription_t* intern = Z_TOPOLOGYDESCRIPTION_OBJ_P(getThis());
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -99,11 +99,11 @@ static PHP_METHOD(MongoDB_Driver_TopologyDescription, getType)
 }
 
 /* MongoDB\Driver\TopologyDescription object handlers */
-static zend_object_handlers php_phongo_handler_topologydescription;
+static zend_object_handlers phongo_handler_topologydescription;
 
-static void php_phongo_topologydescription_free_object(zend_object* object)
+static void phongo_topologydescription_free_object(zend_object* object)
 {
-	php_phongo_topologydescription_t* intern = Z_OBJ_TOPOLOGYDESCRIPTION(object);
+	phongo_topologydescription_t* intern = Z_OBJ_TOPOLOGYDESCRIPTION(object);
 
 	zend_object_std_dtor(&intern->std);
 
@@ -117,22 +117,22 @@ static void php_phongo_topologydescription_free_object(zend_object* object)
 	}
 }
 
-static zend_object* php_phongo_topologydescription_create_object(zend_class_entry* class_type)
+static zend_object* phongo_topologydescription_create_object(zend_class_entry* class_type)
 {
-	php_phongo_topologydescription_t* intern = zend_object_alloc(sizeof(php_phongo_topologydescription_t), class_type);
+	phongo_topologydescription_t* intern = zend_object_alloc(sizeof(phongo_topologydescription_t), class_type);
 
 	zend_object_std_init(&intern->std, class_type);
 	object_properties_init(&intern->std, class_type);
 
-	intern->std.handlers = &php_phongo_handler_topologydescription;
+	intern->std.handlers = &phongo_handler_topologydescription;
 
 	return &intern->std;
 }
 
-HashTable* php_phongo_topologydescription_get_properties_hash(zend_object* object, bool is_debug)
+HashTable* phongo_topologydescription_get_properties_hash(zend_object* object, bool is_debug)
 {
-	php_phongo_topologydescription_t* intern = NULL;
-	HashTable*                        props;
+	phongo_topologydescription_t* intern = NULL;
+	HashTable*                    props;
 
 	intern = Z_OBJ_TOPOLOGYDESCRIPTION(object);
 
@@ -169,34 +169,34 @@ HashTable* php_phongo_topologydescription_get_properties_hash(zend_object* objec
 	return props;
 }
 
-static HashTable* php_phongo_topologydescription_get_debug_info(zend_object* object, int* is_temp)
+static HashTable* phongo_topologydescription_get_debug_info(zend_object* object, int* is_temp)
 {
 	*is_temp = 1;
-	return php_phongo_topologydescription_get_properties_hash(object, true);
+	return phongo_topologydescription_get_properties_hash(object, true);
 }
 
-static HashTable* php_phongo_topologydescription_get_properties(zend_object* object)
+static HashTable* phongo_topologydescription_get_properties(zend_object* object)
 {
-	return php_phongo_topologydescription_get_properties_hash(object, false);
+	return phongo_topologydescription_get_properties_hash(object, false);
 }
 
-void php_phongo_topologydescription_init_ce(INIT_FUNC_ARGS)
+void phongo_topologydescription_init_ce(INIT_FUNC_ARGS)
 {
-	php_phongo_topologydescription_ce                = register_class_MongoDB_Driver_TopologyDescription();
-	php_phongo_topologydescription_ce->create_object = php_phongo_topologydescription_create_object;
+	phongo_topologydescription_ce                = register_class_MongoDB_Driver_TopologyDescription();
+	phongo_topologydescription_ce->create_object = phongo_topologydescription_create_object;
 
-	memcpy(&php_phongo_handler_topologydescription, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
-	php_phongo_handler_topologydescription.get_debug_info = php_phongo_topologydescription_get_debug_info;
-	php_phongo_handler_topologydescription.get_properties = php_phongo_topologydescription_get_properties;
-	php_phongo_handler_topologydescription.free_obj       = php_phongo_topologydescription_free_object;
-	php_phongo_handler_topologydescription.offset         = XtOffsetOf(php_phongo_topologydescription_t, std);
+	memcpy(&phongo_handler_topologydescription, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
+	phongo_handler_topologydescription.get_debug_info = phongo_topologydescription_get_debug_info;
+	phongo_handler_topologydescription.get_properties = phongo_topologydescription_get_properties;
+	phongo_handler_topologydescription.free_obj       = phongo_topologydescription_free_object;
+	phongo_handler_topologydescription.offset         = XtOffsetOf(phongo_topologydescription_t, std);
 }
 
 void phongo_topologydescription_init(zval* return_value, mongoc_topology_description_t* topology_description)
 {
-	php_phongo_topologydescription_t* intern;
+	phongo_topologydescription_t* intern;
 
-	object_init_ex(return_value, php_phongo_topologydescription_ce);
+	object_init_ex(return_value, phongo_topologydescription_ce);
 
 	intern                       = Z_TOPOLOGYDESCRIPTION_OBJ_P(return_value);
 	intern->topology_description = mongoc_topology_description_new_copy(topology_description);
