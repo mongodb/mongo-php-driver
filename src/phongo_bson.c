@@ -1350,10 +1350,10 @@ static bool phongo_bson_state_add_field_path(phongo_bson_typemap* map, char* fie
 			return false;
 		}
 
-		tmp = calloc(1, segment_end - ptr + 1);
+		tmp = ecalloc(1, segment_end - ptr + 1);
 		memcpy(tmp, ptr, segment_end - ptr);
 		phongo_field_path_push(field_path_map_element->entry, tmp, PHONGO_FIELD_PATH_ITEM_NONE);
-		free(tmp);
+		efree(tmp);
 
 		ptr = segment_end + 1;
 	}
