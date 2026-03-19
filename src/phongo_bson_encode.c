@@ -602,12 +602,22 @@ done:
 	if (flags & PHONGO_BSON_RETURN_ID && bson_out) {
 		bson_iter_t iter;
 
+		/* This should not be able to happen since we are copying from
+		 * within a valid bson_t. */
+		if (!bson_iter_init_find(&iter, bson, "_id"))
+		{
+			phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Error copying \"_id\" field from encoded document");
+
+			goto cleanup;
+		}
+
 		*bson_out = bson_new();
 
-		if (bson_iter_init_find(&iter, bson, "_id") && !bson_append_iter(*bson_out, NULL, 0, &iter)) {
+		if (!bson_append_iter(*bson_out, NULL, 0, &iter)) {
 			/* This should not be able to happen since we are copying from
 			 * within a valid bson_t. */
 			phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Error copying \"_id\" field from encoded document");
+			bson_clear(bson_out);
 
 			goto cleanup;
 		}
