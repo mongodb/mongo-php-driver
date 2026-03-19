@@ -78,3 +78,4 @@ secrets-export.sh
 # Claude local config
 !.claude/
 .claude/settings.local.json
+.claude/agent-memory-local
