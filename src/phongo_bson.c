@@ -1298,7 +1298,7 @@ static void map_add_field_path_element(phongo_bson_typemap* map, phongo_field_pa
 	/* Make sure we have allocated enough */
 	if (map->field_paths.allocated_size < map->field_paths.size + 1) {
 		map->field_paths.allocated_size += PHONGO_FIELD_PATH_EXPANSION;
-		map->field_paths.map = erealloc(map->field_paths.map, sizeof(phongo_field_path_map_element) * map->field_paths.allocated_size);
+		map->field_paths.map = erealloc(map->field_paths.map, sizeof(phongo_field_path_map_element*) * map->field_paths.allocated_size);
 	}
 
 	map->field_paths.map[map->field_paths.size] = element;
