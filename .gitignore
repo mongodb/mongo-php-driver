@@ -74,3 +74,7 @@ secrets-export.sh
 
 # temporary purls file
 /purls.txt
+
+# Claude local config
+!.claude/
+.claude/settings.local.json
