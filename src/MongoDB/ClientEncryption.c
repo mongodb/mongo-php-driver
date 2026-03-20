@@ -723,7 +723,7 @@ static mongoc_client_encryption_datakey_opts_t* phongo_clientencryption_datakey_
 
 		ht_data           = HASH_OF(zkeyaltnames);
 		keyaltnames_count = ht_data ? zend_hash_num_elements(ht_data) : 0;
-		keyaltnames = ecalloc(keyaltnames_count, sizeof(char*));
+		keyaltnames       = ecalloc(keyaltnames_count, sizeof(char*));
 
 		{
 			zend_string* string_key = NULL;

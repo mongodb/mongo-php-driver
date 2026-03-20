@@ -604,8 +604,7 @@ done:
 
 		/* This should not be able to happen since we are copying from
 		 * within a valid bson_t. */
-		if (!bson_iter_init_find(&iter, bson, "_id"))
-		{
+		if (!bson_iter_init_find(&iter, bson, "_id")) {
 			phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Error copying \"_id\" field from encoded document");
 
 			goto cleanup;
