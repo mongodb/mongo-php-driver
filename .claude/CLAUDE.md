@@ -35,7 +35,12 @@ make test
 
 # Run a single test file
 make test TESTS=tests/path/to/test.phpt
+
+# TESTS accepts a glob pattern:
+make test TESTS="tests/path/to/pattern*.phpt"
 ```
+
+For failed tests, all intermediate files (e.g. expected output, actual output, diff) are left alongside the test file. This is helpful for debugging purposes. 
 
 Key environment variables for testing:
 - `MONGODB_URI` – connection string (default: `mongodb://127.0.0.1/`)
