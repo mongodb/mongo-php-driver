@@ -19,6 +19,20 @@
 
 #include "phongo_structs.h"
 
+/*
+ * Helper macros for classes
+ *
+ * The PHONGO_DECLARE_CLASS and PHONGO_DECLARE_CLASS_WITH_HELPERS expand to all of the declarations necessary for a
+ * complete PHP class.
+ * - PHONGO_DECLARE_CLASS(foo) will generate external class entry variables and the corresponding init_ce function, e.g.
+ *   phongo_foo_ce and phongo_foo_init_ce()
+ * - PHONGO_DECLARE_CLASS_WITH_HELPERS(FOO, foo) generates the above, plus additional helpers for working with zvals:
+ *   - Z_FOO_OBJ_P() returns a phongo_foo_t* from a given zval*
+ *   - Z_OBJ_FOO() returns a phongo_foo_t* from a given zend_object*
+ *
+ * Helpers assume the presence of a phongo_foo_t struct in phongo_structs.h
+ */
+
 #define CLASS_FETCH_OBJ_DECL(name)                                                                 \
 	static zend_always_inline phongo_##name##_t* php_##name##_fetch_object(const zend_object* obj) \
 	{                                                                                              \
@@ -41,324 +55,111 @@
 		return php_##name##_fetch_object(zo);                                          \
 	}
 
+#define PHONGO_DECLARE_CLASS(name) \
+	CLASS_ENTRY_DECL(name);        \
+	CE_INIT_FUNC_DECL(name);
+
+#define PHONGO_DECLARE_CLASS_WITH_HELPERS(ucname, name) \
+	PHONGO_DECLARE_CLASS(name)                          \
+	CLASS_FETCH_OBJ_DECL(name);                         \
+	Z_OBJ_P_FETCH_DECL(ucname, name);                   \
+	Z_OBJ_DECL(ucname, name);
+
 /* Export zend_class_entry dependencies, which are initialized in MINIT */
 extern zend_class_entry* phongo_json_serializable_ce;
 
-CLASS_FETCH_OBJ_DECL(bulkwrite)
-CLASS_FETCH_OBJ_DECL(bulkwritecommand)
-CLASS_FETCH_OBJ_DECL(bulkwritecommandresult)
-CLASS_FETCH_OBJ_DECL(clientencryption)
-CLASS_FETCH_OBJ_DECL(command)
-CLASS_FETCH_OBJ_DECL(cursor)
-CLASS_FETCH_OBJ_DECL(manager)
-CLASS_FETCH_OBJ_DECL(query)
-CLASS_FETCH_OBJ_DECL(readconcern)
-CLASS_FETCH_OBJ_DECL(readpreference)
-CLASS_FETCH_OBJ_DECL(server)
-CLASS_FETCH_OBJ_DECL(serverdescription)
-CLASS_FETCH_OBJ_DECL(topologydescription)
-CLASS_FETCH_OBJ_DECL(serverapi)
-CLASS_FETCH_OBJ_DECL(session)
-CLASS_FETCH_OBJ_DECL(writeconcern)
-CLASS_FETCH_OBJ_DECL(writeconcernerror)
-CLASS_FETCH_OBJ_DECL(writeerror)
-CLASS_FETCH_OBJ_DECL(writeresult)
-CLASS_FETCH_OBJ_DECL(binary)
-CLASS_FETCH_OBJ_DECL(document)
-CLASS_FETCH_OBJ_DECL(iterator)
-CLASS_FETCH_OBJ_DECL(dbpointer)
-CLASS_FETCH_OBJ_DECL(decimal128)
-CLASS_FETCH_OBJ_DECL(int64)
-CLASS_FETCH_OBJ_DECL(javascript)
-CLASS_FETCH_OBJ_DECL(maxkey)
-CLASS_FETCH_OBJ_DECL(minkey)
-CLASS_FETCH_OBJ_DECL(objectid)
-CLASS_FETCH_OBJ_DECL(packedarray)
-CLASS_FETCH_OBJ_DECL(regex)
-CLASS_FETCH_OBJ_DECL(symbol)
-CLASS_FETCH_OBJ_DECL(timestamp)
-CLASS_FETCH_OBJ_DECL(undefined)
-CLASS_FETCH_OBJ_DECL(utcdatetime)
-CLASS_FETCH_OBJ_DECL(commandfailedevent)
-CLASS_FETCH_OBJ_DECL(commandstartedevent)
-CLASS_FETCH_OBJ_DECL(commandsucceededevent)
-CLASS_FETCH_OBJ_DECL(serverchangedevent)
-CLASS_FETCH_OBJ_DECL(serverclosedevent)
-CLASS_FETCH_OBJ_DECL(serverheartbeatfailedevent)
-CLASS_FETCH_OBJ_DECL(serverheartbeatstartedevent)
-CLASS_FETCH_OBJ_DECL(serverheartbeatsucceededevent)
-CLASS_FETCH_OBJ_DECL(serveropeningevent)
-CLASS_FETCH_OBJ_DECL(topologychangedevent)
-CLASS_FETCH_OBJ_DECL(topologyclosedevent)
-CLASS_FETCH_OBJ_DECL(topologyopeningevent)
+PHONGO_DECLARE_CLASS_WITH_HELPERS(CLIENTENCRYPTION, clientencryption);
+PHONGO_DECLARE_CLASS_WITH_HELPERS(COMMAND, command);
+PHONGO_DECLARE_CLASS_WITH_HELPERS(CURSOR, cursor);
+PHONGO_DECLARE_CLASS_WITH_HELPERS(MANAGER, manager);
+PHONGO_DECLARE_CLASS_WITH_HELPERS(QUERY, query);
+PHONGO_DECLARE_CLASS_WITH_HELPERS(READCONCERN, readconcern);
+PHONGO_DECLARE_CLASS_WITH_HELPERS(READPREFERENCE, readpreference);
+PHONGO_DECLARE_CLASS_WITH_HELPERS(SERVER, server);
+PHONGO_DECLARE_CLASS_WITH_HELPERS(SERVERAPI, serverapi);
+PHONGO_DECLARE_CLASS_WITH_HELPERS(SERVERDESCRIPTION, serverdescription);
+PHONGO_DECLARE_CLASS_WITH_HELPERS(SESSION, session);
+PHONGO_DECLARE_CLASS_WITH_HELPERS(TOPOLOGYDESCRIPTION, topologydescription);
+PHONGO_DECLARE_CLASS_WITH_HELPERS(BULKWRITE, bulkwrite);
+PHONGO_DECLARE_CLASS_WITH_HELPERS(BULKWRITECOMMAND, bulkwritecommand);
+PHONGO_DECLARE_CLASS_WITH_HELPERS(BULKWRITECOMMANDRESULT, bulkwritecommandresult);
+PHONGO_DECLARE_CLASS_WITH_HELPERS(WRITECONCERN, writeconcern);
+PHONGO_DECLARE_CLASS_WITH_HELPERS(WRITECONCERNERROR, writeconcernerror);
+PHONGO_DECLARE_CLASS_WITH_HELPERS(WRITEERROR, writeerror);
+PHONGO_DECLARE_CLASS_WITH_HELPERS(WRITERESULT, writeresult);
+PHONGO_DECLARE_CLASS_WITH_HELPERS(BINARY, binary);
+PHONGO_DECLARE_CLASS_WITH_HELPERS(DOCUMENT, document);
+PHONGO_DECLARE_CLASS_WITH_HELPERS(ITERATOR, iterator);
+PHONGO_DECLARE_CLASS_WITH_HELPERS(DBPOINTER, dbpointer);
+PHONGO_DECLARE_CLASS_WITH_HELPERS(DECIMAL128, decimal128);
+PHONGO_DECLARE_CLASS_WITH_HELPERS(INT64, int64);
+PHONGO_DECLARE_CLASS_WITH_HELPERS(JAVASCRIPT, javascript);
+PHONGO_DECLARE_CLASS_WITH_HELPERS(MAXKEY, maxkey);
+PHONGO_DECLARE_CLASS_WITH_HELPERS(MINKEY, minkey);
+PHONGO_DECLARE_CLASS_WITH_HELPERS(OBJECTID, objectid);
+PHONGO_DECLARE_CLASS_WITH_HELPERS(PACKEDARRAY, packedarray);
+PHONGO_DECLARE_CLASS_WITH_HELPERS(REGEX, regex);
+PHONGO_DECLARE_CLASS_WITH_HELPERS(SYMBOL, symbol);
+PHONGO_DECLARE_CLASS_WITH_HELPERS(TIMESTAMP, timestamp);
+PHONGO_DECLARE_CLASS_WITH_HELPERS(UNDEFINED, undefined);
+PHONGO_DECLARE_CLASS_WITH_HELPERS(UTCDATETIME, utcdatetime);
+PHONGO_DECLARE_CLASS_WITH_HELPERS(COMMANDFAILEDEVENT, commandfailedevent);
+PHONGO_DECLARE_CLASS_WITH_HELPERS(COMMANDSTARTEDEVENT, commandstartedevent);
+PHONGO_DECLARE_CLASS_WITH_HELPERS(COMMANDSUCCEEDEDEVENT, commandsucceededevent);
+PHONGO_DECLARE_CLASS_WITH_HELPERS(SERVERCHANGEDEVENT, serverchangedevent);
+PHONGO_DECLARE_CLASS_WITH_HELPERS(SERVERCLOSEDEVENT, serverclosedevent);
+PHONGO_DECLARE_CLASS_WITH_HELPERS(SERVERHEARTBEATFAILEDEVENT, serverheartbeatfailedevent);
+PHONGO_DECLARE_CLASS_WITH_HELPERS(SERVERHEARTBEATSTARTEDEVENT, serverheartbeatstartedevent);
+PHONGO_DECLARE_CLASS_WITH_HELPERS(SERVERHEARTBEATSUCCEEDEDEVENT, serverheartbeatsucceededevent);
+PHONGO_DECLARE_CLASS_WITH_HELPERS(SERVEROPENINGEVENT, serveropeningevent);
+PHONGO_DECLARE_CLASS_WITH_HELPERS(TOPOLOGYCHANGEDEVENT, topologychangedevent);
+PHONGO_DECLARE_CLASS_WITH_HELPERS(TOPOLOGYCLOSEDEVENT, topologyclosedevent);
+PHONGO_DECLARE_CLASS_WITH_HELPERS(TOPOLOGYOPENINGEVENT, topologyopeningevent);
 
-Z_OBJ_P_FETCH_DECL(CLIENTENCRYPTION, clientencryption)
-Z_OBJ_P_FETCH_DECL(COMMAND, command)
-Z_OBJ_P_FETCH_DECL(CURSOR, cursor)
-Z_OBJ_P_FETCH_DECL(MANAGER, manager)
-Z_OBJ_P_FETCH_DECL(QUERY, query)
-Z_OBJ_P_FETCH_DECL(READCONCERN, readconcern)
-Z_OBJ_P_FETCH_DECL(READPREFERENCE, readpreference)
-Z_OBJ_P_FETCH_DECL(SERVER, server)
-Z_OBJ_P_FETCH_DECL(SERVERAPI, serverapi)
-Z_OBJ_P_FETCH_DECL(SERVERDESCRIPTION, serverdescription)
-Z_OBJ_P_FETCH_DECL(SESSION, session)
-Z_OBJ_P_FETCH_DECL(TOPOLOGYDESCRIPTION, topologydescription)
-Z_OBJ_P_FETCH_DECL(BULKWRITE, bulkwrite)
-Z_OBJ_P_FETCH_DECL(BULKWRITECOMMAND, bulkwritecommand)
-Z_OBJ_P_FETCH_DECL(BULKWRITECOMMANDRESULT, bulkwritecommandresult)
-Z_OBJ_P_FETCH_DECL(WRITECONCERN, writeconcern)
-Z_OBJ_P_FETCH_DECL(WRITECONCERNERROR, writeconcernerror)
-Z_OBJ_P_FETCH_DECL(WRITEERROR, writeerror)
-Z_OBJ_P_FETCH_DECL(WRITERESULT, writeresult)
-Z_OBJ_P_FETCH_DECL(BINARY, binary)
-Z_OBJ_P_FETCH_DECL(DOCUMENT, document)
-Z_OBJ_P_FETCH_DECL(ITERATOR, iterator)
-Z_OBJ_P_FETCH_DECL(DBPOINTER, dbpointer)
-Z_OBJ_P_FETCH_DECL(DECIMAL128, decimal128)
-Z_OBJ_P_FETCH_DECL(INT64, int64)
-Z_OBJ_P_FETCH_DECL(JAVASCRIPT, javascript)
-Z_OBJ_P_FETCH_DECL(MAXKEY, maxkey)
-Z_OBJ_P_FETCH_DECL(MINKEY, minkey)
-Z_OBJ_P_FETCH_DECL(OBJECTID, objectid)
-Z_OBJ_P_FETCH_DECL(PACKEDARRAY, packedarray)
-Z_OBJ_P_FETCH_DECL(REGEX, regex)
-Z_OBJ_P_FETCH_DECL(SYMBOL, symbol)
-Z_OBJ_P_FETCH_DECL(TIMESTAMP, timestamp)
-Z_OBJ_P_FETCH_DECL(UNDEFINED, undefined)
-Z_OBJ_P_FETCH_DECL(UTCDATETIME, utcdatetime)
-Z_OBJ_P_FETCH_DECL(COMMANDFAILEDEVENT, commandfailedevent)
-Z_OBJ_P_FETCH_DECL(COMMANDSTARTEDEVENT, commandstartedevent)
-Z_OBJ_P_FETCH_DECL(COMMANDSUCCEEDEDEVENT, commandsucceededevent)
-Z_OBJ_P_FETCH_DECL(SERVERCHANGEDEVENT, serverchangedevent)
-Z_OBJ_P_FETCH_DECL(SERVERCLOSEDEVENT, serverclosedevent)
-Z_OBJ_P_FETCH_DECL(SERVERHEARTBEATFAILEDEVENT, serverheartbeatfailedevent)
-Z_OBJ_P_FETCH_DECL(SERVERHEARTBEATSTARTEDEVENT, serverheartbeatstartedevent)
-Z_OBJ_P_FETCH_DECL(SERVERHEARTBEATSUCCEEDEDEVENT, serverheartbeatsucceededevent)
-Z_OBJ_P_FETCH_DECL(SERVEROPENINGEVENT, serveropeningevent)
-Z_OBJ_P_FETCH_DECL(TOPOLOGYCHANGEDEVENT, topologychangedevent)
-Z_OBJ_P_FETCH_DECL(TOPOLOGYCLOSEDEVENT, topologyclosedevent)
-Z_OBJ_P_FETCH_DECL(TOPOLOGYOPENINGEVENT, topologyopeningevent)
+PHONGO_DECLARE_CLASS(cursor_interface);
 
-Z_OBJ_DECL(CLIENTENCRYPTION, clientencryption)
-Z_OBJ_DECL(COMMAND, command)
-Z_OBJ_DECL(CURSOR, cursor)
-Z_OBJ_DECL(MANAGER, manager)
-Z_OBJ_DECL(QUERY, query)
-Z_OBJ_DECL(READCONCERN, readconcern)
-Z_OBJ_DECL(READPREFERENCE, readpreference)
-Z_OBJ_DECL(SERVER, server)
-Z_OBJ_DECL(SERVERAPI, serverapi)
-Z_OBJ_DECL(SERVERDESCRIPTION, serverdescription)
-Z_OBJ_DECL(SESSION, session)
-Z_OBJ_DECL(TOPOLOGYDESCRIPTION, topologydescription)
-Z_OBJ_DECL(BULKWRITE, bulkwrite)
-Z_OBJ_DECL(BULKWRITECOMMAND, bulkwritecommand)
-Z_OBJ_DECL(BULKWRITECOMMANDRESULT, bulkwritecommandresult)
-Z_OBJ_DECL(WRITECONCERN, writeconcern)
-Z_OBJ_DECL(WRITECONCERNERROR, writeconcernerror)
-Z_OBJ_DECL(WRITEERROR, writeerror)
-Z_OBJ_DECL(WRITERESULT, writeresult)
-Z_OBJ_DECL(BINARY, binary)
-Z_OBJ_DECL(DOCUMENT, document)
-Z_OBJ_DECL(ITERATOR, iterator)
-Z_OBJ_DECL(DBPOINTER, dbpointer)
-Z_OBJ_DECL(DECIMAL128, decimal128)
-Z_OBJ_DECL(INT64, int64)
-Z_OBJ_DECL(JAVASCRIPT, javascript)
-Z_OBJ_DECL(MAXKEY, maxkey)
-Z_OBJ_DECL(MINKEY, minkey)
-Z_OBJ_DECL(OBJECTID, objectid)
-Z_OBJ_DECL(PACKEDARRAY, packedarray)
-Z_OBJ_DECL(REGEX, regex)
-Z_OBJ_DECL(SYMBOL, symbol)
-Z_OBJ_DECL(TIMESTAMP, timestamp)
-Z_OBJ_DECL(UNDEFINED, undefined)
-Z_OBJ_DECL(UTCDATETIME, utcdatetime)
-Z_OBJ_DECL(COMMANDFAILEDEVENT, commandfailedevent)
-Z_OBJ_DECL(COMMANDSTARTEDEVENT, commandstartedevent)
-Z_OBJ_DECL(COMMANDSUCCEEDEDEVENT, commandsucceededevent)
-Z_OBJ_DECL(SERVERCHANGEDEVENT, serverchangedevent)
-Z_OBJ_DECL(SERVERCLOSEDEVENT, serverclosedevent)
-Z_OBJ_DECL(SERVERHEARTBEATFAILEDEVENT, serverheartbeatfailedevent)
-Z_OBJ_DECL(SERVERHEARTBEATSTARTEDEVENT, serverheartbeatstartedevent)
-Z_OBJ_DECL(SERVERHEARTBEATSUCCEEDEDEVENT, serverheartbeatsucceededevent)
-Z_OBJ_DECL(SERVEROPENINGEVENT, serveropeningevent)
-Z_OBJ_DECL(TOPOLOGYCHANGEDEVENT, topologychangedevent)
-Z_OBJ_DECL(TOPOLOGYCLOSEDEVENT, topologyclosedevent)
-Z_OBJ_DECL(TOPOLOGYOPENINGEVENT, topologyopeningevent)
+PHONGO_DECLARE_CLASS(exception);
+PHONGO_DECLARE_CLASS(logicexception);
+PHONGO_DECLARE_CLASS(runtimeexception);
+PHONGO_DECLARE_CLASS(serverexception);
+PHONGO_DECLARE_CLASS(commandexception);
+PHONGO_DECLARE_CLASS(unexpectedvalueexception);
+PHONGO_DECLARE_CLASS(invalidargumentexception);
+PHONGO_DECLARE_CLASS(connectionexception);
+PHONGO_DECLARE_CLASS(authenticationexception);
+PHONGO_DECLARE_CLASS(encryptionexception);
+PHONGO_DECLARE_CLASS(executiontimeoutexception);
+PHONGO_DECLARE_CLASS(connectiontimeoutexception);
+PHONGO_DECLARE_CLASS(bulkwriteexception);
+PHONGO_DECLARE_CLASS(bulkwritecommandexception);
 
-CLASS_ENTRY_DECL(clientencryption);
-CLASS_ENTRY_DECL(command);
-CLASS_ENTRY_DECL(cursor);
-CLASS_ENTRY_DECL(manager);
-CLASS_ENTRY_DECL(query);
-CLASS_ENTRY_DECL(readconcern);
-CLASS_ENTRY_DECL(readpreference);
-CLASS_ENTRY_DECL(server);
-CLASS_ENTRY_DECL(serverapi);
-CLASS_ENTRY_DECL(serverdescription);
-CLASS_ENTRY_DECL(session);
-CLASS_ENTRY_DECL(topologydescription);
-CLASS_ENTRY_DECL(bulkwrite);
-CLASS_ENTRY_DECL(bulkwritecommand);
-CLASS_ENTRY_DECL(bulkwritecommandresult);
-CLASS_ENTRY_DECL(writeconcern);
-CLASS_ENTRY_DECL(writeconcernerror);
-CLASS_ENTRY_DECL(writeerror);
-CLASS_ENTRY_DECL(writeresult);
+PHONGO_DECLARE_CLASS(type);
+PHONGO_DECLARE_CLASS(persistable);
+PHONGO_DECLARE_CLASS(unserializable);
+PHONGO_DECLARE_CLASS(serializable);
+PHONGO_DECLARE_CLASS(vectortype);
 
-CLASS_ENTRY_DECL(cursor_interface);
+PHONGO_DECLARE_CLASS(binary_interface);
+PHONGO_DECLARE_CLASS(decimal128_interface);
+PHONGO_DECLARE_CLASS(javascript_interface);
+PHONGO_DECLARE_CLASS(maxkey_interface);
+PHONGO_DECLARE_CLASS(minkey_interface);
+PHONGO_DECLARE_CLASS(objectid_interface);
+PHONGO_DECLARE_CLASS(regex_interface);
+PHONGO_DECLARE_CLASS(timestamp_interface);
+PHONGO_DECLARE_CLASS(utcdatetime_interface);
 
-CLASS_ENTRY_DECL(exception);
-CLASS_ENTRY_DECL(logicexception);
-CLASS_ENTRY_DECL(runtimeexception);
-CLASS_ENTRY_DECL(serverexception);
-CLASS_ENTRY_DECL(commandexception);
-CLASS_ENTRY_DECL(unexpectedvalueexception);
-CLASS_ENTRY_DECL(invalidargumentexception);
-CLASS_ENTRY_DECL(connectionexception);
-CLASS_ENTRY_DECL(authenticationexception);
-CLASS_ENTRY_DECL(encryptionexception);
-CLASS_ENTRY_DECL(executiontimeoutexception);
-CLASS_ENTRY_DECL(connectiontimeoutexception);
-CLASS_ENTRY_DECL(bulkwriteexception);
-CLASS_ENTRY_DECL(bulkwritecommandexception);
+PHONGO_DECLARE_CLASS(subscriber);
+PHONGO_DECLARE_CLASS(commandsubscriber);
+PHONGO_DECLARE_CLASS(logsubscriber);
+PHONGO_DECLARE_CLASS(sdamsubscriber);
 
-CLASS_ENTRY_DECL(type);
-CLASS_ENTRY_DECL(persistable);
-CLASS_ENTRY_DECL(unserializable);
-CLASS_ENTRY_DECL(serializable);
-CLASS_ENTRY_DECL(binary);
-CLASS_ENTRY_DECL(document);
-CLASS_ENTRY_DECL(iterator);
-CLASS_ENTRY_DECL(dbpointer);
-CLASS_ENTRY_DECL(decimal128);
-CLASS_ENTRY_DECL(int64);
-CLASS_ENTRY_DECL(javascript);
-CLASS_ENTRY_DECL(maxkey);
-CLASS_ENTRY_DECL(minkey);
-CLASS_ENTRY_DECL(objectid);
-CLASS_ENTRY_DECL(packedarray);
-CLASS_ENTRY_DECL(regex);
-CLASS_ENTRY_DECL(symbol);
-CLASS_ENTRY_DECL(timestamp);
-CLASS_ENTRY_DECL(undefined);
-CLASS_ENTRY_DECL(utcdatetime);
-CLASS_ENTRY_DECL(vectortype);
-
-CLASS_ENTRY_DECL(binary_interface);
-CLASS_ENTRY_DECL(decimal128_interface);
-CLASS_ENTRY_DECL(javascript_interface);
-CLASS_ENTRY_DECL(maxkey_interface);
-CLASS_ENTRY_DECL(minkey_interface);
-CLASS_ENTRY_DECL(objectid_interface);
-CLASS_ENTRY_DECL(regex_interface);
-CLASS_ENTRY_DECL(timestamp_interface);
-CLASS_ENTRY_DECL(utcdatetime_interface);
-
-CLASS_ENTRY_DECL(commandfailedevent);
-CLASS_ENTRY_DECL(commandstartedevent);
-CLASS_ENTRY_DECL(commandsubscriber);
-CLASS_ENTRY_DECL(commandsucceededevent);
-CLASS_ENTRY_DECL(logsubscriber);
-CLASS_ENTRY_DECL(sdamsubscriber);
-CLASS_ENTRY_DECL(subscriber);
-CLASS_ENTRY_DECL(serverchangedevent);
-CLASS_ENTRY_DECL(serverclosedevent);
-CLASS_ENTRY_DECL(serverheartbeatfailedevent);
-CLASS_ENTRY_DECL(serverheartbeatstartedevent);
-CLASS_ENTRY_DECL(serverheartbeatsucceededevent);
-CLASS_ENTRY_DECL(serveropeningevent);
-CLASS_ENTRY_DECL(topologychangedevent);
-CLASS_ENTRY_DECL(topologyclosedevent);
-CLASS_ENTRY_DECL(topologyopeningevent);
-
-CE_INIT_FUNC_DECL(binary);
-CE_INIT_FUNC_DECL(packedarray);
-CE_INIT_FUNC_DECL(document);
-CE_INIT_FUNC_DECL(iterator);
-CE_INIT_FUNC_DECL(dbpointer);
-CE_INIT_FUNC_DECL(decimal128);
-CE_INIT_FUNC_DECL(int64);
-CE_INIT_FUNC_DECL(javascript);
-CE_INIT_FUNC_DECL(maxkey);
-CE_INIT_FUNC_DECL(minkey);
-CE_INIT_FUNC_DECL(objectid);
-CE_INIT_FUNC_DECL(persistable);
-CE_INIT_FUNC_DECL(regex);
-CE_INIT_FUNC_DECL(serializable);
-CE_INIT_FUNC_DECL(symbol);
-CE_INIT_FUNC_DECL(timestamp);
-CE_INIT_FUNC_DECL(type);
-CE_INIT_FUNC_DECL(undefined);
-CE_INIT_FUNC_DECL(unserializable);
-CE_INIT_FUNC_DECL(utcdatetime);
-CE_INIT_FUNC_DECL(vectortype);
-
-CE_INIT_FUNC_DECL(binary_interface);
-CE_INIT_FUNC_DECL(decimal128_interface);
-CE_INIT_FUNC_DECL(javascript_interface);
-CE_INIT_FUNC_DECL(maxkey_interface);
-CE_INIT_FUNC_DECL(minkey_interface);
-CE_INIT_FUNC_DECL(objectid_interface);
-CE_INIT_FUNC_DECL(regex_interface);
-CE_INIT_FUNC_DECL(timestamp_interface);
-CE_INIT_FUNC_DECL(utcdatetime_interface);
-
-CE_INIT_FUNC_DECL(bulkwrite);
-CE_INIT_FUNC_DECL(bulkwritecommand);
-CE_INIT_FUNC_DECL(bulkwritecommandresult);
-CE_INIT_FUNC_DECL(clientencryption);
-CE_INIT_FUNC_DECL(command);
-CE_INIT_FUNC_DECL(cursor);
-CE_INIT_FUNC_DECL(manager);
-CE_INIT_FUNC_DECL(query);
-CE_INIT_FUNC_DECL(readconcern);
-CE_INIT_FUNC_DECL(readpreference);
-CE_INIT_FUNC_DECL(server);
-CE_INIT_FUNC_DECL(serverapi);
-CE_INIT_FUNC_DECL(serverdescription);
-CE_INIT_FUNC_DECL(session);
-CE_INIT_FUNC_DECL(topologydescription);
-CE_INIT_FUNC_DECL(writeconcern);
-CE_INIT_FUNC_DECL(writeconcernerror);
-CE_INIT_FUNC_DECL(writeerror);
-CE_INIT_FUNC_DECL(writeresult);
-
-CE_INIT_FUNC_DECL(cursor_interface);
-
-CE_INIT_FUNC_DECL(authenticationexception);
-CE_INIT_FUNC_DECL(bulkwriteexception);
-CE_INIT_FUNC_DECL(bulkwritecommandexception);
-CE_INIT_FUNC_DECL(commandexception);
-CE_INIT_FUNC_DECL(connectionexception);
-CE_INIT_FUNC_DECL(connectiontimeoutexception);
-CE_INIT_FUNC_DECL(encryptionexception);
-CE_INIT_FUNC_DECL(exception);
-CE_INIT_FUNC_DECL(executiontimeoutexception);
-CE_INIT_FUNC_DECL(invalidargumentexception);
-CE_INIT_FUNC_DECL(logicexception);
-CE_INIT_FUNC_DECL(runtimeexception);
-CE_INIT_FUNC_DECL(serverexception);
-CE_INIT_FUNC_DECL(sslconnectionexception);
-CE_INIT_FUNC_DECL(unexpectedvalueexception);
-
-CE_INIT_FUNC_DECL(commandfailedevent);
-CE_INIT_FUNC_DECL(commandstartedevent);
-CE_INIT_FUNC_DECL(commandsubscriber);
-CE_INIT_FUNC_DECL(commandsucceededevent);
-CE_INIT_FUNC_DECL(logsubscriber);
-CE_INIT_FUNC_DECL(sdamsubscriber);
-CE_INIT_FUNC_DECL(subscriber);
-CE_INIT_FUNC_DECL(serverchangedevent);
-CE_INIT_FUNC_DECL(serverclosedevent);
-CE_INIT_FUNC_DECL(serverheartbeatfailedevent);
-CE_INIT_FUNC_DECL(serverheartbeatstartedevent);
-CE_INIT_FUNC_DECL(serverheartbeatsucceededevent);
-CE_INIT_FUNC_DECL(serveropeningevent);
-CE_INIT_FUNC_DECL(topologychangedevent);
-CE_INIT_FUNC_DECL(topologyclosedevent);
-CE_INIT_FUNC_DECL(topologyopeningevent);
+#undef CLASS_FETCH_OBJ_DECL
+#undef CLASS_ENTRY_DECL
+#undef CE_INIT_FUNC_DECL
+#undef Z_OBJ_P_FETCH_DECL
+#undef Z_OBJ_DECL
+#undef PHONGO_DECLARE_CLASS
+#undef PHONGO_DECLARE_CLASS_WITH_HELPERS
 
 #endif /* PHONGO_CLASSES_H */
