@@ -19,197 +19,62 @@
 
 #include "phongo_structs.h"
 
+#define CLASS_FETCH_OBJ_DECL(name)                                                                 \
+	static zend_always_inline phongo_##name##_t* php_##name##_fetch_object(const zend_object* obj) \
+	{                                                                                              \
+		return (phongo_##name##_t*) ((char*) obj - XtOffsetOf(phongo_##name##_t, std));            \
+	}
+
 /* Export zend_class_entry dependencies, which are initialized in MINIT */
 extern zend_class_entry* phongo_json_serializable_ce;
 
-static inline phongo_bulkwrite_t* php_bulkwrite_fetch_object(zend_object* obj)
-{
-	return (phongo_bulkwrite_t*) ((char*) obj - XtOffsetOf(phongo_bulkwrite_t, std));
-}
-static inline phongo_bulkwritecommand_t* php_bulkwritecommand_fetch_object(zend_object* obj)
-{
-	return (phongo_bulkwritecommand_t*) ((char*) obj - XtOffsetOf(phongo_bulkwritecommand_t, std));
-}
-static inline phongo_bulkwritecommandresult_t* php_bulkwritecommandresult_fetch_object(zend_object* obj)
-{
-	return (phongo_bulkwritecommandresult_t*) ((char*) obj - XtOffsetOf(phongo_bulkwritecommandresult_t, std));
-}
-static inline phongo_clientencryption_t* php_clientencryption_fetch_object(zend_object* obj)
-{
-	return (phongo_clientencryption_t*) ((char*) obj - XtOffsetOf(phongo_clientencryption_t, std));
-}
-static inline phongo_command_t* php_command_fetch_object(zend_object* obj)
-{
-	return (phongo_command_t*) ((char*) obj - XtOffsetOf(phongo_command_t, std));
-}
-static inline phongo_cursor_t* php_cursor_fetch_object(zend_object* obj)
-{
-	return (phongo_cursor_t*) ((char*) obj - XtOffsetOf(phongo_cursor_t, std));
-}
-static inline phongo_manager_t* php_manager_fetch_object(zend_object* obj)
-{
-	return (phongo_manager_t*) ((char*) obj - XtOffsetOf(phongo_manager_t, std));
-}
-static inline phongo_query_t* php_query_fetch_object(zend_object* obj)
-{
-	return (phongo_query_t*) ((char*) obj - XtOffsetOf(phongo_query_t, std));
-}
-static inline phongo_readconcern_t* php_readconcern_fetch_object(zend_object* obj)
-{
-	return (phongo_readconcern_t*) ((char*) obj - XtOffsetOf(phongo_readconcern_t, std));
-}
-static inline phongo_readpreference_t* php_readpreference_fetch_object(zend_object* obj)
-{
-	return (phongo_readpreference_t*) ((char*) obj - XtOffsetOf(phongo_readpreference_t, std));
-}
-static inline phongo_server_t* php_server_fetch_object(zend_object* obj)
-{
-	return (phongo_server_t*) ((char*) obj - XtOffsetOf(phongo_server_t, std));
-}
-static inline phongo_serverdescription_t* php_serverdescription_fetch_object(zend_object* obj)
-{
-	return (phongo_serverdescription_t*) ((char*) obj - XtOffsetOf(phongo_serverdescription_t, std));
-}
-static inline phongo_topologydescription_t* php_topologydescription_fetch_object(zend_object* obj)
-{
-	return (phongo_topologydescription_t*) ((char*) obj - XtOffsetOf(phongo_topologydescription_t, std));
-}
-static inline phongo_serverapi_t* php_serverapi_fetch_object(zend_object* obj)
-{
-	return (phongo_serverapi_t*) ((char*) obj - XtOffsetOf(phongo_serverapi_t, std));
-}
-static inline phongo_session_t* php_session_fetch_object(zend_object* obj)
-{
-	return (phongo_session_t*) ((char*) obj - XtOffsetOf(phongo_session_t, std));
-}
-static inline phongo_writeconcern_t* php_writeconcern_fetch_object(zend_object* obj)
-{
-	return (phongo_writeconcern_t*) ((char*) obj - XtOffsetOf(phongo_writeconcern_t, std));
-}
-static inline phongo_writeconcernerror_t* php_writeconcernerror_fetch_object(zend_object* obj)
-{
-	return (phongo_writeconcernerror_t*) ((char*) obj - XtOffsetOf(phongo_writeconcernerror_t, std));
-}
-static inline phongo_writeerror_t* php_writeerror_fetch_object(zend_object* obj)
-{
-	return (phongo_writeerror_t*) ((char*) obj - XtOffsetOf(phongo_writeerror_t, std));
-}
-static inline phongo_writeresult_t* php_writeresult_fetch_object(zend_object* obj)
-{
-	return (phongo_writeresult_t*) ((char*) obj - XtOffsetOf(phongo_writeresult_t, std));
-}
-static inline phongo_binary_t* php_binary_fetch_object(zend_object* obj)
-{
-	return (phongo_binary_t*) ((char*) obj - XtOffsetOf(phongo_binary_t, std));
-}
-static inline phongo_document_t* php_document_fetch_object(zend_object* obj)
-{
-	return (phongo_document_t*) ((char*) obj - XtOffsetOf(phongo_document_t, std));
-}
-static inline phongo_iterator_t* php_iterator_fetch_object(zend_object* obj)
-{
-	return (phongo_iterator_t*) ((char*) obj - XtOffsetOf(phongo_iterator_t, std));
-}
-static inline phongo_dbpointer_t* php_dbpointer_fetch_object(zend_object* obj)
-{
-	return (phongo_dbpointer_t*) ((char*) obj - XtOffsetOf(phongo_dbpointer_t, std));
-}
-static inline phongo_decimal128_t* php_decimal128_fetch_object(zend_object* obj)
-{
-	return (phongo_decimal128_t*) ((char*) obj - XtOffsetOf(phongo_decimal128_t, std));
-}
-static inline phongo_int64_t* php_int64_fetch_object(zend_object* obj)
-{
-	return (phongo_int64_t*) ((char*) obj - XtOffsetOf(phongo_int64_t, std));
-}
-static inline phongo_javascript_t* php_javascript_fetch_object(zend_object* obj)
-{
-	return (phongo_javascript_t*) ((char*) obj - XtOffsetOf(phongo_javascript_t, std));
-}
-static inline phongo_maxkey_t* php_maxkey_fetch_object(zend_object* obj)
-{
-	return (phongo_maxkey_t*) ((char*) obj - XtOffsetOf(phongo_maxkey_t, std));
-}
-static inline phongo_minkey_t* php_minkey_fetch_object(zend_object* obj)
-{
-	return (phongo_minkey_t*) ((char*) obj - XtOffsetOf(phongo_minkey_t, std));
-}
-static inline phongo_objectid_t* php_objectid_fetch_object(zend_object* obj)
-{
-	return (phongo_objectid_t*) ((char*) obj - XtOffsetOf(phongo_objectid_t, std));
-}
-static inline phongo_packedarray_t* php_packedarray_fetch_object(zend_object* obj)
-{
-	return (phongo_packedarray_t*) ((char*) obj - XtOffsetOf(phongo_packedarray_t, std));
-}
-static inline phongo_regex_t* php_regex_fetch_object(zend_object* obj)
-{
-	return (phongo_regex_t*) ((char*) obj - XtOffsetOf(phongo_regex_t, std));
-}
-static inline phongo_symbol_t* php_symbol_fetch_object(zend_object* obj)
-{
-	return (phongo_symbol_t*) ((char*) obj - XtOffsetOf(phongo_symbol_t, std));
-}
-static inline phongo_timestamp_t* php_timestamp_fetch_object(zend_object* obj)
-{
-	return (phongo_timestamp_t*) ((char*) obj - XtOffsetOf(phongo_timestamp_t, std));
-}
-static inline phongo_undefined_t* php_undefined_fetch_object(zend_object* obj)
-{
-	return (phongo_undefined_t*) ((char*) obj - XtOffsetOf(phongo_undefined_t, std));
-}
-static inline phongo_utcdatetime_t* php_utcdatetime_fetch_object(zend_object* obj)
-{
-	return (phongo_utcdatetime_t*) ((char*) obj - XtOffsetOf(phongo_utcdatetime_t, std));
-}
-static inline phongo_commandfailedevent_t* php_commandfailedevent_fetch_object(zend_object* obj)
-{
-	return (phongo_commandfailedevent_t*) ((char*) obj - XtOffsetOf(phongo_commandfailedevent_t, std));
-}
-static inline phongo_commandstartedevent_t* php_commandstartedevent_fetch_object(zend_object* obj)
-{
-	return (phongo_commandstartedevent_t*) ((char*) obj - XtOffsetOf(phongo_commandstartedevent_t, std));
-}
-static inline phongo_commandsucceededevent_t* php_commandsucceededevent_fetch_object(zend_object* obj)
-{
-	return (phongo_commandsucceededevent_t*) ((char*) obj - XtOffsetOf(phongo_commandsucceededevent_t, std));
-}
-static inline phongo_serverchangedevent_t* php_serverchangedevent_fetch_object(zend_object* obj)
-{
-	return (phongo_serverchangedevent_t*) ((char*) obj - XtOffsetOf(phongo_serverchangedevent_t, std));
-}
-static inline phongo_serverclosedevent_t* php_serverclosedevent_fetch_object(zend_object* obj)
-{
-	return (phongo_serverclosedevent_t*) ((char*) obj - XtOffsetOf(phongo_serverclosedevent_t, std));
-}
-static inline phongo_serverheartbeatfailedevent_t* php_serverheartbeatfailedevent_fetch_object(zend_object* obj)
-{
-	return (phongo_serverheartbeatfailedevent_t*) ((char*) obj - XtOffsetOf(phongo_serverheartbeatfailedevent_t, std));
-}
-static inline phongo_serverheartbeatstartedevent_t* php_serverheartbeatstartedevent_fetch_object(zend_object* obj)
-{
-	return (phongo_serverheartbeatstartedevent_t*) ((char*) obj - XtOffsetOf(phongo_serverheartbeatstartedevent_t, std));
-}
-static inline phongo_serverheartbeatsucceededevent_t* php_serverheartbeatsucceededevent_fetch_object(zend_object* obj)
-{
-	return (phongo_serverheartbeatsucceededevent_t*) ((char*) obj - XtOffsetOf(phongo_serverheartbeatsucceededevent_t, std));
-}
-static inline phongo_serveropeningevent_t* php_serveropeningevent_fetch_object(zend_object* obj)
-{
-	return (phongo_serveropeningevent_t*) ((char*) obj - XtOffsetOf(phongo_serveropeningevent_t, std));
-}
-static inline phongo_topologychangedevent_t* php_topologychangedevent_fetch_object(zend_object* obj)
-{
-	return (phongo_topologychangedevent_t*) ((char*) obj - XtOffsetOf(phongo_topologychangedevent_t, std));
-}
-static inline phongo_topologyclosedevent_t* php_topologyclosedevent_fetch_object(zend_object* obj)
-{
-	return (phongo_topologyclosedevent_t*) ((char*) obj - XtOffsetOf(phongo_topologyclosedevent_t, std));
-}
-static inline phongo_topologyopeningevent_t* php_topologyopeningevent_fetch_object(zend_object* obj)
-{
-	return (phongo_topologyopeningevent_t*) ((char*) obj - XtOffsetOf(phongo_topologyopeningevent_t, std));
-}
+CLASS_FETCH_OBJ_DECL(bulkwrite)
+CLASS_FETCH_OBJ_DECL(bulkwritecommand)
+CLASS_FETCH_OBJ_DECL(bulkwritecommandresult)
+CLASS_FETCH_OBJ_DECL(clientencryption)
+CLASS_FETCH_OBJ_DECL(command)
+CLASS_FETCH_OBJ_DECL(cursor)
+CLASS_FETCH_OBJ_DECL(manager)
+CLASS_FETCH_OBJ_DECL(query)
+CLASS_FETCH_OBJ_DECL(readconcern)
+CLASS_FETCH_OBJ_DECL(readpreference)
+CLASS_FETCH_OBJ_DECL(server)
+CLASS_FETCH_OBJ_DECL(serverdescription)
+CLASS_FETCH_OBJ_DECL(topologydescription)
+CLASS_FETCH_OBJ_DECL(serverapi)
+CLASS_FETCH_OBJ_DECL(session)
+CLASS_FETCH_OBJ_DECL(writeconcern)
+CLASS_FETCH_OBJ_DECL(writeconcernerror)
+CLASS_FETCH_OBJ_DECL(writeerror)
+CLASS_FETCH_OBJ_DECL(writeresult)
+CLASS_FETCH_OBJ_DECL(binary)
+CLASS_FETCH_OBJ_DECL(document)
+CLASS_FETCH_OBJ_DECL(iterator)
+CLASS_FETCH_OBJ_DECL(dbpointer)
+CLASS_FETCH_OBJ_DECL(decimal128)
+CLASS_FETCH_OBJ_DECL(int64)
+CLASS_FETCH_OBJ_DECL(javascript)
+CLASS_FETCH_OBJ_DECL(maxkey)
+CLASS_FETCH_OBJ_DECL(minkey)
+CLASS_FETCH_OBJ_DECL(objectid)
+CLASS_FETCH_OBJ_DECL(packedarray)
+CLASS_FETCH_OBJ_DECL(regex)
+CLASS_FETCH_OBJ_DECL(symbol)
+CLASS_FETCH_OBJ_DECL(timestamp)
+CLASS_FETCH_OBJ_DECL(undefined)
+CLASS_FETCH_OBJ_DECL(utcdatetime)
+CLASS_FETCH_OBJ_DECL(commandfailedevent)
+CLASS_FETCH_OBJ_DECL(commandstartedevent)
+CLASS_FETCH_OBJ_DECL(commandsucceededevent)
+CLASS_FETCH_OBJ_DECL(serverchangedevent)
+CLASS_FETCH_OBJ_DECL(serverclosedevent)
+CLASS_FETCH_OBJ_DECL(serverheartbeatfailedevent)
+CLASS_FETCH_OBJ_DECL(serverheartbeatstartedevent)
+CLASS_FETCH_OBJ_DECL(serverheartbeatsucceededevent)
+CLASS_FETCH_OBJ_DECL(serveropeningevent)
+CLASS_FETCH_OBJ_DECL(topologychangedevent)
+CLASS_FETCH_OBJ_DECL(topologyclosedevent)
+CLASS_FETCH_OBJ_DECL(topologyopeningevent)
 
 #define Z_CLIENTENCRYPTION_OBJ_P(zv) (php_clientencryption_fetch_object(Z_OBJ_P(zv)))
 #define Z_COMMAND_OBJ_P(zv) (php_command_fetch_object(Z_OBJ_P(zv)))
