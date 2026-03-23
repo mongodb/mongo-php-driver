@@ -25,6 +25,8 @@
 		return (phongo_##name##_t*) ((char*) obj - XtOffsetOf(phongo_##name##_t, std));            \
 	}
 
+#define CLASS_ENTRY_DECL(name) extern zend_class_entry* phongo_##name##_ce
+
 /* Export zend_class_entry dependencies, which are initialized in MINIT */
 extern zend_class_entry* phongo_json_serializable_ce;
 
@@ -172,91 +174,91 @@ CLASS_FETCH_OBJ_DECL(topologyopeningevent)
 #define Z_OBJ_TOPOLOGYCLOSEDEVENT(zo) (php_topologyclosedevent_fetch_object(zo))
 #define Z_OBJ_TOPOLOGYOPENINGEVENT(zo) (php_topologyopeningevent_fetch_object(zo))
 
-extern zend_class_entry* phongo_clientencryption_ce;
-extern zend_class_entry* phongo_command_ce;
-extern zend_class_entry* phongo_cursor_ce;
-extern zend_class_entry* phongo_manager_ce;
-extern zend_class_entry* phongo_query_ce;
-extern zend_class_entry* phongo_readconcern_ce;
-extern zend_class_entry* phongo_readpreference_ce;
-extern zend_class_entry* phongo_server_ce;
-extern zend_class_entry* phongo_serverapi_ce;
-extern zend_class_entry* phongo_serverdescription_ce;
-extern zend_class_entry* phongo_session_ce;
-extern zend_class_entry* phongo_topologydescription_ce;
-extern zend_class_entry* phongo_bulkwrite_ce;
-extern zend_class_entry* phongo_bulkwritecommand_ce;
-extern zend_class_entry* phongo_bulkwritecommandresult_ce;
-extern zend_class_entry* phongo_writeconcern_ce;
-extern zend_class_entry* phongo_writeconcernerror_ce;
-extern zend_class_entry* phongo_writeerror_ce;
-extern zend_class_entry* phongo_writeresult_ce;
+CLASS_ENTRY_DECL(clientencryption);
+CLASS_ENTRY_DECL(command);
+CLASS_ENTRY_DECL(cursor);
+CLASS_ENTRY_DECL(manager);
+CLASS_ENTRY_DECL(query);
+CLASS_ENTRY_DECL(readconcern);
+CLASS_ENTRY_DECL(readpreference);
+CLASS_ENTRY_DECL(server);
+CLASS_ENTRY_DECL(serverapi);
+CLASS_ENTRY_DECL(serverdescription);
+CLASS_ENTRY_DECL(session);
+CLASS_ENTRY_DECL(topologydescription);
+CLASS_ENTRY_DECL(bulkwrite);
+CLASS_ENTRY_DECL(bulkwritecommand);
+CLASS_ENTRY_DECL(bulkwritecommandresult);
+CLASS_ENTRY_DECL(writeconcern);
+CLASS_ENTRY_DECL(writeconcernerror);
+CLASS_ENTRY_DECL(writeerror);
+CLASS_ENTRY_DECL(writeresult);
 
-extern zend_class_entry* phongo_cursor_interface_ce;
+CLASS_ENTRY_DECL(cursor_interface);
 
-extern zend_class_entry* phongo_exception_ce;
-extern zend_class_entry* phongo_logicexception_ce;
-extern zend_class_entry* phongo_runtimeexception_ce;
-extern zend_class_entry* phongo_serverexception_ce;
-extern zend_class_entry* phongo_commandexception_ce;
-extern zend_class_entry* phongo_unexpectedvalueexception_ce;
-extern zend_class_entry* phongo_invalidargumentexception_ce;
-extern zend_class_entry* phongo_connectionexception_ce;
-extern zend_class_entry* phongo_authenticationexception_ce;
-extern zend_class_entry* phongo_encryptionexception_ce;
-extern zend_class_entry* phongo_executiontimeoutexception_ce;
-extern zend_class_entry* phongo_connectiontimeoutexception_ce;
-extern zend_class_entry* phongo_bulkwriteexception_ce;
-extern zend_class_entry* phongo_bulkwritecommandexception_ce;
+CLASS_ENTRY_DECL(exception);
+CLASS_ENTRY_DECL(logicexception);
+CLASS_ENTRY_DECL(runtimeexception);
+CLASS_ENTRY_DECL(serverexception);
+CLASS_ENTRY_DECL(commandexception);
+CLASS_ENTRY_DECL(unexpectedvalueexception);
+CLASS_ENTRY_DECL(invalidargumentexception);
+CLASS_ENTRY_DECL(connectionexception);
+CLASS_ENTRY_DECL(authenticationexception);
+CLASS_ENTRY_DECL(encryptionexception);
+CLASS_ENTRY_DECL(executiontimeoutexception);
+CLASS_ENTRY_DECL(connectiontimeoutexception);
+CLASS_ENTRY_DECL(bulkwriteexception);
+CLASS_ENTRY_DECL(bulkwritecommandexception);
 
-extern zend_class_entry* phongo_type_ce;
-extern zend_class_entry* phongo_persistable_ce;
-extern zend_class_entry* phongo_unserializable_ce;
-extern zend_class_entry* phongo_serializable_ce;
-extern zend_class_entry* phongo_binary_ce;
-extern zend_class_entry* phongo_document_ce;
-extern zend_class_entry* phongo_iterator_ce;
-extern zend_class_entry* phongo_dbpointer_ce;
-extern zend_class_entry* phongo_decimal128_ce;
-extern zend_class_entry* phongo_int64_ce;
-extern zend_class_entry* phongo_javascript_ce;
-extern zend_class_entry* phongo_maxkey_ce;
-extern zend_class_entry* phongo_minkey_ce;
-extern zend_class_entry* phongo_objectid_ce;
-extern zend_class_entry* phongo_packedarray_ce;
-extern zend_class_entry* phongo_regex_ce;
-extern zend_class_entry* phongo_symbol_ce;
-extern zend_class_entry* phongo_timestamp_ce;
-extern zend_class_entry* phongo_undefined_ce;
-extern zend_class_entry* phongo_utcdatetime_ce;
-extern zend_class_entry* phongo_vectortype_ce;
+CLASS_ENTRY_DECL(type);
+CLASS_ENTRY_DECL(persistable);
+CLASS_ENTRY_DECL(unserializable);
+CLASS_ENTRY_DECL(serializable);
+CLASS_ENTRY_DECL(binary);
+CLASS_ENTRY_DECL(document);
+CLASS_ENTRY_DECL(iterator);
+CLASS_ENTRY_DECL(dbpointer);
+CLASS_ENTRY_DECL(decimal128);
+CLASS_ENTRY_DECL(int64);
+CLASS_ENTRY_DECL(javascript);
+CLASS_ENTRY_DECL(maxkey);
+CLASS_ENTRY_DECL(minkey);
+CLASS_ENTRY_DECL(objectid);
+CLASS_ENTRY_DECL(packedarray);
+CLASS_ENTRY_DECL(regex);
+CLASS_ENTRY_DECL(symbol);
+CLASS_ENTRY_DECL(timestamp);
+CLASS_ENTRY_DECL(undefined);
+CLASS_ENTRY_DECL(utcdatetime);
+CLASS_ENTRY_DECL(vectortype);
 
-extern zend_class_entry* phongo_binary_interface_ce;
-extern zend_class_entry* phongo_decimal128_interface_ce;
-extern zend_class_entry* phongo_javascript_interface_ce;
-extern zend_class_entry* phongo_maxkey_interface_ce;
-extern zend_class_entry* phongo_minkey_interface_ce;
-extern zend_class_entry* phongo_objectid_interface_ce;
-extern zend_class_entry* phongo_regex_interface_ce;
-extern zend_class_entry* phongo_timestamp_interface_ce;
-extern zend_class_entry* phongo_utcdatetime_interface_ce;
+CLASS_ENTRY_DECL(binary_interface);
+CLASS_ENTRY_DECL(decimal128_interface);
+CLASS_ENTRY_DECL(javascript_interface);
+CLASS_ENTRY_DECL(maxkey_interface);
+CLASS_ENTRY_DECL(minkey_interface);
+CLASS_ENTRY_DECL(objectid_interface);
+CLASS_ENTRY_DECL(regex_interface);
+CLASS_ENTRY_DECL(timestamp_interface);
+CLASS_ENTRY_DECL(utcdatetime_interface);
 
-extern zend_class_entry* phongo_commandfailedevent_ce;
-extern zend_class_entry* phongo_commandstartedevent_ce;
-extern zend_class_entry* phongo_commandsubscriber_ce;
-extern zend_class_entry* phongo_commandsucceededevent_ce;
-extern zend_class_entry* phongo_logsubscriber_ce;
-extern zend_class_entry* phongo_sdamsubscriber_ce;
-extern zend_class_entry* phongo_subscriber_ce;
-extern zend_class_entry* phongo_serverchangedevent_ce;
-extern zend_class_entry* phongo_serverclosedevent_ce;
-extern zend_class_entry* phongo_serverheartbeatfailedevent_ce;
-extern zend_class_entry* phongo_serverheartbeatstartedevent_ce;
-extern zend_class_entry* phongo_serverheartbeatsucceededevent_ce;
-extern zend_class_entry* phongo_serveropeningevent_ce;
-extern zend_class_entry* phongo_topologychangedevent_ce;
-extern zend_class_entry* phongo_topologyclosedevent_ce;
-extern zend_class_entry* phongo_topologyopeningevent_ce;
+CLASS_ENTRY_DECL(commandfailedevent);
+CLASS_ENTRY_DECL(commandstartedevent);
+CLASS_ENTRY_DECL(commandsubscriber);
+CLASS_ENTRY_DECL(commandsucceededevent);
+CLASS_ENTRY_DECL(logsubscriber);
+CLASS_ENTRY_DECL(sdamsubscriber);
+CLASS_ENTRY_DECL(subscriber);
+CLASS_ENTRY_DECL(serverchangedevent);
+CLASS_ENTRY_DECL(serverclosedevent);
+CLASS_ENTRY_DECL(serverheartbeatfailedevent);
+CLASS_ENTRY_DECL(serverheartbeatstartedevent);
+CLASS_ENTRY_DECL(serverheartbeatsucceededevent);
+CLASS_ENTRY_DECL(serveropeningevent);
+CLASS_ENTRY_DECL(topologychangedevent);
+CLASS_ENTRY_DECL(topologyclosedevent);
+CLASS_ENTRY_DECL(topologyopeningevent);
 
 extern void phongo_binary_init_ce(INIT_FUNC_ARGS);
 extern void phongo_packedarray_init_ce(INIT_FUNC_ARGS);
