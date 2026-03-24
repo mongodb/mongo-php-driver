@@ -33,26 +33,26 @@
  * Helpers assume the presence of a phongo_foo_t struct in phongo_structs.h
  */
 
-#define CLASS_FETCH_OBJ_DECL(name)                                                                 \
-	static zend_always_inline phongo_##name##_t* php_##name##_fetch_object(const zend_object* obj) \
-	{                                                                                              \
-		return (phongo_##name##_t*) ((char*) obj - XtOffsetOf(phongo_##name##_t, std));            \
+#define CLASS_FETCH_OBJ_DECL(name)                                                      \
+	static inline phongo_##name##_t* php_##name##_fetch_object(const zend_object* obj)  \
+	{                                                                                   \
+		return (phongo_##name##_t*) ((char*) obj - XtOffsetOf(phongo_##name##_t, std)); \
 	}
 
 #define CLASS_ENTRY_DECL(name) extern zend_class_entry* phongo_##name##_ce
 
 #define CE_INIT_FUNC_DECL(name) extern void phongo_##name##_init_ce(INIT_FUNC_ARGS)
 
-#define Z_OBJ_P_FETCH_DECL(ucname, name)                                            \
-	static zend_always_inline phongo_##name##_t* Z_##ucname##_OBJ_P(const zval* zv) \
-	{                                                                               \
-		return php_##name##_fetch_object(Z_OBJ_P(zv));                              \
+#define Z_OBJ_P_FETCH_DECL(ucname, name)                                \
+	static inline phongo_##name##_t* Z_##ucname##_OBJ_P(const zval* zv) \
+	{                                                                   \
+		return php_##name##_fetch_object(Z_OBJ_P(zv));                  \
 	}
 
-#define Z_OBJ_DECL(ucname, name)                                                       \
-	static zend_always_inline phongo_##name##_t* Z_OBJ_##ucname(const zend_object* zo) \
-	{                                                                                  \
-		return php_##name##_fetch_object(zo);                                          \
+#define Z_OBJ_DECL(ucname, name)                                           \
+	static inline phongo_##name##_t* Z_OBJ_##ucname(const zend_object* zo) \
+	{                                                                      \
+		return php_##name##_fetch_object(zo);                              \
 	}
 
 #define PHONGO_DECLARE_CLASS(name) \
