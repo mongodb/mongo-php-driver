@@ -98,7 +98,6 @@ PHONGO_DECLARE_CLASS_WITH_HELPERS(MAXKEY, maxkey);
 PHONGO_DECLARE_CLASS_WITH_HELPERS(MINKEY, minkey);
 PHONGO_DECLARE_CLASS_WITH_HELPERS(OBJECTID, objectid);
 PHONGO_DECLARE_CLASS_WITH_HELPERS(PACKEDARRAY, packedarray);
-PHONGO_DECLARE_CLASS_WITH_HELPERS(REGEX, regex);
 PHONGO_DECLARE_CLASS_WITH_HELPERS(SYMBOL, symbol);
 PHONGO_DECLARE_CLASS_WITH_HELPERS(TIMESTAMP, timestamp);
 PHONGO_DECLARE_CLASS_WITH_HELPERS(UNDEFINED, undefined);
@@ -115,6 +114,23 @@ PHONGO_DECLARE_CLASS_WITH_HELPERS(SERVEROPENINGEVENT, serveropeningevent);
 PHONGO_DECLARE_CLASS_WITH_HELPERS(TOPOLOGYCHANGEDEVENT, topologychangedevent);
 PHONGO_DECLARE_CLASS_WITH_HELPERS(TOPOLOGYCLOSEDEVENT, topologyclosedevent);
 PHONGO_DECLARE_CLASS_WITH_HELPERS(TOPOLOGYOPENINGEVENT, topologyopeningevent);
+
+/*
+ * On PHP < 8.4 the preprocessor version used for windows builds can cause issues when replacing ##name## macro tokens
+ * if the name is an identifier (e.g. ##REGEX##). To work around this, we declare the class without helpers, then
+ * manually define the Z_REGEX_OBJ_P and Z_OBJ_REGEX helpers.
+ * This can be replaced with a single PHONGO_DECLARE_CLASS_WITH_HELPERS call when dropping support for PHP 8.3
+ */
+PHONGO_DECLARE_CLASS(regex);
+CLASS_FETCH_OBJ_DECL(regex);
+static inline phongo_regex_t* Z_REGEX_OBJ_P(const zval* zv)
+{
+	return php_regex_fetch_object(Z_OBJ_P(zv));
+}
+static inline phongo_regex_t* Z_OBJ_REGEX(const zend_object* zo)
+{
+	return php_regex_fetch_object(zo);
+}
 
 PHONGO_DECLARE_CLASS(cursor_interface);
 
