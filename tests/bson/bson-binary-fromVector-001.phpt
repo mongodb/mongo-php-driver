@@ -13,7 +13,7 @@ var_dump(MongoDB\BSON\Binary::fromVector([1, 0, true, false], MongoDB\BSON\Vecto
 --EXPECTF--
 object(MongoDB\BSON\Binary)#%d (%d) {
   ["data"]=>
-  string(18) "%a"
+  string(%d) "%a"
   ["type"]=>
   int(9)
   ["vector"]=>
@@ -32,7 +32,7 @@ object(MongoDB\BSON\Binary)#%d (%d) {
 }
 object(MongoDB\BSON\Binary)#%d (%d) {
   ["data"]=>
-  string(6) "%a"
+  string(%d) "%a"
   ["type"]=>
   int(9)
   ["vector"]=>
@@ -51,7 +51,7 @@ object(MongoDB\BSON\Binary)#%d (%d) {
 }
 object(MongoDB\BSON\Binary)#%d (%d) {
   ["data"]=>
-  string(3) "%a"
+  string(%d) "%a"
   ["type"]=>
   int(9)
   ["vector"]=>

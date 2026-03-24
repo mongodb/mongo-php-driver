@@ -27,14 +27,14 @@ foreach ($tests as $test) {
 --EXPECTF--
 object(MongoDB\BSON\Binary)#%d (%d) {
   ["data"]=>
-  string(6) "foobar"
+  string(8) "Zm9vYmFy"
   ["type"]=>
   int(0)
 }
 string(70) "O:19:"MongoDB\BSON\Binary":2:{s:4:"data";s:6:"foobar";s:4:"type";i:0;}"
 object(MongoDB\BSON\Binary)#%d (%d) {
   ["data"]=>
-  string(6) "foobar"
+  string(8) "Zm9vYmFy"
   ["type"]=>
   int(0)
 }
@@ -55,49 +55,49 @@ object(MongoDB\BSON\Binary)#%d (%d) {
 
 object(MongoDB\BSON\Binary)#%d (%d) {
   ["data"]=>
-  string(4) "%sfoo"
+  string(8) "AGZvbw=="
   ["type"]=>
   int(0)
 }
 string(68) "O:19:"MongoDB\BSON\Binary":2:{s:4:"data";s:4:"%sfoo";s:4:"type";i:0;}"
 object(MongoDB\BSON\Binary)#%d (%d) {
   ["data"]=>
-  string(4) "%sfoo"
+  string(8) "AGZvbw=="
   ["type"]=>
   int(0)
 }
 
 object(MongoDB\BSON\Binary)#%d (%d) {
   ["data"]=>
-  string(16) "%s"
+  string(24) "Ej5FZ+ibEtOkVkJmVUQAAA=="
   ["type"]=>
   int(4)
 }
 string(81) "O:19:"MongoDB\BSON\Binary":2:{s:4:"data";s:16:"%s";s:4:"type";i:4;}"
 object(MongoDB\BSON\Binary)#%d (%d) {
   ["data"]=>
-  string(16) "%s"
+  string(24) "Ej5FZ+ibEtOkVkJmVUQAAA=="
   ["type"]=>
   int(4)
 }
 
 object(MongoDB\BSON\Binary)#%d (%d) {
   ["data"]=>
-  string(16) "%s"
+  string(24) "OFj2IjCsPJFfMAxmQxLGPw=="
   ["type"]=>
   int(5)
 }
 string(81) "O:19:"MongoDB\BSON\Binary":2:{s:4:"data";s:16:"%s";s:4:"type";i:5;}"
 object(MongoDB\BSON\Binary)#%d (%d) {
   ["data"]=>
-  string(16) "%s"
+  string(24) "OFj2IjCsPJFfMAxmQxLGPw=="
   ["type"]=>
   int(5)
 }
 
 object(MongoDB\BSON\Binary)#%d (%d) {
   ["data"]=>
-  string(6) "%a"
+  string(8) "AwABAgME"
   ["type"]=>
   int(9)
   ["vector"]=>
@@ -117,7 +117,7 @@ object(MongoDB\BSON\Binary)#%d (%d) {
 string(70) "O:19:"MongoDB\BSON\Binary":2:{s:4:"data";s:6:"%a";s:4:"type";i:9;}"
 object(MongoDB\BSON\Binary)#%d (%d) {
   ["data"]=>
-  string(6) "%a"
+  string(8) "AwABAgME"
   ["type"]=>
   int(9)
   ["vector"]=>
