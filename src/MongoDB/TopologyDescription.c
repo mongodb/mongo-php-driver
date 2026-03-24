@@ -36,11 +36,10 @@ PHONGO_DISABLED_CONSTRUCTOR(MongoDB_Driver_TopologyDescription)
 /* Returns an array of ServerDescription objects for all known servers in the topology */
 static PHP_METHOD(MongoDB_Driver_TopologyDescription, getServers)
 {
-	phongo_topologydescription_t* intern;
+	PHONGO_INTERN_FROM_THIS(topologydescription);
+
 	mongoc_server_description_t** sds;
 	size_t                        i, n = 0;
-
-	intern = Z_TOPOLOGYDESCRIPTION_OBJ_P(getThis());
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -60,11 +59,10 @@ static PHP_METHOD(MongoDB_Driver_TopologyDescription, getServers)
 /* Returns whether the topology has a readable server available */
 static PHP_METHOD(MongoDB_Driver_TopologyDescription, hasReadableServer)
 {
-	phongo_topologydescription_t* intern;
-	const mongoc_read_prefs_t*    read_preference   = NULL;
-	zval*                         z_read_preference = NULL;
+	PHONGO_INTERN_FROM_THIS(topologydescription);
 
-	intern = Z_TOPOLOGYDESCRIPTION_OBJ_P(getThis());
+	const mongoc_read_prefs_t* read_preference   = NULL;
+	zval*                      z_read_preference = NULL;
 
 	PHONGO_PARSE_PARAMETERS_START(0, 1)
 	Z_PARAM_OPTIONAL
@@ -81,7 +79,7 @@ static PHP_METHOD(MongoDB_Driver_TopologyDescription, hasReadableServer)
 /* Returns whether the topology has a writable server available */
 static PHP_METHOD(MongoDB_Driver_TopologyDescription, hasWritableServer)
 {
-	phongo_topologydescription_t* intern = Z_TOPOLOGYDESCRIPTION_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(topologydescription);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -91,7 +89,7 @@ static PHP_METHOD(MongoDB_Driver_TopologyDescription, hasWritableServer)
 /* Returns the topology type */
 static PHP_METHOD(MongoDB_Driver_TopologyDescription, getType)
 {
-	phongo_topologydescription_t* intern = Z_TOPOLOGYDESCRIPTION_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(topologydescription);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 

@@ -107,13 +107,12 @@ static HashTable* phongo_regex_get_properties_hash(zend_object* object, bool is_
 /* Constructs a new BSON regular expression type. */
 static PHP_METHOD(MongoDB_BSON_Regex, __construct)
 {
-	phongo_regex_t* intern;
-	char*           pattern;
-	size_t          pattern_len;
-	char*           flags     = NULL;
-	size_t          flags_len = 0;
+	PHONGO_INTERN_FROM_THIS(regex);
 
-	intern = Z_REGEX_OBJ_P(getThis());
+	char*  pattern;
+	size_t pattern_len;
+	char*  flags     = NULL;
+	size_t flags_len = 0;
 
 	PHONGO_PARSE_PARAMETERS_START(1, 2)
 	Z_PARAM_STRING(pattern, pattern_len)
@@ -126,9 +125,7 @@ static PHP_METHOD(MongoDB_BSON_Regex, __construct)
 
 static PHP_METHOD(MongoDB_BSON_Regex, getPattern)
 {
-	phongo_regex_t* intern;
-
-	intern = Z_REGEX_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(regex);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -137,9 +134,7 @@ static PHP_METHOD(MongoDB_BSON_Regex, getPattern)
 
 static PHP_METHOD(MongoDB_BSON_Regex, getFlags)
 {
-	phongo_regex_t* intern;
-
-	intern = Z_REGEX_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(regex);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -167,11 +162,10 @@ static PHP_METHOD(MongoDB_BSON_Regex, __set_state)
 /* Returns a string in the form: /pattern/flags */
 static PHP_METHOD(MongoDB_BSON_Regex, __toString)
 {
-	phongo_regex_t* intern;
-	char*           regex;
-	int             regex_len;
+	PHONGO_INTERN_FROM_THIS(regex);
 
-	intern = Z_REGEX_OBJ_P(getThis());
+	char* regex;
+	int   regex_len;
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -182,11 +176,9 @@ static PHP_METHOD(MongoDB_BSON_Regex, __toString)
 
 static PHP_METHOD(MongoDB_BSON_Regex, jsonSerialize)
 {
-	phongo_regex_t* intern;
+	PHONGO_INTERN_FROM_THIS(regex);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
-
-	intern = Z_REGEX_OBJ_P(getThis());
 
 	array_init_size(return_value, 2);
 	ADD_ASSOC_STRINGL(return_value, "$regex", intern->pattern, intern->pattern_len);

@@ -57,14 +57,13 @@ static void phongo_cursor_free_current(phongo_cursor_t* cursor)
 /* Sets a type map to use for BSON unserialization */
 static PHP_METHOD(MongoDB_Driver_Cursor, setTypeMap)
 {
-	phongo_cursor_t*  intern;
+	PHONGO_INTERN_FROM_THIS(cursor);
+
 	phongo_bson_state state;
 	zval*             typemap                 = NULL;
 	bool              restore_current_element = false;
 
 	PHONGO_BSON_INIT_STATE(state);
-
-	intern = Z_CURSOR_OBJ_P(getThis());
 
 	PHONGO_PARSE_PARAMETERS_START(1, 1)
 	Z_PARAM_ARRAY_OR_NULL(typemap)
@@ -131,9 +130,7 @@ static PHP_METHOD(MongoDB_Driver_Cursor, toArray)
 /* Returns the CursorId for this cursor */
 static PHP_METHOD(MongoDB_Driver_Cursor, getId)
 {
-	phongo_cursor_t* intern;
-
-	intern = Z_CURSOR_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(cursor);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -143,9 +140,7 @@ static PHP_METHOD(MongoDB_Driver_Cursor, getId)
 /* Returns the Server object to which this cursor is attached */
 static PHP_METHOD(MongoDB_Driver_Cursor, getServer)
 {
-	phongo_cursor_t* intern;
-
-	intern = Z_CURSOR_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(cursor);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -155,9 +150,7 @@ static PHP_METHOD(MongoDB_Driver_Cursor, getServer)
 /* Checks if a cursor is still alive */
 static PHP_METHOD(MongoDB_Driver_Cursor, isDead)
 {
-	phongo_cursor_t* intern;
-
-	intern = Z_CURSOR_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(cursor);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -166,8 +159,9 @@ static PHP_METHOD(MongoDB_Driver_Cursor, isDead)
 
 static PHP_METHOD(MongoDB_Driver_Cursor, current)
 {
-	phongo_cursor_t* intern = Z_CURSOR_OBJ_P(getThis());
-	zval*            data;
+	PHONGO_INTERN_FROM_THIS(cursor);
+
+	zval* data;
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -182,7 +176,7 @@ static PHP_METHOD(MongoDB_Driver_Cursor, current)
 
 static PHP_METHOD(MongoDB_Driver_Cursor, key)
 {
-	phongo_cursor_t* intern = Z_CURSOR_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(cursor);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -195,8 +189,9 @@ static PHP_METHOD(MongoDB_Driver_Cursor, key)
 
 static PHP_METHOD(MongoDB_Driver_Cursor, next)
 {
-	phongo_cursor_t* intern = Z_CURSOR_OBJ_P(getThis());
-	const bson_t*    doc;
+	PHONGO_INTERN_FROM_THIS(cursor);
+
+	const bson_t* doc;
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -233,7 +228,7 @@ static PHP_METHOD(MongoDB_Driver_Cursor, next)
 
 static PHP_METHOD(MongoDB_Driver_Cursor, valid)
 {
-	phongo_cursor_t* intern = Z_CURSOR_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(cursor);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -242,8 +237,9 @@ static PHP_METHOD(MongoDB_Driver_Cursor, valid)
 
 static PHP_METHOD(MongoDB_Driver_Cursor, rewind)
 {
-	phongo_cursor_t* intern = Z_CURSOR_OBJ_P(getThis());
-	const bson_t*    doc;
+	PHONGO_INTERN_FROM_THIS(cursor);
+
+	const bson_t* doc;
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 

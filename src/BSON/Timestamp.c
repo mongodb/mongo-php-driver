@@ -122,10 +122,9 @@ static HashTable* phongo_timestamp_get_properties_hash(zend_object* object, bool
    4-byte timestamp. */
 static PHP_METHOD(MongoDB_BSON_Timestamp, __construct)
 {
-	phongo_timestamp_t* intern;
-	zval *              increment = NULL, *timestamp = NULL;
+	PHONGO_INTERN_FROM_THIS(timestamp);
 
-	intern = Z_TIMESTAMP_OBJ_P(getThis());
+	zval *increment = NULL, *timestamp = NULL;
 
 	PHONGO_PARSE_PARAMETERS_START(2, 2)
 	Z_PARAM_ZVAL(increment)
@@ -160,9 +159,7 @@ static PHP_METHOD(MongoDB_BSON_Timestamp, __construct)
 
 static PHP_METHOD(MongoDB_BSON_Timestamp, getIncrement)
 {
-	phongo_timestamp_t* intern;
-
-	intern = Z_TIMESTAMP_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(timestamp);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -171,9 +168,7 @@ static PHP_METHOD(MongoDB_BSON_Timestamp, getIncrement)
 
 static PHP_METHOD(MongoDB_BSON_Timestamp, getTimestamp)
 {
-	phongo_timestamp_t* intern;
-
-	intern = Z_TIMESTAMP_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(timestamp);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -201,11 +196,10 @@ static PHP_METHOD(MongoDB_BSON_Timestamp, __set_state)
 /* Returns a string in the form: [increment:timestamp] */
 static PHP_METHOD(MongoDB_BSON_Timestamp, __toString)
 {
-	phongo_timestamp_t* intern;
-	char*               retval;
-	int                 retval_len;
+	PHONGO_INTERN_FROM_THIS(timestamp);
 
-	intern = Z_TIMESTAMP_OBJ_P(getThis());
+	char* retval;
+	int   retval_len;
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -216,11 +210,9 @@ static PHP_METHOD(MongoDB_BSON_Timestamp, __toString)
 
 static PHP_METHOD(MongoDB_BSON_Timestamp, jsonSerialize)
 {
-	phongo_timestamp_t* intern;
+	PHONGO_INTERN_FROM_THIS(timestamp);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
-
-	intern = Z_TIMESTAMP_OBJ_P(getThis());
 
 	array_init_size(return_value, 1);
 

@@ -44,9 +44,7 @@ PHONGO_DISABLED_CONSTRUCTOR(MongoDB_Driver_BulkWriteCommandResult)
 /* Returns the number of documents that were inserted */
 static PHP_METHOD(MongoDB_Driver_BulkWriteCommandResult, getInsertedCount)
 {
-	phongo_bulkwritecommandresult_t* intern;
-
-	intern = Z_BULKWRITECOMMANDRESULT_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(bulkwritecommandresult);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -58,9 +56,7 @@ static PHP_METHOD(MongoDB_Driver_BulkWriteCommandResult, getInsertedCount)
 /* Returns the number of documents that matched the update criteria */
 static PHP_METHOD(MongoDB_Driver_BulkWriteCommandResult, getMatchedCount)
 {
-	phongo_bulkwritecommandresult_t* intern;
-
-	intern = Z_BULKWRITECOMMANDRESULT_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(bulkwritecommandresult);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -72,9 +68,7 @@ static PHP_METHOD(MongoDB_Driver_BulkWriteCommandResult, getMatchedCount)
 /* Returns the number of documents that were actually modified by an update */
 static PHP_METHOD(MongoDB_Driver_BulkWriteCommandResult, getModifiedCount)
 {
-	phongo_bulkwritecommandresult_t* intern;
-
-	intern = Z_BULKWRITECOMMANDRESULT_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(bulkwritecommandresult);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -86,9 +80,7 @@ static PHP_METHOD(MongoDB_Driver_BulkWriteCommandResult, getModifiedCount)
 /* Returns the number of documents that were deleted */
 static PHP_METHOD(MongoDB_Driver_BulkWriteCommandResult, getDeletedCount)
 {
-	phongo_bulkwritecommandresult_t* intern;
-
-	intern = Z_BULKWRITECOMMANDRESULT_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(bulkwritecommandresult);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -100,9 +92,7 @@ static PHP_METHOD(MongoDB_Driver_BulkWriteCommandResult, getDeletedCount)
 /* Returns the number of documents that were upserted */
 static PHP_METHOD(MongoDB_Driver_BulkWriteCommandResult, getUpsertedCount)
 {
-	phongo_bulkwritecommandresult_t* intern;
-
-	intern = Z_BULKWRITECOMMANDRESULT_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(bulkwritecommandresult);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -113,9 +103,7 @@ static PHP_METHOD(MongoDB_Driver_BulkWriteCommandResult, getUpsertedCount)
 
 static PHP_METHOD(MongoDB_Driver_BulkWriteCommandResult, getInsertResults)
 {
-	phongo_bulkwritecommandresult_t* intern;
-
-	intern = Z_BULKWRITECOMMANDRESULT_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(bulkwritecommandresult);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -128,9 +116,7 @@ static PHP_METHOD(MongoDB_Driver_BulkWriteCommandResult, getInsertResults)
 
 static PHP_METHOD(MongoDB_Driver_BulkWriteCommandResult, getUpdateResults)
 {
-	phongo_bulkwritecommandresult_t* intern;
-
-	intern = Z_BULKWRITECOMMANDRESULT_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(bulkwritecommandresult);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -143,9 +129,7 @@ static PHP_METHOD(MongoDB_Driver_BulkWriteCommandResult, getUpdateResults)
 
 static PHP_METHOD(MongoDB_Driver_BulkWriteCommandResult, getDeleteResults)
 {
-	phongo_bulkwritecommandresult_t* intern;
-
-	intern = Z_BULKWRITECOMMANDRESULT_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(bulkwritecommandresult);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -160,9 +144,7 @@ static PHP_METHOD(MongoDB_Driver_BulkWriteCommandResult, getDeleteResults)
    concern). */
 static PHP_METHOD(MongoDB_Driver_BulkWriteCommandResult, isAcknowledged)
 {
-	phongo_bulkwritecommandresult_t* intern;
-
-	intern = Z_BULKWRITECOMMANDRESULT_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(bulkwritecommandresult);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 

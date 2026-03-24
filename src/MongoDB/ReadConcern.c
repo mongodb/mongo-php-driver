@@ -54,11 +54,10 @@ failure:
 /* Constructs a new ReadConcern */
 static PHP_METHOD(MongoDB_Driver_ReadConcern, __construct)
 {
-	phongo_readconcern_t* intern;
-	char*                 level     = NULL;
-	size_t                level_len = 0;
+	PHONGO_INTERN_FROM_THIS(readconcern);
 
-	intern = Z_READCONCERN_OBJ_P(getThis());
+	char*  level     = NULL;
+	size_t level_len = 0;
 
 	PHONGO_PARSE_PARAMETERS_START(0, 1)
 	Z_PARAM_OPTIONAL
@@ -93,10 +92,9 @@ static PHP_METHOD(MongoDB_Driver_ReadConcern, __set_state)
 /* Returns the ReadConcern "level" option */
 static PHP_METHOD(MongoDB_Driver_ReadConcern, getLevel)
 {
-	phongo_readconcern_t* intern;
-	const char*           level;
+	PHONGO_INTERN_FROM_THIS(readconcern);
 
-	intern = Z_READCONCERN_OBJ_P(getThis());
+	const char* level;
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -113,9 +111,7 @@ static PHP_METHOD(MongoDB_Driver_ReadConcern, getLevel)
    without a level or from a Manager with no read concern URI options). */
 static PHP_METHOD(MongoDB_Driver_ReadConcern, isDefault)
 {
-	phongo_readconcern_t* intern;
-
-	intern = Z_READCONCERN_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(readconcern);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 

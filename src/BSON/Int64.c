@@ -87,10 +87,9 @@ HashTable* phongo_int64_get_properties_hash(zend_object* object, bool is_temp)
 
 static PHP_METHOD(MongoDB_BSON_Int64, __construct)
 {
-	phongo_int64_t* intern;
-	zval*           value;
+	PHONGO_INTERN_FROM_THIS(int64);
 
-	intern = Z_INT64_OBJ_P(getThis());
+	zval* value;
 
 	PHONGO_PARSE_PARAMETERS_START(1, 1)
 	Z_PARAM_ZVAL(value);
@@ -108,11 +107,9 @@ static PHP_METHOD(MongoDB_BSON_Int64, __construct)
 /* Return the Int64's value as a string. */
 static PHP_METHOD(MongoDB_BSON_Int64, __toString)
 {
-	phongo_int64_t* intern;
+	PHONGO_INTERN_FROM_THIS(int64);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
-
-	intern = Z_INT64_OBJ_P(getThis());
 
 	ZVAL_INT64_STRING(return_value, intern->integer);
 }
@@ -137,11 +134,9 @@ static PHP_METHOD(MongoDB_BSON_Int64, __set_state)
 
 static PHP_METHOD(MongoDB_BSON_Int64, jsonSerialize)
 {
-	phongo_int64_t* intern;
+	PHONGO_INTERN_FROM_THIS(int64);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
-
-	intern = Z_INT64_OBJ_P(getThis());
 
 	array_init_size(return_value, 1);
 

@@ -30,7 +30,7 @@ PHONGO_DISABLED_CONSTRUCTOR(MongoDB_Driver_Monitoring_TopologyClosedEvent)
 /* Returns this event's topology id */
 static PHP_METHOD(MongoDB_Driver_Monitoring_TopologyClosedEvent, getTopologyId)
 {
-	phongo_topologyclosedevent_t* intern = Z_TOPOLOGYCLOSEDEVENT_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(topologyclosedevent);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 

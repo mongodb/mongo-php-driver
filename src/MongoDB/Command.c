@@ -100,11 +100,10 @@ static bool phongo_command_init(phongo_command_t* intern, zval* filter, zval* op
 /* Constructs a new Command */
 static PHP_METHOD(MongoDB_Driver_Command, __construct)
 {
-	phongo_command_t* intern;
-	zval*             document;
-	zval*             options = NULL;
+	PHONGO_INTERN_FROM_THIS(command);
 
-	intern = Z_COMMAND_OBJ_P(getThis());
+	zval* document;
+	zval* options = NULL;
 
 	PHONGO_PARSE_PARAMETERS_START(1, 2)
 	Z_PARAM_ARRAY_OR_OBJECT(document)

@@ -49,11 +49,10 @@ PHONGO_DISABLED_CONSTRUCTOR(MongoDB_Driver_ServerDescription)
 /* Returns the most recent "hello" response */
 static PHP_METHOD(MongoDB_Driver_ServerDescription, getHelloResponse)
 {
-	phongo_serverdescription_t* intern;
-	const bson_t*               helloResponse;
-	phongo_bson_state           state;
+	PHONGO_INTERN_FROM_THIS(serverdescription);
 
-	intern = Z_SERVERDESCRIPTION_OBJ_P(getThis());
+	const bson_t*     helloResponse;
+	phongo_bson_state state;
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -78,9 +77,7 @@ static PHP_METHOD(MongoDB_Driver_ServerDescription, getHelloResponse)
 /* Returns the server's hostname */
 static PHP_METHOD(MongoDB_Driver_ServerDescription, getHost)
 {
-	phongo_serverdescription_t* intern;
-
-	intern = Z_SERVERDESCRIPTION_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(serverdescription);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -90,10 +87,9 @@ static PHP_METHOD(MongoDB_Driver_ServerDescription, getHost)
 /* Returns the server's last update time, in microseconds */
 static PHP_METHOD(MongoDB_Driver_ServerDescription, getLastUpdateTime)
 {
-	phongo_serverdescription_t* intern;
-	int64_t                     last_update_time;
+	PHONGO_INTERN_FROM_THIS(serverdescription);
 
-	intern = Z_SERVERDESCRIPTION_OBJ_P(getThis());
+	int64_t last_update_time;
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -111,9 +107,7 @@ static PHP_METHOD(MongoDB_Driver_ServerDescription, getLastUpdateTime)
 /* Returns the server's port */
 static PHP_METHOD(MongoDB_Driver_ServerDescription, getPort)
 {
-	phongo_serverdescription_t* intern;
-
-	intern = Z_SERVERDESCRIPTION_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(serverdescription);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -123,9 +117,7 @@ static PHP_METHOD(MongoDB_Driver_ServerDescription, getPort)
 /* Returns the server's round trip time, in milliseconds */
 static PHP_METHOD(MongoDB_Driver_ServerDescription, getRoundTripTime)
 {
-	phongo_serverdescription_t* intern;
-
-	intern = Z_SERVERDESCRIPTION_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(serverdescription);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -140,9 +132,7 @@ static PHP_METHOD(MongoDB_Driver_ServerDescription, getRoundTripTime)
 /* Returns the server's node type */
 static PHP_METHOD(MongoDB_Driver_ServerDescription, getType)
 {
-	phongo_serverdescription_t* intern;
-
-	intern = Z_SERVERDESCRIPTION_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(serverdescription);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 

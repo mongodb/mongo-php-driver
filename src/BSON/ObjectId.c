@@ -103,11 +103,10 @@ static HashTable* phongo_objectid_get_properties_hash(zend_object* object, bool 
 /* Constructs a new BSON ObjectId type, optionally from a hex string. */
 static PHP_METHOD(MongoDB_BSON_ObjectId, __construct)
 {
-	phongo_objectid_t* intern;
-	char*              id = NULL;
-	size_t             id_len;
+	PHONGO_INTERN_FROM_THIS(objectid);
 
-	intern = Z_OBJECTID_OBJ_P(getThis());
+	char*  id = NULL;
+	size_t id_len;
 
 	PHONGO_PARSE_PARAMETERS_START(0, 1)
 	Z_PARAM_OPTIONAL
@@ -123,10 +122,9 @@ static PHP_METHOD(MongoDB_BSON_ObjectId, __construct)
 
 static PHP_METHOD(MongoDB_BSON_ObjectId, getTimestamp)
 {
-	phongo_objectid_t* intern;
-	bson_oid_t         tmp_oid;
+	PHONGO_INTERN_FROM_THIS(objectid);
 
-	intern = Z_OBJECTID_OBJ_P(getThis());
+	bson_oid_t tmp_oid;
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -154,9 +152,7 @@ static PHP_METHOD(MongoDB_BSON_ObjectId, __set_state)
 
 static PHP_METHOD(MongoDB_BSON_ObjectId, __toString)
 {
-	phongo_objectid_t* intern;
-
-	intern = Z_OBJECTID_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(objectid);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -165,11 +161,9 @@ static PHP_METHOD(MongoDB_BSON_ObjectId, __toString)
 
 static PHP_METHOD(MongoDB_BSON_ObjectId, jsonSerialize)
 {
-	phongo_objectid_t* intern;
+	PHONGO_INTERN_FROM_THIS(objectid);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
-
-	intern = Z_OBJECTID_OBJ_P(getThis());
 
 	array_init_size(return_value, 1);
 	ADD_ASSOC_STRINGL(return_value, "$oid", intern->oid, PHONGO_OID_LEN);

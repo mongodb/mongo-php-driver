@@ -82,11 +82,9 @@ static HashTable* phongo_decimal128_get_properties_hash(zend_object* object, boo
 /* Construct a new BSON Decimal128 type */
 static PHP_METHOD(MongoDB_BSON_Decimal128, __construct)
 {
-	phongo_decimal128_t* intern;
-	char*                value;
-	size_t               value_len;
-
-	intern = Z_DECIMAL128_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(decimal128);
+	char*  value;
+	size_t value_len;
 
 	PHONGO_PARSE_PARAMETERS_START(1, 1)
 	Z_PARAM_STRING(value, value_len)
@@ -115,10 +113,8 @@ static PHP_METHOD(MongoDB_BSON_Decimal128, __set_state)
 
 static PHP_METHOD(MongoDB_BSON_Decimal128, __toString)
 {
-	phongo_decimal128_t* intern;
-	char                 outbuf[BSON_DECIMAL128_STRING];
-
-	intern = Z_DECIMAL128_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(decimal128);
+	char outbuf[BSON_DECIMAL128_STRING];
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -129,12 +125,10 @@ static PHP_METHOD(MongoDB_BSON_Decimal128, __toString)
 
 static PHP_METHOD(MongoDB_BSON_Decimal128, jsonSerialize)
 {
-	phongo_decimal128_t* intern;
-	char                 outbuf[BSON_DECIMAL128_STRING] = "";
+	PHONGO_INTERN_FROM_THIS(decimal128);
+	char outbuf[BSON_DECIMAL128_STRING] = "";
 
 	PHONGO_PARSE_PARAMETERS_NONE();
-
-	intern = Z_DECIMAL128_OBJ_P(getThis());
 
 	array_init_size(return_value, 1);
 	bson_decimal128_to_string(&intern->decimal, outbuf);

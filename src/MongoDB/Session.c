@@ -160,11 +160,11 @@ PHONGO_DISABLED_CONSTRUCTOR(MongoDB_Driver_Session)
 /* Advances the cluster time for this Session */
 static PHP_METHOD(MongoDB_Driver_Session, advanceClusterTime)
 {
-	phongo_session_t* intern;
-	zval*             zcluster_time;
-	bson_t            cluster_time = BSON_INITIALIZER;
+	PHONGO_INTERN_FROM_THIS(session);
 
-	intern = Z_SESSION_OBJ_P(getThis());
+	zval*  zcluster_time;
+	bson_t cluster_time = BSON_INITIALIZER;
+
 	SESSION_CHECK_LIVELINESS(intern, "advanceClusterTime")
 
 	PHONGO_PARSE_PARAMETERS_START(1, 1)
@@ -187,12 +187,12 @@ cleanup:
 /* Advances the operation time for this Session */
 static PHP_METHOD(MongoDB_Driver_Session, advanceOperationTime)
 {
-	phongo_session_t* intern;
-	zval*             ztimestamp;
-	uint32_t          timestamp = 0;
-	uint32_t          increment = 0;
+	PHONGO_INTERN_FROM_THIS(session);
 
-	intern = Z_SESSION_OBJ_P(getThis());
+	zval*    ztimestamp;
+	uint32_t timestamp = 0;
+	uint32_t increment = 0;
+
 	SESSION_CHECK_LIVELINESS(intern, "advanceOperationTime")
 
 	PHONGO_PARSE_PARAMETERS_START(1, 1)
@@ -209,13 +209,13 @@ static PHP_METHOD(MongoDB_Driver_Session, advanceOperationTime)
 /* Returns the cluster time for this Session */
 static PHP_METHOD(MongoDB_Driver_Session, getClusterTime)
 {
-	phongo_session_t* intern;
+	PHONGO_INTERN_FROM_THIS(session);
+
 	const bson_t*     cluster_time;
 	phongo_bson_state state;
 
 	PHONGO_BSON_INIT_STATE(state);
 
-	intern = Z_SESSION_OBJ_P(getThis());
 	SESSION_CHECK_LIVELINESS(intern, "getClusterTime")
 
 	PHONGO_PARSE_PARAMETERS_NONE();
@@ -238,13 +238,13 @@ static PHP_METHOD(MongoDB_Driver_Session, getClusterTime)
 /* Returns the logical session ID for this Session */
 static PHP_METHOD(MongoDB_Driver_Session, getLogicalSessionId)
 {
-	phongo_session_t* intern;
+	PHONGO_INTERN_FROM_THIS(session);
+
 	const bson_t*     lsid;
 	phongo_bson_state state;
 
 	PHONGO_BSON_INIT_STATE(state);
 
-	intern = Z_SESSION_OBJ_P(getThis());
 	SESSION_CHECK_LIVELINESS(intern, "getLogicalSessionId")
 
 	PHONGO_PARSE_PARAMETERS_NONE();
@@ -263,10 +263,10 @@ static PHP_METHOD(MongoDB_Driver_Session, getLogicalSessionId)
 /* Returns the operation time for this Session */
 static PHP_METHOD(MongoDB_Driver_Session, getOperationTime)
 {
-	phongo_session_t* intern;
-	uint32_t          timestamp, increment;
+	PHONGO_INTERN_FROM_THIS(session);
 
-	intern = Z_SESSION_OBJ_P(getThis());
+	uint32_t timestamp, increment;
+
 	SESSION_CHECK_LIVELINESS(intern, "getOperationTime")
 
 	PHONGO_PARSE_PARAMETERS_NONE();
@@ -286,10 +286,10 @@ static PHP_METHOD(MongoDB_Driver_Session, getOperationTime)
 /* Returns the server this session is pinned to */
 static PHP_METHOD(MongoDB_Driver_Session, getServer)
 {
-	phongo_session_t* intern;
-	uint32_t          server_id = 0;
+	PHONGO_INTERN_FROM_THIS(session);
 
-	intern = Z_SESSION_OBJ_P(getThis());
+	uint32_t server_id = 0;
+
 	SESSION_CHECK_LIVELINESS(intern, "getServer")
 
 	PHONGO_PARSE_PARAMETERS_NONE();
@@ -307,9 +307,8 @@ static PHP_METHOD(MongoDB_Driver_Session, getServer)
 /* Returns options for the currently running transaction */
 static PHP_METHOD(MongoDB_Driver_Session, getTransactionOptions)
 {
-	phongo_session_t* intern;
+	PHONGO_INTERN_FROM_THIS(session);
 
-	intern = Z_SESSION_OBJ_P(getThis());
 	SESSION_CHECK_LIVELINESS(intern, "getTransactionOptions")
 
 	PHONGO_PARSE_PARAMETERS_NONE();
@@ -320,10 +319,10 @@ static PHP_METHOD(MongoDB_Driver_Session, getTransactionOptions)
 /* Returns the current transaction state for this session */
 static PHP_METHOD(MongoDB_Driver_Session, getTransactionState)
 {
-	phongo_session_t* intern;
-	const char*       state;
+	PHONGO_INTERN_FROM_THIS(session);
 
-	intern = Z_SESSION_OBJ_P(getThis());
+	const char* state;
+
 	SESSION_CHECK_LIVELINESS(intern, "getTransactionState")
 
 	PHONGO_PARSE_PARAMETERS_NONE();
@@ -437,12 +436,12 @@ mongoc_transaction_opt_t* php_mongodb_session_parse_transaction_options(zval* op
 /* Starts a new transaction */
 static PHP_METHOD(MongoDB_Driver_Session, startTransaction)
 {
-	phongo_session_t*         intern;
+	PHONGO_INTERN_FROM_THIS(session);
+
 	zval*                     options     = NULL;
 	mongoc_transaction_opt_t* txn_options = NULL;
 	bson_error_t              error;
 
-	intern = Z_SESSION_OBJ_P(getThis());
 	SESSION_CHECK_LIVELINESS(intern, "startTransaction")
 
 	PHONGO_PARSE_PARAMETERS_START(0, 1)
@@ -469,11 +468,11 @@ static PHP_METHOD(MongoDB_Driver_Session, startTransaction)
 /* Commits an existing transaction */
 static PHP_METHOD(MongoDB_Driver_Session, commitTransaction)
 {
-	phongo_session_t* intern;
-	bson_error_t      error;
-	bson_t            reply;
+	PHONGO_INTERN_FROM_THIS(session);
 
-	intern = Z_SESSION_OBJ_P(getThis());
+	bson_error_t error;
+	bson_t       reply;
+
 	SESSION_CHECK_LIVELINESS(intern, "commitTransaction")
 
 	PHONGO_PARSE_PARAMETERS_NONE();
@@ -488,10 +487,10 @@ static PHP_METHOD(MongoDB_Driver_Session, commitTransaction)
 /* Aborts (rolls back) an existing transaction */
 static PHP_METHOD(MongoDB_Driver_Session, abortTransaction)
 {
-	phongo_session_t* intern;
-	bson_error_t      error;
+	PHONGO_INTERN_FROM_THIS(session);
 
-	intern = Z_SESSION_OBJ_P(getThis());
+	bson_error_t error;
+
 	SESSION_CHECK_LIVELINESS(intern, "abortTransaction")
 
 	PHONGO_PARSE_PARAMETERS_NONE();
@@ -504,9 +503,7 @@ static PHP_METHOD(MongoDB_Driver_Session, abortTransaction)
 /* Ends the session, and a running transaction if active */
 static PHP_METHOD(MongoDB_Driver_Session, endSession)
 {
-	phongo_session_t* intern;
-
-	intern = Z_SESSION_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(session);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -519,7 +516,7 @@ static PHP_METHOD(MongoDB_Driver_Session, endSession)
    server session pool. */
 static PHP_METHOD(MongoDB_Driver_Session, isDirty)
 {
-	phongo_session_t* intern = Z_SESSION_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(session);
 
 	SESSION_CHECK_LIVELINESS(intern, "isDirty")
 
@@ -531,9 +528,8 @@ static PHP_METHOD(MongoDB_Driver_Session, isDirty)
 /* Returns whether a multi-document transaction is in progress */
 static PHP_METHOD(MongoDB_Driver_Session, isInTransaction)
 {
-	phongo_session_t* intern;
+	PHONGO_INTERN_FROM_THIS(session);
 
-	intern = Z_SESSION_OBJ_P(getThis());
 	SESSION_CHECK_LIVELINESS(intern, "isInTransaction")
 
 	PHONGO_PARSE_PARAMETERS_NONE();

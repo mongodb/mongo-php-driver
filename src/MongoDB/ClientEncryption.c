@@ -141,12 +141,11 @@ cleanup:
    returns its identifier (UUID as a BSON binary with subtype 0x04). */
 static PHP_METHOD(MongoDB_Driver_ClientEncryption, createDataKey)
 {
-	char*                      kms_provider     = NULL;
-	size_t                     kms_provider_len = 0;
-	zval*                      options          = NULL;
-	phongo_clientencryption_t* intern;
+	PHONGO_INTERN_FROM_THIS(clientencryption);
 
-	intern = Z_CLIENTENCRYPTION_OBJ_P(getThis());
+	char*  kms_provider     = NULL;
+	size_t kms_provider_len = 0;
+	zval*  options          = NULL;
 
 	PHONGO_PARSE_PARAMETERS_START(1, 2)
 	Z_PARAM_STRING(kms_provider, kms_provider_len)
@@ -202,11 +201,10 @@ cleanup:
 /* Encrypts a value with a given key and algorithm */
 static PHP_METHOD(MongoDB_Driver_ClientEncryption, encrypt)
 {
-	zval*                      value   = NULL;
-	zval*                      options = NULL;
-	phongo_clientencryption_t* intern;
+	PHONGO_INTERN_FROM_THIS(clientencryption);
 
-	intern = Z_CLIENTENCRYPTION_OBJ_P(getThis());
+	zval* value   = NULL;
+	zval* options = NULL;
 
 	PHONGO_PARSE_PARAMETERS_START(1, 2)
 	Z_PARAM_ZVAL(value)
@@ -220,11 +218,10 @@ static PHP_METHOD(MongoDB_Driver_ClientEncryption, encrypt)
 /* Encrypts a value with a given key and algorithm */
 static PHP_METHOD(MongoDB_Driver_ClientEncryption, encryptExpression)
 {
-	zval*                      expr    = NULL;
-	zval*                      options = NULL;
-	phongo_clientencryption_t* intern;
+	PHONGO_INTERN_FROM_THIS(clientencryption);
 
-	intern = Z_CLIENTENCRYPTION_OBJ_P(getThis());
+	zval* expr    = NULL;
+	zval* options = NULL;
 
 	PHONGO_PARSE_PARAMETERS_START(1, 2)
 	Z_PARAM_ZVAL(expr)
@@ -238,10 +235,9 @@ static PHP_METHOD(MongoDB_Driver_ClientEncryption, encryptExpression)
 /* Decrypts an encrypted value (BSON binary of subtype 6). Returns the original BSON value */
 static PHP_METHOD(MongoDB_Driver_ClientEncryption, decrypt)
 {
-	zval*                      ciphertext;
-	phongo_clientencryption_t* intern;
+	PHONGO_INTERN_FROM_THIS(clientencryption);
 
-	intern = Z_CLIENTENCRYPTION_OBJ_P(getThis());
+	zval* ciphertext;
 
 	PHONGO_PARSE_PARAMETERS_START(1, 1)
 	Z_PARAM_OBJECT_OF_CLASS(ciphertext, phongo_binary_interface_ce)
@@ -315,12 +311,11 @@ cleanup:
    internal find() operation on the key vault collection as a cursor. */
 static PHP_METHOD(MongoDB_Driver_ClientEncryption, getKeys)
 {
-	mongoc_cursor_t*           cursor;
-	bson_error_t               error = { 0 };
-	phongo_clientencryption_t* intern;
-	zval                       query = ZVAL_STATIC_INIT;
+	PHONGO_INTERN_FROM_THIS(clientencryption);
 
-	intern = Z_CLIENTENCRYPTION_OBJ_P(getThis());
+	mongoc_cursor_t* cursor;
+	bson_error_t     error = { 0 };
+	zval             query = ZVAL_STATIC_INIT;
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 

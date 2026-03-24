@@ -80,11 +80,9 @@ PHONGO_DISABLED_CONSTRUCTOR(MongoDB_BSON_Symbol)
 /* Return the Symbol's symbol string. */
 static PHP_METHOD(MongoDB_BSON_Symbol, __toString)
 {
-	phongo_symbol_t* intern;
+	PHONGO_INTERN_FROM_THIS(symbol);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
-
-	intern = Z_SYMBOL_OBJ_P(getThis());
 
 	RETURN_STRINGL(intern->symbol, intern->symbol_len);
 }
@@ -109,11 +107,9 @@ static PHP_METHOD(MongoDB_BSON_Symbol, __set_state)
 
 static PHP_METHOD(MongoDB_BSON_Symbol, jsonSerialize)
 {
-	phongo_symbol_t* intern;
+	PHONGO_INTERN_FROM_THIS(symbol);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
-
-	intern = Z_SYMBOL_OBJ_P(getThis());
 
 	array_init_size(return_value, 1);
 	ADD_ASSOC_STRINGL(return_value, "$symbol", intern->symbol, intern->symbol_len);

@@ -94,13 +94,12 @@ PHONGO_DISABLED_CONSTRUCTOR(MongoDB_BSON_DBPointer)
 /* Return the DBPointer's namespace string and ObjectId. */
 static PHP_METHOD(MongoDB_BSON_DBPointer, __toString)
 {
-	phongo_dbpointer_t* intern;
-	char*               retval;
-	int                 retval_len;
+	PHONGO_INTERN_FROM_THIS(dbpointer);
+
+	char* retval;
+	int   retval_len;
 
 	PHONGO_PARSE_PARAMETERS_NONE();
-
-	intern = Z_DBPOINTER_OBJ_P(getThis());
 
 	retval_len = spprintf(&retval, 0, "[%s/%s]", intern->ref, intern->id);
 	RETVAL_STRINGL(retval, retval_len);
@@ -127,13 +126,12 @@ static PHP_METHOD(MongoDB_BSON_DBPointer, __set_state)
 
 static PHP_METHOD(MongoDB_BSON_DBPointer, jsonSerialize)
 {
-	phongo_dbpointer_t* intern;
-	zval                zdb_pointer;
-	zval                zoid;
+	PHONGO_INTERN_FROM_THIS(dbpointer);
+
+	zval zdb_pointer;
+	zval zoid;
 
 	PHONGO_PARSE_PARAMETERS_NONE();
-
-	intern = Z_DBPOINTER_OBJ_P(getThis());
 
 	array_init_size(&zdb_pointer, 2);
 	array_init_size(&zoid, 1);

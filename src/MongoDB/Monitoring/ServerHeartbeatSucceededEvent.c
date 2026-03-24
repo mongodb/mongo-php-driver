@@ -28,7 +28,7 @@ PHONGO_DISABLED_CONSTRUCTOR(MongoDB_Driver_Monitoring_ServerHeartbeatSucceededEv
 /* Returns this event's duration in microseconds */
 static PHP_METHOD(MongoDB_Driver_Monitoring_ServerHeartbeatSucceededEvent, getDurationMicros)
 {
-	phongo_serverheartbeatsucceededevent_t* intern = Z_SERVERHEARTBEATSUCCEEDEDEVENT_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(serverheartbeatsucceededevent);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -38,7 +38,7 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_ServerHeartbeatSucceededEvent, getDu
 /* Returns this event's host */
 static PHP_METHOD(MongoDB_Driver_Monitoring_ServerHeartbeatSucceededEvent, getHost)
 {
-	phongo_serverheartbeatsucceededevent_t* intern = Z_SERVERHEARTBEATSUCCEEDEDEVENT_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(serverheartbeatsucceededevent);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -48,7 +48,7 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_ServerHeartbeatSucceededEvent, getHo
 /* Returns this event's port */
 static PHP_METHOD(MongoDB_Driver_Monitoring_ServerHeartbeatSucceededEvent, getPort)
 {
-	phongo_serverheartbeatsucceededevent_t* intern = Z_SERVERHEARTBEATSUCCEEDEDEVENT_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(serverheartbeatsucceededevent);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -58,8 +58,9 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_ServerHeartbeatSucceededEvent, getPo
 /* Returns this event's reply */
 static PHP_METHOD(MongoDB_Driver_Monitoring_ServerHeartbeatSucceededEvent, getReply)
 {
-	phongo_serverheartbeatsucceededevent_t* intern = Z_SERVERHEARTBEATSUCCEEDEDEVENT_OBJ_P(getThis());
-	phongo_bson_state                       state;
+	PHONGO_INTERN_FROM_THIS(serverheartbeatsucceededevent);
+
+	phongo_bson_state state;
 
 	PHONGO_BSON_INIT_STATE(state);
 
@@ -76,7 +77,7 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_ServerHeartbeatSucceededEvent, getRe
 /* Returns whether this event came from an awaitable hello */
 static PHP_METHOD(MongoDB_Driver_Monitoring_ServerHeartbeatSucceededEvent, isAwaited)
 {
-	phongo_serverheartbeatsucceededevent_t* intern = Z_SERVERHEARTBEATSUCCEEDEDEVENT_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(serverheartbeatsucceededevent);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 

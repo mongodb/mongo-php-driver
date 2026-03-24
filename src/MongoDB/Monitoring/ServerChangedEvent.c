@@ -34,7 +34,7 @@ PHONGO_DISABLED_CONSTRUCTOR(MongoDB_Driver_Monitoring_ServerChangedEvent)
 /* Returns this event's host */
 static PHP_METHOD(MongoDB_Driver_Monitoring_ServerChangedEvent, getHost)
 {
-	phongo_serverchangedevent_t* intern = Z_SERVERCHANGEDEVENT_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(serverchangedevent);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -44,7 +44,7 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_ServerChangedEvent, getHost)
 /* Returns this event's port */
 static PHP_METHOD(MongoDB_Driver_Monitoring_ServerChangedEvent, getPort)
 {
-	phongo_serverchangedevent_t* intern = Z_SERVERCHANGEDEVENT_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(serverchangedevent);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -54,7 +54,7 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_ServerChangedEvent, getPort)
 /* Returns this event's new description */
 static PHP_METHOD(MongoDB_Driver_Monitoring_ServerChangedEvent, getNewDescription)
 {
-	phongo_serverchangedevent_t* intern = Z_SERVERCHANGEDEVENT_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(serverchangedevent);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -64,7 +64,7 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_ServerChangedEvent, getNewDescriptio
 /* Returns this event's previous description */
 static PHP_METHOD(MongoDB_Driver_Monitoring_ServerChangedEvent, getPreviousDescription)
 {
-	phongo_serverchangedevent_t* intern = Z_SERVERCHANGEDEVENT_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(serverchangedevent);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -74,7 +74,7 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_ServerChangedEvent, getPreviousDescr
 /* Returns this event's topology id */
 static PHP_METHOD(MongoDB_Driver_Monitoring_ServerChangedEvent, getTopologyId)
 {
-	phongo_serverchangedevent_t* intern = Z_SERVERCHANGEDEVENT_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(serverchangedevent);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 

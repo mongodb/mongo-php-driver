@@ -28,7 +28,7 @@ PHONGO_DISABLED_CONSTRUCTOR(MongoDB_Driver_Monitoring_ServerHeartbeatFailedEvent
 /* Returns this event's duration in microseconds */
 static PHP_METHOD(MongoDB_Driver_Monitoring_ServerHeartbeatFailedEvent, getDurationMicros)
 {
-	phongo_serverheartbeatfailedevent_t* intern = Z_SERVERHEARTBEATFAILEDEVENT_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(serverheartbeatfailedevent);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -38,7 +38,7 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_ServerHeartbeatFailedEvent, getDurat
 /* Returns the error associated with the event */
 static PHP_METHOD(MongoDB_Driver_Monitoring_ServerHeartbeatFailedEvent, getError)
 {
-	phongo_serverheartbeatfailedevent_t* intern = Z_SERVERHEARTBEATFAILEDEVENT_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(serverheartbeatfailedevent);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -48,7 +48,7 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_ServerHeartbeatFailedEvent, getError
 /* Returns this event's host */
 static PHP_METHOD(MongoDB_Driver_Monitoring_ServerHeartbeatFailedEvent, getHost)
 {
-	phongo_serverheartbeatfailedevent_t* intern = Z_SERVERHEARTBEATFAILEDEVENT_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(serverheartbeatfailedevent);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -58,7 +58,7 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_ServerHeartbeatFailedEvent, getHost)
 /* Returns this event's port */
 static PHP_METHOD(MongoDB_Driver_Monitoring_ServerHeartbeatFailedEvent, getPort)
 {
-	phongo_serverheartbeatfailedevent_t* intern = Z_SERVERHEARTBEATFAILEDEVENT_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(serverheartbeatfailedevent);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -68,7 +68,7 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_ServerHeartbeatFailedEvent, getPort)
 /* Returns whether this event came from an awaitable hello */
 static PHP_METHOD(MongoDB_Driver_Monitoring_ServerHeartbeatFailedEvent, isAwaited)
 {
-	phongo_serverheartbeatfailedevent_t* intern = Z_SERVERHEARTBEATFAILEDEVENT_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(serverheartbeatfailedevent);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 

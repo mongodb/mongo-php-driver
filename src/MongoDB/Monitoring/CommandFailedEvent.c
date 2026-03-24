@@ -33,9 +33,7 @@ PHONGO_DISABLED_CONSTRUCTOR(MongoDB_Driver_Monitoring_CommandFailedEvent)
 
 static PHP_METHOD(MongoDB_Driver_Monitoring_CommandFailedEvent, getCommandName)
 {
-	phongo_commandfailedevent_t* intern;
-
-	intern = Z_COMMANDFAILEDEVENT_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(commandfailedevent);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -44,9 +42,7 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_CommandFailedEvent, getCommandName)
 
 static PHP_METHOD(MongoDB_Driver_Monitoring_CommandFailedEvent, getDatabaseName)
 {
-	phongo_commandfailedevent_t* intern;
-
-	intern = Z_COMMANDFAILEDEVENT_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(commandfailedevent);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -55,9 +51,7 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_CommandFailedEvent, getDatabaseName)
 
 static PHP_METHOD(MongoDB_Driver_Monitoring_CommandFailedEvent, getDurationMicros)
 {
-	phongo_commandfailedevent_t* intern;
-
-	intern = Z_COMMANDFAILEDEVENT_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(commandfailedevent);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -66,9 +60,7 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_CommandFailedEvent, getDurationMicro
 
 static PHP_METHOD(MongoDB_Driver_Monitoring_CommandFailedEvent, getError)
 {
-	phongo_commandfailedevent_t* intern;
-
-	intern = Z_COMMANDFAILEDEVENT_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(commandfailedevent);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -77,7 +69,7 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_CommandFailedEvent, getError)
 
 static PHP_METHOD(MongoDB_Driver_Monitoring_CommandFailedEvent, getHost)
 {
-	phongo_commandfailedevent_t* intern = Z_COMMANDFAILEDEVENT_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(commandfailedevent);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -86,10 +78,9 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_CommandFailedEvent, getHost)
 
 static PHP_METHOD(MongoDB_Driver_Monitoring_CommandFailedEvent, getOperationId)
 {
-	phongo_commandfailedevent_t* intern;
-	char                         operation_id[24];
+	PHONGO_INTERN_FROM_THIS(commandfailedevent);
 
-	intern = Z_COMMANDFAILEDEVENT_OBJ_P(getThis());
+	char operation_id[24];
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -99,7 +90,7 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_CommandFailedEvent, getOperationId)
 
 static PHP_METHOD(MongoDB_Driver_Monitoring_CommandFailedEvent, getPort)
 {
-	phongo_commandfailedevent_t* intern = Z_COMMANDFAILEDEVENT_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(commandfailedevent);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -108,12 +99,11 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_CommandFailedEvent, getPort)
 
 static PHP_METHOD(MongoDB_Driver_Monitoring_CommandFailedEvent, getReply)
 {
-	phongo_commandfailedevent_t* intern;
-	phongo_bson_state            state;
+	PHONGO_INTERN_FROM_THIS(commandfailedevent);
+
+	phongo_bson_state state;
 
 	PHONGO_BSON_INIT_STATE(state);
-
-	intern = Z_COMMANDFAILEDEVENT_OBJ_P(getThis());
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -127,10 +117,9 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_CommandFailedEvent, getReply)
 
 static PHP_METHOD(MongoDB_Driver_Monitoring_CommandFailedEvent, getRequestId)
 {
-	phongo_commandfailedevent_t* intern;
-	char                         request_id[24];
+	PHONGO_INTERN_FROM_THIS(commandfailedevent);
 
-	intern = Z_COMMANDFAILEDEVENT_OBJ_P(getThis());
+	char request_id[24];
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -140,7 +129,7 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_CommandFailedEvent, getRequestId)
 
 static PHP_METHOD(MongoDB_Driver_Monitoring_CommandFailedEvent, getServiceId)
 {
-	phongo_commandfailedevent_t* intern = Z_COMMANDFAILEDEVENT_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(commandfailedevent);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -153,7 +142,7 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_CommandFailedEvent, getServiceId)
 
 static PHP_METHOD(MongoDB_Driver_Monitoring_CommandFailedEvent, getServerConnectionId)
 {
-	phongo_commandfailedevent_t* intern = Z_COMMANDFAILEDEVENT_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(commandfailedevent);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 

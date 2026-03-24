@@ -174,12 +174,11 @@ static const char* phongo_readpreference_get_mode_string(const mongoc_read_prefs
 /* Constructs a new ReadPreference */
 static PHP_METHOD(MongoDB_Driver_ReadPreference, __construct)
 {
-	phongo_readpreference_t* intern;
-	zend_string*             mode;
-	zval*                    tagSets = NULL;
-	zval*                    options = NULL;
+	PHONGO_INTERN_FROM_THIS(readpreference);
 
-	intern = Z_READPREFERENCE_OBJ_P(getThis());
+	zend_string* mode;
+	zval*        tagSets = NULL;
+	zval*        options = NULL;
 
 	/* Separate the tagSets zval, since we may end up modifying it in
 	 * phongo_read_preference_prep_tagsets() below. */
@@ -307,10 +306,9 @@ static PHP_METHOD(MongoDB_Driver_ReadPreference, __set_state)
 /* Returns the ReadPreference hedge document */
 static PHP_METHOD(MongoDB_Driver_ReadPreference, getHedge)
 {
-	phongo_readpreference_t* intern;
-	const bson_t*            hedge;
+	PHONGO_INTERN_FROM_THIS(readpreference);
 
-	intern = Z_READPREFERENCE_OBJ_P(getThis());
+	const bson_t* hedge;
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -335,9 +333,7 @@ static PHP_METHOD(MongoDB_Driver_ReadPreference, getHedge)
 /* Returns the ReadPreference maxStalenessSeconds value */
 static PHP_METHOD(MongoDB_Driver_ReadPreference, getMaxStalenessSeconds)
 {
-	phongo_readpreference_t* intern;
-
-	intern = Z_READPREFERENCE_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(readpreference);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -347,9 +343,7 @@ static PHP_METHOD(MongoDB_Driver_ReadPreference, getMaxStalenessSeconds)
 /* Returns the ReadPreference mode as string */
 static PHP_METHOD(MongoDB_Driver_ReadPreference, getModeString)
 {
-	phongo_readpreference_t* intern;
-
-	intern = Z_READPREFERENCE_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(readpreference);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -359,10 +353,9 @@ static PHP_METHOD(MongoDB_Driver_ReadPreference, getModeString)
 /* Returns the ReadPreference tag sets */
 static PHP_METHOD(MongoDB_Driver_ReadPreference, getTagSets)
 {
-	phongo_readpreference_t* intern;
-	const bson_t*            tags;
+	PHONGO_INTERN_FROM_THIS(readpreference);
 
-	intern = Z_READPREFERENCE_OBJ_P(getThis());
+	const bson_t* tags;
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 

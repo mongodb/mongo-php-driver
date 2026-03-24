@@ -93,14 +93,13 @@ static bool phongo_serverapi_init_from_hash(phongo_serverapi_t* intern, HashTabl
 /* Constructs a new ServerApi object */
 static PHP_METHOD(MongoDB_Driver_ServerApi, __construct)
 {
-	phongo_serverapi_t* intern;
-	zend_string*        version;
-	zend_bool           strict                  = 0;
-	zend_bool           strict_null             = 1;
-	zend_bool           deprecation_errors      = 0;
-	zend_bool           deprecation_errors_null = 1;
+	PHONGO_INTERN_FROM_THIS(serverapi);
 
-	intern = Z_SERVERAPI_OBJ_P(getThis());
+	zend_string* version;
+	zend_bool    strict                  = 0;
+	zend_bool    strict_null             = 1;
+	zend_bool    deprecation_errors      = 0;
+	zend_bool    deprecation_errors_null = 1;
 
 	PHONGO_PARSE_PARAMETERS_START(1, 3)
 	Z_PARAM_STR(version)

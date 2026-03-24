@@ -172,8 +172,9 @@ PHONGO_DISABLED_CONSTRUCTOR(MongoDB_BSON_Iterator)
 
 static PHP_METHOD(MongoDB_BSON_Iterator, current)
 {
-	phongo_iterator_t* intern = Z_ITERATOR_OBJ_P(getThis());
-	zval*              data;
+	PHONGO_INTERN_FROM_THIS(iterator);
+
+	zval* data;
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -192,7 +193,7 @@ static PHP_METHOD(MongoDB_BSON_Iterator, current)
 
 static PHP_METHOD(MongoDB_BSON_Iterator, key)
 {
-	phongo_iterator_t* intern = Z_ITERATOR_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(iterator);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -204,7 +205,7 @@ static PHP_METHOD(MongoDB_BSON_Iterator, key)
 
 static PHP_METHOD(MongoDB_BSON_Iterator, next)
 {
-	phongo_iterator_t* intern = Z_ITERATOR_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(iterator);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -213,7 +214,7 @@ static PHP_METHOD(MongoDB_BSON_Iterator, next)
 
 static PHP_METHOD(MongoDB_BSON_Iterator, valid)
 {
-	phongo_iterator_t* intern = Z_ITERATOR_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(iterator);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -222,7 +223,7 @@ static PHP_METHOD(MongoDB_BSON_Iterator, valid)
 
 static PHP_METHOD(MongoDB_BSON_Iterator, rewind)
 {
-	phongo_iterator_t* intern = Z_ITERATOR_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(iterator);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 

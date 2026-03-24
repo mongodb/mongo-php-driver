@@ -118,12 +118,11 @@ failure:
    be evaluated. Note that this type cannot be represented as Extended JSON. */
 static PHP_METHOD(MongoDB_BSON_Javascript, __construct)
 {
-	phongo_javascript_t* intern;
-	char*                code;
-	size_t               code_len;
-	zval*                scope = NULL;
+	PHONGO_INTERN_FROM_THIS(javascript);
 
-	intern = Z_JAVASCRIPT_OBJ_P(getThis());
+	char*  code;
+	size_t code_len;
+	zval*  scope = NULL;
 
 	PHONGO_PARSE_PARAMETERS_START(1, 2)
 	Z_PARAM_STRING(code, code_len)
@@ -155,33 +154,27 @@ static PHP_METHOD(MongoDB_BSON_Javascript, __set_state)
 /* Return the Javascript's code string. */
 static PHP_METHOD(MongoDB_BSON_Javascript, __toString)
 {
-	phongo_javascript_t* intern;
+	PHONGO_INTERN_FROM_THIS(javascript);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
-
-	intern = Z_JAVASCRIPT_OBJ_P(getThis());
 
 	RETURN_STRINGL(intern->code, intern->code_len);
 }
 
 static PHP_METHOD(MongoDB_BSON_Javascript, getCode)
 {
-	phongo_javascript_t* intern;
+	PHONGO_INTERN_FROM_THIS(javascript);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
-
-	intern = Z_JAVASCRIPT_OBJ_P(getThis());
 
 	RETURN_STRINGL(intern->code, intern->code_len);
 }
 
 static PHP_METHOD(MongoDB_BSON_Javascript, getScope)
 {
-	phongo_javascript_t* intern;
+	PHONGO_INTERN_FROM_THIS(javascript);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
-
-	intern = Z_JAVASCRIPT_OBJ_P(getThis());
 
 	if (!intern->scope) {
 		RETURN_NULL();
@@ -205,11 +198,9 @@ static PHP_METHOD(MongoDB_BSON_Javascript, getScope)
 
 static PHP_METHOD(MongoDB_BSON_Javascript, jsonSerialize)
 {
-	phongo_javascript_t* intern;
+	PHONGO_INTERN_FROM_THIS(javascript);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
-
-	intern = Z_JAVASCRIPT_OBJ_P(getThis());
 
 	array_init_size(return_value, 2);
 	ADD_ASSOC_STRINGL(return_value, "$code", intern->code, intern->code_len);

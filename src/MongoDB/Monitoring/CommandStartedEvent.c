@@ -33,12 +33,11 @@ PHONGO_DISABLED_CONSTRUCTOR(MongoDB_Driver_Monitoring_CommandStartedEvent)
 
 static PHP_METHOD(MongoDB_Driver_Monitoring_CommandStartedEvent, getCommand)
 {
-	phongo_commandstartedevent_t* intern;
-	phongo_bson_state             state;
+	PHONGO_INTERN_FROM_THIS(commandstartedevent);
+
+	phongo_bson_state state;
 
 	PHONGO_BSON_INIT_STATE(state);
-
-	intern = Z_COMMANDSTARTEDEVENT_OBJ_P(getThis());
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -52,9 +51,7 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_CommandStartedEvent, getCommand)
 
 static PHP_METHOD(MongoDB_Driver_Monitoring_CommandStartedEvent, getCommandName)
 {
-	phongo_commandstartedevent_t* intern;
-
-	intern = Z_COMMANDSTARTEDEVENT_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(commandstartedevent);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -63,9 +60,7 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_CommandStartedEvent, getCommandName)
 
 static PHP_METHOD(MongoDB_Driver_Monitoring_CommandStartedEvent, getDatabaseName)
 {
-	phongo_commandstartedevent_t* intern;
-
-	intern = Z_COMMANDSTARTEDEVENT_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(commandstartedevent);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -74,7 +69,7 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_CommandStartedEvent, getDatabaseName
 
 static PHP_METHOD(MongoDB_Driver_Monitoring_CommandStartedEvent, getHost)
 {
-	phongo_commandstartedevent_t* intern = Z_COMMANDSTARTEDEVENT_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(commandstartedevent);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -83,10 +78,9 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_CommandStartedEvent, getHost)
 
 static PHP_METHOD(MongoDB_Driver_Monitoring_CommandStartedEvent, getOperationId)
 {
-	phongo_commandstartedevent_t* intern;
-	char                          operation_id[24];
+	PHONGO_INTERN_FROM_THIS(commandstartedevent);
 
-	intern = Z_COMMANDSTARTEDEVENT_OBJ_P(getThis());
+	char operation_id[24];
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -96,7 +90,7 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_CommandStartedEvent, getOperationId)
 
 static PHP_METHOD(MongoDB_Driver_Monitoring_CommandStartedEvent, getPort)
 {
-	phongo_commandstartedevent_t* intern = Z_COMMANDSTARTEDEVENT_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(commandstartedevent);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -105,10 +99,9 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_CommandStartedEvent, getPort)
 
 static PHP_METHOD(MongoDB_Driver_Monitoring_CommandStartedEvent, getRequestId)
 {
-	phongo_commandstartedevent_t* intern;
-	char                          request_id[24];
+	PHONGO_INTERN_FROM_THIS(commandstartedevent);
 
-	intern = Z_COMMANDSTARTEDEVENT_OBJ_P(getThis());
+	char request_id[24];
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -118,7 +111,7 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_CommandStartedEvent, getRequestId)
 
 static PHP_METHOD(MongoDB_Driver_Monitoring_CommandStartedEvent, getServiceId)
 {
-	phongo_commandstartedevent_t* intern = Z_COMMANDSTARTEDEVENT_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(commandstartedevent);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -131,7 +124,7 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_CommandStartedEvent, getServiceId)
 
 static PHP_METHOD(MongoDB_Driver_Monitoring_CommandStartedEvent, getServerConnectionId)
 {
-	phongo_commandstartedevent_t* intern = Z_COMMANDSTARTEDEVENT_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(commandstartedevent);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 

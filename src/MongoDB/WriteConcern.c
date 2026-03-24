@@ -108,11 +108,10 @@ failure:
 /* Constructs a new WriteConcern */
 static PHP_METHOD(MongoDB_Driver_WriteConcern, __construct)
 {
-	phongo_writeconcern_t* intern;
-	zval *                 w, *journal = NULL;
-	zend_long              wtimeout = 0;
+	PHONGO_INTERN_FROM_THIS(writeconcern);
 
-	intern = Z_WRITECONCERN_OBJ_P(getThis());
+	zval *    w, *journal = NULL;
+	zend_long wtimeout = 0;
 
 	PHONGO_PARSE_PARAMETERS_START(1, 3)
 	Z_PARAM_ZVAL(w)
@@ -188,10 +187,9 @@ static PHP_METHOD(MongoDB_Driver_WriteConcern, __set_state)
 /* Returns the WriteConcern "w" option */
 static PHP_METHOD(MongoDB_Driver_WriteConcern, getW)
 {
-	phongo_writeconcern_t* intern;
-	const char*            wtag;
+	PHONGO_INTERN_FROM_THIS(writeconcern);
 
-	intern = Z_WRITECONCERN_OBJ_P(getThis());
+	const char* wtag;
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -215,10 +213,9 @@ static PHP_METHOD(MongoDB_Driver_WriteConcern, getW)
 /* Returns the WriteConcern "wtimeout" option */
 static PHP_METHOD(MongoDB_Driver_WriteConcern, getWtimeout)
 {
-	phongo_writeconcern_t* intern;
-	int64_t                wtimeout;
+	PHONGO_INTERN_FROM_THIS(writeconcern);
 
-	intern = Z_WRITECONCERN_OBJ_P(getThis());
+	int64_t wtimeout;
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -236,9 +233,7 @@ static PHP_METHOD(MongoDB_Driver_WriteConcern, getWtimeout)
 /* Returns the WriteConcern "journal" option */
 static PHP_METHOD(MongoDB_Driver_WriteConcern, getJournal)
 {
-	phongo_writeconcern_t* intern;
-
-	intern = Z_WRITECONCERN_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(writeconcern);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -253,9 +248,7 @@ static PHP_METHOD(MongoDB_Driver_WriteConcern, getJournal)
    with no write concern URI options). */
 static PHP_METHOD(MongoDB_Driver_WriteConcern, isDefault)
 {
-	phongo_writeconcern_t* intern;
-
-	intern = Z_WRITECONCERN_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(writeconcern);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 

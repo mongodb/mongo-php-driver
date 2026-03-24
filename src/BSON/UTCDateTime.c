@@ -181,10 +181,9 @@ static void phongo_utcdatetime_to_php_date(zval* return_value, const zval* this,
    current time. */
 static PHP_METHOD(MongoDB_BSON_UTCDateTime, __construct)
 {
-	phongo_utcdatetime_t* intern;
-	zval*                 milliseconds = NULL;
+	PHONGO_INTERN_FROM_THIS(utcdatetime);
 
-	intern = Z_UTCDATETIME_OBJ_P(getThis());
+	zval* milliseconds = NULL;
 
 	PHONGO_PARSE_PARAMETERS_START(0, 1)
 	Z_PARAM_OPTIONAL
@@ -230,9 +229,7 @@ static PHP_METHOD(MongoDB_BSON_UTCDateTime, __set_state)
 /* Returns the UTCDateTime's milliseconds as a string */
 static PHP_METHOD(MongoDB_BSON_UTCDateTime, __toString)
 {
-	phongo_utcdatetime_t* intern;
-
-	intern = Z_UTCDATETIME_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(utcdatetime);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -257,11 +254,9 @@ static PHP_METHOD(MongoDB_BSON_UTCDateTime, toDateTimeImmutable)
 
 static PHP_METHOD(MongoDB_BSON_UTCDateTime, jsonSerialize)
 {
-	phongo_utcdatetime_t* intern;
+	PHONGO_INTERN_FROM_THIS(utcdatetime);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
-
-	intern = Z_UTCDATETIME_OBJ_P(getThis());
 
 	array_init_size(return_value, 1);
 

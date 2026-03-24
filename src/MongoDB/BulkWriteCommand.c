@@ -117,10 +117,9 @@ static inline bool phongo_bwc_bson_array_has_valid_keys(bson_t* array)
 /* Constructs a new BulkWriteCommand */
 static PHP_METHOD(MongoDB_Driver_BulkWriteCommand, __construct)
 {
-	phongo_bulkwritecommand_t* intern;
-	zval*                      zoptions = NULL;
+	PHONGO_INTERN_FROM_THIS(bulkwritecommand);
 
-	intern = Z_BULKWRITECOMMAND_OBJ_P(getThis());
+	zval* zoptions = NULL;
 
 	PHONGO_PARSE_PARAMETERS_START(0, 1)
 	Z_PARAM_OPTIONAL
@@ -181,9 +180,7 @@ static PHP_METHOD(MongoDB_Driver_BulkWriteCommand, __construct)
 
 static PHP_METHOD(MongoDB_Driver_BulkWriteCommand, count)
 {
-	phongo_bulkwritecommand_t* intern;
-
-	intern = Z_BULKWRITECOMMAND_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(bulkwritecommand);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -252,7 +249,8 @@ static bool phongo_bwc_parse_array(zval* zarray, bson_t* barray, const char* key
 
 static PHP_METHOD(MongoDB_Driver_BulkWriteCommand, deleteMany)
 {
-	phongo_bulkwritecommand_t*         intern;
+	PHONGO_INTERN_FROM_THIS(bulkwritecommand);
+
 	char*                              ns;
 	size_t                             ns_len;
 	zval*                              zfilter;
@@ -260,8 +258,6 @@ static PHP_METHOD(MongoDB_Driver_BulkWriteCommand, deleteMany)
 	bson_t                             bfilter  = BSON_INITIALIZER;
 	mongoc_bulkwrite_deletemanyopts_t* opts     = NULL;
 	bson_error_t                       error    = { 0 };
-
-	intern = Z_BULKWRITECOMMAND_OBJ_P(getThis());
 
 	PHONGO_PARSE_PARAMETERS_START(2, 3)
 	Z_PARAM_STRING(ns, ns_len)
@@ -323,7 +319,8 @@ cleanup:
 
 static PHP_METHOD(MongoDB_Driver_BulkWriteCommand, deleteOne)
 {
-	phongo_bulkwritecommand_t*        intern;
+	PHONGO_INTERN_FROM_THIS(bulkwritecommand);
+
 	char*                             ns;
 	size_t                            ns_len;
 	zval*                             zfilter;
@@ -331,8 +328,6 @@ static PHP_METHOD(MongoDB_Driver_BulkWriteCommand, deleteOne)
 	bson_t                            bfilter  = BSON_INITIALIZER;
 	mongoc_bulkwrite_deleteoneopts_t* opts     = NULL;
 	bson_error_t                      error    = { 0 };
-
-	intern = Z_BULKWRITECOMMAND_OBJ_P(getThis());
 
 	PHONGO_PARSE_PARAMETERS_START(2, 3)
 	Z_PARAM_STRING(ns, ns_len)
@@ -394,15 +389,14 @@ cleanup:
 
 static PHP_METHOD(MongoDB_Driver_BulkWriteCommand, insertOne)
 {
-	phongo_bulkwritecommand_t* intern;
-	char*                      ns;
-	size_t                     ns_len;
-	zval*                      zdocument;
-	bson_t                     bdocument = BSON_INITIALIZER;
-	bson_t*                    bson_out  = NULL;
-	bson_error_t               error     = { 0 };
+	PHONGO_INTERN_FROM_THIS(bulkwritecommand);
 
-	intern = Z_BULKWRITECOMMAND_OBJ_P(getThis());
+	char*        ns;
+	size_t       ns_len;
+	zval*        zdocument;
+	bson_t       bdocument = BSON_INITIALIZER;
+	bson_t*      bson_out  = NULL;
+	bson_error_t error     = { 0 };
 
 	PHONGO_PARSE_PARAMETERS_START(2, 2)
 	Z_PARAM_STRING(ns, ns_len)
@@ -441,7 +435,8 @@ cleanup:
 
 static PHP_METHOD(MongoDB_Driver_BulkWriteCommand, replaceOne)
 {
-	phongo_bulkwritecommand_t*         intern;
+	PHONGO_INTERN_FROM_THIS(bulkwritecommand);
+
 	char*                              ns;
 	size_t                             ns_len;
 	zval*                              zfilter;
@@ -451,8 +446,6 @@ static PHP_METHOD(MongoDB_Driver_BulkWriteCommand, replaceOne)
 	bson_t                             breplacement = BSON_INITIALIZER;
 	mongoc_bulkwrite_replaceoneopts_t* opts         = NULL;
 	bson_error_t                       error        = { 0 };
-
-	intern = Z_BULKWRITECOMMAND_OBJ_P(getThis());
 
 	PHONGO_PARSE_PARAMETERS_START(3, 4)
 	Z_PARAM_STRING(ns, ns_len)
@@ -538,7 +531,8 @@ cleanup:
 
 static PHP_METHOD(MongoDB_Driver_BulkWriteCommand, updateMany)
 {
-	phongo_bulkwritecommand_t*         intern;
+	PHONGO_INTERN_FROM_THIS(bulkwritecommand);
+
 	char*                              ns;
 	size_t                             ns_len;
 	zval*                              zfilter;
@@ -548,8 +542,6 @@ static PHP_METHOD(MongoDB_Driver_BulkWriteCommand, updateMany)
 	bson_t                             bupdate  = BSON_INITIALIZER;
 	mongoc_bulkwrite_updatemanyopts_t* opts     = NULL;
 	bson_error_t                       error    = { 0 };
-
-	intern = Z_BULKWRITECOMMAND_OBJ_P(getThis());
 
 	PHONGO_PARSE_PARAMETERS_START(3, 4)
 	Z_PARAM_STRING(ns, ns_len)
@@ -636,7 +628,8 @@ cleanup:
 
 static PHP_METHOD(MongoDB_Driver_BulkWriteCommand, updateOne)
 {
-	phongo_bulkwritecommand_t*        intern;
+	PHONGO_INTERN_FROM_THIS(bulkwritecommand);
+
 	char*                             ns;
 	size_t                            ns_len;
 	zval*                             zfilter;
@@ -646,8 +639,6 @@ static PHP_METHOD(MongoDB_Driver_BulkWriteCommand, updateOne)
 	bson_t                            bupdate  = BSON_INITIALIZER;
 	mongoc_bulkwrite_updateoneopts_t* opts     = NULL;
 	bson_error_t                      error    = { 0 };
-
-	intern = Z_BULKWRITECOMMAND_OBJ_P(getThis());
 
 	PHONGO_PARSE_PARAMETERS_START(3, 4)
 	Z_PARAM_STRING(ns, ns_len)

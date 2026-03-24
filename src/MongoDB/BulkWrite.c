@@ -315,11 +315,10 @@ static bool phongo_bulkwrite_delete_apply_options(bson_t* boptions, zval* zoptio
 /* Constructs a new BulkWrite */
 static PHP_METHOD(MongoDB_Driver_BulkWrite, __construct)
 {
-	phongo_bulkwrite_t* intern;
-	zval*               options = NULL;
-	zend_bool           ordered = 1;
+	PHONGO_INTERN_FROM_THIS(bulkwrite);
 
-	intern = Z_BULKWRITE_OBJ_P(getThis());
+	zval*     options = NULL;
+	zend_bool ordered = 1;
 
 	PHONGO_PARSE_PARAMETERS_START(0, 1)
 	Z_PARAM_OPTIONAL
@@ -379,13 +378,12 @@ static PHP_METHOD(MongoDB_Driver_BulkWrite, __construct)
 /* Adds an insert operation to the BulkWrite */
 static PHP_METHOD(MongoDB_Driver_BulkWrite, insert)
 {
-	phongo_bulkwrite_t* intern;
-	zval*               zdocument;
-	bson_t              bdocument = BSON_INITIALIZER, boptions = BSON_INITIALIZER;
-	bson_t*             bson_out = NULL;
-	bson_error_t        error    = { 0 };
+	PHONGO_INTERN_FROM_THIS(bulkwrite);
 
-	intern = Z_BULKWRITE_OBJ_P(getThis());
+	zval*        zdocument;
+	bson_t       bdocument = BSON_INITIALIZER, boptions = BSON_INITIALIZER;
+	bson_t*      bson_out = NULL;
+	bson_error_t error    = { 0 };
 
 	PHONGO_PARSE_PARAMETERS_START(1, 1)
 	Z_PARAM_ARRAY_OR_OBJECT(zdocument)
@@ -420,12 +418,11 @@ cleanup:
 /* Adds an update operation to the BulkWrite */
 static PHP_METHOD(MongoDB_Driver_BulkWrite, update)
 {
-	phongo_bulkwrite_t* intern;
-	zval *              zquery, *zupdate, *zoptions = NULL;
-	bson_t              bquery = BSON_INITIALIZER, bupdate = BSON_INITIALIZER, boptions = BSON_INITIALIZER;
-	bson_error_t        error = { 0 };
+	PHONGO_INTERN_FROM_THIS(bulkwrite);
 
-	intern = Z_BULKWRITE_OBJ_P(getThis());
+	zval *       zquery, *zupdate, *zoptions = NULL;
+	bson_t       bquery = BSON_INITIALIZER, bupdate = BSON_INITIALIZER, boptions = BSON_INITIALIZER;
+	bson_error_t error = { 0 };
 
 	PHONGO_PARSE_PARAMETERS_START(2, 3)
 	Z_PARAM_ARRAY_OR_OBJECT(zquery)
@@ -486,12 +483,11 @@ cleanup:
 /* Adds a delete operation to the BulkWrite */
 static PHP_METHOD(MongoDB_Driver_BulkWrite, delete)
 {
-	phongo_bulkwrite_t* intern;
-	zval *              zquery, *zoptions = NULL;
-	bson_t              bquery = BSON_INITIALIZER, boptions = BSON_INITIALIZER;
-	bson_error_t        error = { 0 };
+	PHONGO_INTERN_FROM_THIS(bulkwrite);
 
-	intern = Z_BULKWRITE_OBJ_P(getThis());
+	zval *       zquery, *zoptions = NULL;
+	bson_t       bquery = BSON_INITIALIZER, boptions = BSON_INITIALIZER;
+	bson_error_t error = { 0 };
 
 	PHONGO_PARSE_PARAMETERS_START(1, 2)
 	Z_PARAM_ARRAY_OR_OBJECT(zquery)
@@ -531,9 +527,7 @@ cleanup:
 /* Returns the number of operations that have been added to the BulkWrite */
 static PHP_METHOD(MongoDB_Driver_BulkWrite, count)
 {
-	phongo_bulkwrite_t* intern;
-
-	intern = Z_BULKWRITE_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(bulkwrite);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 

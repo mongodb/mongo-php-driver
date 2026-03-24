@@ -32,9 +32,7 @@ PHONGO_DISABLED_CONSTRUCTOR(MongoDB_Driver_WriteError)
 /* Returns the MongoDB error code */
 static PHP_METHOD(MongoDB_Driver_WriteError, getCode)
 {
-	phongo_writeerror_t* intern;
-
-	intern = Z_WRITEERROR_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(writeerror);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -45,9 +43,7 @@ static PHP_METHOD(MongoDB_Driver_WriteError, getCode)
    corresponds. */
 static PHP_METHOD(MongoDB_Driver_WriteError, getIndex)
 {
-	phongo_writeerror_t* intern;
-
-	intern = Z_WRITEERROR_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(writeerror);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -57,9 +53,7 @@ static PHP_METHOD(MongoDB_Driver_WriteError, getIndex)
 /* Returns the actual error message from the server */
 static PHP_METHOD(MongoDB_Driver_WriteError, getMessage)
 {
-	phongo_writeerror_t* intern;
-
-	intern = Z_WRITEERROR_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(writeerror);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -69,9 +63,7 @@ static PHP_METHOD(MongoDB_Driver_WriteError, getMessage)
 /* Returns additional metadata for the error */
 static PHP_METHOD(MongoDB_Driver_WriteError, getInfo)
 {
-	phongo_writeerror_t* intern;
-
-	intern = Z_WRITEERROR_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(writeerror);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 

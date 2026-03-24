@@ -30,7 +30,7 @@ PHONGO_DISABLED_CONSTRUCTOR(MongoDB_Driver_Monitoring_ServerClosedEvent)
 /* Returns this event's host */
 static PHP_METHOD(MongoDB_Driver_Monitoring_ServerClosedEvent, getHost)
 {
-	phongo_serverclosedevent_t* intern = Z_SERVERCLOSEDEVENT_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(serverclosedevent);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -40,7 +40,7 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_ServerClosedEvent, getHost)
 /* Returns this event's port */
 static PHP_METHOD(MongoDB_Driver_Monitoring_ServerClosedEvent, getPort)
 {
-	phongo_serverclosedevent_t* intern = Z_SERVERCLOSEDEVENT_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(serverclosedevent);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -50,7 +50,7 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_ServerClosedEvent, getPort)
 /* Returns this event's topology id */
 static PHP_METHOD(MongoDB_Driver_Monitoring_ServerClosedEvent, getTopologyId)
 {
-	phongo_serverclosedevent_t* intern = Z_SERVERCLOSEDEVENT_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(serverclosedevent);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 

@@ -219,14 +219,13 @@ static bool phongo_packedarray_get(phongo_packedarray_t* intern, zend_long index
 
 static PHP_METHOD(MongoDB_BSON_PackedArray, get)
 {
-	phongo_packedarray_t* intern;
-	zend_long             index;
+	PHONGO_INTERN_FROM_THIS(packedarray);
+
+	zend_long index;
 
 	PHONGO_PARSE_PARAMETERS_START(1, 1)
 	Z_PARAM_LONG(index)
 	PHONGO_PARSE_PARAMETERS_END();
-
-	intern = Z_PACKEDARRAY_OBJ_P(getThis());
 
 	if (!phongo_packedarray_get(intern, index, return_value, false)) {
 		// Exception already thrown
@@ -255,45 +254,41 @@ static bool phongo_packedarray_has(phongo_packedarray_t* intern, zend_long index
 
 static PHP_METHOD(MongoDB_BSON_PackedArray, has)
 {
-	phongo_packedarray_t* intern;
-	zend_long             index;
+	PHONGO_INTERN_FROM_THIS(packedarray);
+
+	zend_long index;
 
 	PHONGO_PARSE_PARAMETERS_START(1, 1)
 	Z_PARAM_LONG(index)
 	PHONGO_PARSE_PARAMETERS_END();
-
-	intern = Z_PACKEDARRAY_OBJ_P(getThis());
 
 	RETURN_BOOL(phongo_packedarray_has(intern, index));
 }
 
 static PHP_METHOD(MongoDB_BSON_PackedArray, toCanonicalExtendedJSON)
 {
-	phongo_packedarray_t* intern;
+	PHONGO_INTERN_FROM_THIS(packedarray);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
-
-	intern = Z_PACKEDARRAY_OBJ_P(getThis());
 
 	phongo_packedarray_to_json(return_value, BSON_JSON_MODE_CANONICAL, intern->bson);
 }
 
 static PHP_METHOD(MongoDB_BSON_PackedArray, toRelaxedExtendedJSON)
 {
-	phongo_packedarray_t* intern;
+	PHONGO_INTERN_FROM_THIS(packedarray);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
-
-	intern = Z_PACKEDARRAY_OBJ_P(getThis());
 
 	phongo_packedarray_to_json(return_value, BSON_JSON_MODE_RELAXED, intern->bson);
 }
 
 static PHP_METHOD(MongoDB_BSON_PackedArray, toPHP)
 {
-	phongo_packedarray_t* intern;
-	zval*                 typemap = NULL;
-	phongo_bson_state     state;
+	PHONGO_INTERN_FROM_THIS(packedarray);
+
+	zval*             typemap = NULL;
+	phongo_bson_state state;
 
 	PHONGO_PARSE_PARAMETERS_START(0, 1)
 	Z_PARAM_OPTIONAL
@@ -305,8 +300,6 @@ static PHP_METHOD(MongoDB_BSON_PackedArray, toPHP)
 	if (!phongo_bson_typemap_to_state(typemap, &state.map)) {
 		return;
 	}
-
-	intern = Z_PACKEDARRAY_OBJ_P(getThis());
 
 	state.is_visiting_array   = true;
 	state.map.int64_as_object = true;
@@ -324,14 +317,12 @@ static PHP_METHOD(MongoDB_BSON_PackedArray, toPHP)
 
 static PHP_METHOD(MongoDB_BSON_PackedArray, offsetExists)
 {
-	phongo_packedarray_t* intern;
-	zval*                 key;
+	PHONGO_INTERN_FROM_THIS(packedarray);
+	zval* key;
 
 	PHONGO_PARSE_PARAMETERS_START(1, 1)
 	Z_PARAM_ZVAL(key)
 	PHONGO_PARSE_PARAMETERS_END();
-
-	intern = Z_PACKEDARRAY_OBJ_P(getThis());
 
 	if (Z_TYPE_P(key) != IS_LONG) {
 		RETURN_FALSE;
@@ -342,14 +333,12 @@ static PHP_METHOD(MongoDB_BSON_PackedArray, offsetExists)
 
 static PHP_METHOD(MongoDB_BSON_PackedArray, offsetGet)
 {
-	phongo_packedarray_t* intern;
-	zval*                 key;
+	PHONGO_INTERN_FROM_THIS(packedarray);
+	zval* key;
 
 	PHONGO_PARSE_PARAMETERS_START(1, 1)
 	Z_PARAM_ZVAL(key)
 	PHONGO_PARSE_PARAMETERS_END();
-
-	intern = Z_PACKEDARRAY_OBJ_P(getThis());
 
 	if (Z_TYPE_P(key) != IS_LONG) {
 		phongo_throw_exception(PHONGO_ERROR_RUNTIME, "Could not find index of type \"%s\" in BSON array", zend_zval_type_name(key));
@@ -372,11 +361,9 @@ static PHP_METHOD(MongoDB_BSON_PackedArray, offsetUnset)
 
 static PHP_METHOD(MongoDB_BSON_PackedArray, __toString)
 {
-	phongo_packedarray_t* intern;
+	PHONGO_INTERN_FROM_THIS(packedarray);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
-
-	intern = Z_PACKEDARRAY_OBJ_P(getThis());
 
 	RETVAL_STRINGL((const char*) bson_get_data(intern->bson), intern->bson->len);
 }

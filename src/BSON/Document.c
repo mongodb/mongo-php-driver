@@ -221,15 +221,14 @@ static bool phongo_document_get_by_zval(phongo_document_t* intern, zval* key, zv
 
 static PHP_METHOD(MongoDB_BSON_Document, get)
 {
-	phongo_document_t* intern;
-	char*              key;
-	size_t             key_len;
+	PHONGO_INTERN_FROM_THIS(document);
+
+	char*  key;
+	size_t key_len;
 
 	PHONGO_PARSE_PARAMETERS_START(1, 1)
 	Z_PARAM_STRING(key, key_len)
 	PHONGO_PARSE_PARAMETERS_END();
-
-	intern = Z_DOCUMENT_OBJ_P(getThis());
 
 	// May throw, in which case we do nothing
 	phongo_document_get(intern, key, key_len, return_value, false);
@@ -280,46 +279,42 @@ static bool phongo_document_has_by_zval(phongo_document_t* intern, zval* key)
 
 static PHP_METHOD(MongoDB_BSON_Document, has)
 {
-	phongo_document_t* intern;
-	char*              key;
-	size_t             key_len;
+	PHONGO_INTERN_FROM_THIS(document);
+
+	char*  key;
+	size_t key_len;
 
 	PHONGO_PARSE_PARAMETERS_START(1, 1)
 	Z_PARAM_STRING(key, key_len)
 	PHONGO_PARSE_PARAMETERS_END();
-
-	intern = Z_DOCUMENT_OBJ_P(getThis());
 
 	RETURN_BOOL(phongo_document_has(intern, key, key_len));
 }
 
 static PHP_METHOD(MongoDB_BSON_Document, toCanonicalExtendedJSON)
 {
-	phongo_document_t* intern;
+	PHONGO_INTERN_FROM_THIS(document);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
-
-	intern = Z_DOCUMENT_OBJ_P(getThis());
 
 	phongo_bson_to_json(return_value, intern->bson, PHONGO_JSON_MODE_CANONICAL);
 }
 
 static PHP_METHOD(MongoDB_BSON_Document, toRelaxedExtendedJSON)
 {
-	phongo_document_t* intern;
+	PHONGO_INTERN_FROM_THIS(document);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
-
-	intern = Z_DOCUMENT_OBJ_P(getThis());
 
 	phongo_bson_to_json(return_value, intern->bson, PHONGO_JSON_MODE_RELAXED);
 }
 
 static PHP_METHOD(MongoDB_BSON_Document, toPHP)
 {
-	phongo_document_t* intern;
-	zval*              typemap = NULL;
-	phongo_bson_state  state;
+	PHONGO_INTERN_FROM_THIS(document);
+
+	zval*             typemap = NULL;
+	phongo_bson_state state;
 
 	PHONGO_PARSE_PARAMETERS_START(0, 1)
 	Z_PARAM_OPTIONAL
@@ -331,8 +326,6 @@ static PHP_METHOD(MongoDB_BSON_Document, toPHP)
 	if (!phongo_bson_typemap_to_state(typemap, &state.map)) {
 		return;
 	}
-
-	intern = Z_DOCUMENT_OBJ_P(getThis());
 
 	state.map.int64_as_object = true;
 
@@ -349,28 +342,26 @@ static PHP_METHOD(MongoDB_BSON_Document, toPHP)
 
 static PHP_METHOD(MongoDB_BSON_Document, offsetExists)
 {
-	phongo_document_t* intern;
-	zval*              offset;
+	PHONGO_INTERN_FROM_THIS(document);
+
+	zval* offset;
 
 	PHONGO_PARSE_PARAMETERS_START(1, 1)
 	Z_PARAM_ZVAL(offset)
 	PHONGO_PARSE_PARAMETERS_END();
-
-	intern = Z_DOCUMENT_OBJ_P(getThis());
 
 	RETURN_BOOL(phongo_document_has_by_zval(intern, offset));
 }
 
 static PHP_METHOD(MongoDB_BSON_Document, offsetGet)
 {
-	phongo_document_t* intern;
-	zval*              offset;
+	PHONGO_INTERN_FROM_THIS(document);
+
+	zval* offset;
 
 	PHONGO_PARSE_PARAMETERS_START(1, 1)
 	Z_PARAM_ZVAL(offset)
 	PHONGO_PARSE_PARAMETERS_END();
-
-	intern = Z_DOCUMENT_OBJ_P(getThis());
 
 	// May throw, in which case we do nothing
 	phongo_document_get_by_zval(intern, offset, return_value, false);
@@ -388,11 +379,9 @@ static PHP_METHOD(MongoDB_BSON_Document, offsetUnset)
 
 static PHP_METHOD(MongoDB_BSON_Document, __toString)
 {
-	phongo_document_t* intern;
+	PHONGO_INTERN_FROM_THIS(document);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
-
-	intern = Z_DOCUMENT_OBJ_P(getThis());
 
 	RETVAL_STRINGL((const char*) bson_get_data(intern->bson), intern->bson->len);
 }
