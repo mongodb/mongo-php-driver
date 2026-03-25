@@ -34,7 +34,7 @@ foreach ($tests as $test) {
 
 object(MongoDB\BSON\Binary)#%d (%d) {
   ["data"]=>
-  string(3) "foo"
+  string(%d) "%s"
   ["type"]=>
   int(0)
 }

@@ -61,7 +61,7 @@ array(14) {
   [6]=>
   object(MongoDB\BSON\Binary)#%d (%d) {
     ["data"]=>
-    string(3) "foo"
+    string(4) "Zm9v"
     ["type"]=>
     int(0)
   }

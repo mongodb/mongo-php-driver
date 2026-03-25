@@ -74,7 +74,7 @@ static bool phongo_binary_init_from_hash(phongo_binary_t* intern, HashTable* pro
 	return false;
 }
 
-static HashTable* phongo_binary_get_properties_hash(zend_object* object, bool is_temp)
+static HashTable* phongo_binary_get_properties_hash(zend_object* object, bool is_temp, bool is_debug)
 {
 	phongo_binary_t* intern;
 	HashTable*       props;
@@ -90,7 +90,12 @@ static HashTable* phongo_binary_get_properties_hash(zend_object* object, bool is
 	{
 		zval data, type;
 
-		ZVAL_STRINGL(&data, intern->data, intern->data_len);
+		if (is_debug) {
+			ZVAL_NEW_STR(&data, php_base64_encode((unsigned char*) intern->data, intern->data_len));
+		} else {
+			ZVAL_STRINGL(&data, intern->data, intern->data_len);
+		}
+
 		zend_hash_str_update(props, "data", sizeof("data") - 1, &data);
 
 		ZVAL_LONG(&type, intern->type);
@@ -197,7 +202,7 @@ static PHP_METHOD(MongoDB_BSON_Binary, __serialize)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
 
-	RETURN_ARR(phongo_binary_get_properties_hash(Z_OBJ_P(getThis()), true));
+	RETURN_ARR(phongo_binary_get_properties_hash(Z_OBJ_P(getThis()), true, false));
 }
 
 static PHP_METHOD(MongoDB_BSON_Binary, __unserialize)
@@ -284,7 +289,7 @@ static int phongo_binary_compare_objects(zval* o1, zval* o2)
 static HashTable* phongo_binary_get_debug_info(zend_object* object, int* is_temp)
 {
 	*is_temp         = 1;
-	HashTable* props = phongo_binary_get_properties_hash(object, true);
+	HashTable* props = phongo_binary_get_properties_hash(object, true, true);
 
 	phongo_binary_t* intern = Z_OBJ_BINARY(object);
 
@@ -317,7 +322,7 @@ static HashTable* phongo_binary_get_debug_info(zend_object* object, int* is_temp
 
 static HashTable* phongo_binary_get_properties(zend_object* object)
 {
-	return phongo_binary_get_properties_hash(object, false);
+	return phongo_binary_get_properties_hash(object, false, false);
 }
 
 void phongo_binary_init_ce(INIT_FUNC_ARGS)
