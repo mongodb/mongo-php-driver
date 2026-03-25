@@ -53,7 +53,6 @@ static void phongo_zval_to_bson_internal(zval* data, phongo_field_path* field_pa
 static int phongo_is_array_or_document(zval* val)
 {
 	HashTable* ht_data = HASH_OF(val);
-	int        count;
 
 	if (Z_TYPE_P(val) != IS_ARRAY) {
 		if (Z_TYPE_P(val) == IS_OBJECT && instanceof_function(Z_OBJCE_P(val), phongo_packedarray_ce)) {
@@ -63,26 +62,8 @@ static int phongo_is_array_or_document(zval* val)
 		return IS_OBJECT;
 	}
 
-	count = ht_data ? zend_hash_num_elements(ht_data) : 0;
-	if (count > 0) {
-		zend_string* key;
-		zend_ulong   index, idx;
-
-		idx = 0;
-		ZEND_HASH_FOREACH_KEY(ht_data, index, key)
-		{
-			if (key) {
-				return IS_OBJECT;
-			} else {
-				if (index != idx) {
-					return IS_OBJECT;
-				}
-			}
-			idx++;
-		}
-		ZEND_HASH_FOREACH_END();
-	} else {
-		return Z_TYPE_P(val);
+	if (!zend_array_is_list(ht_data)) {
+		return IS_OBJECT;
 	}
 
 	return IS_ARRAY;
