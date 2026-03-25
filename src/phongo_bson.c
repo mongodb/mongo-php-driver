@@ -98,14 +98,23 @@ char* phongo_field_path_as_string(phongo_field_path* field_path)
 	ptr  = path;
 
 	for (i = 0; i <= field_path->size; i++) {
+		size_t element_len;
+
 		if (!field_path->elements[i]) {
 			continue;
 		}
+
+		element_len = strlen(field_path->elements[i]);
+
+		/* Assert that we have enough space in the buffer for this element plus separator */
+		BSON_ASSERT((size_t) (ptr - path) + element_len + 1 < length);
+
 		strcpy(ptr, field_path->elements[i]);
-		ptr += strlen(field_path->elements[i]);
+		ptr += element_len;
 		ptr[0] = '.';
 		ptr++;
 	}
+
 	ptr[-1] = '\0';
 
 	return path;
@@ -122,11 +131,13 @@ phongo_field_path* phongo_field_path_alloc(bool owns_elements)
 
 void phongo_field_path_free(phongo_field_path* field_path)
 {
-	if (field_path->owns_elements) {
+	if (field_path->owns_elements && field_path->elements) {
 		size_t i;
 
 		for (i = 0; i < field_path->size; i++) {
-			efree(field_path->elements[i]);
+			if (field_path->elements[i]) {
+				efree(field_path->elements[i]);
+			}
 		}
 	}
 	if (field_path->elements) {
@@ -1287,7 +1298,7 @@ static void map_add_field_path_element(phongo_bson_typemap* map, phongo_field_pa
 	/* Make sure we have allocated enough */
 	if (map->field_paths.allocated_size < map->field_paths.size + 1) {
 		map->field_paths.allocated_size += PHONGO_FIELD_PATH_EXPANSION;
-		map->field_paths.map = erealloc(map->field_paths.map, sizeof(phongo_field_path_map_element) * map->field_paths.allocated_size);
+		map->field_paths.map = erealloc(map->field_paths.map, sizeof(phongo_field_path_map_element*) * map->field_paths.allocated_size);
 	}
 
 	map->field_paths.map[map->field_paths.size] = element;
@@ -1339,10 +1350,10 @@ static bool phongo_bson_state_add_field_path(phongo_bson_typemap* map, char* fie
 			return false;
 		}
 
-		tmp = calloc(1, segment_end - ptr + 1);
+		tmp = ecalloc(1, segment_end - ptr + 1);
 		memcpy(tmp, ptr, segment_end - ptr);
 		phongo_field_path_push(field_path_map_element->entry, tmp, PHONGO_FIELD_PATH_ITEM_NONE);
-		free(tmp);
+		efree(tmp);
 
 		ptr = segment_end + 1;
 	}

@@ -30,6 +30,5 @@ typedef enum {
 
 void phongo_zval_to_bson(zval* data, phongo_bson_flags_t flags, bson_t* bson, bson_t** bson_out);
 bool phongo_zval_to_bson_value(zval* data, bson_value_t* value);
-void phongo_bson_append_zval(bson_t* bson, const char* key, long key_len, zval* value);
 
 #endif /* PHONGO_BSON_ENCODE_H */

@@ -469,6 +469,7 @@ cleanup:
 	}
 
 	bson_destroy(&filter);
+	bson_destroy(&reply);
 	bson_destroy(masterkey);
 	mongoc_client_encryption_rewrap_many_datakey_result_destroy(result);
 }
@@ -625,6 +626,7 @@ static mongoc_client_encryption_opts_t* phongo_clientencryption_opts_from_zval(z
 
 		phongo_zval_to_bson(tls_options, PHONGO_BSON_NONE, &bson_options, NULL);
 		if (EG(exception)) {
+			bson_destroy(&bson_options);
 			goto cleanup;
 		}
 
@@ -758,7 +760,9 @@ static mongoc_client_encryption_datakey_opts_t* phongo_clientencryption_datakey_
 		}
 
 		for (j = 0; j < i; j++) {
-			efree(keyaltnames[j]);
+			if (keyaltnames[j]) {
+				efree(keyaltnames[j]);
+			}
 		}
 		efree(keyaltnames);
 

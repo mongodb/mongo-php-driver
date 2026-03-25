@@ -371,7 +371,7 @@ static void phongo_binary_init_vector_from_float32_array(phongo_binary_t* intern
 
 	if (!BSON_APPEND_VECTOR_FLOAT32_UNINIT(&doc, "vector", vector_len, &view)) {
 		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "BSON_APPEND_VECTOR_FLOAT32_UNINIT failed for vector of size %zu", vector_len);
-		return;
+		goto cleanup;
 	}
 
 	zval*  val;
@@ -381,14 +381,14 @@ static void phongo_binary_init_vector_from_float32_array(phongo_binary_t* intern
 	{
 		if (Z_TYPE_P(val) != IS_DOUBLE) {
 			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected vector[%zu] to be a float, %s given", i, zend_zval_type_name(val));
-			return;
+			goto cleanup;
 		}
 
 		float v = (float) Z_DVAL_P(val);
 
 		if (!bson_vector_float32_view_write(view, &v, 1, i)) {
 			phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "bson_vector_float32_view_write failed to write vector[%zu]", i);
-			return;
+			goto cleanup;
 		}
 
 		i += 1;
@@ -396,6 +396,9 @@ static void phongo_binary_init_vector_from_float32_array(phongo_binary_t* intern
 	ZEND_HASH_FOREACH_END();
 
 	phongo_binary_init_vector_from_bson_key(intern, &doc, "vector");
+
+cleanup:
+	bson_destroy(&doc);
 }
 
 static void phongo_binary_init_vector_from_int8_array(phongo_binary_t* intern, HashTable* vector)
@@ -412,7 +415,7 @@ static void phongo_binary_init_vector_from_int8_array(phongo_binary_t* intern, H
 
 	if (!BSON_APPEND_VECTOR_INT8_UNINIT(&doc, "vector", vector_len, &view)) {
 		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "BSON_APPEND_VECTOR_INT8_UNINIT failed for vector of size %zu", vector_len);
-		return;
+		goto cleanup;
 	}
 
 	zval*  val;
@@ -422,19 +425,19 @@ static void phongo_binary_init_vector_from_int8_array(phongo_binary_t* intern, H
 	{
 		if (Z_TYPE_P(val) != IS_LONG) {
 			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected vector[%zu] to be an integer, %s given", i, zend_zval_type_name(val));
-			return;
+			goto cleanup;
 		}
 
 		if (Z_LVAL_P(val) < INT8_MIN || Z_LVAL_P(val) > INT8_MAX) {
 			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected vector[%zu] to be a signed 8-bit integer, %" PHONGO_LONG_FORMAT " given", i, Z_LVAL_P(val));
-			return;
+			goto cleanup;
 		}
 
 		int8_t v = (int8_t) Z_LVAL_P(val);
 
 		if (!bson_vector_int8_view_write(view, &v, 1, i)) {
 			phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "bson_vector_int8_view_write failed to write vector[%zu]", i);
-			return;
+			goto cleanup;
 		}
 
 		i += 1;
@@ -442,6 +445,9 @@ static void phongo_binary_init_vector_from_int8_array(phongo_binary_t* intern, H
 	ZEND_HASH_FOREACH_END();
 
 	phongo_binary_init_vector_from_bson_key(intern, &doc, "vector");
+
+cleanup:
+	bson_destroy(&doc);
 }
 
 static void phongo_binary_init_vector_from_packed_bit_array(phongo_binary_t* intern, HashTable* vector)
@@ -458,7 +464,7 @@ static void phongo_binary_init_vector_from_packed_bit_array(phongo_binary_t* int
 
 	if (!BSON_APPEND_VECTOR_PACKED_BIT_UNINIT(&doc, "vector", vector_len, &view)) {
 		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "BSON_APPEND_VECTOR_PACKED_BIT_UNINIT failed for vector of size %zu", vector_len);
-		return;
+		goto cleanup;
 	}
 
 	zval*  val;
@@ -468,19 +474,19 @@ static void phongo_binary_init_vector_from_packed_bit_array(phongo_binary_t* int
 	{
 		if (Z_TYPE_P(val) != IS_LONG && Z_TYPE_P(val) != IS_TRUE && Z_TYPE_P(val) != IS_FALSE) {
 			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected vector[%zu] to be 0, 1, or a boolean, %s given", i, zend_zval_type_name(val));
-			return;
+			goto cleanup;
 		}
 
 		if (Z_TYPE_P(val) == IS_LONG && Z_LVAL_P(val) != 0 && Z_LVAL_P(val) != 1) {
 			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected vector[%zu] to be 0 or 1, %" PHONGO_LONG_FORMAT " given", i, Z_LVAL_P(val));
-			return;
+			goto cleanup;
 		}
 
 		bool v = zend_is_true(val);
 
 		if (!bson_vector_packed_bit_view_pack_bool(view, &v, 1, i)) {
 			phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "bson_vector_packed_bit_view_pack_bool failed to write vector[%zu]", i);
-			return;
+			goto cleanup;
 		}
 
 		i += 1;
@@ -488,6 +494,9 @@ static void phongo_binary_init_vector_from_packed_bit_array(phongo_binary_t* int
 	ZEND_HASH_FOREACH_END();
 
 	phongo_binary_init_vector_from_bson_key(intern, &doc, "vector");
+
+cleanup:
+	bson_destroy(&doc);
 }
 
 static PHP_METHOD(MongoDB_BSON_Binary, fromVector)
