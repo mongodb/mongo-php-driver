@@ -29,6 +29,7 @@ foreach ($tests as $test) {
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
+Deprecated: MongoDB\Driver\ReadPreference::__construct(): The "hedge" option is deprecated as of MongoDB 8.0 and will be removed in a future release in %s
 object(MongoDB\Driver\ReadPreference)#%d (%d) {
   ["mode"]=>
   string(7) "primary"
@@ -185,6 +186,8 @@ object(MongoDB\Driver\ReadPreference)#%d (%d) {
   }
 }
 O:29:"MongoDB\Driver\ReadPreference":2:{s:4:"mode";s:9:"secondary";s:5:"hedge";O:8:"stdClass":1:{s:7:"enabled";b:1;}}
+
+Deprecated: MongoDB\Driver\ReadPreference::__unserialize(): The "hedge" option is deprecated as of MongoDB 8.0 and will be removed in a future release in %s
 object(MongoDB\Driver\ReadPreference)#%d (%d) {
   ["mode"]=>
   string(9) "secondary"

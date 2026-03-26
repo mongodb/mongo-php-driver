@@ -7,8 +7,6 @@ var_dump(new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::PRIMAR
 var_dump(new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::SECONDARY, [['tag' => 'one']]));
 var_dump(new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::PRIMARY, []));
 var_dump(new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::SECONDARY, null, ['maxStalenessSeconds' => 1000]));
-var_dump(new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::SECONDARY, null, ['hedge' => ['enabled' => true]]));
-var_dump(new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::SECONDARY, null, ['hedge' => []]));
 
 ?>
 ===DONE===
@@ -39,18 +37,5 @@ object(MongoDB\Driver\ReadPreference)#%d (%d) {
   string(9) "secondary"
   ["maxStalenessSeconds"]=>
   int(1000)
-}
-object(MongoDB\Driver\ReadPreference)#%d (%d) {
-  ["mode"]=>
-  string(9) "secondary"
-  ["hedge"]=>
-  object(stdClass)#%d (%d) {
-    ["enabled"]=>
-    bool(true)
-  }
-}
-object(MongoDB\Driver\ReadPreference)#%d (%d) {
-  ["mode"]=>
-  string(9) "secondary"
 }
 ===DONE===

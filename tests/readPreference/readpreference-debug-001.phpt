@@ -26,6 +26,7 @@ foreach ($tests as $test) {
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
+Deprecated: MongoDB\Driver\ReadPreference::__construct(): The "hedge" option is deprecated as of MongoDB 8.0 and will be removed in a future release in %s
 object(MongoDB\Driver\ReadPreference)#%d (%d) {
   ["mode"]=>
   string(7) "primary"

@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 27261ceb122b2783b1fba08be5c17b4f48ab8523 */
+ * Stub hash: ecf94da5562a2befc25e9770cc9970101823dcf2 */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_Driver_ReadPreference___construct, 0, 0, 1)
 	ZEND_ARG_TYPE_INFO(0, mode, IS_STRING, 0)
@@ -46,7 +46,7 @@ static ZEND_METHOD(MongoDB_Driver_ReadPreference, __serialize);
 
 static const zend_function_entry class_MongoDB_Driver_ReadPreference_methods[] = {
 	ZEND_ME(MongoDB_Driver_ReadPreference, __construct, arginfo_class_MongoDB_Driver_ReadPreference___construct, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	ZEND_ME(MongoDB_Driver_ReadPreference, getHedge, arginfo_class_MongoDB_Driver_ReadPreference_getHedge, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	ZEND_ME(MongoDB_Driver_ReadPreference, getHedge, arginfo_class_MongoDB_Driver_ReadPreference_getHedge, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL|ZEND_ACC_DEPRECATED)
 	ZEND_ME(MongoDB_Driver_ReadPreference, getMaxStalenessSeconds, arginfo_class_MongoDB_Driver_ReadPreference_getMaxStalenessSeconds, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_Driver_ReadPreference, getModeString, arginfo_class_MongoDB_Driver_ReadPreference_getModeString, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_Driver_ReadPreference, getTagSets, arginfo_class_MongoDB_Driver_ReadPreference_getTagSets, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
