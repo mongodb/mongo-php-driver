@@ -88,51 +88,18 @@ static int phongo_is_array_or_document(zval* val)
 	return IS_ARRAY;
 }
 
-/* Checks the return type of a bsonSerialize() method. Returns true on
- * success; otherwise, throws an exception and returns false.
- *
- * TODO: obsolete once the tentative return type in Serializable::bsonSerialize is enforced.
- */
-static inline bool phongo_check_bson_serialize_return_type(zval* retval, zend_class_entry* ce)
+static bool phongo_bson_encode_serializable(zval* object, zval* out_data)
 {
-	if (instanceof_function(ce, phongo_persistable_ce)) {
-		// Instances of Persistable must return an array, stdClass, or MongoDB\BSON\Document
-		if (
-			Z_TYPE_P(retval) != IS_ARRAY && !(Z_TYPE_P(retval) == IS_OBJECT && (instanceof_function(Z_OBJCE_P(retval), zend_standard_class_def) || instanceof_function(Z_OBJCE_P(retval), phongo_document_ce)))) {
-			phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE,
-								   "Expected %s::%s() to return an array, stdClass, or %s, %s given",
-								   ZSTR_VAL(ce->name),
-								   BSON_SERIALIZE_FUNC_NAME,
-								   ZSTR_VAL(phongo_document_ce->name),
-								   zend_zval_type_name(retval));
-			return false;
-		}
+	ZVAL_UNDEF(out_data);
+	zend_call_method_with_0_params(Z_OBJ_P(object), NULL, NULL, BSON_SERIALIZE_FUNC_NAME, out_data);
 
-		return true;
+	if (Z_ISUNDEF_P(out_data)) {
+		/* zend_call_method() failed or bsonSerialize() threw an
+		 * exception. Either way, there is nothing else to do. */
+		return false;
 	}
 
-	if (instanceof_function(ce, phongo_serializable_ce)) {
-		// Instances of Serializable must return an array, stdClass, MongoDB\BSON\Document, or MongoDB\BSON\PackedArray
-		if (
-			Z_TYPE_P(retval) != IS_ARRAY && !(Z_TYPE_P(retval) == IS_OBJECT && (instanceof_function(Z_OBJCE_P(retval), zend_standard_class_def) || instanceof_function(Z_OBJCE_P(retval), phongo_document_ce) || instanceof_function(Z_OBJCE_P(retval), phongo_packedarray_ce)))) {
-			phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE,
-								   "Expected %s::%s() to return an array, stdClass, %s, or %s, %s given",
-								   ZSTR_VAL(ce->name),
-								   BSON_SERIALIZE_FUNC_NAME,
-								   ZSTR_VAL(phongo_document_ce->name),
-								   ZSTR_VAL(phongo_packedarray_ce->name),
-								   zend_zval_type_name(retval));
-			return false;
-		}
-
-		return true;
-	}
-
-	phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE,
-						   "Expected to receive instance of %s, %s given",
-						   ZSTR_VAL(phongo_serializable_ce->name),
-						   ZSTR_VAL(ce->name));
-	return false;
+	return true;
 }
 
 /* Appends the array or object argument to the BSON document.
@@ -166,17 +133,8 @@ static void phongo_bson_append_object(bson_t* bson, phongo_field_path* field_pat
 			zval   obj_data;
 			bson_t child;
 
-			zend_call_method_with_0_params(Z_OBJ_P(object), NULL, NULL, BSON_SERIALIZE_FUNC_NAME, &obj_data);
-
-			if (Z_ISUNDEF(obj_data)) {
-				/* zend_call_method() failed or bsonSerialize() threw an
-				 * exception. Either way, there is nothing else to do. */
-				return;
-			}
-
-			if (!phongo_check_bson_serialize_return_type(&obj_data, Z_OBJCE_P(object))) {
+			if (!phongo_bson_encode_serializable(object, &obj_data)) {
 				// Exception already thrown
-				zval_ptr_dtor(&obj_data);
 				return;
 			}
 
@@ -488,17 +446,9 @@ static void phongo_zval_to_bson_internal(zval* data, phongo_field_path* field_pa
 			/* For any MongoDB\BSON\Serializable, invoke the bsonSerialize method
 			 * and work with the result. */
 			if (instanceof_function(Z_OBJCE_P(data), phongo_serializable_ce)) {
-				zend_call_method_with_0_params(Z_OBJ_P(data), NULL, NULL, BSON_SERIALIZE_FUNC_NAME, &obj_data);
-
-				if (Z_ISUNDEF(obj_data)) {
-					/* zend_call_method() failed or bsonSerialize() threw an
-					 * exception. Either way, there is nothing else to do. */
-					return;
-				}
-
-				if (!phongo_check_bson_serialize_return_type(&obj_data, Z_OBJCE_P(data))) {
+				if (!phongo_bson_encode_serializable(data, &obj_data)) {
 					// Exception already thrown
-					goto cleanup;
+					return;
 				}
 
 				if (instanceof_function(Z_OBJCE_P(data), phongo_persistable_ce)) {
