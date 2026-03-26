@@ -581,20 +581,20 @@ bool phongo_execute_command(zval* manager, phongo_command_type_t type, const cha
 
 		bson_copy_to(&reply, &initial_reply);
 
-		bson_append_int32(&cursor_opts, "serverId", -1, server_id);
+		bson_append_int32(&cursor_opts, ZEND_STRL("serverId"), server_id);
 
 		if (command->max_await_time_ms) {
-			bson_append_bool(&cursor_opts, "awaitData", -1, 1);
-			bson_append_int64(&cursor_opts, "maxAwaitTimeMS", -1, command->max_await_time_ms);
-			bson_append_bool(&cursor_opts, "tailable", -1, 1);
+			bson_append_bool(&cursor_opts, ZEND_STRL("awaitData"), 1);
+			bson_append_int64(&cursor_opts, ZEND_STRL("maxAwaitTimeMS"), command->max_await_time_ms);
+			bson_append_bool(&cursor_opts, ZEND_STRL("tailable"), 1);
 		}
 
 		if (command->batch_size) {
-			bson_append_int64(&cursor_opts, "batchSize", -1, command->batch_size);
+			bson_append_int64(&cursor_opts, ZEND_STRL("batchSize"), command->batch_size);
 		}
 
 		if (bson_iter_init(&iter, command->bson) && bson_iter_find(&iter, "comment")) {
-			bson_append_value(&cursor_opts, "comment", -1, bson_iter_value(&iter));
+			bson_append_value(&cursor_opts, ZEND_STRL("comment"), bson_iter_value(&iter));
 		}
 
 		if (zsession && !mongoc_client_session_append(Z_SESSION_OBJ_P(zsession)->client_session, &cursor_opts, &error)) {
@@ -611,7 +611,7 @@ bool phongo_execute_command(zval* manager, phongo_command_type_t type, const cha
 		bson_t  cursor_opts   = BSON_INITIALIZER;
 		bson_t* wrapped_reply = create_wrapped_command_envelope(db, &reply);
 
-		bson_append_int32(&cursor_opts, "serverId", -1, server_id);
+		bson_append_int32(&cursor_opts, ZEND_STRL("serverId"), server_id);
 		cmd_cursor = mongoc_cursor_new_from_command_reply_with_opts(client, wrapped_reply, &cursor_opts);
 		bson_destroy(&cursor_opts);
 	}

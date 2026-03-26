@@ -527,7 +527,7 @@ done:
 		bson_oid_t oid;
 
 		bson_oid_init(&oid, NULL);
-		bson_append_oid(bson, "_id", strlen("_id"), &oid);
+		bson_append_oid(bson, ZEND_STRL("_id"), &oid);
 	}
 
 	if (flags & PHONGO_BSON_RETURN_ID && bson_out) {
