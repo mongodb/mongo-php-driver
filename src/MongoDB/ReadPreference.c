@@ -31,6 +31,71 @@
 
 zend_class_entry* phongo_readpreference_ce;
 
+static const char* phongo_readpreference_get_mode_string(const mongoc_read_prefs_t* read_prefs)
+{
+	switch (mongoc_read_prefs_get_mode(read_prefs)) {
+		case MONGOC_READ_PRIMARY:
+			return PHONGO_READ_PRIMARY;
+		case MONGOC_READ_PRIMARY_PREFERRED:
+			return PHONGO_READ_PRIMARY_PREFERRED;
+		case MONGOC_READ_SECONDARY:
+			return PHONGO_READ_SECONDARY;
+		case MONGOC_READ_SECONDARY_PREFERRED:
+			return PHONGO_READ_SECONDARY_PREFERRED;
+		case MONGOC_READ_NEAREST:
+			return PHONGO_READ_NEAREST;
+		default:
+			return "";
+	}
+}
+
+static void phongo_readpreference_update_properties(phongo_readpreference_t* intern)
+{
+	const bson_t* bson;
+
+	zend_update_property_string(phongo_readpreference_ce, &intern->std, ZEND_STRL("mode"), phongo_readpreference_get_mode_string(intern->read_preference));
+	zend_update_property_long(phongo_readpreference_ce, &intern->std, ZEND_STRL("maxStalenessSeconds"), mongoc_read_prefs_get_max_staleness_seconds(intern->read_preference));
+
+	bson = mongoc_read_prefs_get_tags(intern->read_preference);
+
+	if (!bson_empty0(bson)) {
+		phongo_bson_state state;
+
+		PHONGO_BSON_INIT_STATE(state);
+		state.map.root.type = PHONGO_TYPEMAP_NATIVE_ARRAY;
+
+		if (!phongo_bson_to_zval_ex(bson, &state)) {
+			// Exception already thrown
+			zval_ptr_dtor(&state.zchild);
+			return;
+		}
+
+		zend_update_property(phongo_readpreference_ce, &intern->std, ZEND_STRL("tags"), &state.zchild);
+		zval_ptr_dtor(&state.zchild);
+	} else {
+		zend_update_property_null(phongo_readpreference_ce, &intern->std, ZEND_STRL("tags"));
+	}
+
+	bson = mongoc_read_prefs_get_hedge(intern->read_preference);
+
+	if (!bson_empty0(bson)) {
+		phongo_bson_state state;
+
+		PHONGO_BSON_INIT_STATE(state);
+
+		if (!phongo_bson_to_zval_ex(bson, &state)) {
+			// Exception already thrown
+			zval_ptr_dtor(&state.zchild);
+			return;
+		}
+
+		zend_update_property(phongo_readpreference_ce, &intern->std, ZEND_STRL("hedge"), &state.zchild);
+		zval_ptr_dtor(&state.zchild);
+	} else {
+		zend_update_property_null(phongo_readpreference_ce, &intern->std, ZEND_STRL("hedge"));
+	}
+}
+
 /* Initialize the object from a HashTable and return whether it was successful.
  * An exception will be thrown on error. */
 static bool phongo_readpreference_init_from_hash(phongo_readpreference_t* intern, HashTable* props)
@@ -83,7 +148,7 @@ static bool phongo_readpreference_init_from_hash(phongo_readpreference_t* intern
 
 			mongoc_read_prefs_set_tags(intern->read_preference, tags);
 			bson_destroy(tags);
-		} else {
+		} else if (Z_TYPE_P(tagSets) != IS_NULL) {
 			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "%s initialization requires \"tags\" field to be array", ZSTR_VAL(phongo_readpreference_ce->name));
 			goto failure;
 		}
@@ -134,7 +199,7 @@ static bool phongo_readpreference_init_from_hash(phongo_readpreference_t* intern
 
 			mongoc_read_prefs_set_hedge(intern->read_preference, hedge_doc);
 			bson_destroy(hedge_doc);
-		} else {
+		} else if (Z_TYPE_P(hedge) != IS_NULL) {
 			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "%s initialization requires \"hedge\" field to be an array or object", ZSTR_VAL(phongo_readpreference_ce->name));
 			goto failure;
 		}
@@ -145,30 +210,14 @@ static bool phongo_readpreference_init_from_hash(phongo_readpreference_t* intern
 		goto failure;
 	}
 
+	phongo_readpreference_update_properties(intern);
+
 	return true;
 
 failure:
 	mongoc_read_prefs_destroy(intern->read_preference);
 	intern->read_preference = NULL;
 	return false;
-}
-
-static const char* phongo_readpreference_get_mode_string(const mongoc_read_prefs_t* read_prefs)
-{
-	switch (mongoc_read_prefs_get_mode(read_prefs)) {
-		case MONGOC_READ_PRIMARY:
-			return PHONGO_READ_PRIMARY;
-		case MONGOC_READ_PRIMARY_PREFERRED:
-			return PHONGO_READ_PRIMARY_PREFERRED;
-		case MONGOC_READ_SECONDARY:
-			return PHONGO_READ_SECONDARY;
-		case MONGOC_READ_SECONDARY_PREFERRED:
-			return PHONGO_READ_SECONDARY_PREFERRED;
-		case MONGOC_READ_NEAREST:
-			return PHONGO_READ_NEAREST;
-		default:
-			return "";
-	}
 }
 
 /* Constructs a new ReadPreference */
@@ -281,6 +330,8 @@ static PHP_METHOD(MongoDB_Driver_ReadPreference, __construct)
 		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Read preference is not valid");
 		return;
 	}
+
+	phongo_readpreference_update_properties(intern);
 }
 
 static PHP_METHOD(MongoDB_Driver_ReadPreference, __set_state)
@@ -384,87 +435,32 @@ static PHP_METHOD(MongoDB_Driver_ReadPreference, getTagSets)
 	}
 }
 
-static HashTable* phongo_readpreference_get_properties_hash(zend_object* object, bool is_temp)
-{
-	phongo_readpreference_t* intern;
-	HashTable*               props;
-	const bson_t*            tags;
-	const bson_t*            hedge;
-
-	intern = Z_OBJ_READPREFERENCE(object);
-
-	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_temp, intern, props, 4);
-
-	if (!intern->read_preference) {
-		return props;
-	}
-
-	tags  = mongoc_read_prefs_get_tags(intern->read_preference);
-	hedge = mongoc_read_prefs_get_hedge(intern->read_preference);
-
-	{
-		zval z_mode;
-
-		ZVAL_STRING(&z_mode, phongo_readpreference_get_mode_string(intern->read_preference));
-		zend_hash_str_update(props, "mode", sizeof("mode") - 1, &z_mode);
-	}
-
-	if (!bson_empty0(tags)) {
-		phongo_bson_state state;
-
-		/* Use PHONGO_TYPEMAP_NATIVE_ARRAY for the root type since tags is an
-		 * array; however, inner documents and arrays can use the default. */
-		PHONGO_BSON_INIT_STATE(state);
-		state.map.root.type = PHONGO_TYPEMAP_NATIVE_ARRAY;
-
-		if (!phongo_bson_to_zval_ex(tags, &state)) {
-			zval_ptr_dtor(&state.zchild);
-			goto done;
-		}
-
-		zend_hash_str_update(props, "tags", sizeof("tags") - 1, &state.zchild);
-	}
-
-	if (mongoc_read_prefs_get_max_staleness_seconds(intern->read_preference) != MONGOC_NO_MAX_STALENESS) {
-		/* Note: valid values for maxStalesnessSeconds will not exceed the range
-		 * of 32-bit signed integers, so conditional encoding is not necessary. */
-		long maxStalenessSeconds = mongoc_read_prefs_get_max_staleness_seconds(intern->read_preference);
-		zval z_max_ss;
-
-		ZVAL_LONG(&z_max_ss, maxStalenessSeconds);
-		zend_hash_str_update(props, "maxStalenessSeconds", sizeof("maxStalenessSeconds") - 1, &z_max_ss);
-	}
-
-	if (!bson_empty0(hedge)) {
-		phongo_bson_state state;
-
-		PHONGO_BSON_INIT_STATE(state);
-
-		if (!phongo_bson_to_zval_ex(hedge, &state)) {
-			zval_ptr_dtor(&state.zchild);
-			goto done;
-		}
-
-		zend_hash_str_update(props, "hedge", sizeof("hedge") - 1, &state.zchild);
-	}
-
-done:
-	return props;
-}
-
 static PHP_METHOD(MongoDB_Driver_ReadPreference, bsonSerialize)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
 
-	ZVAL_ARR(return_value, phongo_readpreference_get_properties_hash(Z_OBJ_P(getThis()), true));
+	array_init_size(return_value, 4);
+
+	{
+		zend_string* string_key;
+		zval*        val;
+
+		ZEND_HASH_FOREACH_STR_KEY_VAL_IND(HASH_OF(getThis()), string_key, val)
+		{
+			if (
+				(Z_TYPE_P(val) == IS_NULL) || (!strcmp(ZSTR_VAL(string_key), "maxStalenessSeconds") && Z_TYPE_P(val) == IS_LONG && Z_LVAL_P(val) == MONGOC_NO_MAX_STALENESS)) {
+				continue;
+			}
+
+			// Increase the refcount of our zval, as add_assoc_zval takes ownership, leading to the property value being
+			// freed once the return value goes out of scope
+			Z_TRY_ADDREF_P(val);
+			add_assoc_zval(return_value, ZSTR_VAL(string_key), val);
+		}
+		ZEND_HASH_FOREACH_END();
+	}
+
 	convert_to_object(return_value);
-}
-
-static PHP_METHOD(MongoDB_Driver_ReadPreference, __serialize)
-{
-	PHONGO_PARSE_PARAMETERS_NONE();
-
-	RETURN_ARR(phongo_readpreference_get_properties_hash(Z_OBJ_P(getThis()), true));
 }
 
 static PHP_METHOD(MongoDB_Driver_ReadPreference, __unserialize)
@@ -487,11 +483,6 @@ static void phongo_readpreference_free_object(zend_object* object)
 
 	zend_object_std_dtor(&intern->std);
 
-	if (intern->properties) {
-		zend_hash_destroy(intern->properties);
-		FREE_HASHTABLE(intern->properties);
-	}
-
 	if (intern->read_preference) {
 		mongoc_read_prefs_destroy(intern->read_preference);
 	}
@@ -509,15 +500,13 @@ static zend_object* phongo_readpreference_create_object(zend_class_entry* class_
 	return &intern->std;
 }
 
-static HashTable* phongo_readpreference_get_debug_info(zend_object* object, int* is_temp)
+static zval* phongo_readpreference_read_property(zend_object* zobj, zend_string* name, int type, void** cache_slot, zval* rv)
 {
-	*is_temp = 1;
-	return phongo_readpreference_get_properties_hash(object, true);
-}
+	if (!strcmp(ZSTR_VAL(name), "hedge")) {
+		php_error_docref(NULL, E_DEPRECATED, "Property MongoDB\\Driver\\ReadPreference::hedge is deprecated");
+	}
 
-static HashTable* phongo_readpreference_get_properties(zend_object* object)
-{
-	return phongo_readpreference_get_properties_hash(object, false);
+	return zend_std_read_property(zobj, name, type, cache_slot, rv);
 }
 
 void phongo_readpreference_init_ce(INIT_FUNC_ARGS)
@@ -526,10 +515,9 @@ void phongo_readpreference_init_ce(INIT_FUNC_ARGS)
 	phongo_readpreference_ce->create_object = phongo_readpreference_create_object;
 
 	memcpy(&phongo_handler_readpreference, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
-	phongo_handler_readpreference.get_debug_info = phongo_readpreference_get_debug_info;
-	phongo_handler_readpreference.get_properties = phongo_readpreference_get_properties;
-	phongo_handler_readpreference.free_obj       = phongo_readpreference_free_object;
-	phongo_handler_readpreference.offset         = XtOffsetOf(phongo_readpreference_t, std);
+	phongo_handler_readpreference.read_property = phongo_readpreference_read_property;
+	phongo_handler_readpreference.free_obj      = phongo_readpreference_free_object;
+	phongo_handler_readpreference.offset        = XtOffsetOf(phongo_readpreference_t, std);
 }
 
 void phongo_readpreference_init(zval* return_value, const mongoc_read_prefs_t* read_prefs)
@@ -540,6 +528,8 @@ void phongo_readpreference_init(zval* return_value, const mongoc_read_prefs_t* r
 
 	intern                  = Z_READPREFERENCE_OBJ_P(return_value);
 	intern->read_preference = mongoc_read_prefs_copy(read_prefs);
+
+	phongo_readpreference_update_properties(intern);
 }
 
 const mongoc_read_prefs_t* phongo_read_preference_from_zval(zval* zread_preference)
