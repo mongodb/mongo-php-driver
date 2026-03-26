@@ -43,18 +43,30 @@ foreach ($options as $test) {
 NULL
 array(1) {
   ["readPreference"]=>
-  object(MongoDB\Driver\ReadPreference)#%d (1) {
+  object(MongoDB\Driver\ReadPreference)#%d (%d) {
     ["mode"]=>
     string(7) "primary"
+    ["tags"]=>
+    NULL
+    ["maxStalenessSeconds"]=>
+    int(-1)
+    ["hedge"]=>
+    NULL
   }
 }
 array(2) {
   ["maxCommitTimeMS"]=>
   int(1)
   ["readPreference"]=>
-  object(MongoDB\Driver\ReadPreference)#%d (1) {
+  object(MongoDB\Driver\ReadPreference)#%d (%d) {
     ["mode"]=>
     string(7) "primary"
+    ["tags"]=>
+    NULL
+    ["maxStalenessSeconds"]=>
+    int(-1)
+    ["hedge"]=>
+    NULL
   }
 }
 array(2) {
@@ -64,23 +76,41 @@ array(2) {
     string(8) "majority"
   }
   ["readPreference"]=>
-  object(MongoDB\Driver\ReadPreference)#%d (1) {
+  object(MongoDB\Driver\ReadPreference)#%d (%d) {
     ["mode"]=>
     string(7) "primary"
+    ["tags"]=>
+    NULL
+    ["maxStalenessSeconds"]=>
+    int(-1)
+    ["hedge"]=>
+    NULL
   }
 }
 array(1) {
   ["readPreference"]=>
-  object(MongoDB\Driver\ReadPreference)#%d (1) {
+  object(MongoDB\Driver\ReadPreference)#%d (%d) {
     ["mode"]=>
     string(16) "primaryPreferred"
+    ["tags"]=>
+    NULL
+    ["maxStalenessSeconds"]=>
+    int(-1)
+    ["hedge"]=>
+    NULL
   }
 }
 array(2) {
   ["readPreference"]=>
-  object(MongoDB\Driver\ReadPreference)#%d (1) {
+  object(MongoDB\Driver\ReadPreference)#%d (%d) {
     ["mode"]=>
     string(7) "primary"
+    ["tags"]=>
+    NULL
+    ["maxStalenessSeconds"]=>
+    int(-1)
+    ["hedge"]=>
+    NULL
   }
   ["writeConcern"]=>
   object(MongoDB\Driver\WriteConcern)#%d (1) {
@@ -97,9 +127,15 @@ array(4) {
     string(8) "majority"
   }
   ["readPreference"]=>
-  object(MongoDB\Driver\ReadPreference)#%d (1) {
+  object(MongoDB\Driver\ReadPreference)#%d (%d) {
     ["mode"]=>
     string(7) "primary"
+    ["tags"]=>
+    NULL
+    ["maxStalenessSeconds"]=>
+    int(-1)
+    ["hedge"]=>
+    NULL
   }
   ["writeConcern"]=>
   object(MongoDB\Driver\WriteConcern)#%d (1) {

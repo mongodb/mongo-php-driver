@@ -78,6 +78,12 @@ object(MongoDB\Driver\Session)#%d (%d) {
     object(MongoDB\Driver\ReadPreference)#%d (%d) {
       ["mode"]=>
       string(7) "primary"
+      ["tags"]=>
+      NULL
+      ["maxStalenessSeconds"]=>
+      int(-1)
+      ["hedge"]=>
+      NULL
     }
   }
 }

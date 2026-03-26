@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: ecf94da5562a2befc25e9770cc9970101823dcf2 */
+ * Stub hash: e7204ca51d594bcc92f399d4c2d5fe728114c1e4 */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_Driver_ReadPreference___construct, 0, 0, 1)
 	ZEND_ARG_TYPE_INFO(0, mode, IS_STRING, 0)
@@ -30,8 +30,6 @@ ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_Driver_ReadPrefere
 	ZEND_ARG_TYPE_INFO(0, data, IS_ARRAY, 0)
 ZEND_END_ARG_INFO()
 
-#define arginfo_class_MongoDB_Driver_ReadPreference___serialize arginfo_class_MongoDB_Driver_ReadPreference_getTagSets
-
 
 static ZEND_METHOD(MongoDB_Driver_ReadPreference, __construct);
 static ZEND_METHOD(MongoDB_Driver_ReadPreference, getHedge);
@@ -41,7 +39,6 @@ static ZEND_METHOD(MongoDB_Driver_ReadPreference, getTagSets);
 static ZEND_METHOD(MongoDB_Driver_ReadPreference, __set_state);
 static ZEND_METHOD(MongoDB_Driver_ReadPreference, bsonSerialize);
 static ZEND_METHOD(MongoDB_Driver_ReadPreference, __unserialize);
-static ZEND_METHOD(MongoDB_Driver_ReadPreference, __serialize);
 
 
 static const zend_function_entry class_MongoDB_Driver_ReadPreference_methods[] = {
@@ -53,7 +50,6 @@ static const zend_function_entry class_MongoDB_Driver_ReadPreference_methods[] =
 	ZEND_ME(MongoDB_Driver_ReadPreference, __set_state, arginfo_class_MongoDB_Driver_ReadPreference___set_state, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_Driver_ReadPreference, bsonSerialize, arginfo_class_MongoDB_Driver_ReadPreference_bsonSerialize, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_Driver_ReadPreference, __unserialize, arginfo_class_MongoDB_Driver_ReadPreference___unserialize, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	ZEND_ME(MongoDB_Driver_ReadPreference, __serialize, arginfo_class_MongoDB_Driver_ReadPreference___serialize, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_FE_END
 };
 
@@ -112,6 +108,30 @@ static zend_class_entry *register_class_MongoDB_Driver_ReadPreference(zend_class
 	zend_string *const_SMALLEST_MAX_STALENESS_SECONDS_name = zend_string_init_interned("SMALLEST_MAX_STALENESS_SECONDS", sizeof("SMALLEST_MAX_STALENESS_SECONDS") - 1, 1);
 	zend_declare_class_constant_ex(class_entry, const_SMALLEST_MAX_STALENESS_SECONDS_name, &const_SMALLEST_MAX_STALENESS_SECONDS_value, ZEND_ACC_PUBLIC, NULL);
 	zend_string_release(const_SMALLEST_MAX_STALENESS_SECONDS_name);
+
+	zval property_mode_default_value;
+	ZVAL_UNDEF(&property_mode_default_value);
+	zend_string *property_mode_name = zend_string_init("mode", sizeof("mode") - 1, 1);
+	zend_declare_typed_property(class_entry, property_mode_name, &property_mode_default_value, ZEND_ACC_PUBLIC|ZEND_ACC_READONLY, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_STRING));
+	zend_string_release(property_mode_name);
+
+	zval property_tags_default_value;
+	ZVAL_UNDEF(&property_tags_default_value);
+	zend_string *property_tags_name = zend_string_init("tags", sizeof("tags") - 1, 1);
+	zend_declare_typed_property(class_entry, property_tags_name, &property_tags_default_value, ZEND_ACC_PUBLIC|ZEND_ACC_READONLY, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_ARRAY|MAY_BE_NULL));
+	zend_string_release(property_tags_name);
+
+	zval property_maxStalenessSeconds_default_value;
+	ZVAL_UNDEF(&property_maxStalenessSeconds_default_value);
+	zend_string *property_maxStalenessSeconds_name = zend_string_init("maxStalenessSeconds", sizeof("maxStalenessSeconds") - 1, 1);
+	zend_declare_typed_property(class_entry, property_maxStalenessSeconds_name, &property_maxStalenessSeconds_default_value, ZEND_ACC_PUBLIC|ZEND_ACC_READONLY, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(property_maxStalenessSeconds_name);
+
+	zval property_hedge_default_value;
+	ZVAL_UNDEF(&property_hedge_default_value);
+	zend_string *property_hedge_name = zend_string_init("hedge", sizeof("hedge") - 1, 1);
+	zend_declare_typed_property(class_entry, property_hedge_name, &property_hedge_default_value, ZEND_ACC_PUBLIC|ZEND_ACC_READONLY, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_OBJECT|MAY_BE_NULL));
+	zend_string_release(property_hedge_name);
 
 	return class_entry;
 }

@@ -66,6 +66,12 @@ object(MongoDB\Driver\Session)#%d (%d) {
     object(MongoDB\Driver\ReadPreference)#%d (%d) {
       ["mode"]=>
       string(16) "primaryPreferred"
+      ["tags"]=>
+      NULL
+      ["maxStalenessSeconds"]=>
+      int(-1)
+      ["hedge"]=>
+      NULL
     }
     ["writeConcern"]=>
     object(MongoDB\Driver\WriteConcern)#%d (%d) {
