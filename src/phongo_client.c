@@ -294,7 +294,7 @@ static bool phongo_apply_options_to_uri(mongoc_uri_t* uri, bson_t* options)
 				return false;
 			}
 
-			bson_append_utf8(&properties, "SERVICE_NAME", -1, bson_iter_utf8(&iter, NULL), -1);
+			bson_append_utf8(&properties, ZEND_STRL("SERVICE_NAME"), bson_iter_utf8(&iter, NULL), -1);
 
 			if (!mongoc_uri_set_mechanism_properties(uri, &properties)) {
 				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Failed to parse \"%s\" URI option", key);

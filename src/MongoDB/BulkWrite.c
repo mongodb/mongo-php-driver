@@ -251,7 +251,7 @@ static bool phongo_bulkwrite_opt_hint(bson_t* boptions, zval* zoptions)
 		if (type == IS_STRING) {
 			zval* value = php_array_fetchc_deref(zoptions, "hint");
 
-			if (!bson_append_utf8(boptions, "hint", 4, Z_STRVAL_P(value), Z_STRLEN_P(value))) {
+			if (!bson_append_utf8(boptions, ZEND_STRL("hint"), Z_STRVAL_P(value), Z_STRLEN_P(value))) {
 				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Error appending \"hint\" option");
 				return false;
 			}

@@ -939,7 +939,7 @@ bool phongo_bson_value_to_zval_legacy(const bson_value_t* value, zval* zv)
 		PHONGO_BSON_INIT_STATE(state);
 		state.map.root.type = PHONGO_TYPEMAP_NATIVE_ARRAY;
 
-		bson_append_value(&bson, "data", 4, value);
+		bson_append_value(&bson, ZEND_STRL("data"), value);
 		if (!phongo_bson_to_zval_ex(&bson, &state)) {
 			/* Exception already thrown */
 			goto cleanup;
