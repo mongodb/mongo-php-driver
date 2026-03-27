@@ -238,11 +238,7 @@ static inline bson_t* _bson_copy_or_null(const bson_t* bson)
 
 phongo_bulkwritecommandresult_t* phongo_bulkwritecommandresult_init(zval* return_value, mongoc_bulkwriteresult_t* bw_res)
 {
-	phongo_bulkwritecommandresult_t* intern;
-
-	object_init_ex(return_value, phongo_bulkwritecommandresult_ce);
-
-	intern                  = Z_BULKWRITECOMMANDRESULT_OBJ_P(return_value);
+	PHONGO_INTERN_INIT_EX(bulkwritecommandresult, return_value);
 	intern->is_acknowledged = (bw_res != NULL);
 
 	// Copy mongoc_bulkwriteresult_t fields

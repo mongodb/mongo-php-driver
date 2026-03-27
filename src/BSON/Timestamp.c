@@ -176,18 +176,15 @@ static PHP_METHOD(MongoDB_BSON_Timestamp, getTimestamp)
 
 static PHP_METHOD(MongoDB_BSON_Timestamp, __set_state)
 {
-	phongo_timestamp_t* intern;
-	HashTable*          props;
-	zval*               array;
+	HashTable* props;
+	zval*      array;
 
 	PHONGO_PARSE_PARAMETERS_START(1, 1)
 	Z_PARAM_ARRAY(array)
 	PHONGO_PARSE_PARAMETERS_END();
 
-	object_init_ex(return_value, phongo_timestamp_ce);
-
-	intern = Z_TIMESTAMP_OBJ_P(return_value);
-	props  = Z_ARRVAL_P(array);
+	PHONGO_INTERN_INIT_EX(timestamp, return_value);
+	props = Z_ARRVAL_P(array);
 
 	phongo_timestamp_init_from_hash(intern, props);
 }
@@ -332,11 +329,7 @@ void phongo_timestamp_init_ce(INIT_FUNC_ARGS)
 
 bool phongo_timestamp_new(zval* object, uint32_t increment, uint32_t timestamp)
 {
-	phongo_timestamp_t* intern;
-
-	object_init_ex(object, phongo_timestamp_ce);
-
-	intern              = Z_TIMESTAMP_OBJ_P(object);
+	PHONGO_INTERN_INIT_EX(timestamp, object);
 	intern->increment   = increment;
 	intern->timestamp   = timestamp;
 	intern->initialized = true;

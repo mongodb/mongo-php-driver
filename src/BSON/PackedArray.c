@@ -107,11 +107,9 @@ PHONGO_DISABLED_CONSTRUCTOR(MongoDB_BSON_PackedArray)
 
 static PHP_METHOD(MongoDB_BSON_PackedArray, fromJSON)
 {
-	zval                  zv;
-	phongo_packedarray_t* intern;
-	zend_string*          json;
-	bson_t*               bson;
-	bson_error_t          error;
+	zend_string* json;
+	bson_t*      bson;
+	bson_error_t error;
 
 	PHONGO_PARSE_PARAMETERS_START(1, 1)
 	Z_PARAM_STR(json)
@@ -150,18 +148,13 @@ static PHP_METHOD(MongoDB_BSON_PackedArray, fromJSON)
 		}
 	}
 
-	object_init_ex(&zv, phongo_packedarray_ce);
-	intern       = Z_PACKEDARRAY_OBJ_P(&zv);
+	PHONGO_INTERN_INIT_EX(packedarray, return_value);
 	intern->bson = bson;
-
-	RETURN_ZVAL(&zv, 1, 1);
 }
 
 static PHP_METHOD(MongoDB_BSON_PackedArray, fromPHP)
 {
-	zval                  zv;
-	phongo_packedarray_t* intern;
-	zval*                 data;
+	zval* data;
 
 	PHONGO_PARSE_PARAMETERS_START(1, 1)
 	Z_PARAM_ARRAY(data)
@@ -172,13 +165,9 @@ static PHP_METHOD(MongoDB_BSON_PackedArray, fromPHP)
 		return;
 	}
 
-	object_init_ex(&zv, phongo_packedarray_ce);
-	intern = Z_PACKEDARRAY_OBJ_P(&zv);
-
+	PHONGO_INTERN_INIT_EX(packedarray, return_value);
 	intern->bson = bson_new();
 	phongo_zval_to_bson(data, PHONGO_BSON_NONE, intern->bson, NULL);
-
-	RETURN_ZVAL(&zv, 1, 1);
 }
 
 static bool seek_iter_to_index(bson_iter_t* iter, zend_long index)
@@ -369,18 +358,15 @@ static PHP_METHOD(MongoDB_BSON_PackedArray, __toString)
 
 static PHP_METHOD(MongoDB_BSON_PackedArray, __set_state)
 {
-	phongo_packedarray_t* intern;
-	HashTable*            props;
-	zval*                 array;
+	HashTable* props;
+	zval*      array;
 
 	PHONGO_PARSE_PARAMETERS_START(1, 1)
 	Z_PARAM_ARRAY(array)
 	PHONGO_PARSE_PARAMETERS_END();
 
-	object_init_ex(return_value, phongo_packedarray_ce);
-
-	intern = Z_PACKEDARRAY_OBJ_P(return_value);
-	props  = Z_ARRVAL_P(array);
+	PHONGO_INTERN_INIT_EX(packedarray, return_value);
+	props = Z_ARRVAL_P(array);
 
 	phongo_packedarray_init_from_hash(intern, props);
 }
@@ -563,11 +549,7 @@ void phongo_packedarray_init_ce(INIT_FUNC_ARGS)
 
 bool phongo_packedarray_new(zval* object, bson_t* bson, bool copy)
 {
-	phongo_packedarray_t* intern;
-
-	object_init_ex(object, phongo_packedarray_ce);
-
-	intern       = Z_PACKEDARRAY_OBJ_P(object);
+	PHONGO_INTERN_INIT_EX(packedarray, object);
 	intern->bson = copy ? bson_copy(bson) : bson;
 
 	return true;

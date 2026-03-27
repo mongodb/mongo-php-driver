@@ -146,12 +146,9 @@ bool phongo_writeerror_init(zval* return_value, const bson_t* bson)
  * provided since the BSON document will not have an "index" field. */
 bool phongo_writeerror_init_ex(zval* return_value, const bson_t* bson, int32_t index)
 {
-	bson_iter_t          iter;
-	phongo_writeerror_t* intern;
+	bson_iter_t iter;
 
-	object_init_ex(return_value, phongo_writeerror_ce);
-
-	intern        = Z_WRITEERROR_OBJ_P(return_value);
+	PHONGO_INTERN_INIT_EX(writeerror, return_value);
 	intern->code  = 0;
 	intern->index = index;
 

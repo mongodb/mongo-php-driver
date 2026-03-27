@@ -284,9 +284,8 @@ static PHP_METHOD(MongoDB_Driver_ReadPreference, __construct)
 
 static PHP_METHOD(MongoDB_Driver_ReadPreference, __set_state)
 {
-	phongo_readpreference_t* intern;
-	HashTable*               props;
-	zval*                    array;
+	HashTable* props;
+	zval*      array;
 
 	/* Separate the zval, since we may end up modifying the "tags" element in
 	 * phongo_read_preference_prep_tagsets(), which is called from
@@ -295,10 +294,8 @@ static PHP_METHOD(MongoDB_Driver_ReadPreference, __set_state)
 	Z_PARAM_ARRAY_EX(array, 0, 1)
 	PHONGO_PARSE_PARAMETERS_END();
 
-	object_init_ex(return_value, phongo_readpreference_ce);
-
-	intern = Z_READPREFERENCE_OBJ_P(return_value);
-	props  = Z_ARRVAL_P(array);
+	PHONGO_INTERN_INIT_EX(readpreference, return_value);
+	props = Z_ARRVAL_P(array);
 
 	phongo_readpreference_init_from_hash(intern, props);
 }
@@ -523,11 +520,7 @@ void phongo_readpreference_init_ce(INIT_FUNC_ARGS)
 
 void phongo_readpreference_init(zval* return_value, const mongoc_read_prefs_t* read_prefs)
 {
-	phongo_readpreference_t* intern;
-
-	object_init_ex(return_value, phongo_readpreference_ce);
-
-	intern                  = Z_READPREFERENCE_OBJ_P(return_value);
+	PHONGO_INTERN_INIT_EX(readpreference, return_value);
 	intern->read_preference = mongoc_read_prefs_copy(read_prefs);
 }
 

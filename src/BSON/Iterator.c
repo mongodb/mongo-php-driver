@@ -231,10 +231,7 @@ static PHP_METHOD(MongoDB_BSON_Iterator, rewind)
 
 void phongo_iterator_init(zval* return_value, zval* document_or_packedarray)
 {
-	phongo_iterator_t* intern;
-
-	object_init_ex(return_value, phongo_iterator_ce);
-	intern = Z_ITERATOR_OBJ_P(return_value);
+	PHONGO_INTERN_INIT_EX(iterator, return_value);
 
 	phongo_iterator_init_with_zval(intern, document_or_packedarray);
 }

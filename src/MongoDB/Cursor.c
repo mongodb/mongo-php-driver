@@ -421,11 +421,7 @@ void phongo_cursor_init_ce(INIT_FUNC_ARGS)
 
 static void phongo_cursor_init(zval* return_value, zval* manager, mongoc_cursor_t* cursor, zval* readPreference, zval* session)
 {
-	phongo_cursor_t* intern;
-
-	object_init_ex(return_value, phongo_cursor_ce);
-
-	intern            = Z_CURSOR_OBJ_P(return_value);
+	PHONGO_INTERN_INIT_EX(cursor, return_value);
 	intern->cursor    = cursor;
 	intern->server_id = mongoc_cursor_get_server_id(cursor);
 	intern->advanced  = false;

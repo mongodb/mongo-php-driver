@@ -168,18 +168,15 @@ static PHP_METHOD(MongoDB_Driver_WriteConcern, __construct)
 
 static PHP_METHOD(MongoDB_Driver_WriteConcern, __set_state)
 {
-	phongo_writeconcern_t* intern;
-	HashTable*             props;
-	zval*                  array;
+	HashTable* props;
+	zval*      array;
 
 	PHONGO_PARSE_PARAMETERS_START(1, 1)
 	Z_PARAM_ARRAY(array)
 	PHONGO_PARSE_PARAMETERS_END();
 
-	object_init_ex(return_value, phongo_writeconcern_ce);
-
-	intern = Z_WRITECONCERN_OBJ_P(return_value);
-	props  = Z_ARRVAL_P(array);
+	PHONGO_INTERN_INIT_EX(writeconcern, return_value);
+	props = Z_ARRVAL_P(array);
 
 	phongo_writeconcern_init_from_hash(intern, props);
 }
@@ -404,11 +401,7 @@ void phongo_writeconcern_init_ce(INIT_FUNC_ARGS)
 
 void phongo_writeconcern_init(zval* return_value, const mongoc_write_concern_t* write_concern)
 {
-	phongo_writeconcern_t* intern;
-
-	object_init_ex(return_value, phongo_writeconcern_ce);
-
-	intern                = Z_WRITECONCERN_OBJ_P(return_value);
+	PHONGO_INTERN_INIT_EX(writeconcern, return_value);
 	intern->write_concern = mongoc_write_concern_copy(write_concern);
 }
 

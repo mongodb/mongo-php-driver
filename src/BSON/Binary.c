@@ -123,18 +123,15 @@ static PHP_METHOD(MongoDB_BSON_Binary, __construct)
 
 static PHP_METHOD(MongoDB_BSON_Binary, __set_state)
 {
-	phongo_binary_t* intern;
-	HashTable*       props;
-	zval*            array;
+	HashTable* props;
+	zval*      array;
 
 	PHONGO_PARSE_PARAMETERS_START(1, 1)
 	Z_PARAM_ARRAY(array)
 	PHONGO_PARSE_PARAMETERS_END();
 
-	object_init_ex(return_value, phongo_binary_ce);
-
-	intern = Z_BINARY_OBJ_P(return_value);
-	props  = Z_ARRVAL_P(array);
+	PHONGO_INTERN_INIT_EX(binary, return_value);
+	props = Z_ARRVAL_P(array);
 
 	phongo_binary_init_from_hash(intern, props);
 }

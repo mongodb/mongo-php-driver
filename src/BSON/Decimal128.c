@@ -94,18 +94,15 @@ static PHP_METHOD(MongoDB_BSON_Decimal128, __construct)
 
 static PHP_METHOD(MongoDB_BSON_Decimal128, __set_state)
 {
-	phongo_decimal128_t* intern;
-	HashTable*           props;
-	zval*                array;
+	HashTable* props;
+	zval*      array;
 
 	PHONGO_PARSE_PARAMETERS_START(1, 1)
 	Z_PARAM_ARRAY(array)
 	PHONGO_PARSE_PARAMETERS_END();
 
-	object_init_ex(return_value, phongo_decimal128_ce);
-
-	intern = Z_DECIMAL128_OBJ_P(return_value);
-	props  = Z_ARRVAL_P(array);
+	PHONGO_INTERN_INIT_EX(decimal128, return_value);
+	props = Z_ARRVAL_P(array);
 
 	phongo_decimal128_init_from_hash(intern, props);
 }
@@ -221,11 +218,7 @@ void phongo_decimal128_init_ce(INIT_FUNC_ARGS)
 
 bool phongo_decimal128_new(zval* object, const bson_decimal128_t* decimal)
 {
-	phongo_decimal128_t* intern;
-
-	object_init_ex(object, phongo_decimal128_ce);
-
-	intern = Z_DECIMAL128_OBJ_P(object);
+	PHONGO_INTERN_INIT_EX(decimal128, object);
 	memcpy(&intern->decimal, decimal, sizeof(bson_decimal128_t));
 	intern->initialized = true;
 

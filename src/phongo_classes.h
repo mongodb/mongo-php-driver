@@ -45,6 +45,13 @@
 		object_properties_init(&intern->std, class_type);                  \
 	} while (0)
 
+#define PHONGO_INTERN_INIT_EX(name, z)                  \
+	phongo_##name##_t* intern;                          \
+	do {                                                \
+		object_init_ex(z, phongo_##name##_ce);          \
+		intern = php_##name##_fetch_object(Z_OBJ_P(z)); \
+	} while (0)
+
 #define CLASS_FETCH_OBJ_DECL(name)                                                      \
 	static inline phongo_##name##_t* php_##name##_fetch_object(const zend_object* obj)  \
 	{                                                                                   \

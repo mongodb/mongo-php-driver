@@ -208,18 +208,15 @@ static PHP_METHOD(MongoDB_BSON_UTCDateTime, __construct)
 
 static PHP_METHOD(MongoDB_BSON_UTCDateTime, __set_state)
 {
-	phongo_utcdatetime_t* intern;
-	HashTable*            props;
-	zval*                 array;
+	HashTable* props;
+	zval*      array;
 
 	PHONGO_PARSE_PARAMETERS_START(1, 1)
 	Z_PARAM_ARRAY(array)
 	PHONGO_PARSE_PARAMETERS_END();
 
-	object_init_ex(return_value, phongo_utcdatetime_ce);
-
-	intern = Z_UTCDATETIME_OBJ_P(return_value);
-	props  = Z_ARRVAL_P(array);
+	PHONGO_INTERN_INIT_EX(utcdatetime, return_value);
+	props = Z_ARRVAL_P(array);
 
 	phongo_utcdatetime_init_from_hash(intern, props);
 }
@@ -369,11 +366,7 @@ void phongo_utcdatetime_init_ce(INIT_FUNC_ARGS)
 
 bool phongo_utcdatetime_new(zval* object, int64_t msec_since_epoch)
 {
-	phongo_utcdatetime_t* intern;
-
-	object_init_ex(object, phongo_utcdatetime_ce);
-
-	intern               = Z_UTCDATETIME_OBJ_P(object);
+	PHONGO_INTERN_INIT_EX(utcdatetime, object);
 	intern->milliseconds = msec_since_epoch;
 	intern->initialized  = true;
 

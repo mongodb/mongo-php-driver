@@ -120,18 +120,15 @@ static PHP_METHOD(MongoDB_Driver_ServerApi, __construct)
 
 static PHP_METHOD(MongoDB_Driver_ServerApi, __set_state)
 {
-	phongo_serverapi_t* intern;
-	HashTable*          props;
-	zval*               array;
+	HashTable* props;
+	zval*      array;
 
 	PHONGO_PARSE_PARAMETERS_START(1, 1)
 	Z_PARAM_ARRAY(array)
 	PHONGO_PARSE_PARAMETERS_END();
 
-	object_init_ex(return_value, phongo_serverapi_ce);
-
-	intern = Z_SERVERAPI_OBJ_P(return_value);
-	props  = Z_ARRVAL_P(array);
+	PHONGO_INTERN_INIT_EX(serverapi, return_value);
+	props = Z_ARRVAL_P(array);
 
 	phongo_serverapi_init_from_hash(intern, props);
 }

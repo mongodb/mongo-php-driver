@@ -142,18 +142,15 @@ static PHP_METHOD(MongoDB_BSON_Regex, getFlags)
 
 static PHP_METHOD(MongoDB_BSON_Regex, __set_state)
 {
-	phongo_regex_t* intern;
-	HashTable*      props;
-	zval*           array;
+	HashTable* props;
+	zval*      array;
 
 	PHONGO_PARSE_PARAMETERS_START(1, 1)
 	Z_PARAM_ARRAY(array)
 	PHONGO_PARSE_PARAMETERS_END();
 
-	object_init_ex(return_value, phongo_regex_ce);
-
-	intern = Z_REGEX_OBJ_P(return_value);
-	props  = Z_ARRVAL_P(array);
+	PHONGO_INTERN_INIT_EX(regex, return_value);
+	props = Z_ARRVAL_P(array);
 
 	phongo_regex_init_from_hash(intern, props);
 }
@@ -298,11 +295,7 @@ void phongo_regex_init_ce(INIT_FUNC_ARGS)
 
 bool phongo_regex_new(zval* object, const char* pattern, const char* flags)
 {
-	phongo_regex_t* intern;
-
-	object_init_ex(object, phongo_regex_ce);
-
-	intern              = Z_REGEX_OBJ_P(object);
+	PHONGO_INTERN_INIT_EX(regex, object);
 	intern->pattern_len = strlen(pattern);
 	intern->pattern     = estrndup(pattern, intern->pattern_len);
 	intern->flags_len   = strlen(flags);

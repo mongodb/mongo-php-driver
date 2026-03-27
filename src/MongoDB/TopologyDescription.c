@@ -188,10 +188,6 @@ void phongo_topologydescription_init_ce(INIT_FUNC_ARGS)
 
 void phongo_topologydescription_init(zval* return_value, mongoc_topology_description_t* topology_description)
 {
-	phongo_topologydescription_t* intern;
-
-	object_init_ex(return_value, phongo_topologydescription_ce);
-
-	intern                       = Z_TOPOLOGYDESCRIPTION_OBJ_P(return_value);
+	PHONGO_INTERN_INIT_EX(topologydescription, return_value);
 	intern->topology_description = mongoc_topology_description_new_copy(topology_description);
 }

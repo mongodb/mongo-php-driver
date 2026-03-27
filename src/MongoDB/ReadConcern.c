@@ -73,18 +73,15 @@ static PHP_METHOD(MongoDB_Driver_ReadConcern, __construct)
 
 static PHP_METHOD(MongoDB_Driver_ReadConcern, __set_state)
 {
-	phongo_readconcern_t* intern;
-	HashTable*            props;
-	zval*                 array;
+	HashTable* props;
+	zval*      array;
 
 	PHONGO_PARSE_PARAMETERS_START(1, 1)
 	Z_PARAM_ARRAY(array)
 	PHONGO_PARSE_PARAMETERS_END();
 
-	object_init_ex(return_value, phongo_readconcern_ce);
-
-	intern = Z_READCONCERN_OBJ_P(return_value);
-	props  = Z_ARRVAL_P(array);
+	PHONGO_INTERN_INIT_EX(readconcern, return_value);
+	props = Z_ARRVAL_P(array);
 
 	phongo_readconcern_init_from_hash(intern, props);
 }
@@ -222,11 +219,7 @@ void phongo_readconcern_init_ce(INIT_FUNC_ARGS)
 
 void phongo_readconcern_init(zval* return_value, const mongoc_read_concern_t* read_concern)
 {
-	phongo_readconcern_t* intern;
-
-	object_init_ex(return_value, phongo_readconcern_ce);
-
-	intern               = Z_READCONCERN_OBJ_P(return_value);
+	PHONGO_INTERN_INIT_EX(readconcern, return_value);
 	intern->read_concern = mongoc_read_concern_copy(read_concern);
 }
 

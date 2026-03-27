@@ -133,18 +133,15 @@ static PHP_METHOD(MongoDB_BSON_ObjectId, getTimestamp)
 
 static PHP_METHOD(MongoDB_BSON_ObjectId, __set_state)
 {
-	phongo_objectid_t* intern;
-	HashTable*         props;
-	zval*              array;
+	HashTable* props;
+	zval*      array;
 
 	PHONGO_PARSE_PARAMETERS_START(1, 1)
 	Z_PARAM_ARRAY(array)
 	PHONGO_PARSE_PARAMETERS_END();
 
-	object_init_ex(return_value, phongo_objectid_ce);
-
-	intern = Z_OBJECTID_OBJ_P(return_value);
-	props  = Z_ARRVAL_P(array);
+	PHONGO_INTERN_INIT_EX(objectid, return_value);
+	props = Z_ARRVAL_P(array);
 
 	phongo_objectid_init_from_hash(intern, props);
 }
@@ -269,11 +266,7 @@ void phongo_objectid_init_ce(INIT_FUNC_ARGS)
 
 bool phongo_objectid_new(zval* return_value, const bson_oid_t* oid)
 {
-	phongo_objectid_t* intern;
-
-	object_init_ex(return_value, phongo_objectid_ce);
-
-	intern = Z_OBJECTID_OBJ_P(return_value);
+	PHONGO_INTERN_INIT_EX(objectid, return_value);
 	bson_oid_to_string(oid, intern->oid);
 	intern->initialized = true;
 

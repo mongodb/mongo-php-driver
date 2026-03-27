@@ -134,18 +134,15 @@ static PHP_METHOD(MongoDB_BSON_Javascript, __construct)
 
 static PHP_METHOD(MongoDB_BSON_Javascript, __set_state)
 {
-	phongo_javascript_t* intern;
-	HashTable*           props;
-	zval*                array;
+	HashTable* props;
+	zval*      array;
 
 	PHONGO_PARSE_PARAMETERS_START(1, 1)
 	Z_PARAM_ARRAY(array)
 	PHONGO_PARSE_PARAMETERS_END();
 
-	object_init_ex(return_value, phongo_javascript_ce);
-
-	intern = Z_JAVASCRIPT_OBJ_P(return_value);
-	props  = Z_ARRVAL_P(array);
+	PHONGO_INTERN_INIT_EX(javascript, return_value);
+	props = Z_ARRVAL_P(array);
 
 	phongo_javascript_init_from_hash(intern, props);
 }
@@ -325,8 +322,6 @@ void phongo_javascript_init_ce(INIT_FUNC_ARGS)
 
 bool phongo_javascript_new(zval* object, const char* code, size_t code_len, const bson_t* scope)
 {
-	phongo_javascript_t* intern;
-
 	if (scope) {
 		phongo_bson_state state;
 		bool              valid_scope;
@@ -341,9 +336,7 @@ bool phongo_javascript_new(zval* object, const char* code, size_t code_len, cons
 		}
 	}
 
-	object_init_ex(object, phongo_javascript_ce);
-
-	intern           = Z_JAVASCRIPT_OBJ_P(object);
+	PHONGO_INTERN_INIT_EX(javascript, object);
 	intern->code     = estrndup(code, code_len);
 	intern->code_len = code_len;
 	intern->scope    = scope ? bson_copy(scope) : NULL;

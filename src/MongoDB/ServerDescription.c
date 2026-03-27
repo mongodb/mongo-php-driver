@@ -267,11 +267,7 @@ void phongo_serverdescription_init_ce(INIT_FUNC_ARGS)
 
 void phongo_serverdescription_init_ex(zval* return_value, mongoc_server_description_t* server_description, bool copy)
 {
-	phongo_serverdescription_t* intern;
-
-	object_init_ex(return_value, phongo_serverdescription_ce);
-
-	intern                     = Z_SERVERDESCRIPTION_OBJ_P(return_value);
+	PHONGO_INTERN_INIT_EX(serverdescription, return_value);
 	intern->server_description = copy ? mongoc_server_description_new_copy(server_description) : server_description;
 }
 

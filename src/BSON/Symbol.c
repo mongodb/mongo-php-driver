@@ -88,18 +88,15 @@ static PHP_METHOD(MongoDB_BSON_Symbol, __toString)
 
 static PHP_METHOD(MongoDB_BSON_Symbol, __set_state)
 {
-	phongo_symbol_t* intern;
-	HashTable*       props;
-	zval*            array;
+	HashTable* props;
+	zval*      array;
 
 	PHONGO_PARSE_PARAMETERS_START(1, 1)
 	Z_PARAM_ARRAY(array)
 	PHONGO_PARSE_PARAMETERS_END();
 
-	object_init_ex(return_value, phongo_symbol_ce);
-
-	intern = Z_SYMBOL_OBJ_P(return_value);
-	props  = Z_ARRVAL_P(array);
+	PHONGO_INTERN_INIT_EX(symbol, return_value);
+	props = Z_ARRVAL_P(array);
 
 	phongo_symbol_init_from_hash(intern, props);
 }
@@ -216,11 +213,7 @@ void phongo_symbol_init_ce(INIT_FUNC_ARGS)
 
 bool phongo_symbol_new(zval* object, const char* symbol, size_t symbol_len)
 {
-	phongo_symbol_t* intern;
-
-	object_init_ex(object, phongo_symbol_ce);
-
-	intern             = Z_SYMBOL_OBJ_P(object);
+	PHONGO_INTERN_INIT_EX(symbol, object);
 	intern->symbol     = estrndup(symbol, symbol_len);
 	intern->symbol_len = symbol_len;
 

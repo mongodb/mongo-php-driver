@@ -107,18 +107,15 @@ static PHP_METHOD(MongoDB_BSON_DBPointer, __toString)
 
 static PHP_METHOD(MongoDB_BSON_DBPointer, __set_state)
 {
-	phongo_dbpointer_t* intern;
-	HashTable*          props;
-	zval*               array;
+	HashTable* props;
+	zval*      array;
 
 	PHONGO_PARSE_PARAMETERS_START(1, 1)
 	Z_PARAM_ARRAY(array)
 	PHONGO_PARSE_PARAMETERS_END();
 
-	object_init_ex(return_value, phongo_dbpointer_ce);
-
-	intern = Z_DBPOINTER_OBJ_P(return_value);
-	props  = Z_ARRVAL_P(array);
+	PHONGO_INTERN_INIT_EX(dbpointer, return_value);
+	props = Z_ARRVAL_P(array);
 
 	phongo_dbpointer_init_from_hash(intern, props);
 }
@@ -251,11 +248,8 @@ void phongo_dbpointer_init_ce(INIT_FUNC_ARGS)
 
 bool phongo_dbpointer_new(zval* object, const char* ref, size_t ref_len, const bson_oid_t* oid)
 {
-	phongo_dbpointer_t* intern;
+	PHONGO_INTERN_INIT_EX(dbpointer, object);
 
-	object_init_ex(object, phongo_dbpointer_ce);
-
-	intern          = Z_DBPOINTER_OBJ_P(object);
 	intern->ref     = estrndup(ref, ref_len);
 	intern->ref_len = ref_len;
 	bson_oid_to_string(oid, intern->id);

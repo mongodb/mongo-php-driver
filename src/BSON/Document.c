@@ -81,12 +81,11 @@ PHONGO_DISABLED_CONSTRUCTOR(MongoDB_BSON_Document)
 
 static PHP_METHOD(MongoDB_BSON_Document, fromBSON)
 {
-	zval               zv;
-	phongo_document_t* intern = NULL;
-	zend_string*       bson_string;
-	const bson_t*      bson;
-	bson_reader_t*     reader;
-	bool               eof = false;
+	zval           zv;
+	zend_string*   bson_string;
+	const bson_t*  bson;
+	bson_reader_t* reader;
+	bool           eof = false;
 
 	PHONGO_PARSE_PARAMETERS_START(1, 1)
 	Z_PARAM_STR(bson_string)
@@ -99,8 +98,7 @@ static PHP_METHOD(MongoDB_BSON_Document, fromBSON)
 		goto cleanup;
 	}
 
-	object_init_ex(&zv, phongo_document_ce);
-	intern       = Z_DOCUMENT_OBJ_P(&zv);
+	PHONGO_INTERN_INIT_EX(document, &zv);
 	intern->bson = bson_copy(bson);
 
 	if (bson_reader_read(reader, &eof) || !eof) {
@@ -120,11 +118,10 @@ cleanup:
 
 static PHP_METHOD(MongoDB_BSON_Document, fromJSON)
 {
-	zval               zv;
-	phongo_document_t* intern;
-	zend_string*       json;
-	bson_t*            bson;
-	bson_error_t       error;
+	zval         zv;
+	zend_string* json;
+	bson_t*      bson;
+	bson_error_t error;
 
 	PHONGO_PARSE_PARAMETERS_START(1, 1)
 	Z_PARAM_STR(json)
@@ -136,8 +133,7 @@ static PHP_METHOD(MongoDB_BSON_Document, fromJSON)
 		return;
 	}
 
-	object_init_ex(&zv, phongo_document_ce);
-	intern       = Z_DOCUMENT_OBJ_P(&zv);
+	PHONGO_INTERN_INIT_EX(document, &zv);
 	intern->bson = bson;
 
 	RETURN_ZVAL(&zv, 1, 1);
@@ -145,17 +141,14 @@ static PHP_METHOD(MongoDB_BSON_Document, fromJSON)
 
 static PHP_METHOD(MongoDB_BSON_Document, fromPHP)
 {
-	zval               zv;
-	phongo_document_t* intern;
-	zval*              data;
+	zval  zv;
+	zval* data;
 
 	PHONGO_PARSE_PARAMETERS_START(1, 1)
 	Z_PARAM_ARRAY_OR_OBJECT(data)
 	PHONGO_PARSE_PARAMETERS_END();
 
-	object_init_ex(&zv, phongo_document_ce);
-	intern = Z_DOCUMENT_OBJ_P(&zv);
-
+	PHONGO_INTERN_INIT_EX(document, &zv);
 	intern->bson = bson_new();
 
 	// Explicitly allow constructing a Document from a PackedArray
@@ -387,18 +380,15 @@ static PHP_METHOD(MongoDB_BSON_Document, __toString)
 
 static PHP_METHOD(MongoDB_BSON_Document, __set_state)
 {
-	phongo_document_t* intern;
-	HashTable*         props;
-	zval*              array;
+	HashTable* props;
+	zval*      array;
 
 	PHONGO_PARSE_PARAMETERS_START(1, 1)
 	Z_PARAM_ARRAY(array)
 	PHONGO_PARSE_PARAMETERS_END();
 
-	object_init_ex(return_value, phongo_document_ce);
-
-	intern = Z_DOCUMENT_OBJ_P(return_value);
-	props  = Z_ARRVAL_P(array);
+	PHONGO_INTERN_INIT_EX(document, return_value);
+	props = Z_ARRVAL_P(array);
 
 	phongo_document_init_from_hash(intern, props);
 }
@@ -600,11 +590,7 @@ void phongo_document_init_ce(INIT_FUNC_ARGS)
 
 bool phongo_document_new(zval* object, bson_t* bson, bool copy)
 {
-	phongo_document_t* intern;
-
-	object_init_ex(object, phongo_document_ce);
-
-	intern       = Z_DOCUMENT_OBJ_P(object);
+	PHONGO_INTERN_INIT_EX(document, object);
 	intern->bson = copy ? bson_copy(bson) : bson;
 
 	return true;

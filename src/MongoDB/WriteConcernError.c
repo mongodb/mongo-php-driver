@@ -132,12 +132,9 @@ void phongo_writeconcernerror_init_ce(INIT_FUNC_ARGS)
  * mongoc_bulkwriteexception_t (returned by mongoc_bulkwrite_execute). */
 bool phongo_writeconcernerror_init(zval* return_value, const bson_t* bson)
 {
-	bson_iter_t                 iter;
-	phongo_writeconcernerror_t* intern;
+	bson_iter_t iter;
 
-	object_init_ex(return_value, phongo_writeconcernerror_ce);
-
-	intern       = Z_WRITECONCERNERROR_OBJ_P(return_value);
+	PHONGO_INTERN_INIT_EX(writeconcernerror, return_value);
 	intern->code = 0;
 
 	if (bson_iter_init_find(&iter, bson, "code") && BSON_ITER_HOLDS_INT32(&iter)) {
