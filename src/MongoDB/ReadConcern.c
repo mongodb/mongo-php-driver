@@ -216,12 +216,49 @@ static HashTable* phongo_readconcern_get_properties(zend_object* object)
 	return phongo_readconcern_get_properties_hash(object, false);
 }
 
+static int phongo_readconcern_compare_objects(zval* o1, zval* o2)
+{
+	ZEND_COMPARE_OBJECTS_FALLBACK(o1, o2);
+
+	phongo_readconcern_t* intern1;
+	phongo_readconcern_t* intern2;
+
+	const char* level1 = NULL;
+	const char* level2 = NULL;
+
+	intern1 = Z_READCONCERN_OBJ_P(o1);
+	intern2 = Z_READCONCERN_OBJ_P(o2);
+
+	if (intern1 && intern1->read_concern) {
+		level1 = mongoc_read_concern_get_level(intern1->read_concern);
+	}
+
+	if (intern2 && intern2->read_concern) {
+		level2 = mongoc_read_concern_get_level(intern2->read_concern);
+	}
+
+	if (level1 == NULL && level2 == NULL) {
+		return 0;
+	}
+
+	if (level1 == NULL) {
+		return -1;
+	}
+
+	if (level2 == NULL) {
+		return 1;
+	}
+
+	return strcmp(level1, level2);
+}
+
 void phongo_readconcern_init_ce(INIT_FUNC_ARGS)
 {
 	phongo_readconcern_ce                = register_class_MongoDB_Driver_ReadConcern(phongo_serializable_ce);
 	phongo_readconcern_ce->create_object = phongo_readconcern_create_object;
 
 	memcpy(&phongo_handler_readconcern, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
+	phongo_handler_readconcern.compare        = phongo_readconcern_compare_objects;
 	phongo_handler_readconcern.get_debug_info = phongo_readconcern_get_debug_info;
 	phongo_handler_readconcern.get_properties = phongo_readconcern_get_properties;
 	phongo_handler_readconcern.free_obj       = phongo_readconcern_free_object;
