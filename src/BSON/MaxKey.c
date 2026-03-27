@@ -63,7 +63,7 @@ static zend_object_handlers phongo_handler_maxkey;
 
 static void phongo_maxkey_free_object(zend_object* object)
 {
-	phongo_maxkey_t* intern = Z_OBJ_MAXKEY(object);
+	PHONGO_INTERN_FROM_Z_OBJ(maxkey, object);
 
 	zend_object_std_dtor(&intern->std);
 }

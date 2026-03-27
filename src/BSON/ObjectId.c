@@ -79,10 +79,9 @@ static bool phongo_objectid_init_from_hash(phongo_objectid_t* intern, HashTable*
 
 static HashTable* phongo_objectid_get_properties_hash(zend_object* object, bool is_temp)
 {
-	phongo_objectid_t* intern;
-	HashTable*         props;
+	PHONGO_INTERN_FROM_Z_OBJ(objectid, object);
 
-	intern = Z_OBJ_OBJECTID(object);
+	HashTable* props;
 
 	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_temp, intern, props, 1);
 
@@ -192,7 +191,7 @@ static zend_object_handlers phongo_handler_objectid;
 
 static void phongo_objectid_free_object(zend_object* object)
 {
-	phongo_objectid_t* intern = Z_OBJ_OBJECTID(object);
+	PHONGO_INTERN_FROM_Z_OBJ(objectid, object);
 
 	zend_object_std_dtor(&intern->std);
 
@@ -216,11 +215,11 @@ static zend_object* phongo_objectid_create_object(zend_class_entry* class_type)
 
 static zend_object* phongo_objectid_clone_object(zend_object* object)
 {
-	phongo_objectid_t* intern;
+	PHONGO_INTERN_FROM_Z_OBJ(objectid, object);
+
 	phongo_objectid_t* new_intern;
 	zend_object*       new_object;
 
-	intern     = Z_OBJ_OBJECTID(object);
 	new_object = phongo_objectid_create_object(object->ce);
 
 	new_intern = Z_OBJ_OBJECTID(new_object);

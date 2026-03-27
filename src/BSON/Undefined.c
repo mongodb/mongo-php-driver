@@ -73,7 +73,7 @@ static zend_object_handlers phongo_handler_undefined;
 
 static void phongo_undefined_free_object(zend_object* object)
 {
-	phongo_undefined_t* intern = Z_OBJ_UNDEFINED(object);
+	PHONGO_INTERN_FROM_Z_OBJ(undefined, object);
 
 	zend_object_std_dtor(&intern->std);
 }

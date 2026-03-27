@@ -97,14 +97,14 @@ static void phongo_bson_append_object(bson_t* bson, phongo_field_path* field_pat
 {
 	if (Z_TYPE_P(object) == IS_OBJECT && instanceof_function(Z_OBJCE_P(object), phongo_type_ce)) {
 		if (instanceof_function(Z_OBJCE_P(object), phongo_document_ce)) {
-			phongo_document_t* intern = Z_DOCUMENT_OBJ_P(object);
+			PHONGO_INTERN_FROM_ZVAL(document, object);
 			bson_append_document(bson, key, key_len, intern->bson);
 
 			return;
 		}
 
 		if (instanceof_function(Z_OBJCE_P(object), phongo_packedarray_ce)) {
-			phongo_packedarray_t* intern = Z_PACKEDARRAY_OBJ_P(object);
+			PHONGO_INTERN_FROM_ZVAL(packedarray, object);
 			bson_append_array(bson, key, key_len, intern->bson);
 
 			return;
@@ -139,46 +139,46 @@ static void phongo_bson_append_object(bson_t* bson, phongo_field_path* field_pat
 		}
 
 		if (instanceof_function(Z_OBJCE_P(object), phongo_objectid_ce)) {
-			bson_oid_t         oid;
-			phongo_objectid_t* intern = Z_OBJECTID_OBJ_P(object);
+			PHONGO_INTERN_FROM_ZVAL(objectid, object);
+			bson_oid_t oid;
 
 			bson_oid_init_from_string(&oid, intern->oid);
 			bson_append_oid(bson, key, key_len, &oid);
 			return;
 		}
 		if (instanceof_function(Z_OBJCE_P(object), phongo_utcdatetime_ce)) {
-			phongo_utcdatetime_t* intern = Z_UTCDATETIME_OBJ_P(object);
+			PHONGO_INTERN_FROM_ZVAL(utcdatetime, object);
 
 			bson_append_date_time(bson, key, key_len, intern->milliseconds);
 			return;
 		}
 		// TODO: confirm that this handles binary vector
 		if (instanceof_function(Z_OBJCE_P(object), phongo_binary_ce)) {
-			phongo_binary_t* intern = Z_BINARY_OBJ_P(object);
+			PHONGO_INTERN_FROM_ZVAL(binary, object);
 
 			bson_append_binary(bson, key, key_len, intern->type, (const uint8_t*) intern->data, (uint32_t) intern->data_len);
 			return;
 		}
 		if (instanceof_function(Z_OBJCE_P(object), phongo_decimal128_ce)) {
-			phongo_decimal128_t* intern = Z_DECIMAL128_OBJ_P(object);
+			PHONGO_INTERN_FROM_ZVAL(decimal128, object);
 
 			bson_append_decimal128(bson, key, key_len, &intern->decimal);
 			return;
 		}
 		if (instanceof_function(Z_OBJCE_P(object), phongo_int64_ce)) {
-			phongo_int64_t* intern = Z_INT64_OBJ_P(object);
+			PHONGO_INTERN_FROM_ZVAL(int64, object);
 
 			bson_append_int64(bson, key, key_len, intern->integer);
 			return;
 		}
 		if (instanceof_function(Z_OBJCE_P(object), phongo_regex_ce)) {
-			phongo_regex_t* intern = Z_REGEX_OBJ_P(object);
+			PHONGO_INTERN_FROM_ZVAL(regex, object);
 
 			bson_append_regex(bson, key, key_len, intern->pattern, intern->flags);
 			return;
 		}
 		if (instanceof_function(Z_OBJCE_P(object), phongo_javascript_ce)) {
-			phongo_javascript_t* intern = Z_JAVASCRIPT_OBJ_P(object);
+			PHONGO_INTERN_FROM_ZVAL(javascript, object);
 
 			if (intern->scope) {
 				bson_append_code_with_scope(bson, key, key_len, intern->code, intern->scope);
@@ -188,7 +188,7 @@ static void phongo_bson_append_object(bson_t* bson, phongo_field_path* field_pat
 			return;
 		}
 		if (instanceof_function(Z_OBJCE_P(object), phongo_timestamp_ce)) {
-			phongo_timestamp_t* intern = Z_TIMESTAMP_OBJ_P(object);
+			PHONGO_INTERN_FROM_ZVAL(timestamp, object);
 
 			bson_append_timestamp(bson, key, key_len, intern->timestamp, intern->increment);
 			return;
@@ -204,15 +204,15 @@ static void phongo_bson_append_object(bson_t* bson, phongo_field_path* field_pat
 
 		/* Deprecated types */
 		if (instanceof_function(Z_OBJCE_P(object), phongo_dbpointer_ce)) {
-			bson_oid_t          oid;
-			phongo_dbpointer_t* intern = Z_DBPOINTER_OBJ_P(object);
+			PHONGO_INTERN_FROM_ZVAL(dbpointer, object);
+			bson_oid_t oid;
 
 			bson_oid_init_from_string(&oid, intern->id);
 			bson_append_dbpointer(bson, key, key_len, intern->ref, &oid);
 			return;
 		}
 		if (instanceof_function(Z_OBJCE_P(object), phongo_symbol_ce)) {
-			phongo_symbol_t* intern = Z_SYMBOL_OBJ_P(object);
+			PHONGO_INTERN_FROM_ZVAL(symbol, object);
 
 			bson_append_symbol(bson, key, key_len, intern->symbol, intern->symbol_len);
 			return;
@@ -394,8 +394,8 @@ static void phongo_zval_to_bson_internal(zval* data, phongo_field_path* field_pa
 		case IS_OBJECT:
 			/* Short-circuit MongoDB\BSON\Document and MongoDB\BSON\PackedArray instances - copy the data */
 			if (instanceof_function(Z_OBJCE_P(data), phongo_document_ce)) {
-				phongo_document_t* intern = Z_DOCUMENT_OBJ_P(data);
-				bson_iter_t        iter;
+				PHONGO_INTERN_FROM_ZVAL(document, data);
+				bson_iter_t iter;
 
 				phongo_bson_copy_to_noinit(intern->bson, bson);
 
@@ -417,7 +417,7 @@ static void phongo_zval_to_bson_internal(zval* data, phongo_field_path* field_pa
 					return;
 				}
 
-				phongo_packedarray_t* intern = Z_PACKEDARRAY_OBJ_P(data);
+				PHONGO_INTERN_FROM_ZVAL(packedarray, data);
 
 				phongo_bson_copy_to_noinit(intern->bson, bson);
 

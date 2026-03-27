@@ -257,13 +257,12 @@ static PHP_METHOD(MongoDB_Driver_WriteConcern, isDefault)
 
 static HashTable* phongo_writeconcern_get_properties_hash(zend_object* object, bool is_temp, bool is_bson, bool is_serialize)
 {
-	phongo_writeconcern_t* intern;
-	HashTable*             props;
-	const char*            wtag;
-	int32_t                w;
-	int64_t                wtimeout;
+	PHONGO_INTERN_FROM_Z_OBJ(writeconcern, object);
 
-	intern = Z_OBJ_WRITECONCERN(object);
+	HashTable*  props;
+	const char* wtag;
+	int32_t     w;
+	int64_t     wtimeout;
 
 	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_temp, intern, props, 4);
 
@@ -357,7 +356,7 @@ static zend_object_handlers phongo_handler_writeconcern;
 
 static void phongo_writeconcern_free_object(zend_object* object)
 {
-	phongo_writeconcern_t* intern = Z_OBJ_WRITECONCERN(object);
+	PHONGO_INTERN_FROM_Z_OBJ(writeconcern, object);
 
 	zend_object_std_dtor(&intern->std);
 
@@ -419,7 +418,7 @@ void phongo_writeconcern_init(zval* return_value, const mongoc_write_concern_t* 
 const mongoc_write_concern_t* phongo_write_concern_from_zval(zval* zwrite_concern)
 {
 	if (zwrite_concern) {
-		phongo_writeconcern_t* intern = Z_WRITECONCERN_OBJ_P(zwrite_concern);
+		PHONGO_INTERN_FROM_ZVAL(writeconcern, zwrite_concern);
 
 		if (intern) {
 			return intern->write_concern;

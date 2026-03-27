@@ -66,10 +66,9 @@ static bool phongo_dbpointer_init_from_hash(phongo_dbpointer_t* intern, HashTabl
 
 HashTable* phongo_dbpointer_get_properties_hash(zend_object* object, bool is_temp)
 {
-	phongo_dbpointer_t* intern;
-	HashTable*          props;
+	PHONGO_INTERN_FROM_Z_OBJ(dbpointer, object);
 
-	intern = Z_OBJ_DBPOINTER(object);
+	HashTable* props;
 
 	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_temp, intern, props, 2);
 
@@ -166,7 +165,7 @@ static zend_object_handlers phongo_handler_dbpointer;
 
 static void phongo_dbpointer_free_object(zend_object* object)
 {
-	phongo_dbpointer_t* intern = Z_OBJ_DBPOINTER(object);
+	PHONGO_INTERN_FROM_Z_OBJ(dbpointer, object);
 
 	zend_object_std_dtor(&intern->std);
 
@@ -194,11 +193,11 @@ zend_object* phongo_dbpointer_create_object(zend_class_entry* class_type)
 
 static zend_object* phongo_dbpointer_clone_object(zend_object* object)
 {
-	phongo_dbpointer_t* intern;
+	PHONGO_INTERN_FROM_Z_OBJ(dbpointer, object);
+
 	phongo_dbpointer_t* new_intern;
 	zend_object*        new_object;
 
-	intern     = Z_OBJ_DBPOINTER(object);
 	new_object = phongo_dbpointer_create_object(object->ce);
 
 	new_intern = Z_OBJ_DBPOINTER(new_object);

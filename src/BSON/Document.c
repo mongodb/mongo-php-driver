@@ -57,10 +57,9 @@ static bool phongo_document_init_from_hash(phongo_document_t* intern, HashTable*
 
 static HashTable* phongo_document_get_properties_hash(zend_object* object, bool is_temp, int size)
 {
-	phongo_document_t* intern;
-	HashTable*         props;
+	PHONGO_INTERN_FROM_Z_OBJ(document, object);
 
-	intern = Z_OBJ_DOCUMENT(object);
+	HashTable* props;
 
 	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_temp, intern, props, size);
 
@@ -427,7 +426,7 @@ static zend_object_handlers phongo_handler_document;
 
 static void phongo_document_free_object(zend_object* object)
 {
-	phongo_document_t* intern = Z_OBJ_DOCUMENT(object);
+	PHONGO_INTERN_FROM_Z_OBJ(document, object);
 
 	zend_object_std_dtor(&intern->std);
 
@@ -455,11 +454,11 @@ static zend_object* phongo_document_create_object(zend_class_entry* class_type)
 
 static zend_object* phongo_document_clone_object(zend_object* object)
 {
-	phongo_document_t* intern;
+	PHONGO_INTERN_FROM_Z_OBJ(document, object);
+
 	phongo_document_t* new_intern;
 	zend_object*       new_object;
 
-	intern     = Z_OBJ_DOCUMENT(object);
 	new_object = phongo_document_create_object(object->ce);
 
 	new_intern = Z_OBJ_DOCUMENT(new_object);
@@ -484,11 +483,11 @@ static int phongo_document_compare_objects(zval* o1, zval* o2)
 
 static HashTable* phongo_document_get_debug_info(zend_object* object, int* is_temp)
 {
-	phongo_document_t* intern;
-	HashTable*         props;
+	PHONGO_INTERN_FROM_Z_OBJ(document, object);
+
+	HashTable* props;
 
 	*is_temp = 1;
-	intern   = Z_OBJ_DOCUMENT(object);
 
 	/* This get_debug_info handler reports an additional property. This does not
 	 * conflict with other uses of phongo_document_get_properties_hash since
@@ -523,7 +522,7 @@ static HashTable* phongo_document_get_properties(zend_object* object)
 
 zval* phongo_document_read_property(zend_object* object, zend_string* member, int type, void** cache_slot, zval* rv)
 {
-	phongo_document_t* intern = Z_OBJ_DOCUMENT(object);
+	PHONGO_INTERN_FROM_Z_OBJ(document, object);
 
 	if (!phongo_document_get(intern, ZSTR_VAL(member), ZSTR_LEN(member), rv, type == BP_VAR_IS)) {
 		// Exception already thrown
@@ -541,7 +540,7 @@ zval* phongo_document_write_property(zend_object* object, zend_string* member, z
 
 int phongo_document_has_property(zend_object* object, zend_string* member, int has_set_exists, void** cache_slot)
 {
-	phongo_document_t* intern = Z_OBJ_DOCUMENT(object);
+	PHONGO_INTERN_FROM_Z_OBJ(document, object);
 
 	return phongo_document_has(intern, ZSTR_VAL(member), ZSTR_LEN(member));
 }
@@ -553,7 +552,7 @@ void phongo_document_unset_property(zend_object* object, zend_string* member, vo
 
 zval* phongo_document_read_dimension(zend_object* object, zval* offset, int type, zval* rv)
 {
-	phongo_document_t* intern = Z_OBJ_DOCUMENT(object);
+	PHONGO_INTERN_FROM_Z_OBJ(document, object);
 
 	if (!phongo_document_get_by_zval(intern, offset, rv, type == BP_VAR_IS)) {
 		// Exception already thrown
@@ -570,7 +569,7 @@ void phongo_document_write_dimension(zend_object* object, zval* offset, zval* va
 
 int phongo_document_has_dimension(zend_object* object, zval* member, int check_empty)
 {
-	phongo_document_t* intern = Z_OBJ_DOCUMENT(object);
+	PHONGO_INTERN_FROM_Z_OBJ(document, object);
 
 	return phongo_document_has_by_zval(intern, member);
 }

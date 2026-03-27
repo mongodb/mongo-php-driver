@@ -80,10 +80,9 @@ static bool phongo_regex_init_from_hash(phongo_regex_t* intern, HashTable* props
 
 static HashTable* phongo_regex_get_properties_hash(zend_object* object, bool is_temp)
 {
-	phongo_regex_t* intern;
-	HashTable*      props;
+	PHONGO_INTERN_FROM_Z_OBJ(regex, object);
 
-	intern = Z_OBJ_REGEX(object);
+	HashTable* props;
 
 	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_temp, intern, props, 2);
 
@@ -208,7 +207,7 @@ static zend_object_handlers phongo_handler_regex;
 
 static void phongo_regex_free_object(zend_object* object)
 {
-	phongo_regex_t* intern = Z_OBJ_REGEX(object);
+	PHONGO_INTERN_FROM_Z_OBJ(regex, object);
 
 	zend_object_std_dtor(&intern->std);
 
@@ -240,11 +239,11 @@ static zend_object* phongo_regex_create_object(zend_class_entry* class_type)
 
 static zend_object* phongo_regex_clone_object(zend_object* object)
 {
-	phongo_regex_t* intern;
+	PHONGO_INTERN_FROM_Z_OBJ(regex, object);
+
 	phongo_regex_t* new_intern;
 	zend_object*    new_object;
 
-	intern     = Z_OBJ_REGEX(object);
 	new_object = phongo_regex_create_object(object->ce);
 
 	new_intern = Z_OBJ_REGEX(new_object);

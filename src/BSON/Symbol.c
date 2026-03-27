@@ -54,10 +54,9 @@ static bool phongo_symbol_init_from_hash(phongo_symbol_t* intern, HashTable* pro
 
 HashTable* phongo_symbol_get_properties_hash(zend_object* object, bool is_temp)
 {
-	phongo_symbol_t* intern;
-	HashTable*       props;
+	PHONGO_INTERN_FROM_Z_OBJ(symbol, object);
 
-	intern = Z_OBJ_SYMBOL(object);
+	HashTable* props;
 
 	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_temp, intern, props, 2);
 
@@ -138,7 +137,7 @@ static zend_object_handlers phongo_handler_symbol;
 
 static void phongo_symbol_free_object(zend_object* object)
 {
-	phongo_symbol_t* intern = Z_OBJ_SYMBOL(object);
+	PHONGO_INTERN_FROM_Z_OBJ(symbol, object);
 
 	zend_object_std_dtor(&intern->std);
 
@@ -166,11 +165,11 @@ zend_object* phongo_symbol_create_object(zend_class_entry* class_type)
 
 static zend_object* phongo_symbol_clone_object(zend_object* object)
 {
-	phongo_symbol_t* intern;
+	PHONGO_INTERN_FROM_Z_OBJ(symbol, object);
+
 	phongo_symbol_t* new_intern;
 	zend_object*     new_object;
 
-	intern     = Z_OBJ_SYMBOL(object);
 	new_object = phongo_symbol_create_object(object->ce);
 
 	new_intern = Z_OBJ_SYMBOL(new_object);

@@ -155,10 +155,9 @@ static void phongo_iterator_rewind(phongo_iterator_t* intern)
 
 static HashTable* phongo_iterator_get_properties_hash(zend_object* object, bool is_temp)
 {
-	phongo_iterator_t* intern;
-	HashTable*         props;
+	PHONGO_INTERN_FROM_Z_OBJ(iterator, object);
 
-	intern = Z_OBJ_ITERATOR(object);
+	HashTable* props;
 
 	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_temp, intern, props, 1);
 
@@ -245,7 +244,7 @@ static zend_object_handlers phongo_handler_iterator;
 
 static void phongo_iterator_free_object(zend_object* object)
 {
-	phongo_iterator_t* intern = Z_OBJ_ITERATOR(object);
+	PHONGO_INTERN_FROM_Z_OBJ(iterator, object);
 
 	zend_object_std_dtor(&intern->std);
 
@@ -273,11 +272,11 @@ static zend_object* phongo_iterator_create_object(zend_class_entry* class_type)
 
 static zend_object* phongo_iterator_clone_object(zend_object* object)
 {
-	phongo_iterator_t* intern;
+	PHONGO_INTERN_FROM_Z_OBJ(iterator, object);
+
 	phongo_iterator_t* new_intern;
 	zend_object*       new_object;
 
-	intern     = Z_OBJ_ITERATOR(object);
 	new_object = phongo_iterator_create_object(object->ce);
 	new_intern = Z_OBJ_ITERATOR(new_object);
 
@@ -306,21 +305,21 @@ static void phongo_iterator_it_dtor(zend_object_iterator* iter)
 
 static PHONGO_ITERATOR_VALID_RESULT phongo_iterator_it_valid(zend_object_iterator* iter)
 {
-	phongo_iterator_t* intern = Z_ITERATOR_OBJ_P(&iter->data);
+	PHONGO_INTERN_FROM_ZVAL(iterator, &iter->data);
 
 	return intern->valid ? SUCCESS : FAILURE;
 }
 
 static zval* phongo_iterator_it_get_current_data(zend_object_iterator* iter)
 {
-	phongo_iterator_t* intern = Z_ITERATOR_OBJ_P(&iter->data);
+	PHONGO_INTERN_FROM_ZVAL(iterator, &iter->data);
 
 	return phongo_iterator_get_current(intern);
 }
 
 static void phongo_iterator_it_get_current_key(zend_object_iterator* iter, zval* key)
 {
-	phongo_iterator_t* intern = Z_ITERATOR_OBJ_P(&iter->data);
+	PHONGO_INTERN_FROM_ZVAL(iterator, &iter->data);
 
 	if (!phongo_iterator_key(intern, key)) {
 		// Exception already thrown
@@ -330,14 +329,14 @@ static void phongo_iterator_it_get_current_key(zend_object_iterator* iter, zval*
 
 static void phongo_iterator_it_move_forward(zend_object_iterator* iter)
 {
-	phongo_iterator_t* intern = Z_ITERATOR_OBJ_P(&iter->data);
+	PHONGO_INTERN_FROM_ZVAL(iterator, &iter->data);
 
 	phongo_iterator_next(intern);
 }
 
 static void phongo_iterator_it_rewind(zend_object_iterator* iter)
 {
-	phongo_iterator_t* intern = Z_ITERATOR_OBJ_P(&iter->data);
+	PHONGO_INTERN_FROM_ZVAL(iterator, &iter->data);
 
 	phongo_iterator_rewind(intern);
 }

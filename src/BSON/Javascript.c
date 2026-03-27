@@ -71,10 +71,9 @@ static bool phongo_javascript_init_from_hash(phongo_javascript_t* intern, HashTa
 
 HashTable* phongo_javascript_get_properties_hash(zend_object* object, bool is_temp)
 {
-	phongo_javascript_t* intern;
-	HashTable*           props;
+	PHONGO_INTERN_FROM_Z_OBJ(javascript, object);
 
-	intern = Z_OBJ_JAVASCRIPT(object);
+	HashTable* props;
 
 	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_temp, intern, props, 2);
 
@@ -241,7 +240,7 @@ static zend_object_handlers phongo_handler_javascript;
 
 static void phongo_javascript_free_object(zend_object* object)
 {
-	phongo_javascript_t* intern = Z_OBJ_JAVASCRIPT(object);
+	PHONGO_INTERN_FROM_Z_OBJ(javascript, object);
 
 	zend_object_std_dtor(&intern->std);
 
@@ -273,11 +272,11 @@ zend_object* phongo_javascript_create_object(zend_class_entry* class_type)
 
 static zend_object* phongo_javascript_clone_object(zend_object* object)
 {
-	phongo_javascript_t* intern;
+	PHONGO_INTERN_FROM_Z_OBJ(javascript, object);
+
 	phongo_javascript_t* new_intern;
 	zend_object*         new_object;
 
-	intern     = Z_OBJ_JAVASCRIPT(object);
 	new_object = phongo_javascript_create_object(object->ce);
 
 	new_intern = Z_OBJ_JAVASCRIPT(new_object);

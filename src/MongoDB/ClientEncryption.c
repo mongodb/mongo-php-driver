@@ -474,7 +474,7 @@ static zend_object_handlers phongo_handler_clientencryption;
 
 static void phongo_clientencryption_free_object(zend_object* object)
 {
-	phongo_clientencryption_t* intern = Z_OBJ_CLIENTENCRYPTION(object);
+	PHONGO_INTERN_FROM_Z_OBJ(clientencryption, object);
 
 	zend_object_std_dtor(&intern->std);
 
@@ -507,11 +507,8 @@ static zend_object* phongo_clientencryption_create_object(zend_class_entry* clas
 
 static HashTable* phongo_clientencryption_get_debug_info(zend_object* object, int* is_temp)
 {
-	phongo_clientencryption_t* intern = NULL;
-	zval                       retval = ZVAL_STATIC_INIT;
-
-	*is_temp = 1;
-	intern   = Z_OBJ_CLIENTENCRYPTION(object);
+	zval retval = ZVAL_STATIC_INIT;
+	*is_temp    = 1;
 
 	array_init(&retval);
 

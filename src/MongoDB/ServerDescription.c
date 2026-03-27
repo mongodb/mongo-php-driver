@@ -144,7 +144,7 @@ static zend_object_handlers phongo_handler_serverdescription;
 
 static void phongo_serverdescription_free_object(zend_object* object)
 {
-	phongo_serverdescription_t* intern = Z_OBJ_SERVERDESCRIPTION(object);
+	PHONGO_INTERN_FROM_Z_OBJ(serverdescription, object);
 
 	zend_object_std_dtor(&intern->std);
 
@@ -172,10 +172,9 @@ static zend_object* phongo_serverdescription_create_object(zend_class_entry* cla
 
 HashTable* phongo_serverdescription_get_properties_hash(zend_object* object, bool is_debug)
 {
-	phongo_serverdescription_t* intern = NULL;
-	HashTable*                  props;
+	PHONGO_INTERN_FROM_Z_OBJ(serverdescription, object);
 
-	intern = Z_OBJ_SERVERDESCRIPTION(object);
+	HashTable* props;
 
 	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_debug, intern, props, 6);
 

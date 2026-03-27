@@ -379,12 +379,11 @@ static PHP_METHOD(MongoDB_Driver_ReadPreference, getTagSets)
 
 static HashTable* phongo_readpreference_get_properties_hash(zend_object* object, bool is_temp)
 {
-	phongo_readpreference_t* intern;
-	HashTable*               props;
-	const bson_t*            tags;
-	const bson_t*            hedge;
+	PHONGO_INTERN_FROM_Z_OBJ(readpreference, object);
 
-	intern = Z_OBJ_READPREFERENCE(object);
+	HashTable*    props;
+	const bson_t* tags;
+	const bson_t* hedge;
 
 	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_temp, intern, props, 4);
 
@@ -476,7 +475,7 @@ static zend_object_handlers phongo_handler_readpreference;
 
 static void phongo_readpreference_free_object(zend_object* object)
 {
-	phongo_readpreference_t* intern = Z_OBJ_READPREFERENCE(object);
+	PHONGO_INTERN_FROM_Z_OBJ(readpreference, object);
 
 	zend_object_std_dtor(&intern->std);
 
@@ -538,7 +537,7 @@ void phongo_readpreference_init(zval* return_value, const mongoc_read_prefs_t* r
 const mongoc_read_prefs_t* phongo_read_preference_from_zval(zval* zread_preference)
 {
 	if (zread_preference) {
-		phongo_readpreference_t* intern = Z_READPREFERENCE_OBJ_P(zread_preference);
+		PHONGO_INTERN_FROM_ZVAL(readpreference, zread_preference);
 
 		if (intern) {
 			return intern->read_preference;

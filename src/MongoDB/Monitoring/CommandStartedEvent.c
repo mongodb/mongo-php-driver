@@ -147,7 +147,7 @@ static zend_object_handlers phongo_handler_commandstartedevent;
 
 static void phongo_commandstartedevent_free_object(zend_object* object)
 {
-	phongo_commandstartedevent_t* intern = Z_OBJ_COMMANDSTARTEDEVENT(object);
+	PHONGO_INTERN_FROM_Z_OBJ(commandstartedevent, object);
 
 	zend_object_std_dtor(&intern->std);
 
@@ -178,14 +178,14 @@ static zend_object* phongo_commandstartedevent_create_object(zend_class_entry* c
 
 static HashTable* phongo_commandstartedevent_get_debug_info(zend_object* object, int* is_temp)
 {
-	phongo_commandstartedevent_t* intern;
-	zval                          retval = ZVAL_STATIC_INIT;
-	char                          operation_id[24], request_id[24];
-	phongo_bson_state             command_state;
+	PHONGO_INTERN_FROM_Z_OBJ(commandstartedevent, object);
+
+	zval              retval = ZVAL_STATIC_INIT;
+	char              operation_id[24], request_id[24];
+	phongo_bson_state command_state;
 
 	PHONGO_BSON_INIT_STATE(command_state);
 
-	intern   = Z_OBJ_COMMANDSTARTEDEVENT(object);
 	*is_temp = 1;
 	array_init_size(&retval, 9);
 

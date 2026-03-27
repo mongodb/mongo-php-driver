@@ -64,10 +64,9 @@ static bool phongo_int64_init_from_hash(phongo_int64_t* intern, HashTable* props
 
 HashTable* phongo_int64_get_properties_hash(zend_object* object, bool is_temp)
 {
-	phongo_int64_t* intern;
-	HashTable*      props;
+	PHONGO_INTERN_FROM_Z_OBJ(int64, object);
 
-	intern = Z_OBJ_INT64(object);
+	HashTable* props;
 
 	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_temp, intern, props, 2);
 
@@ -166,7 +165,7 @@ static zend_object_handlers phongo_handler_int64;
 
 static void phongo_int64_free_object(zend_object* object)
 {
-	phongo_int64_t* intern = Z_OBJ_INT64(object);
+	PHONGO_INTERN_FROM_Z_OBJ(int64, object);
 
 	zend_object_std_dtor(&intern->std);
 
@@ -190,11 +189,11 @@ zend_object* phongo_int64_create_object(zend_class_entry* class_type)
 
 static zend_object* phongo_int64_clone_object(zend_object* object)
 {
-	phongo_int64_t* intern;
+	PHONGO_INTERN_FROM_Z_OBJ(int64, object);
+
 	phongo_int64_t* new_intern;
 	zend_object*    new_object;
 
-	intern     = Z_OBJ_INT64(object);
 	new_object = phongo_int64_create_object(object->ce);
 
 	new_intern = Z_OBJ_INT64(new_object);
@@ -235,11 +234,10 @@ static int phongo_int64_compare_int64_objects(zval* o1, zval* o2)
 
 static int phongo_int64_compare_with_long_or_float(zval* object, zval* value)
 {
-	phongo_int64_t* intern;
-	int64_t         long_value;
-	double          double_value;
+	PHONGO_INTERN_FROM_ZVAL(int64, object);
 
-	intern = Z_INT64_OBJ_P(object);
+	int64_t long_value;
+	double  double_value;
 
 	assert(phongo_int64_is_long_or_double(value));
 
@@ -287,9 +285,7 @@ static int phongo_int64_compare_objects(zval* o1, zval* o2)
 
 static zend_result phongo_int64_cast_object(zend_object* readobj, zval* retval, int type)
 {
-	phongo_int64_t* intern;
-
-	intern = Z_OBJ_INT64(readobj);
+	PHONGO_INTERN_FROM_Z_OBJ(int64, readobj);
 
 	switch (type) {
 		case IS_DOUBLE:

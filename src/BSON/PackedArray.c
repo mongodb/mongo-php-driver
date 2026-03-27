@@ -58,10 +58,9 @@ static bool phongo_packedarray_init_from_hash(phongo_packedarray_t* intern, Hash
 
 static HashTable* phongo_packedarray_get_properties_hash(zend_object* object, bool is_temp, int size)
 {
-	phongo_packedarray_t* intern;
-	HashTable*            props;
+	PHONGO_INTERN_FROM_Z_OBJ(packedarray, object);
 
-	intern = Z_OBJ_PACKEDARRAY(object);
+	HashTable* props;
 
 	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_temp, intern, props, size);
 
@@ -409,7 +408,7 @@ static zend_object_handlers phongo_handler_packedarray;
 
 static void phongo_packedarray_free_object(zend_object* object)
 {
-	phongo_packedarray_t* intern = Z_OBJ_PACKEDARRAY(object);
+	PHONGO_INTERN_FROM_Z_OBJ(packedarray, object);
 
 	zend_object_std_dtor(&intern->std);
 
@@ -437,11 +436,11 @@ static zend_object* phongo_packedarray_create_object(zend_class_entry* class_typ
 
 static zend_object* phongo_packedarray_clone_object(zend_object* object)
 {
-	phongo_packedarray_t* intern;
+	PHONGO_INTERN_FROM_Z_OBJ(packedarray, object);
+
 	phongo_packedarray_t* new_intern;
 	zend_object*          new_object;
 
-	intern     = Z_OBJ_PACKEDARRAY(object);
 	new_object = phongo_packedarray_create_object(object->ce);
 
 	new_intern = Z_OBJ_PACKEDARRAY(new_object);
@@ -466,11 +465,11 @@ static int phongo_packedarray_compare_objects(zval* o1, zval* o2)
 
 static HashTable* phongo_packedarray_get_debug_info(zend_object* object, int* is_temp)
 {
-	phongo_packedarray_t* intern;
-	HashTable*            props;
+	PHONGO_INTERN_FROM_Z_OBJ(packedarray, object);
+
+	HashTable* props;
 
 	*is_temp = 1;
-	intern   = Z_OBJ_PACKEDARRAY(object);
 
 	/* This get_debug_info handler reports an additional property. This does not
 	 * conflict with other uses of phongo_document_get_properties_hash since
@@ -506,9 +505,7 @@ static HashTable* phongo_packedarray_get_properties(zend_object* object)
 
 zval* phongo_packedarray_read_dimension(zend_object* object, zval* offset, int type, zval* rv)
 {
-	phongo_packedarray_t* intern;
-
-	intern = Z_OBJ_PACKEDARRAY(object);
+	PHONGO_INTERN_FROM_Z_OBJ(packedarray, object);
 
 	if (Z_TYPE_P(offset) != IS_LONG) {
 		if (type == BP_VAR_IS) {
@@ -535,9 +532,7 @@ void phongo_packedarray_write_dimension(zend_object* object, zval* offset, zval*
 
 int phongo_packedarray_has_dimension(zend_object* object, zval* member, int check_empty)
 {
-	phongo_packedarray_t* intern;
-
-	intern = Z_OBJ_PACKEDARRAY(object);
+	PHONGO_INTERN_FROM_Z_OBJ(packedarray, object);
 
 	if (Z_TYPE_P(member) != IS_LONG) {
 		return false;

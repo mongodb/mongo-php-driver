@@ -542,7 +542,7 @@ static zend_object_handlers phongo_handler_session;
 
 static void phongo_session_free_object(zend_object* object)
 {
-	phongo_session_t* intern = Z_OBJ_SESSION(object);
+	PHONGO_INTERN_FROM_Z_OBJ(session, object);
 
 	zend_object_std_dtor(&intern->std);
 
@@ -578,11 +578,11 @@ static zend_object* phongo_session_create_object(zend_class_entry* class_type)
 
 static HashTable* phongo_session_get_debug_info(zend_object* object, int* is_temp)
 {
-	phongo_session_t* intern = NULL;
-	zval              retval = ZVAL_STATIC_INIT;
+	PHONGO_INTERN_FROM_Z_OBJ(session, object);
+
+	zval retval = ZVAL_STATIC_INIT;
 
 	*is_temp = 1;
-	intern   = Z_OBJ_SESSION(object);
 
 	array_init(&retval);
 

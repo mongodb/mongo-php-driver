@@ -742,7 +742,7 @@ static zend_object_handlers phongo_handler_manager;
 
 static void phongo_manager_free_object(zend_object* object)
 {
-	phongo_manager_t* intern = Z_OBJ_MANAGER(object);
+	PHONGO_INTERN_FROM_Z_OBJ(manager, object);
 
 	zend_object_std_dtor(&intern->std);
 

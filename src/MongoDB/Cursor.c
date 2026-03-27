@@ -280,7 +280,7 @@ static zend_object_handlers phongo_handler_cursor;
 
 static void phongo_cursor_free_object(zend_object* object)
 {
-	phongo_cursor_t* intern = Z_OBJ_CURSOR(object);
+	PHONGO_INTERN_FROM_Z_OBJ(cursor, object);
 
 	zend_object_std_dtor(&intern->std);
 
@@ -342,11 +342,11 @@ static zend_object* phongo_cursor_create_object(zend_class_entry* class_type)
 
 static HashTable* phongo_cursor_get_debug_info(zend_object* object, int* is_temp)
 {
-	phongo_cursor_t* intern;
-	zval             retval = ZVAL_STATIC_INIT;
+	PHONGO_INTERN_FROM_Z_OBJ(cursor, object);
+
+	zval retval = ZVAL_STATIC_INIT;
 
 	*is_temp = 1;
-	intern   = Z_OBJ_CURSOR(object);
 
 	array_init_size(&retval, 10);
 

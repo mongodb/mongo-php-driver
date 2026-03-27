@@ -539,7 +539,7 @@ static zend_object_handlers phongo_handler_bulkwrite;
 
 static void phongo_bulkwrite_free_object(zend_object* object)
 {
-	phongo_bulkwrite_t* intern = Z_OBJ_BULKWRITE(object);
+	PHONGO_INTERN_FROM_Z_OBJ(bulkwrite, object);
 
 	zend_object_std_dtor(&intern->std);
 
@@ -583,11 +583,11 @@ static zend_object* phongo_bulkwrite_create_object(zend_class_entry* class_type)
 
 static HashTable* phongo_bulkwrite_get_debug_info(zend_object* object, int* is_temp)
 {
-	zval                retval = ZVAL_STATIC_INIT;
-	phongo_bulkwrite_t* intern = NULL;
+	PHONGO_INTERN_FROM_Z_OBJ(bulkwrite, object);
+
+	zval retval = ZVAL_STATIC_INIT;
 
 	*is_temp = 1;
-	intern   = Z_OBJ_BULKWRITE(object);
 	array_init(&retval);
 
 	if (intern->database) {

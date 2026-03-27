@@ -120,11 +120,10 @@ static PHP_METHOD(MongoDB_Driver_ReadConcern, isDefault)
 
 static HashTable* phongo_readconcern_get_properties_hash(zend_object* object, bool is_temp)
 {
-	phongo_readconcern_t* intern;
-	HashTable*            props;
-	const char*           level;
+	PHONGO_INTERN_FROM_Z_OBJ(readconcern, object);
 
-	intern = Z_OBJ_READCONCERN(object);
+	HashTable*  props;
+	const char* level;
 
 	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_temp, intern, props, 1);
 
@@ -175,7 +174,7 @@ static zend_object_handlers phongo_handler_readconcern;
 
 static void phongo_readconcern_free_object(zend_object* object)
 {
-	phongo_readconcern_t* intern = Z_OBJ_READCONCERN(object);
+	PHONGO_INTERN_FROM_Z_OBJ(readconcern, object);
 
 	zend_object_std_dtor(&intern->std);
 
@@ -237,7 +236,7 @@ void phongo_readconcern_init(zval* return_value, const mongoc_read_concern_t* re
 const mongoc_read_concern_t* phongo_read_concern_from_zval(zval* zread_concern)
 {
 	if (zread_concern) {
-		phongo_readconcern_t* intern = Z_READCONCERN_OBJ_P(zread_concern);
+		PHONGO_INTERN_FROM_ZVAL(readconcern, zread_concern);
 
 		if (intern) {
 			return intern->read_concern;

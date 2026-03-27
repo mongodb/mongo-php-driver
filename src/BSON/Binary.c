@@ -76,10 +76,9 @@ static bool phongo_binary_init_from_hash(phongo_binary_t* intern, HashTable* pro
 
 static HashTable* phongo_binary_get_properties_hash(zend_object* object, bool is_temp, bool is_debug)
 {
-	phongo_binary_t* intern;
-	HashTable*       props;
+	PHONGO_INTERN_FROM_Z_OBJ(binary, object);
 
-	intern = Z_OBJ_BINARY(object);
+	HashTable* props;
 
 	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_temp, intern, props, 2);
 
@@ -211,7 +210,7 @@ static zend_object_handlers phongo_handler_binary;
 
 static void phongo_binary_free_object(zend_object* object)
 {
-	phongo_binary_t* intern = Z_OBJ_BINARY(object);
+	PHONGO_INTERN_FROM_Z_OBJ(binary, object);
 
 	zend_object_std_dtor(&intern->std);
 
@@ -239,11 +238,11 @@ static zend_object* phongo_binary_create_object(zend_class_entry* class_type)
 
 static zend_object* phongo_binary_clone_object(zend_object* object)
 {
-	phongo_binary_t* intern;
+	PHONGO_INTERN_FROM_Z_OBJ(binary, object);
+
 	phongo_binary_t* new_intern;
 	zend_object*     new_object;
 
-	intern     = Z_OBJ_BINARY(object);
 	new_object = phongo_binary_create_object(object->ce);
 
 	new_intern = Z_OBJ_BINARY(new_object);
@@ -281,7 +280,7 @@ static HashTable* phongo_binary_get_debug_info(zend_object* object, int* is_temp
 	*is_temp         = 1;
 	HashTable* props = phongo_binary_get_properties_hash(object, true, true);
 
-	phongo_binary_t* intern = Z_OBJ_BINARY(object);
+	PHONGO_INTERN_FROM_Z_OBJ(binary, object);
 
 	if (intern->type == BSON_SUBTYPE_VECTOR) {
 		zval vector;

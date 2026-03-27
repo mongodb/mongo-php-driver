@@ -138,12 +138,11 @@ static PHP_METHOD(MongoDB_Driver_ServerApi, __set_state)
 
 static HashTable* phongo_serverapi_get_properties_hash(zend_object* object, bool is_temp, bool include_null)
 {
-	phongo_serverapi_t* intern;
-	HashTable*          props;
-	zval                version, strict, deprecation_errors;
-	bool                is_set;
+	PHONGO_INTERN_FROM_Z_OBJ(serverapi, object);
 
-	intern = Z_OBJ_SERVERAPI(object);
+	HashTable* props;
+	zval       version, strict, deprecation_errors;
+	bool       is_set;
 
 	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_temp, intern, props, 1);
 
@@ -206,7 +205,7 @@ static zend_object_handlers phongo_handler_serverapi;
 
 static void phongo_serverapi_free_object(zend_object* object)
 {
-	phongo_serverapi_t* intern = Z_OBJ_SERVERAPI(object);
+	PHONGO_INTERN_FROM_Z_OBJ(serverapi, object);
 
 	zend_object_std_dtor(&intern->std);
 

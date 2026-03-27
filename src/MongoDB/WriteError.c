@@ -77,7 +77,7 @@ static zend_object_handlers phongo_handler_writeerror;
 
 static void phongo_writeerror_free_object(zend_object* object)
 {
-	phongo_writeerror_t* intern = Z_OBJ_WRITEERROR(object);
+	PHONGO_INTERN_FROM_Z_OBJ(writeerror, object);
 
 	zend_object_std_dtor(&intern->std);
 
@@ -104,11 +104,11 @@ static zend_object* phongo_writeerror_create_object(zend_class_entry* class_type
 
 static HashTable* phongo_writeerror_get_debug_info(zend_object* object, int* is_temp)
 {
-	phongo_writeerror_t* intern;
-	zval                 retval = ZVAL_STATIC_INIT;
+	PHONGO_INTERN_FROM_Z_OBJ(writeerror, object);
+
+	zval retval = ZVAL_STATIC_INIT;
 
 	*is_temp = 1;
-	intern   = Z_OBJ_WRITEERROR(object);
 
 	array_init_size(&retval, 3);
 	ADD_ASSOC_STRING(&retval, "message", intern->message);

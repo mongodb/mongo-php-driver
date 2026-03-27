@@ -80,7 +80,7 @@ static zend_object_handlers phongo_handler_serverheartbeatfailedevent;
 
 static void phongo_serverheartbeatfailedevent_free_object(zend_object* object)
 {
-	phongo_serverheartbeatfailedevent_t* intern = Z_OBJ_SERVERHEARTBEATFAILEDEVENT(object);
+	PHONGO_INTERN_FROM_Z_OBJ(serverheartbeatfailedevent, object);
 
 	zend_object_std_dtor(&intern->std);
 
@@ -103,10 +103,10 @@ static zend_object* phongo_serverheartbeatfailedevent_create_object(zend_class_e
 
 static HashTable* phongo_serverheartbeatfailedevent_get_debug_info(zend_object* object, int* is_temp)
 {
-	phongo_serverheartbeatfailedevent_t* intern;
-	zval                                 retval = ZVAL_STATIC_INIT;
+	PHONGO_INTERN_FROM_Z_OBJ(serverheartbeatfailedevent, object);
 
-	intern   = Z_OBJ_SERVERHEARTBEATFAILEDEVENT(object);
+	zval retval = ZVAL_STATIC_INIT;
+
 	*is_temp = 1;
 	array_init_size(&retval, 5);
 

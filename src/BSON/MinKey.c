@@ -63,7 +63,7 @@ static zend_object_handlers phongo_handler_minkey;
 
 static void phongo_minkey_free_object(zend_object* object)
 {
-	phongo_minkey_t* intern = Z_OBJ_MINKEY(object);
+	PHONGO_INTERN_FROM_Z_OBJ(minkey, object);
 
 	zend_object_std_dtor(&intern->std);
 }

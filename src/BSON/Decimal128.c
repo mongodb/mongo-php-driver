@@ -55,11 +55,10 @@ static bool phongo_decimal128_init_from_hash(phongo_decimal128_t* intern, HashTa
 
 static HashTable* phongo_decimal128_get_properties_hash(zend_object* object, bool is_temp)
 {
-	phongo_decimal128_t* intern;
-	HashTable*           props;
-	char                 outbuf[BSON_DECIMAL128_STRING] = "";
+	PHONGO_INTERN_FROM_Z_OBJ(decimal128, object);
 
-	intern = Z_OBJ_DECIMAL128(object);
+	HashTable* props;
+	char       outbuf[BSON_DECIMAL128_STRING] = "";
 
 	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_temp, intern, props, 1);
 
@@ -158,7 +157,7 @@ static zend_object_handlers phongo_handler_decimal128;
 
 static void phongo_decimal128_free_object(zend_object* object)
 {
-	phongo_decimal128_t* intern = Z_OBJ_DECIMAL128(object);
+	PHONGO_INTERN_FROM_Z_OBJ(decimal128, object);
 
 	zend_object_std_dtor(&intern->std);
 
@@ -182,11 +181,11 @@ static zend_object* phongo_decimal128_create_object(zend_class_entry* class_type
 
 static zend_object* phongo_decimal128_clone_object(zend_object* object)
 {
-	phongo_decimal128_t* intern;
+	PHONGO_INTERN_FROM_Z_OBJ(decimal128, object);
+
 	phongo_decimal128_t* new_intern;
 	zend_object*         new_object;
 
-	intern     = Z_OBJ_DECIMAL128(object);
 	new_object = phongo_decimal128_create_object(object->ce);
 
 	new_intern = Z_OBJ_DECIMAL128(new_object);

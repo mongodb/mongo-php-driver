@@ -533,7 +533,7 @@ static int phongo_server_compare_objects(zval* o1, zval* o2)
 
 static void phongo_server_free_object(zend_object* object)
 {
-	phongo_server_t* intern = Z_OBJ_SERVER(object);
+	PHONGO_INTERN_FROM_Z_OBJ(server, object);
 
 	zend_object_std_dtor(&intern->std);
 

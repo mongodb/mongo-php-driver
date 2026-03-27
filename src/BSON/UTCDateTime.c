@@ -123,10 +123,9 @@ static bool phongo_utcdatetime_init_from_object(phongo_utcdatetime_t* intern, ze
 
 static HashTable* phongo_utcdatetime_get_properties_hash(zend_object* object, bool is_temp)
 {
-	phongo_utcdatetime_t* intern;
-	HashTable*            props;
+	PHONGO_INTERN_FROM_Z_OBJ(utcdatetime, object);
 
-	intern = Z_OBJ_UTCDATETIME(object);
+	HashTable* props;
 
 	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_temp, intern, props, 1);
 
@@ -146,13 +145,12 @@ static HashTable* phongo_utcdatetime_get_properties_hash(zend_object* object, bo
 
 static void phongo_utcdatetime_to_php_date(zval* return_value, const zval* this, zend_class_entry* ce)
 {
-	phongo_utcdatetime_t* intern;
-	php_date_obj*         datetime_obj;
-	char*                 sec_str;
-	size_t                sec_len;
-	int64_t               sec, usec;
+	PHONGO_INTERN_FROM_ZVAL(utcdatetime, this);
 
-	intern = Z_UTCDATETIME_OBJ_P(this);
+	php_date_obj* datetime_obj;
+	char*         sec_str;
+	size_t        sec_len;
+	int64_t       sec, usec;
 
 	object_init_ex(return_value, ce);
 	datetime_obj = Z_PHPDATE_P(return_value);
@@ -292,7 +290,7 @@ static zend_object_handlers phongo_handler_utcdatetime;
 
 static void phongo_utcdatetime_free_object(zend_object* object)
 {
-	phongo_utcdatetime_t* intern = Z_OBJ_UTCDATETIME(object);
+	PHONGO_INTERN_FROM_Z_OBJ(utcdatetime, object);
 
 	zend_object_std_dtor(&intern->std);
 
@@ -316,11 +314,11 @@ static zend_object* phongo_utcdatetime_create_object(zend_class_entry* class_typ
 
 static zend_object* phongo_utcdatetime_clone_object(zend_object* object)
 {
-	phongo_utcdatetime_t* intern;
+	PHONGO_INTERN_FROM_Z_OBJ(utcdatetime, object);
+
 	phongo_utcdatetime_t* new_intern;
 	zend_object*          new_object;
 
-	intern     = Z_OBJ_UTCDATETIME(object);
 	new_object = phongo_utcdatetime_create_object(object->ce);
 
 	new_intern = Z_OBJ_UTCDATETIME(new_object);
