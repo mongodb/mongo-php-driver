@@ -285,7 +285,7 @@ static PHP_METHOD(MongoDB_Driver_Manager, executeCommand)
 	uint32_t          server_id       = 0;
 
 	PHONGO_PARSE_PARAMETERS_START(2, 3)
-	Z_PARAM_STRING_OR_NULL(db, db_len)
+	Z_PARAM_STRING(db, db_len)
 	Z_PARAM_OBJECT_OF_CLASS(command, phongo_command_ce)
 	Z_PARAM_OPTIONAL
 	Z_PARAM_ZVAL_OR_NULL(options)
@@ -329,7 +329,7 @@ static PHP_METHOD(MongoDB_Driver_Manager, executeReadCommand)
 	zval*             zsession        = NULL;
 
 	PHONGO_PARSE_PARAMETERS_START(2, 3)
-	Z_PARAM_STRING_OR_NULL(db, db_len)
+	Z_PARAM_STRING(db, db_len)
 	Z_PARAM_OBJECT_OF_CLASS(command, phongo_command_ce)
 	Z_PARAM_OPTIONAL
 	Z_PARAM_ARRAY_OR_NULL(options)
@@ -372,7 +372,7 @@ static PHP_METHOD(MongoDB_Driver_Manager, executeWriteCommand)
 	zval*             zsession  = NULL;
 
 	PHONGO_PARSE_PARAMETERS_START(2, 3)
-	Z_PARAM_STRING_OR_NULL(db, db_len)
+	Z_PARAM_STRING(db, db_len)
 	Z_PARAM_OBJECT_OF_CLASS(command, phongo_command_ce)
 	Z_PARAM_OPTIONAL
 	Z_PARAM_ARRAY_OR_NULL(options)
@@ -410,7 +410,7 @@ static PHP_METHOD(MongoDB_Driver_Manager, executeReadWriteCommand)
 	zval*             zsession  = NULL;
 
 	PHONGO_PARSE_PARAMETERS_START(2, 3)
-	Z_PARAM_STRING_OR_NULL(db, db_len)
+	Z_PARAM_STRING(db, db_len)
 	Z_PARAM_OBJECT_OF_CLASS(command, phongo_command_ce)
 	Z_PARAM_OPTIONAL
 	Z_PARAM_ARRAY_OR_NULL(options)
@@ -449,7 +449,7 @@ static PHP_METHOD(MongoDB_Driver_Manager, executeQuery)
 	zval*    zsession        = NULL;
 
 	PHONGO_PARSE_PARAMETERS_START(2, 3)
-	Z_PARAM_STRING_OR_NULL(namespace, namespace_len)
+	Z_PARAM_STRING(namespace, namespace_len)
 	Z_PARAM_OBJECT_OF_CLASS(query, phongo_query_ce)
 	Z_PARAM_OPTIONAL
 	Z_PARAM_ZVAL_OR_NULL(options)
@@ -493,7 +493,7 @@ static PHP_METHOD(MongoDB_Driver_Manager, executeBulkWrite)
 	zval*               zsession  = NULL;
 
 	PHONGO_PARSE_PARAMETERS_START(2, 3)
-	Z_PARAM_STRING_OR_NULL(namespace, namespace_len)
+	Z_PARAM_STRING(namespace, namespace_len)
 	Z_PARAM_OBJECT_OF_CLASS(zbulk, phongo_bulkwrite_ce)
 	Z_PARAM_OPTIONAL
 	Z_PARAM_ZVAL_OR_NULL(options)
