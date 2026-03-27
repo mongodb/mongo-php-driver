@@ -226,10 +226,7 @@ static void phongo_binary_free_object(zend_object* object)
 
 static zend_object* phongo_binary_create_object(zend_class_entry* class_type)
 {
-	phongo_binary_t* intern = zend_object_alloc(sizeof(phongo_binary_t), class_type);
-
-	zend_object_std_init(&intern->std, class_type);
-	object_properties_init(&intern->std, class_type);
+	PHONGO_INTERN_OBJECT_ALLOC(binary, class_type);
 
 	intern->std.handlers = &phongo_handler_binary;
 
@@ -499,7 +496,7 @@ static PHP_METHOD(MongoDB_BSON_Binary, fromVector)
 	zend_object* type;
 
 	object_init_ex(return_value, phongo_binary_ce);
-	phongo_binary_t* intern = Z_BINARY_OBJ_P(return_value);
+	PHONGO_INTERN_FROM_ZVAL(binary, return_value);
 
 	PHONGO_PARSE_PARAMETERS_START(2, 2)
 	Z_PARAM_ARRAY_HT(vector)

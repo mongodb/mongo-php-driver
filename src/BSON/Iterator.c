@@ -260,10 +260,7 @@ static void phongo_iterator_free_object(zend_object* object)
 
 static zend_object* phongo_iterator_create_object(zend_class_entry* class_type)
 {
-	phongo_iterator_t* intern = zend_object_alloc(sizeof(phongo_iterator_t), class_type);
-
-	zend_object_std_init(&intern->std, class_type);
-	object_properties_init(&intern->std, class_type);
+	PHONGO_INTERN_OBJECT_ALLOC(iterator, class_type);
 
 	intern->std.handlers = &phongo_handler_iterator;
 

@@ -328,10 +328,7 @@ static void phongo_cursor_free_object(zend_object* object)
 
 static zend_object* phongo_cursor_create_object(zend_class_entry* class_type)
 {
-	phongo_cursor_t* intern = zend_object_alloc(sizeof(phongo_cursor_t), class_type);
-
-	zend_object_std_init(&intern->std, class_type);
-	object_properties_init(&intern->std, class_type);
+	PHONGO_INTERN_OBJECT_ALLOC(cursor, class_type);
 
 	PHONGO_SET_CREATED_BY_PID(intern);
 
