@@ -53,6 +53,7 @@ final class ReadPreference implements \MongoDB\BSON\Serializable
 
     final public function __construct(string $mode, ?array $tagSets = null, ?array $options = null) {}
 
+    /** @deprecated Hedged reads are deprecated in MongoDB 8.0 and will be removed in a future release */
     final public function getHedge(): ?object {}
 
     final public function getMaxStalenessSeconds(): int {}

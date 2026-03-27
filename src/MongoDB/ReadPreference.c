@@ -117,6 +117,8 @@ static bool phongo_readpreference_init_from_hash(phongo_readpreference_t* intern
 		if (Z_TYPE_P(hedge) == IS_ARRAY || Z_TYPE_P(hedge) == IS_OBJECT) {
 			bson_t* hedge_doc = bson_new();
 
+			php_error_docref(NULL, E_DEPRECATED, "The \"hedge\" option is deprecated as of MongoDB 8.0 and will be removed in a future release");
+
 			if (mongoc_read_prefs_get_mode(intern->read_preference) == MONGOC_READ_PRIMARY) {
 				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "%s initialization requires \"hedge\" field to not be present with \"primary\" mode", ZSTR_VAL(phongo_readpreference_ce->name));
 				bson_destroy(hedge_doc);
@@ -251,6 +253,8 @@ static PHP_METHOD(MongoDB_Driver_ReadPreference, __construct)
 
 		if (Z_TYPE_P(hedge) == IS_ARRAY || Z_TYPE_P(hedge) == IS_OBJECT) {
 			bson_t* hedge_doc = bson_new();
+
+			php_error_docref(NULL, E_DEPRECATED, "The \"hedge\" option is deprecated as of MongoDB 8.0 and will be removed in a future release");
 
 			if (mongoc_read_prefs_get_mode(intern->read_preference) == MONGOC_READ_PRIMARY) {
 				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "hedge may not be used with primary mode");
