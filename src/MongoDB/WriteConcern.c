@@ -401,12 +401,74 @@ static HashTable* phongo_writeconcern_get_properties(zend_object* object)
 	return phongo_writeconcern_get_properties_hash(object, false, false, false);
 }
 
+/**
+ * Note: only equality comparison is supported for objects.
+ * Inequality will always return -1, making sorting arbitrary.
+ */
+static int phongo_writeconcern_compare_objects(zval* o1, zval* o2)
+{
+	ZEND_COMPARE_OBJECTS_FALLBACK(o1, o2);
+
+	phongo_writeconcern_t* intern1;
+	phongo_writeconcern_t* intern2;
+
+	const mongoc_write_concern_t* wc1 = NULL;
+	const mongoc_write_concern_t* wc2 = NULL;
+
+	intern1 = Z_WRITECONCERN_OBJ_P(o1);
+	intern2 = Z_WRITECONCERN_OBJ_P(o2);
+
+	if (intern1 && intern1->write_concern) {
+		wc1 = intern1->write_concern;
+	}
+
+	if (intern2 && intern2->write_concern) {
+		wc2 = intern2->write_concern;
+	}
+
+	if (wc1 == wc2) {
+		return 0;
+	}
+
+	if (wc1 == NULL || wc2 == NULL) {
+		return -1;
+	}
+
+	if (mongoc_write_concern_get_w(wc1) != mongoc_write_concern_get_w(wc2)) {
+		return -1;
+	}
+
+	const char* wtag1 = NULL;
+	const char* wtag2 = NULL;
+
+	wtag1 = mongoc_write_concern_get_wtag(wc1);
+	wtag2 = mongoc_write_concern_get_wtag(wc2);
+
+	if (wtag1 == wtag2) {
+	} else if (wtag1 == NULL || wtag2 == NULL) {
+		return -1;
+	} else if (strcmp(wtag1, wtag2) != 0) {
+		return -1;
+	}
+
+	if (mongoc_write_concern_journal_is_set(wc1) != mongoc_write_concern_journal_is_set(wc2)) {
+		return -1;
+	}
+
+	if (mongoc_write_concern_get_journal(wc1) != mongoc_write_concern_get_journal(wc2)) {
+		return -1;
+	}
+
+	return 0;
+}
+
 void phongo_writeconcern_init_ce(INIT_FUNC_ARGS)
 {
 	phongo_writeconcern_ce                = register_class_MongoDB_Driver_WriteConcern(phongo_serializable_ce);
 	phongo_writeconcern_ce->create_object = phongo_writeconcern_create_object;
 
 	memcpy(&phongo_handler_writeconcern, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
+	phongo_handler_writeconcern.compare        = phongo_writeconcern_compare_objects;
 	phongo_handler_writeconcern.get_debug_info = phongo_writeconcern_get_debug_info;
 	phongo_handler_writeconcern.get_properties = phongo_writeconcern_get_properties;
 	phongo_handler_writeconcern.free_obj       = phongo_writeconcern_free_object;
