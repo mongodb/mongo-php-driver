@@ -520,12 +520,60 @@ static HashTable* phongo_readpreference_get_properties(zend_object* object)
 	return phongo_readpreference_get_properties_hash(object, false);
 }
 
+static int phongo_readpreference_compare_objects(zval* o1, zval* o2)
+{
+	ZEND_COMPARE_OBJECTS_FALLBACK(o1, o2);
+
+	phongo_readpreference_t *intern1, *intern2;
+
+	const mongoc_read_prefs_t* rp1 = NULL;
+	const mongoc_read_prefs_t* rp2 = NULL;
+
+	intern1 = Z_READPREFERENCE_OBJ_P(o1);
+	intern2 = Z_READPREFERENCE_OBJ_P(o2);
+
+	if (intern1 && intern1->read_preference) {
+		rp1 = intern1->read_preference;
+	}
+
+	if (intern2 && intern2->read_preference) {
+		rp2 = intern2->read_preference;
+	}
+
+	if (rp1 == rp2) {
+		return 0;
+	}
+
+	if (!rp1 || !rp2) {
+		return -1;
+	}
+
+	if (mongoc_read_prefs_get_mode(rp1) != mongoc_read_prefs_get_mode(rp2)) {
+		return -1;
+	}
+
+	if (mongoc_read_prefs_get_max_staleness_seconds(rp1) != mongoc_read_prefs_get_max_staleness_seconds(rp2)) {
+		return -1;
+	}
+
+	if (bson_compare(mongoc_read_prefs_get_tags(rp1), mongoc_read_prefs_get_tags(rp2)) != 0) {
+		return -1;
+	}
+
+	if (bson_compare(mongoc_read_prefs_get_hedge(rp1), mongoc_read_prefs_get_hedge(rp2)) != 0) {
+		return -1;
+	}
+
+	return 0;
+}
+
 void phongo_readpreference_init_ce(INIT_FUNC_ARGS)
 {
 	phongo_readpreference_ce                = register_class_MongoDB_Driver_ReadPreference(phongo_serializable_ce);
 	phongo_readpreference_ce->create_object = phongo_readpreference_create_object;
 
 	memcpy(&phongo_handler_readpreference, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
+	phongo_handler_readpreference.compare        = phongo_readpreference_compare_objects;
 	phongo_handler_readpreference.get_debug_info = phongo_readpreference_get_debug_info;
 	phongo_handler_readpreference.get_properties = phongo_readpreference_get_properties;
 	phongo_handler_readpreference.free_obj       = phongo_readpreference_free_object;
