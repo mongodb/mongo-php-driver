@@ -252,9 +252,8 @@ static int phongo_objectid_compare_objects(zval* o1, zval* o2)
 	return strcmp(intern1->oid, intern2->oid);
 }
 
-static HashTable* phongo_objectid_get_debug_info(zend_object* object, int* is_temp)
+static HashTable* phongo_objectid_get_properties_for(zend_object* object, ARG_UNUSED zend_prop_purpose purpose)
 {
-	*is_temp = 1;
 	return phongo_objectid_get_properties_hash(object, true);
 }
 
@@ -269,12 +268,12 @@ void phongo_objectid_init_ce(INIT_FUNC_ARGS)
 	phongo_objectid_ce->create_object = phongo_objectid_create_object;
 
 	memcpy(&phongo_handler_objectid, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
-	phongo_handler_objectid.compare        = phongo_objectid_compare_objects;
-	phongo_handler_objectid.clone_obj      = phongo_objectid_clone_object;
-	phongo_handler_objectid.get_debug_info = phongo_objectid_get_debug_info;
-	phongo_handler_objectid.get_properties = phongo_objectid_get_properties;
-	phongo_handler_objectid.free_obj       = phongo_objectid_free_object;
-	phongo_handler_objectid.offset         = XtOffsetOf(phongo_objectid_t, std);
+	phongo_handler_objectid.compare            = phongo_objectid_compare_objects;
+	phongo_handler_objectid.clone_obj          = phongo_objectid_clone_object;
+	phongo_handler_objectid.get_properties_for = phongo_objectid_get_properties_for;
+	phongo_handler_objectid.get_properties     = phongo_objectid_get_properties;
+	phongo_handler_objectid.free_obj           = phongo_objectid_free_object;
+	phongo_handler_objectid.offset             = XtOffsetOf(phongo_objectid_t, std);
 }
 
 bool phongo_objectid_new(zval* return_value, const bson_oid_t* oid)
