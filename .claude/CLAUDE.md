@@ -40,7 +40,10 @@ make test TESTS=tests/path/to/test.phpt
 make test TESTS="tests/path/to/pattern*.phpt"
 ```
 
-For failed tests, all intermediate files (e.g. expected output, actual output, diff) are left alongside the test file. This is helpful for debugging purposes. 
+`make test` compiles the extension and loads it automatically — no need to run `make all` or `make install` first.
+
+For failed tests, all intermediate files (e.g. expected output, actual output, diff) are left alongside the test file.
+The `.log` file contains everything in one place and is the recommended starting point for debugging.
 
 Key environment variables for testing:
 - `MONGODB_URI` – connection string (default: `mongodb://127.0.0.1/`)
