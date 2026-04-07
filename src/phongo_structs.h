@@ -121,7 +121,6 @@ typedef struct {
 
 typedef struct {
 	mongoc_read_concern_t* read_concern;
-	HashTable*             properties;
 	zend_object            std;
 } phongo_readconcern_t;
 
