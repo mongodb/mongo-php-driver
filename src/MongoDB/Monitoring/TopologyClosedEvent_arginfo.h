@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: c636ee276d6ebc18186a6ef4b8f67c48f5b4c29c */
+ * Stub hash: 644621167d1bf91bd04be273dc5ba0824477a10d */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_Driver_Monitoring_TopologyClosedEvent___construct, 0, 0, 0)
 ZEND_END_ARG_INFO()
@@ -25,6 +25,13 @@ static zend_class_entry *register_class_MongoDB_Driver_Monitoring_TopologyClosed
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver\\Monitoring", "TopologyClosedEvent", class_MongoDB_Driver_Monitoring_TopologyClosedEvent_methods);
 	class_entry = zend_register_internal_class_ex(&ce, NULL);
 	class_entry->ce_flags |= ZEND_ACC_FINAL|ZEND_ACC_NOT_SERIALIZABLE;
+
+	zend_string *property_topologyId_class_MongoDB_BSON_ObjectId = zend_string_init("MongoDB\\BSON\\ObjectId", sizeof("MongoDB\\BSON\\ObjectId")-1, 1);
+	zval property_topologyId_default_value;
+	ZVAL_UNDEF(&property_topologyId_default_value);
+	zend_string *property_topologyId_name = zend_string_init("topologyId", sizeof("topologyId") - 1, 1);
+	zend_declare_typed_property(class_entry, property_topologyId_name, &property_topologyId_default_value, ZEND_ACC_PUBLIC|ZEND_ACC_READONLY, NULL, (zend_type) ZEND_TYPE_INIT_CLASS(property_topologyId_class_MongoDB_BSON_ObjectId, 0, 0));
+	zend_string_release(property_topologyId_name);
 
 	return class_entry;
 }

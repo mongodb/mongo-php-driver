@@ -332,10 +332,9 @@ cleanup:
 
 static void phongo_apm_topology_closed(const mongoc_apm_topology_closed_t* event)
 {
-	mongoc_client_t*              client;
-	HashTable*                    subscribers;
-	phongo_topologyclosedevent_t* p_event;
-	zval                          z_event;
+	mongoc_client_t* client;
+	HashTable*       subscribers;
+	zval             z_event;
 
 	client      = mongoc_apm_topology_closed_get_context(event);
 	subscribers = phongo_apm_get_subscribers_to_notify(phongo_sdamsubscriber_ce, client);
@@ -345,11 +344,7 @@ static void phongo_apm_topology_closed(const mongoc_apm_topology_closed_t* event
 		goto cleanup;
 	}
 
-	object_init_ex(&z_event, phongo_topologyclosedevent_ce);
-	p_event = Z_TOPOLOGYCLOSEDEVENT_OBJ_P(&z_event);
-
-	mongoc_apm_topology_closed_get_topology_id(event, &p_event->topology_id);
-
+	phongo_topologyclosedevent_init(&z_event, event);
 	phongo_apm_dispatch_event(subscribers, "topologyClosed", &z_event);
 	zval_ptr_dtor(&z_event);
 
