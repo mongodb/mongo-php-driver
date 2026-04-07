@@ -27,7 +27,7 @@
  * or command should select ExecutionTimeoutException. */
 #define PHONGO_SERVER_ERROR_EXCEEDED_TIME_LIMIT 50
 
-void phongo_add_exception_prop(const char* prop, int prop_len, zval* value)
+void phongo_add_exception_prop(const char* prop, size_t prop_len, zval* value)
 {
 	if (EG(exception)) {
 		zval ex;
