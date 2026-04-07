@@ -11,8 +11,8 @@ require_once __DIR__ . "/../utils/basic.inc";
 $manager = create_test_manager();
 $session = $manager->startSession();
 
-/* Session::getServer() returns null, as sessions are not pinned to a server.
- * Note: mongos pinning for sharded transactions was removed in MongoDB 6.0. */
+/* Session::getServer() currently returns null, as sessions are not pinned
+ * to a server. */
 var_dump($session->getServer());
 
 ?>

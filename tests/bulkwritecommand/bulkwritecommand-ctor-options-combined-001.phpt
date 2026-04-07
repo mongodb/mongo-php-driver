@@ -20,7 +20,7 @@ class CommandLogger implements MongoDB\Driver\Monitoring\CommandSubscriber
 
         $command = $event->getCommand();
 
-        printf("ordered: %s\n", var_export((bool) $command->ordered, true));
+        printf("ordered: %s\n", var_export($command->ordered, true));
         printf("comment: %s\n", json_encode($command->comment));
     }
 
