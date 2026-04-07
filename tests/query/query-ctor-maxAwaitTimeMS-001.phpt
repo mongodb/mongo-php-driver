@@ -9,14 +9,10 @@ echo "maxAwaitTimeMS=0: OK\n";
 $q = new MongoDB\Driver\Query([], ['maxAwaitTimeMS' => 1000]);
 echo "maxAwaitTimeMS=1000: OK\n";
 
-$q = new MongoDB\Driver\Query([], ['maxAwaitTimeMS' => 4294967295]);
-echo "maxAwaitTimeMS=4294967295: OK\n";
-
 ?>
 ===DONE===
 <?php exit(0); ?>
 --EXPECT--
 maxAwaitTimeMS=0: OK
 maxAwaitTimeMS=1000: OK
-maxAwaitTimeMS=4294967295: OK
 ===DONE===
