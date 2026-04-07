@@ -55,6 +55,13 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_ServerHeartbeatStartedEvent, isAwait
 	RETVAL_BOOL(intern->awaited);
 }
 
+static void phongo_serverheartbeatstartedevent_update_properties(phongo_serverheartbeatstartedevent_t* intern)
+{
+	zend_update_property_string(phongo_serverheartbeatstartedevent_ce, &intern->std, ZEND_STRL("host"), intern->host.host);
+	zend_update_property_long(phongo_serverheartbeatstartedevent_ce, &intern->std, ZEND_STRL("port"), intern->host.port);
+	zend_update_property_bool(phongo_serverheartbeatstartedevent_ce, &intern->std, ZEND_STRL("awaited"), intern->awaited);
+}
+
 /* MongoDB\Driver\Monitoring\ServerHeartbeatStartedEvent object handlers */
 static zend_object_handlers phongo_handler_serverheartbeatstartedevent;
 
@@ -74,31 +81,22 @@ static zend_object* phongo_serverheartbeatstartedevent_create_object(zend_class_
 	return &intern->std;
 }
 
-static HashTable* phongo_serverheartbeatstartedevent_get_debug_info(zend_object* object, int* is_temp)
-{
-	PHONGO_INTERN_FROM_Z_OBJ(serverheartbeatstartedevent, object);
-
-	zval retval = ZVAL_STATIC_INIT;
-
-	*is_temp = 1;
-	array_init_size(&retval, 4);
-
-	ADD_ASSOC_STRING(&retval, "host", intern->host.host);
-	ADD_ASSOC_LONG_EX(&retval, "port", intern->host.port);
-	ADD_ASSOC_BOOL_EX(&retval, "awaited", intern->awaited);
-
-	return Z_ARRVAL(retval);
-}
-
 void phongo_serverheartbeatstartedevent_init_ce(INIT_FUNC_ARGS)
 {
 	phongo_serverheartbeatstartedevent_ce                = register_class_MongoDB_Driver_Monitoring_ServerHeartbeatStartedEvent();
 	phongo_serverheartbeatstartedevent_ce->create_object = phongo_serverheartbeatstartedevent_create_object;
 
 	memcpy(&phongo_handler_serverheartbeatstartedevent, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
-	phongo_handler_serverheartbeatstartedevent.get_debug_info = phongo_serverheartbeatstartedevent_get_debug_info;
-	phongo_handler_serverheartbeatstartedevent.free_obj       = phongo_serverheartbeatstartedevent_free_object;
-	phongo_handler_serverheartbeatstartedevent.offset         = XtOffsetOf(phongo_serverheartbeatstartedevent_t, std);
+	phongo_handler_serverheartbeatstartedevent.free_obj = phongo_serverheartbeatstartedevent_free_object;
+	phongo_handler_serverheartbeatstartedevent.offset   = XtOffsetOf(phongo_serverheartbeatstartedevent_t, std);
+}
 
-	return;
+void phongo_serverheartbeatstartedevent_init(zval* return_value, const mongoc_apm_server_heartbeat_started_t* event)
+{
+	PHONGO_INTERN_INIT_EX(serverheartbeatstartedevent, return_value);
+
+	memcpy(&intern->host, mongoc_apm_server_heartbeat_started_get_host(event), sizeof(mongoc_host_list_t));
+	intern->awaited = mongoc_apm_server_heartbeat_started_get_awaited(event);
+
+	phongo_serverheartbeatstartedevent_update_properties(intern);
 }

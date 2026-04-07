@@ -271,10 +271,9 @@ cleanup:
 
 static void phongo_apm_server_heartbeat_started(const mongoc_apm_server_heartbeat_started_t* event)
 {
-	mongoc_client_t*                      client;
-	HashTable*                            subscribers;
-	phongo_serverheartbeatstartedevent_t* p_event;
-	zval                                  z_event;
+	mongoc_client_t* client;
+	HashTable*       subscribers;
+	zval             z_event;
 
 	client      = mongoc_apm_server_heartbeat_started_get_context(event);
 	subscribers = phongo_apm_get_subscribers_to_notify(phongo_sdamsubscriber_ce, client);
@@ -284,12 +283,7 @@ static void phongo_apm_server_heartbeat_started(const mongoc_apm_server_heartbea
 		goto cleanup;
 	}
 
-	object_init_ex(&z_event, phongo_serverheartbeatstartedevent_ce);
-	p_event = Z_SERVERHEARTBEATSTARTEDEVENT_OBJ_P(&z_event);
-
-	memcpy(&p_event->host, mongoc_apm_server_heartbeat_started_get_host(event), sizeof(mongoc_host_list_t));
-	p_event->awaited = mongoc_apm_server_heartbeat_started_get_awaited(event);
-
+	phongo_serverheartbeatstartedevent_init(&z_event, event);
 	phongo_apm_dispatch_event(subscribers, "serverHeartbeatStarted", &z_event);
 	zval_ptr_dtor(&z_event);
 

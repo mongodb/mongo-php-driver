@@ -31,5 +31,6 @@ void phongo_commandsucceededevent_init(zval* return_value, const mongoc_apm_comm
 void phongo_serverchangedevent_init(zval* return_value, const mongoc_apm_server_changed_t* event);
 void phongo_serverclosedevent_init(zval* return_value, const mongoc_apm_server_closed_t* event);
 void phongo_serverheartbeatfailedevent_init(zval* return_value, const mongoc_apm_server_heartbeat_failed_t* event);
+void phongo_serverheartbeatstartedevent_init(zval* return_value, const mongoc_apm_server_heartbeat_started_t* event);
 
 #endif /* PHONGO_APM_H */
