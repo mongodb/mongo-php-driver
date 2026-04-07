@@ -32,7 +32,6 @@ void phongo_add_exception_prop(const char* prop, size_t prop_len, zval* value)
 	if (EG(exception)) {
 		zval ex;
 		ZVAL_OBJ(&ex, EG(exception));
-		ZEND_ASSERT(zend_hash_str_exists(&Z_OBJCE(ex)->properties_info, prop, prop_len) && "Exception class does not declare property");
 		zend_update_property(Z_OBJCE(ex), Z_OBJ_P(&ex), prop, prop_len, value);
 	}
 }
@@ -151,7 +150,12 @@ void phongo_exception_add_error_labels(const bson_t* reply)
 	zval        labels;
 	uint32_t    label_count = 0;
 
-	if (!reply) {
+	if (!reply || !EG(exception)) {
+		return;
+	}
+
+	/* errorLabels is only declared on RuntimeException and its subclasses. */
+	if (!instanceof_function(EG(exception)->ce, phongo_runtimeexception_ce)) {
 		return;
 	}
 
