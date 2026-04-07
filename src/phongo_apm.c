@@ -194,10 +194,9 @@ cleanup:
 
 static void phongo_apm_server_closed(const mongoc_apm_server_closed_t* event)
 {
-	mongoc_client_t*            client;
-	HashTable*                  subscribers;
-	phongo_serverclosedevent_t* p_event;
-	zval                        z_event;
+	mongoc_client_t* client;
+	HashTable*       subscribers;
+	zval             z_event;
 
 	client      = mongoc_apm_server_closed_get_context(event);
 	subscribers = phongo_apm_get_subscribers_to_notify(phongo_sdamsubscriber_ce, client);
@@ -207,12 +206,7 @@ static void phongo_apm_server_closed(const mongoc_apm_server_closed_t* event)
 		goto cleanup;
 	}
 
-	object_init_ex(&z_event, phongo_serverclosedevent_ce);
-	p_event = Z_SERVERCLOSEDEVENT_OBJ_P(&z_event);
-
-	memcpy(&p_event->host, mongoc_apm_server_closed_get_host(event), sizeof(mongoc_host_list_t));
-	mongoc_apm_server_closed_get_topology_id(event, &p_event->topology_id);
-
+	phongo_serverclosedevent_init(&z_event, event);
 	phongo_apm_dispatch_event(subscribers, "serverClosed", &z_event);
 	zval_ptr_dtor(&z_event);
 
