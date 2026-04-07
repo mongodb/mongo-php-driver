@@ -309,10 +309,9 @@ cleanup:
 
 static void phongo_apm_topology_changed(const mongoc_apm_topology_changed_t* event)
 {
-	mongoc_client_t*               client;
-	HashTable*                     subscribers;
-	phongo_topologychangedevent_t* p_event;
-	zval                           z_event;
+	mongoc_client_t* client;
+	HashTable*       subscribers;
+	zval             z_event;
 
 	client      = mongoc_apm_topology_changed_get_context(event);
 	subscribers = phongo_apm_get_subscribers_to_notify(phongo_sdamsubscriber_ce, client);
@@ -322,13 +321,7 @@ static void phongo_apm_topology_changed(const mongoc_apm_topology_changed_t* eve
 		goto cleanup;
 	}
 
-	object_init_ex(&z_event, phongo_topologychangedevent_ce);
-	p_event = Z_TOPOLOGYCHANGEDEVENT_OBJ_P(&z_event);
-
-	mongoc_apm_topology_changed_get_topology_id(event, &p_event->topology_id);
-	p_event->new_topology_description = mongoc_topology_description_new_copy(mongoc_apm_topology_changed_get_new_description(event));
-	p_event->old_topology_description = mongoc_topology_description_new_copy(mongoc_apm_topology_changed_get_previous_description(event));
-
+	phongo_topologychangedevent_init(&z_event, event);
 	phongo_apm_dispatch_event(subscribers, "topologyChanged", &z_event);
 	zval_ptr_dtor(&z_event);
 
