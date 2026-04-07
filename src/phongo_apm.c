@@ -171,10 +171,9 @@ cleanup:
 
 static void phongo_apm_server_changed(const mongoc_apm_server_changed_t* event)
 {
-	mongoc_client_t*             client;
-	HashTable*                   subscribers;
-	phongo_serverchangedevent_t* p_event;
-	zval                         z_event;
+	mongoc_client_t* client;
+	HashTable*       subscribers;
+	zval             z_event;
 
 	client      = mongoc_apm_server_changed_get_context(event);
 	subscribers = phongo_apm_get_subscribers_to_notify(phongo_sdamsubscriber_ce, client);
@@ -184,14 +183,7 @@ static void phongo_apm_server_changed(const mongoc_apm_server_changed_t* event)
 		goto cleanup;
 	}
 
-	object_init_ex(&z_event, phongo_serverchangedevent_ce);
-	p_event = Z_SERVERCHANGEDEVENT_OBJ_P(&z_event);
-
-	memcpy(&p_event->host, mongoc_apm_server_changed_get_host(event), sizeof(mongoc_host_list_t));
-	mongoc_apm_server_changed_get_topology_id(event, &p_event->topology_id);
-	p_event->new_server_description = mongoc_server_description_new_copy(mongoc_apm_server_changed_get_new_description(event));
-	p_event->old_server_description = mongoc_server_description_new_copy(mongoc_apm_server_changed_get_previous_description(event));
-
+	phongo_serverchangedevent_init(&z_event, event);
 	phongo_apm_dispatch_event(subscribers, "serverChanged", &z_event);
 	zval_ptr_dtor(&z_event);
 
