@@ -27,5 +27,5 @@ printf("Collected cycles: %d\n", gc_collect_cycles());
 <?php exit(0); ?>
 --EXPECT--
 Collected cycles: 0
-Collected cycles: 2
+Collected cycles: 3
 ===DONE===

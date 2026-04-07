@@ -74,9 +74,13 @@ object(MongoDB\Driver\Session)#%d (%d) {
       NULL
     }
     ["writeConcern"]=>
-    object(MongoDB\Driver\WriteConcern)#%d (%d) {
+    object(MongoDB\Driver\WriteConcern)#%d (3) {
       ["w"]=>
       string(8) "majority"
+      ["j"]=>
+      NULL
+      ["wtimeout"]=>
+      int(0)
     }
   }
 }

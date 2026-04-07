@@ -113,9 +113,13 @@ array(2) {
     NULL
   }
   ["writeConcern"]=>
-  object(MongoDB\Driver\WriteConcern)#%d (1) {
+  object(MongoDB\Driver\WriteConcern)#%d (3) {
     ["w"]=>
     string(8) "majority"
+    ["j"]=>
+    NULL
+    ["wtimeout"]=>
+    int(0)
   }
 }
 array(4) {
@@ -138,9 +142,13 @@ array(4) {
     NULL
   }
   ["writeConcern"]=>
-  object(MongoDB\Driver\WriteConcern)#%d (1) {
+  object(MongoDB\Driver\WriteConcern)#%d (3) {
     ["w"]=>
     string(8) "majority"
+    ["j"]=>
+    NULL
+    ["wtimeout"]=>
+    int(0)
   }
 }
 ===DONE===

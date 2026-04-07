@@ -15,6 +15,12 @@ final class WriteConcern implements \MongoDB\BSON\Serializable
      */
     public const MAJORITY = UNKNOWN;
 
+    public readonly string|int|null $w;
+
+    public readonly bool|null $j;
+
+    public readonly int $wtimeout;
+
     final public function __construct(string|int $w, ?int $wtimeout = null, ?bool $journal = null) {}
 
     final public function getJournal(): ?bool {}
@@ -30,7 +36,4 @@ final class WriteConcern implements \MongoDB\BSON\Serializable
     final public function bsonSerialize(): \stdClass {}
 
     final public function __unserialize(array $data): void {}
-
-    final public function __serialize(): array {}
-
 }

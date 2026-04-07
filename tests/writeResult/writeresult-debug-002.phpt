@@ -111,9 +111,13 @@ object(MongoDB\Driver\WriteResult)#%d (%d) {
     %a
   }
   ["writeConcern"]=>
-  object(MongoDB\Driver\WriteConcern)#%d (%d) {
+  object(MongoDB\Driver\WriteConcern)#%d (3) {
     ["w"]=>
     int(30)
+    ["j"]=>
+    NULL
+    ["wtimeout"]=>
+    int(0)
   }
   ["errorReplies"]=>
   array(0) {

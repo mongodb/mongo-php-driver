@@ -162,7 +162,6 @@ typedef struct {
 } phongo_topologydescription_t;
 
 typedef struct {
-	HashTable*              properties;
 	mongoc_write_concern_t* write_concern;
 	zend_object             std;
 } phongo_writeconcern_t;
