@@ -286,10 +286,9 @@ cleanup:
 
 static void phongo_apm_server_opening(const mongoc_apm_server_opening_t* event)
 {
-	mongoc_client_t*             client;
-	HashTable*                   subscribers;
-	phongo_serveropeningevent_t* p_event;
-	zval                         z_event;
+	mongoc_client_t* client;
+	HashTable*       subscribers;
+	zval             z_event;
 
 	client      = mongoc_apm_server_opening_get_context(event);
 	subscribers = phongo_apm_get_subscribers_to_notify(phongo_sdamsubscriber_ce, client);
@@ -299,12 +298,7 @@ static void phongo_apm_server_opening(const mongoc_apm_server_opening_t* event)
 		goto cleanup;
 	}
 
-	object_init_ex(&z_event, phongo_serveropeningevent_ce);
-	p_event = Z_SERVEROPENINGEVENT_OBJ_P(&z_event);
-
-	memcpy(&p_event->host, mongoc_apm_server_opening_get_host(event), sizeof(mongoc_host_list_t));
-	mongoc_apm_server_opening_get_topology_id(event, &p_event->topology_id);
-
+	phongo_serveropeningevent_init(&z_event, event);
 	phongo_apm_dispatch_event(subscribers, "serverOpening", &z_event);
 	zval_ptr_dtor(&z_event);
 
