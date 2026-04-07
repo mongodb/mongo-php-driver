@@ -124,10 +124,9 @@ cleanup:
 
 static void phongo_apm_command_succeeded(const mongoc_apm_command_succeeded_t* event)
 {
-	mongoc_client_t*                client;
-	HashTable*                      subscribers;
-	phongo_commandsucceededevent_t* p_event;
-	zval                            z_event;
+	mongoc_client_t* client;
+	HashTable*       subscribers;
+	zval             z_event;
 
 	client      = mongoc_apm_command_succeeded_get_context(event);
 	subscribers = phongo_apm_get_subscribers_to_notify(phongo_commandsubscriber_ce, client);
@@ -137,24 +136,7 @@ static void phongo_apm_command_succeeded(const mongoc_apm_command_succeeded_t* e
 		goto cleanup;
 	}
 
-	object_init_ex(&z_event, phongo_commandsucceededevent_ce);
-	p_event = Z_COMMANDSUCCEEDEDEVENT_OBJ_P(&z_event);
-
-	memcpy(&p_event->host, mongoc_apm_command_succeeded_get_host(event), sizeof(mongoc_host_list_t));
-
-	p_event->command_name         = estrdup(mongoc_apm_command_succeeded_get_command_name(event));
-	p_event->database_name        = estrdup(mongoc_apm_command_succeeded_get_database_name(event));
-	p_event->server_id            = mongoc_apm_command_succeeded_get_server_id(event);
-	p_event->operation_id         = mongoc_apm_command_succeeded_get_operation_id(event);
-	p_event->request_id           = mongoc_apm_command_succeeded_get_request_id(event);
-	p_event->duration_micros      = mongoc_apm_command_succeeded_get_duration(event);
-	p_event->reply                = bson_copy(mongoc_apm_command_succeeded_get_reply(event));
-	p_event->server_connection_id = mongoc_apm_command_succeeded_get_server_connection_id_int64(event);
-	p_event->has_service_id       = mongoc_apm_command_succeeded_get_service_id(event) != NULL;
-
-	if (p_event->has_service_id) {
-		bson_oid_copy(mongoc_apm_command_succeeded_get_service_id(event), &p_event->service_id);
-	}
+	phongo_commandsucceededevent_init(&z_event, event);
 
 	phongo_apm_dispatch_event(subscribers, "commandSucceeded", &z_event);
 	zval_ptr_dtor(&z_event);

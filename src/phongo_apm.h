@@ -27,5 +27,6 @@ bool phongo_apm_remove_subscriber(HashTable* subscribers, zval* subscriber);
 
 void phongo_commandfailedevent_init(zval* return_value, const mongoc_apm_command_failed_t* event);
 void phongo_commandstartedevent_init(zval* return_value, const mongoc_apm_command_started_t* event);
+void phongo_commandsucceededevent_init(zval* return_value, const mongoc_apm_command_succeeded_t* event);
 
 #endif /* PHONGO_APM_H */
