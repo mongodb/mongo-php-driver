@@ -32,6 +32,7 @@ void phongo_add_exception_prop(const char* prop, int prop_len, zval* value)
 	if (EG(exception)) {
 		zval ex;
 		ZVAL_OBJ(&ex, EG(exception));
+		ZEND_ASSERT(zend_hash_str_exists(&Z_OBJCE(ex)->properties_info, prop, prop_len) && "Exception class does not declare property");
 		zend_update_property(Z_OBJCE(ex), Z_OBJ_P(&ex), prop, prop_len, value);
 	}
 }
