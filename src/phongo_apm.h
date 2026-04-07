@@ -36,5 +36,6 @@ void phongo_serverheartbeatsucceededevent_init(zval* return_value, const mongoc_
 void phongo_serveropeningevent_init(zval* return_value, const mongoc_apm_server_opening_t* event);
 void phongo_topologychangedevent_init(zval* return_value, const mongoc_apm_topology_changed_t* event);
 void phongo_topologyclosedevent_init(zval* return_value, const mongoc_apm_topology_closed_t* event);
+void phongo_topologyopeningevent_init(zval* return_value, const mongoc_apm_topology_opening_t* event);
 
 #endif /* PHONGO_APM_H */
