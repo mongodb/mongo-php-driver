@@ -32,37 +32,31 @@ try {
 <?php exit(0); ?>
 --EXPECTF--
 object(MongoDB\Driver\WriteResult)#%d (%d) {
-  ["nInserted"]=>
+  ["insertedCount"]=>
   int(3)
-  ["nMatched"]=>
+  ["matchedCount"]=>
   int(0)
-  ["nModified"]=>
+  ["modifiedCount"]=>
   int(0)
-  ["nRemoved"]=>
+  ["deletedCount"]=>
   int(0)
-  ["nUpserted"]=>
+  ["upsertedCount"]=>
   int(2)
+  ["server"]=>
+  object(MongoDB\Driver\Server)#%d (%d) {
+    %a
+  }
   ["upsertedIds"]=>
   array(2) {
     [0]=>
-    array(2) {
-      ["index"]=>
-      int(0)
-      ["_id"]=>
-      object(MongoDB\BSON\ObjectId)#%d (%d) {
-        ["oid"]=>
-        string(24) "%x"
-      }
+    object(MongoDB\BSON\ObjectId)#%d (%d) {
+      ["oid"]=>
+      string(24) "%x"
     }
     [1]=>
-    array(2) {
-      ["index"]=>
-      int(1)
-      ["_id"]=>
-      object(MongoDB\BSON\ObjectId)#%d (%d) {
-        ["oid"]=>
-        string(24) "%x"
-      }
+    object(MongoDB\BSON\ObjectId)#%d (%d) {
+      ["oid"]=>
+      string(24) "%x"
     }
   }
   ["writeErrors"]=>

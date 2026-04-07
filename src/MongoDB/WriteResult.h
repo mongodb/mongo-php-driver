@@ -23,6 +23,6 @@
 
 #include "phongo_structs.h"
 
-phongo_writeresult_t* phongo_writeresult_init(zval* return_value, bson_t* reply, zval* manager, uint32_t server_id);
+void phongo_writeresult_init(zval* return_value, bson_t* reply, zval* manager, uint32_t server_id, const mongoc_write_concern_t* write_concern);
 
 #endif /* PHONGO_WRITERESULT_H */

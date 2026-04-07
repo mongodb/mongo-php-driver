@@ -236,9 +236,8 @@ bool phongo_execute_bulk_write(zval* manager, const char* namespace, phongo_bulk
 	mongoc_client_t*              client = NULL;
 	bson_error_t                  error  = { 0 };
 	int                           success;
-	bson_t                        reply = BSON_INITIALIZER;
-	mongoc_bulk_operation_t*      bulk  = bulk_write->bulk;
-	phongo_writeresult_t*         writeresult;
+	bson_t                        reply         = BSON_INITIALIZER;
+	mongoc_bulk_operation_t*      bulk          = bulk_write->bulk;
 	zval*                         zwriteConcern = NULL;
 	zval*                         zsession      = NULL;
 	const mongoc_write_concern_t* write_concern = NULL;
@@ -293,8 +292,7 @@ bool phongo_execute_bulk_write(zval* manager, const char* namespace, phongo_bulk
 	success              = mongoc_bulk_operation_execute(bulk, &reply, &error);
 	bulk_write->executed = true;
 
-	writeresult                = phongo_writeresult_init(return_value, &reply, manager, mongoc_bulk_operation_get_server_id(bulk));
-	writeresult->write_concern = mongoc_write_concern_copy(write_concern);
+	phongo_writeresult_init(return_value, &reply, manager, mongoc_bulk_operation_get_server_id(bulk), write_concern);
 
 	/* A BulkWriteException is always thrown if mongoc_bulk_operation_execute()
 	 * fails to ensure that the write result is accessible. If the error does

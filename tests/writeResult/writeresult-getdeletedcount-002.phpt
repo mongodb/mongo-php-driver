@@ -22,6 +22,7 @@ $result = $manager->executeBulkWrite(NS, $bulk, ['writeConcern' => new MongoDB\D
 echo throws(function() use ($result) {
     $result->getDeletedCount();
 }, MongoDB\Driver\Exception\LogicException::class), "\n";
+var_dump($result->deletedCount);
 
 ?>
 ===DONE===
@@ -29,4 +30,5 @@ echo throws(function() use ($result) {
 --EXPECT--
 OK: Got MongoDB\Driver\Exception\LogicException
 MongoDB\Driver\WriteResult::getDeletedCount() should not be called for an unacknowledged write result
+NULL
 ===DONE===
