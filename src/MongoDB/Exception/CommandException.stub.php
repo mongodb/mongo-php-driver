@@ -9,8 +9,7 @@ namespace MongoDB\Driver\Exception;
 
 class CommandException extends ServerException
 {
-    /** @var object */
-    protected $resultDocument;
+    public readonly object $resultDocument;
 
     final public function getResultDocument(): object {}
 }
