@@ -18,6 +18,7 @@
 
 #include <php.h>
 #include <Zend/zend_interfaces.h>
+#include <Zend/zend_exceptions.h>
 
 #include "phongo.h"
 #include "phongo_bson_encode.h"
@@ -160,6 +161,50 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_CommandFailedEvent, getServerConnect
 	RETURN_LONG(intern->server_connection_id);
 }
 
+static void phongo_commandfailedevent_update_properties(phongo_commandfailedevent_t* intern)
+{
+	char              operation_id[24], request_id[24];
+	phongo_bson_state reply_state;
+
+	PHONGO_BSON_INIT_STATE(reply_state);
+
+	zend_update_property_string(phongo_commandfailedevent_ce, &intern->std, ZEND_STRL("host"), intern->host.host);
+	zend_update_property_long(phongo_commandfailedevent_ce, &intern->std, ZEND_STRL("port"), intern->host.port);
+	zend_update_property_string(phongo_commandfailedevent_ce, &intern->std, ZEND_STRL("commandName"), intern->command_name);
+	zend_update_property_string(phongo_commandfailedevent_ce, &intern->std, ZEND_STRL("databaseName"), intern->database_name);
+	zend_update_property_long(phongo_commandfailedevent_ce, &intern->std, ZEND_STRL("durationMicros"), intern->duration_micros);
+	zend_update_property(phongo_commandfailedevent_ce, &intern->std, ZEND_STRL("error"), &intern->z_error);
+
+	if (phongo_bson_to_zval_ex(intern->reply, &reply_state)) {
+		zend_update_property(phongo_commandfailedevent_ce, &intern->std, ZEND_STRL("reply"), &reply_state.zchild);
+	}
+	zval_ptr_dtor(&reply_state.zchild);
+
+	snprintf(operation_id, sizeof(operation_id), "%" PRId64, intern->operation_id);
+	zend_update_property_string(phongo_commandfailedevent_ce, &intern->std, ZEND_STRL("operationId"), operation_id);
+
+	snprintf(request_id, sizeof(request_id), "%" PRId64, intern->request_id);
+	zend_update_property_string(phongo_commandfailedevent_ce, &intern->std, ZEND_STRL("requestId"), request_id);
+
+	if (intern->has_service_id) {
+		zval service_id;
+
+		if (phongo_objectid_new(&service_id, &intern->service_id)) {
+			zend_update_property(phongo_commandfailedevent_ce, &intern->std, ZEND_STRL("serviceId"), &service_id);
+			zval_ptr_dtor(&service_id);
+		}
+	} else {
+		zend_update_property_null(phongo_commandfailedevent_ce, &intern->std, ZEND_STRL("serviceId"));
+	}
+
+	/* TODO: Use MONGOC_NO_SERVER_CONNECTION_ID once it is added to libmongoc's public API (CDRIVER-4176) */
+	if (intern->server_connection_id == -1) {
+		zend_update_property_null(phongo_commandfailedevent_ce, &intern->std, ZEND_STRL("serverConnectionId"));
+	} else {
+		zend_update_property_long(phongo_commandfailedevent_ce, &intern->std, ZEND_STRL("serverConnectionId"), intern->server_connection_id);
+	}
+}
+
 /* MongoDB\Driver\Monitoring\CommandFailedEvent object handlers */
 static zend_object_handlers phongo_handler_commandfailedevent;
 
@@ -195,71 +240,46 @@ static zend_object* phongo_commandfailedevent_create_object(zend_class_entry* cl
 	return &intern->std;
 }
 
-static HashTable* phongo_commandfailedevent_get_debug_info(zend_object* object, int* is_temp)
-{
-	PHONGO_INTERN_FROM_Z_OBJ(commandfailedevent, object);
-
-	zval              retval = ZVAL_STATIC_INIT;
-	char              operation_id[24], request_id[24];
-	phongo_bson_state reply_state;
-
-	PHONGO_BSON_INIT_STATE(reply_state);
-
-	*is_temp = 1;
-	array_init_size(&retval, 10);
-
-	ADD_ASSOC_STRING(&retval, "host", intern->host.host);
-	ADD_ASSOC_LONG_EX(&retval, "port", intern->host.port);
-	ADD_ASSOC_STRING(&retval, "commandName", intern->command_name);
-	ADD_ASSOC_INT64(&retval, "durationMicros", intern->duration_micros);
-
-	ADD_ASSOC_ZVAL_EX(&retval, "error", &intern->z_error);
-	Z_ADDREF(intern->z_error);
-
-	if (!phongo_bson_to_zval_ex(intern->reply, &reply_state)) {
-		zval_ptr_dtor(&reply_state.zchild);
-		goto done;
-	}
-
-	ADD_ASSOC_ZVAL(&retval, "reply", &reply_state.zchild);
-
-	snprintf(operation_id, sizeof(operation_id), "%" PRId64, intern->operation_id);
-	ADD_ASSOC_STRING(&retval, "operationId", operation_id);
-
-	snprintf(request_id, sizeof(request_id), "%" PRId64, intern->request_id);
-	ADD_ASSOC_STRING(&retval, "requestId", request_id);
-
-	if (intern->has_service_id) {
-		zval service_id;
-
-		if (!phongo_objectid_new(&service_id, &intern->service_id)) {
-			/* Exception should already have been thrown */
-			goto done;
-		}
-
-		ADD_ASSOC_ZVAL_EX(&retval, "serviceId", &service_id);
-	} else {
-		ADD_ASSOC_NULL_EX(&retval, "serviceId");
-	}
-
-	/* TODO: Use MONGOC_NO_SERVER_CONNECTION_ID once it is added to libmongoc's public API (CDRIVER-4176) */
-	if (intern->server_connection_id == -1) {
-		ADD_ASSOC_NULL_EX(&retval, "serverConnectionId");
-	} else {
-		ADD_ASSOC_LONG_EX(&retval, "serverConnectionId", intern->server_connection_id);
-	}
-
-done:
-	return Z_ARRVAL(retval);
-}
-
 void phongo_commandfailedevent_init_ce(INIT_FUNC_ARGS)
 {
 	phongo_commandfailedevent_ce                = register_class_MongoDB_Driver_Monitoring_CommandFailedEvent();
 	phongo_commandfailedevent_ce->create_object = phongo_commandfailedevent_create_object;
 
 	memcpy(&phongo_handler_commandfailedevent, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
-	phongo_handler_commandfailedevent.get_debug_info = phongo_commandfailedevent_get_debug_info;
-	phongo_handler_commandfailedevent.free_obj       = phongo_commandfailedevent_free_object;
-	phongo_handler_commandfailedevent.offset         = XtOffsetOf(phongo_commandfailedevent_t, std);
+	phongo_handler_commandfailedevent.free_obj = phongo_commandfailedevent_free_object;
+	phongo_handler_commandfailedevent.offset   = XtOffsetOf(phongo_commandfailedevent_t, std);
+}
+
+void phongo_commandfailedevent_init(zval* return_value, const mongoc_apm_command_failed_t* event)
+{
+	PHONGO_INTERN_INIT_EX(commandfailedevent, return_value);
+
+	bson_error_t tmp_error = { 0 };
+
+	memcpy(&intern->host, mongoc_apm_command_failed_get_host(event), sizeof(mongoc_host_list_t));
+
+	intern->command_name         = estrdup(mongoc_apm_command_failed_get_command_name(event));
+	intern->database_name        = estrdup(mongoc_apm_command_failed_get_database_name(event));
+	intern->server_id            = mongoc_apm_command_failed_get_server_id(event);
+	intern->operation_id         = mongoc_apm_command_failed_get_operation_id(event);
+	intern->request_id           = mongoc_apm_command_failed_get_request_id(event);
+	intern->duration_micros      = mongoc_apm_command_failed_get_duration(event);
+	intern->reply                = bson_copy(mongoc_apm_command_failed_get_reply(event));
+	intern->server_connection_id = mongoc_apm_command_failed_get_server_connection_id_int64(event);
+	intern->has_service_id       = mongoc_apm_command_failed_get_service_id(event) != NULL;
+
+	if (intern->has_service_id) {
+		bson_oid_copy(mongoc_apm_command_failed_get_service_id(event), &intern->service_id);
+	}
+
+	/* We need to process and convert the error right here, otherwise
+	 * debug_info will turn into a recursive loop, and with the wrong trace
+	 * locations */
+	mongoc_apm_command_failed_get_error(event, &tmp_error);
+
+	object_init_ex(&intern->z_error, phongo_exception_from_mongoc_domain(tmp_error.domain, tmp_error.code));
+	zend_update_property_string(zend_ce_exception, Z_OBJ_P(&intern->z_error), ZEND_STRL("message"), tmp_error.message);
+	zend_update_property_long(zend_ce_exception, Z_OBJ_P(&intern->z_error), ZEND_STRL("code"), tmp_error.code);
+
+	phongo_commandfailedevent_update_properties(intern);
 }

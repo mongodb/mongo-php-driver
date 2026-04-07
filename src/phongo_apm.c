@@ -183,11 +183,9 @@ cleanup:
 
 static void phongo_apm_command_failed(const mongoc_apm_command_failed_t* event)
 {
-	mongoc_client_t*             client;
-	HashTable*                   subscribers;
-	phongo_commandfailedevent_t* p_event;
-	zval                         z_event;
-	bson_error_t                 tmp_error = { 0 };
+	mongoc_client_t* client;
+	HashTable*       subscribers;
+	zval             z_event;
 
 	client      = mongoc_apm_command_failed_get_context(event);
 	subscribers = phongo_apm_get_subscribers_to_notify(phongo_commandsubscriber_ce, client);
@@ -197,34 +195,7 @@ static void phongo_apm_command_failed(const mongoc_apm_command_failed_t* event)
 		goto cleanup;
 	}
 
-	object_init_ex(&z_event, phongo_commandfailedevent_ce);
-	p_event = Z_COMMANDFAILEDEVENT_OBJ_P(&z_event);
-
-	memcpy(&p_event->host, mongoc_apm_command_failed_get_host(event), sizeof(mongoc_host_list_t));
-
-	p_event->command_name         = estrdup(mongoc_apm_command_failed_get_command_name(event));
-	p_event->database_name        = estrdup(mongoc_apm_command_failed_get_database_name(event));
-	p_event->server_id            = mongoc_apm_command_failed_get_server_id(event);
-	p_event->operation_id         = mongoc_apm_command_failed_get_operation_id(event);
-	p_event->request_id           = mongoc_apm_command_failed_get_request_id(event);
-	p_event->duration_micros      = mongoc_apm_command_failed_get_duration(event);
-	p_event->reply                = bson_copy(mongoc_apm_command_failed_get_reply(event));
-	p_event->server_connection_id = mongoc_apm_command_failed_get_server_connection_id_int64(event);
-	p_event->has_service_id       = mongoc_apm_command_failed_get_service_id(event) != NULL;
-
-	if (p_event->has_service_id) {
-		bson_oid_copy(mongoc_apm_command_failed_get_service_id(event), &p_event->service_id);
-	}
-
-	/* We need to process and convert the error right here, otherwise
-	 * debug_info will turn into a recursive loop, and with the wrong trace
-	 * locations */
-	mongoc_apm_command_failed_get_error(event, &tmp_error);
-
-	object_init_ex(&p_event->z_error, phongo_exception_from_mongoc_domain(tmp_error.domain, tmp_error.code));
-	zend_update_property_string(zend_ce_exception, Z_OBJ_P(&p_event->z_error), ZEND_STRL("message"), tmp_error.message);
-	zend_update_property_long(zend_ce_exception, Z_OBJ_P(&p_event->z_error), ZEND_STRL("code"), tmp_error.code);
-
+	phongo_commandfailedevent_init(&z_event, event);
 	phongo_apm_dispatch_event(subscribers, "commandFailed", &z_event);
 	zval_ptr_dtor(&z_event);
 
