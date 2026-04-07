@@ -84,6 +84,23 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_ServerHeartbeatSucceededEvent, isAwa
 	RETVAL_BOOL(intern->awaited);
 }
 
+static void phongo_serverheartbeatsucceededevent_update_properties(phongo_serverheartbeatsucceededevent_t* intern)
+{
+	phongo_bson_state reply_state;
+
+	PHONGO_BSON_INIT_STATE(reply_state);
+
+	zend_update_property_string(phongo_serverheartbeatsucceededevent_ce, &intern->std, ZEND_STRL("host"), intern->host.host);
+	zend_update_property_long(phongo_serverheartbeatsucceededevent_ce, &intern->std, ZEND_STRL("port"), intern->host.port);
+	zend_update_property_bool(phongo_serverheartbeatsucceededevent_ce, &intern->std, ZEND_STRL("awaited"), intern->awaited);
+	zend_update_property_long(phongo_serverheartbeatsucceededevent_ce, &intern->std, ZEND_STRL("durationMicros"), intern->duration_micros);
+
+	if (phongo_bson_to_zval_ex(intern->reply, &reply_state)) {
+		zend_update_property(phongo_serverheartbeatsucceededevent_ce, &intern->std, ZEND_STRL("reply"), &reply_state.zchild);
+	}
+	zval_ptr_dtor(&reply_state.zchild);
+}
+
 /* MongoDB\Driver\Monitoring\ServerHeartbeatSucceededEvent object handlers */
 static zend_object_handlers phongo_handler_serverheartbeatsucceededevent;
 
@@ -107,43 +124,24 @@ static zend_object* phongo_serverheartbeatsucceededevent_create_object(zend_clas
 	return &intern->std;
 }
 
-static HashTable* phongo_serverheartbeatsucceededevent_get_debug_info(zend_object* object, int* is_temp)
-{
-	PHONGO_INTERN_FROM_Z_OBJ(serverheartbeatsucceededevent, object);
-
-	zval              retval = ZVAL_STATIC_INIT;
-	phongo_bson_state reply_state;
-
-	PHONGO_BSON_INIT_STATE(reply_state);
-
-	*is_temp = 1;
-	array_init_size(&retval, 4);
-
-	ADD_ASSOC_STRING(&retval, "host", intern->host.host);
-	ADD_ASSOC_LONG_EX(&retval, "port", intern->host.port);
-	ADD_ASSOC_BOOL_EX(&retval, "awaited", intern->awaited);
-	ADD_ASSOC_INT64(&retval, "durationMicros", intern->duration_micros);
-
-	if (!phongo_bson_to_zval_ex(intern->reply, &reply_state)) {
-		zval_ptr_dtor(&reply_state.zchild);
-		goto done;
-	}
-
-	ADD_ASSOC_ZVAL(&retval, "reply", &reply_state.zchild);
-
-done:
-	return Z_ARRVAL(retval);
-}
-
 void phongo_serverheartbeatsucceededevent_init_ce(INIT_FUNC_ARGS)
 {
 	phongo_serverheartbeatsucceededevent_ce                = register_class_MongoDB_Driver_Monitoring_ServerHeartbeatSucceededEvent();
 	phongo_serverheartbeatsucceededevent_ce->create_object = phongo_serverheartbeatsucceededevent_create_object;
 
 	memcpy(&phongo_handler_serverheartbeatsucceededevent, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
-	phongo_handler_serverheartbeatsucceededevent.get_debug_info = phongo_serverheartbeatsucceededevent_get_debug_info;
-	phongo_handler_serverheartbeatsucceededevent.free_obj       = phongo_serverheartbeatsucceededevent_free_object;
-	phongo_handler_serverheartbeatsucceededevent.offset         = XtOffsetOf(phongo_serverheartbeatsucceededevent_t, std);
+	phongo_handler_serverheartbeatsucceededevent.free_obj = phongo_serverheartbeatsucceededevent_free_object;
+	phongo_handler_serverheartbeatsucceededevent.offset   = XtOffsetOf(phongo_serverheartbeatsucceededevent_t, std);
+}
 
-	return;
+void phongo_serverheartbeatsucceededevent_init(zval* return_value, const mongoc_apm_server_heartbeat_succeeded_t* event)
+{
+	PHONGO_INTERN_INIT_EX(serverheartbeatsucceededevent, return_value);
+
+	memcpy(&intern->host, mongoc_apm_server_heartbeat_succeeded_get_host(event), sizeof(mongoc_host_list_t));
+	intern->awaited         = mongoc_apm_server_heartbeat_succeeded_get_awaited(event);
+	intern->duration_micros = mongoc_apm_server_heartbeat_succeeded_get_duration(event);
+	intern->reply           = bson_copy(mongoc_apm_server_heartbeat_succeeded_get_reply(event));
+
+	phongo_serverheartbeatsucceededevent_update_properties(intern);
 }

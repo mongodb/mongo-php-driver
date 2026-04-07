@@ -10,9 +10,15 @@ namespace MongoDB\Driver\Monitoring;
 /** @not-serializable */
 final class ServerHeartbeatSucceededEvent
 {
+    public readonly string $host;
+    public readonly int $port;
+    public readonly bool $awaited;
+    public readonly int $durationMicros;
+    public readonly object $reply;
+
     final private function __construct() {}
 
-    final public function getDurationMicros() : int{}
+    final public function getDurationMicros(): int {}
 
     final public function getReply(): object {}
 

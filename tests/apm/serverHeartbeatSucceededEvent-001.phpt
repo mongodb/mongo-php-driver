@@ -29,10 +29,15 @@ class MySubscriber implements MongoDB\Driver\Monitoring\SDAMSubscriber
         $this->isObserved = true;
 
         printf("getDurationMicros() returns an integer: %s\n", is_integer($event->getDurationMicros()) ? 'yes' : 'no');
+        printf("durationMicros returns an integer: %s\n", is_integer($event->durationMicros) ? 'yes' : 'no');
         printf("getHost() returns a string: %s\n", is_string($event->getHost()) ? 'yes' : 'no');
+        printf("host returns a string: %s\n", is_string($event->host) ? 'yes' : 'no');
         printf("getPort() returns an integer: %s\n", is_integer($event->getPort()) ? 'yes' : 'no');
+        printf("port returns an integer: %s\n", is_integer($event->port) ? 'yes' : 'no');
         printf("getReply() returns an object: %s\n", is_object($event->getReply()) ? 'yes' : 'no');
+        printf("reply returns an object: %s\n", is_object($event->reply) ? 'yes' : 'no');
         printf("isAwaited() returns a bool: %s\n", is_bool($event->isAwaited()) ? 'yes' : 'no');
+        printf("awaited returns a bool: %s\n", is_bool($event->awaited) ? 'yes' : 'no');
 
         var_dump($event);
     }
@@ -57,10 +62,15 @@ $m->executeCommand(DATABASE_NAME, $command);
 <?php exit(0); ?>
 --EXPECTF--
 getDurationMicros() returns an integer: yes
+durationMicros returns an integer: yes
 getHost() returns a string: yes
+host returns a string: yes
 getPort() returns an integer: yes
+port returns an integer: yes
 getReply() returns an object: yes
+reply returns an object: yes
 isAwaited() returns a bool: yes
+awaited returns a bool: yes
 object(MongoDB\Driver\Monitoring\ServerHeartbeatSucceededEvent)#%d (%d) {
   ["host"]=>
   string(%d) "%s"
