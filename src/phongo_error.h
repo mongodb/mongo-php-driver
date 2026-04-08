@@ -29,7 +29,7 @@ typedef enum {
 	PHONGO_ERROR_LOGIC             = 9
 } phongo_error_domain_t;
 
-void              phongo_add_exception_prop(const char* prop, int prop_len, zval* value);
+void              phongo_add_exception_prop(const char* prop, size_t prop_len, zval* value);
 zend_class_entry* phongo_exception_from_mongoc_domain(mongoc_error_domain_t domain, mongoc_error_code_t code);
 zend_class_entry* phongo_exception_from_phongo_domain(phongo_error_domain_t domain);
 void              phongo_exception_add_error_labels(const bson_t* reply);

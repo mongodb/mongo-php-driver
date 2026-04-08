@@ -27,7 +27,7 @@
  * or command should select ExecutionTimeoutException. */
 #define PHONGO_SERVER_ERROR_EXCEEDED_TIME_LIMIT 50
 
-void phongo_add_exception_prop(const char* prop, int prop_len, zval* value)
+void phongo_add_exception_prop(const char* prop, size_t prop_len, zval* value)
 {
 	if (EG(exception)) {
 		zval ex;
@@ -150,7 +150,12 @@ void phongo_exception_add_error_labels(const bson_t* reply)
 	zval        labels;
 	uint32_t    label_count = 0;
 
-	if (!reply) {
+	if (!reply || !EG(exception)) {
+		return;
+	}
+
+	/* errorLabels is only declared on RuntimeException and its subclasses. */
+	if (!instanceof_function(EG(exception)->ce, phongo_runtimeexception_ce)) {
 		return;
 	}
 
