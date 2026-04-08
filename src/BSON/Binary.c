@@ -76,10 +76,9 @@ static bool phongo_binary_init_from_hash(phongo_binary_t* intern, HashTable* pro
 
 static HashTable* phongo_binary_get_properties_hash(zend_object* object, bool is_temp, bool is_debug)
 {
-	phongo_binary_t* intern;
-	HashTable*       props;
+	PHONGO_INTERN_FROM_Z_OBJ(binary, object);
 
-	intern = Z_OBJ_BINARY(object);
+	HashTable* props;
 
 	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_temp, intern, props, 2);
 
@@ -108,12 +107,10 @@ static HashTable* phongo_binary_get_properties_hash(zend_object* object, bool is
 /* Construct a new BSON binary type */
 static PHP_METHOD(MongoDB_BSON_Binary, __construct)
 {
-	phongo_binary_t* intern;
-	char*            data;
-	size_t           data_len;
-	zend_long        type = BSON_SUBTYPE_BINARY;
-
-	intern = Z_BINARY_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(binary);
+	char*     data;
+	size_t    data_len;
+	zend_long type = BSON_SUBTYPE_BINARY;
 
 	PHONGO_PARSE_PARAMETERS_START(1, 2)
 	Z_PARAM_STRING(data, data_len)
@@ -126,18 +123,15 @@ static PHP_METHOD(MongoDB_BSON_Binary, __construct)
 
 static PHP_METHOD(MongoDB_BSON_Binary, __set_state)
 {
-	phongo_binary_t* intern;
-	HashTable*       props;
-	zval*            array;
+	HashTable* props;
+	zval*      array;
 
 	PHONGO_PARSE_PARAMETERS_START(1, 1)
 	Z_PARAM_ARRAY(array)
 	PHONGO_PARSE_PARAMETERS_END();
 
-	object_init_ex(return_value, phongo_binary_ce);
-
-	intern = Z_BINARY_OBJ_P(return_value);
-	props  = Z_ARRVAL_P(array);
+	PHONGO_INTERN_INIT_EX(binary, return_value);
+	props = Z_ARRVAL_P(array);
 
 	phongo_binary_init_from_hash(intern, props);
 }
@@ -145,20 +139,16 @@ static PHP_METHOD(MongoDB_BSON_Binary, __set_state)
 /* Return the Binary's data string. */
 static PHP_METHOD(MongoDB_BSON_Binary, __toString)
 {
-	phongo_binary_t* intern;
+	PHONGO_INTERN_FROM_THIS(binary);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
-
-	intern = Z_BINARY_OBJ_P(getThis());
 
 	RETURN_STRINGL(intern->data, intern->data_len);
 }
 
 static PHP_METHOD(MongoDB_BSON_Binary, getData)
 {
-	phongo_binary_t* intern;
-
-	intern = Z_BINARY_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(binary);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -167,9 +157,7 @@ static PHP_METHOD(MongoDB_BSON_Binary, getData)
 
 static PHP_METHOD(MongoDB_BSON_Binary, getType)
 {
-	phongo_binary_t* intern;
-
-	intern = Z_BINARY_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(binary);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -178,13 +166,11 @@ static PHP_METHOD(MongoDB_BSON_Binary, getType)
 
 static PHP_METHOD(MongoDB_BSON_Binary, jsonSerialize)
 {
-	phongo_binary_t* intern;
-	char             type[3];
-	int              type_len;
+	PHONGO_INTERN_FROM_THIS(binary);
+	char type[3];
+	int  type_len;
 
 	PHONGO_PARSE_PARAMETERS_NONE();
-
-	intern = Z_BINARY_OBJ_P(getThis());
 
 	array_init_size(return_value, 2);
 
@@ -221,7 +207,7 @@ static zend_object_handlers phongo_handler_binary;
 
 static void phongo_binary_free_object(zend_object* object)
 {
-	phongo_binary_t* intern = Z_OBJ_BINARY(object);
+	PHONGO_INTERN_FROM_Z_OBJ(binary, object);
 
 	zend_object_std_dtor(&intern->std);
 
@@ -237,10 +223,7 @@ static void phongo_binary_free_object(zend_object* object)
 
 static zend_object* phongo_binary_create_object(zend_class_entry* class_type)
 {
-	phongo_binary_t* intern = zend_object_alloc(sizeof(phongo_binary_t), class_type);
-
-	zend_object_std_init(&intern->std, class_type);
-	object_properties_init(&intern->std, class_type);
+	PHONGO_INTERN_OBJECT_ALLOC(binary, class_type);
 
 	intern->std.handlers = &phongo_handler_binary;
 
@@ -249,11 +232,11 @@ static zend_object* phongo_binary_create_object(zend_class_entry* class_type)
 
 static zend_object* phongo_binary_clone_object(zend_object* object)
 {
-	phongo_binary_t* intern;
+	PHONGO_INTERN_FROM_Z_OBJ(binary, object);
+
 	phongo_binary_t* new_intern;
 	zend_object*     new_object;
 
-	intern     = Z_OBJ_BINARY(object);
 	new_object = phongo_binary_create_object(object->ce);
 
 	new_intern = Z_OBJ_BINARY(new_object);
@@ -291,7 +274,7 @@ static HashTable* phongo_binary_get_debug_info(zend_object* object, int* is_temp
 	*is_temp         = 1;
 	HashTable* props = phongo_binary_get_properties_hash(object, true, true);
 
-	phongo_binary_t* intern = Z_OBJ_BINARY(object);
+	PHONGO_INTERN_FROM_Z_OBJ(binary, object);
 
 	if (intern->type == BSON_SUBTYPE_VECTOR) {
 		zval vector;
@@ -510,7 +493,7 @@ static PHP_METHOD(MongoDB_BSON_Binary, fromVector)
 	zend_object* type;
 
 	object_init_ex(return_value, phongo_binary_ce);
-	phongo_binary_t* intern = Z_BINARY_OBJ_P(return_value);
+	PHONGO_INTERN_FROM_ZVAL(binary, return_value);
 
 	PHONGO_PARSE_PARAMETERS_START(2, 2)
 	Z_PARAM_ARRAY_HT(vector)
@@ -557,9 +540,9 @@ static phongo_bson_vector_type_t phongo_binary_get_vector_type(const phongo_bina
 
 static PHP_METHOD(MongoDB_BSON_Binary, getVectorType)
 {
-	PHONGO_PARSE_PARAMETERS_NONE();
+	PHONGO_INTERN_FROM_THIS(binary);
 
-	phongo_binary_t* intern = Z_BINARY_OBJ_P(getThis());
+	PHONGO_PARSE_PARAMETERS_NONE();
 
 	if (intern->type != BSON_SUBTYPE_VECTOR) {
 		phongo_throw_exception(PHONGO_ERROR_LOGIC, "Expected Binary of type vector (%" PRId8 ") but it is %" PHONGO_LONG_FORMAT, BSON_SUBTYPE_VECTOR, intern->type);
@@ -664,9 +647,9 @@ static void phongo_binary_get_vector_as_array(const phongo_binary_t* intern, zva
 
 static PHP_METHOD(MongoDB_BSON_Binary, toArray)
 {
-	PHONGO_PARSE_PARAMETERS_NONE();
+	PHONGO_INTERN_FROM_THIS(binary);
 
-	phongo_binary_t* intern = Z_BINARY_OBJ_P(getThis());
+	PHONGO_PARSE_PARAMETERS_NONE();
 
 	if (intern->type != BSON_SUBTYPE_VECTOR) {
 		phongo_throw_exception(PHONGO_ERROR_LOGIC, "Expected Binary of type vector (%" PRId8 ") but it is %" PHONGO_LONG_FORMAT, BSON_SUBTYPE_VECTOR, intern->type);

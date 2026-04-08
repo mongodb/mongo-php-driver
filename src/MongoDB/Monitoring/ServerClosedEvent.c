@@ -30,7 +30,7 @@ PHONGO_DISABLED_CONSTRUCTOR(MongoDB_Driver_Monitoring_ServerClosedEvent)
 /* Returns this event's host */
 static PHP_METHOD(MongoDB_Driver_Monitoring_ServerClosedEvent, getHost)
 {
-	phongo_serverclosedevent_t* intern = Z_SERVERCLOSEDEVENT_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(serverclosedevent);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -40,7 +40,7 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_ServerClosedEvent, getHost)
 /* Returns this event's port */
 static PHP_METHOD(MongoDB_Driver_Monitoring_ServerClosedEvent, getPort)
 {
-	phongo_serverclosedevent_t* intern = Z_SERVERCLOSEDEVENT_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(serverclosedevent);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -50,7 +50,7 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_ServerClosedEvent, getPort)
 /* Returns this event's topology id */
 static PHP_METHOD(MongoDB_Driver_Monitoring_ServerClosedEvent, getTopologyId)
 {
-	phongo_serverclosedevent_t* intern = Z_SERVERCLOSEDEVENT_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(serverclosedevent);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -62,17 +62,14 @@ static zend_object_handlers phongo_handler_serverclosedevent;
 
 static void phongo_serverclosedevent_free_object(zend_object* object)
 {
-	phongo_serverclosedevent_t* intern = Z_OBJ_SERVERCLOSEDEVENT(object);
+	PHONGO_INTERN_FROM_Z_OBJ(serverclosedevent, object);
 
 	zend_object_std_dtor(&intern->std);
 }
 
 static zend_object* phongo_serverclosedevent_create_object(zend_class_entry* class_type)
 {
-	phongo_serverclosedevent_t* intern = zend_object_alloc(sizeof(phongo_serverclosedevent_t), class_type);
-
-	zend_object_std_init(&intern->std, class_type);
-	object_properties_init(&intern->std, class_type);
+	PHONGO_INTERN_OBJECT_ALLOC(serverclosedevent, class_type);
 
 	intern->std.handlers = &phongo_handler_serverclosedevent;
 
@@ -81,10 +78,10 @@ static zend_object* phongo_serverclosedevent_create_object(zend_class_entry* cla
 
 static HashTable* phongo_serverclosedevent_get_debug_info(zend_object* object, int* is_temp)
 {
-	phongo_serverclosedevent_t* intern;
-	zval                        retval = ZVAL_STATIC_INIT;
+	PHONGO_INTERN_FROM_Z_OBJ(serverclosedevent, object);
 
-	intern   = Z_OBJ_SERVERCLOSEDEVENT(object);
+	zval retval = ZVAL_STATIC_INIT;
+
 	*is_temp = 1;
 	array_init_size(&retval, 3);
 

@@ -28,7 +28,7 @@ PHONGO_DISABLED_CONSTRUCTOR(MongoDB_Driver_Monitoring_ServerHeartbeatSucceededEv
 /* Returns this event's duration in microseconds */
 static PHP_METHOD(MongoDB_Driver_Monitoring_ServerHeartbeatSucceededEvent, getDurationMicros)
 {
-	phongo_serverheartbeatsucceededevent_t* intern = Z_SERVERHEARTBEATSUCCEEDEDEVENT_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(serverheartbeatsucceededevent);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -38,7 +38,7 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_ServerHeartbeatSucceededEvent, getDu
 /* Returns this event's host */
 static PHP_METHOD(MongoDB_Driver_Monitoring_ServerHeartbeatSucceededEvent, getHost)
 {
-	phongo_serverheartbeatsucceededevent_t* intern = Z_SERVERHEARTBEATSUCCEEDEDEVENT_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(serverheartbeatsucceededevent);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -48,7 +48,7 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_ServerHeartbeatSucceededEvent, getHo
 /* Returns this event's port */
 static PHP_METHOD(MongoDB_Driver_Monitoring_ServerHeartbeatSucceededEvent, getPort)
 {
-	phongo_serverheartbeatsucceededevent_t* intern = Z_SERVERHEARTBEATSUCCEEDEDEVENT_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(serverheartbeatsucceededevent);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -58,8 +58,9 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_ServerHeartbeatSucceededEvent, getPo
 /* Returns this event's reply */
 static PHP_METHOD(MongoDB_Driver_Monitoring_ServerHeartbeatSucceededEvent, getReply)
 {
-	phongo_serverheartbeatsucceededevent_t* intern = Z_SERVERHEARTBEATSUCCEEDEDEVENT_OBJ_P(getThis());
-	phongo_bson_state                       state;
+	PHONGO_INTERN_FROM_THIS(serverheartbeatsucceededevent);
+
+	phongo_bson_state state;
 
 	PHONGO_BSON_INIT_STATE(state);
 
@@ -76,7 +77,7 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_ServerHeartbeatSucceededEvent, getRe
 /* Returns whether this event came from an awaitable hello */
 static PHP_METHOD(MongoDB_Driver_Monitoring_ServerHeartbeatSucceededEvent, isAwaited)
 {
-	phongo_serverheartbeatsucceededevent_t* intern = Z_SERVERHEARTBEATSUCCEEDEDEVENT_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(serverheartbeatsucceededevent);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -88,7 +89,7 @@ static zend_object_handlers phongo_handler_serverheartbeatsucceededevent;
 
 static void phongo_serverheartbeatsucceededevent_free_object(zend_object* object)
 {
-	phongo_serverheartbeatsucceededevent_t* intern = Z_OBJ_SERVERHEARTBEATSUCCEEDEDEVENT(object);
+	PHONGO_INTERN_FROM_Z_OBJ(serverheartbeatsucceededevent, object);
 
 	zend_object_std_dtor(&intern->std);
 
@@ -99,10 +100,7 @@ static void phongo_serverheartbeatsucceededevent_free_object(zend_object* object
 
 static zend_object* phongo_serverheartbeatsucceededevent_create_object(zend_class_entry* class_type)
 {
-	phongo_serverheartbeatsucceededevent_t* intern = zend_object_alloc(sizeof(phongo_serverheartbeatsucceededevent_t), class_type);
-
-	zend_object_std_init(&intern->std, class_type);
-	object_properties_init(&intern->std, class_type);
+	PHONGO_INTERN_OBJECT_ALLOC(serverheartbeatsucceededevent, class_type);
 
 	intern->std.handlers = &phongo_handler_serverheartbeatsucceededevent;
 
@@ -111,13 +109,13 @@ static zend_object* phongo_serverheartbeatsucceededevent_create_object(zend_clas
 
 static HashTable* phongo_serverheartbeatsucceededevent_get_debug_info(zend_object* object, int* is_temp)
 {
-	phongo_serverheartbeatsucceededevent_t* intern;
-	zval                                    retval = ZVAL_STATIC_INIT;
-	phongo_bson_state                       reply_state;
+	PHONGO_INTERN_FROM_Z_OBJ(serverheartbeatsucceededevent, object);
+
+	zval              retval = ZVAL_STATIC_INIT;
+	phongo_bson_state reply_state;
 
 	PHONGO_BSON_INIT_STATE(reply_state);
 
-	intern   = Z_OBJ_SERVERHEARTBEATSUCCEEDEDEVENT(object);
 	*is_temp = 1;
 	array_init_size(&retval, 4);
 

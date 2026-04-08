@@ -33,7 +33,7 @@ PHONGO_DISABLED_CONSTRUCTOR(MongoDB_Driver_Monitoring_TopologyChangedEvent)
 /* Returns this event's new description */
 static PHP_METHOD(MongoDB_Driver_Monitoring_TopologyChangedEvent, getNewDescription)
 {
-	phongo_topologychangedevent_t* intern = Z_TOPOLOGYCHANGEDEVENT_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(topologychangedevent);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -43,7 +43,7 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_TopologyChangedEvent, getNewDescript
 /* Returns this event's previous description */
 static PHP_METHOD(MongoDB_Driver_Monitoring_TopologyChangedEvent, getPreviousDescription)
 {
-	phongo_topologychangedevent_t* intern = Z_TOPOLOGYCHANGEDEVENT_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(topologychangedevent);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -53,7 +53,7 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_TopologyChangedEvent, getPreviousDes
 /* Returns this event's topology id */
 static PHP_METHOD(MongoDB_Driver_Monitoring_TopologyChangedEvent, getTopologyId)
 {
-	phongo_topologychangedevent_t* intern = Z_TOPOLOGYCHANGEDEVENT_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(topologychangedevent);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -65,7 +65,7 @@ static zend_object_handlers phongo_handler_topologychangedevent;
 
 static void phongo_topologychangedevent_free_object(zend_object* object)
 {
-	phongo_topologychangedevent_t* intern = Z_OBJ_TOPOLOGYCHANGEDEVENT(object);
+	PHONGO_INTERN_FROM_Z_OBJ(topologychangedevent, object);
 
 	zend_object_std_dtor(&intern->std);
 
@@ -80,10 +80,7 @@ static void phongo_topologychangedevent_free_object(zend_object* object)
 
 static zend_object* phongo_topologychangedevent_create_object(zend_class_entry* class_type)
 {
-	phongo_topologychangedevent_t* intern = zend_object_alloc(sizeof(phongo_topologychangedevent_t), class_type);
-
-	zend_object_std_init(&intern->std, class_type);
-	object_properties_init(&intern->std, class_type);
+	PHONGO_INTERN_OBJECT_ALLOC(topologychangedevent, class_type);
 
 	intern->std.handlers = &phongo_handler_topologychangedevent;
 
@@ -92,10 +89,10 @@ static zend_object* phongo_topologychangedevent_create_object(zend_class_entry* 
 
 static HashTable* phongo_topologychangedevent_get_debug_info(zend_object* object, int* is_temp)
 {
-	phongo_topologychangedevent_t* intern;
-	zval                           retval = ZVAL_STATIC_INIT;
+	PHONGO_INTERN_FROM_Z_OBJ(topologychangedevent, object);
 
-	intern   = Z_OBJ_TOPOLOGYCHANGEDEVENT(object);
+	zval retval = ZVAL_STATIC_INIT;
+
 	*is_temp = 1;
 	array_init_size(&retval, 3);
 

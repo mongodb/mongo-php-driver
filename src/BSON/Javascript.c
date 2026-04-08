@@ -71,10 +71,9 @@ static bool phongo_javascript_init_from_hash(phongo_javascript_t* intern, HashTa
 
 HashTable* phongo_javascript_get_properties_hash(zend_object* object, bool is_temp)
 {
-	phongo_javascript_t* intern;
-	HashTable*           props;
+	PHONGO_INTERN_FROM_Z_OBJ(javascript, object);
 
-	intern = Z_OBJ_JAVASCRIPT(object);
+	HashTable* props;
 
 	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_temp, intern, props, 2);
 
@@ -118,12 +117,11 @@ failure:
    be evaluated. Note that this type cannot be represented as Extended JSON. */
 static PHP_METHOD(MongoDB_BSON_Javascript, __construct)
 {
-	phongo_javascript_t* intern;
-	char*                code;
-	size_t               code_len;
-	zval*                scope = NULL;
+	PHONGO_INTERN_FROM_THIS(javascript);
 
-	intern = Z_JAVASCRIPT_OBJ_P(getThis());
+	char*  code;
+	size_t code_len;
+	zval*  scope = NULL;
 
 	PHONGO_PARSE_PARAMETERS_START(1, 2)
 	Z_PARAM_STRING(code, code_len)
@@ -136,18 +134,15 @@ static PHP_METHOD(MongoDB_BSON_Javascript, __construct)
 
 static PHP_METHOD(MongoDB_BSON_Javascript, __set_state)
 {
-	phongo_javascript_t* intern;
-	HashTable*           props;
-	zval*                array;
+	HashTable* props;
+	zval*      array;
 
 	PHONGO_PARSE_PARAMETERS_START(1, 1)
 	Z_PARAM_ARRAY(array)
 	PHONGO_PARSE_PARAMETERS_END();
 
-	object_init_ex(return_value, phongo_javascript_ce);
-
-	intern = Z_JAVASCRIPT_OBJ_P(return_value);
-	props  = Z_ARRVAL_P(array);
+	PHONGO_INTERN_INIT_EX(javascript, return_value);
+	props = Z_ARRVAL_P(array);
 
 	phongo_javascript_init_from_hash(intern, props);
 }
@@ -155,33 +150,27 @@ static PHP_METHOD(MongoDB_BSON_Javascript, __set_state)
 /* Return the Javascript's code string. */
 static PHP_METHOD(MongoDB_BSON_Javascript, __toString)
 {
-	phongo_javascript_t* intern;
+	PHONGO_INTERN_FROM_THIS(javascript);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
-
-	intern = Z_JAVASCRIPT_OBJ_P(getThis());
 
 	RETURN_STRINGL(intern->code, intern->code_len);
 }
 
 static PHP_METHOD(MongoDB_BSON_Javascript, getCode)
 {
-	phongo_javascript_t* intern;
+	PHONGO_INTERN_FROM_THIS(javascript);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
-
-	intern = Z_JAVASCRIPT_OBJ_P(getThis());
 
 	RETURN_STRINGL(intern->code, intern->code_len);
 }
 
 static PHP_METHOD(MongoDB_BSON_Javascript, getScope)
 {
-	phongo_javascript_t* intern;
+	PHONGO_INTERN_FROM_THIS(javascript);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
-
-	intern = Z_JAVASCRIPT_OBJ_P(getThis());
 
 	if (!intern->scope) {
 		RETURN_NULL();
@@ -205,11 +194,9 @@ static PHP_METHOD(MongoDB_BSON_Javascript, getScope)
 
 static PHP_METHOD(MongoDB_BSON_Javascript, jsonSerialize)
 {
-	phongo_javascript_t* intern;
+	PHONGO_INTERN_FROM_THIS(javascript);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
-
-	intern = Z_JAVASCRIPT_OBJ_P(getThis());
 
 	array_init_size(return_value, 2);
 	ADD_ASSOC_STRINGL(return_value, "$code", intern->code, intern->code_len);
@@ -250,7 +237,7 @@ static zend_object_handlers phongo_handler_javascript;
 
 static void phongo_javascript_free_object(zend_object* object)
 {
-	phongo_javascript_t* intern = Z_OBJ_JAVASCRIPT(object);
+	PHONGO_INTERN_FROM_Z_OBJ(javascript, object);
 
 	zend_object_std_dtor(&intern->std);
 
@@ -270,10 +257,7 @@ static void phongo_javascript_free_object(zend_object* object)
 
 zend_object* phongo_javascript_create_object(zend_class_entry* class_type)
 {
-	phongo_javascript_t* intern = zend_object_alloc(sizeof(phongo_javascript_t), class_type);
-
-	zend_object_std_init(&intern->std, class_type);
-	object_properties_init(&intern->std, class_type);
+	PHONGO_INTERN_OBJECT_ALLOC(javascript, class_type);
 
 	intern->std.handlers = &phongo_handler_javascript;
 
@@ -282,11 +266,11 @@ zend_object* phongo_javascript_create_object(zend_class_entry* class_type)
 
 static zend_object* phongo_javascript_clone_object(zend_object* object)
 {
-	phongo_javascript_t* intern;
+	PHONGO_INTERN_FROM_Z_OBJ(javascript, object);
+
 	phongo_javascript_t* new_intern;
 	zend_object*         new_object;
 
-	intern     = Z_OBJ_JAVASCRIPT(object);
 	new_object = phongo_javascript_create_object(object->ce);
 
 	new_intern = Z_OBJ_JAVASCRIPT(new_object);
@@ -338,8 +322,6 @@ void phongo_javascript_init_ce(INIT_FUNC_ARGS)
 
 bool phongo_javascript_new(zval* object, const char* code, size_t code_len, const bson_t* scope)
 {
-	phongo_javascript_t* intern;
-
 	if (scope) {
 		phongo_bson_state state;
 		bool              valid_scope;
@@ -354,9 +336,7 @@ bool phongo_javascript_new(zval* object, const char* code, size_t code_len, cons
 		}
 	}
 
-	object_init_ex(object, phongo_javascript_ce);
-
-	intern           = Z_JAVASCRIPT_OBJ_P(object);
+	PHONGO_INTERN_INIT_EX(javascript, object);
 	intern->code     = estrndup(code, code_len);
 	intern->code_len = code_len;
 	intern->scope    = scope ? bson_copy(scope) : NULL;

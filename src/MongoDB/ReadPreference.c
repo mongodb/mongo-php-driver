@@ -174,12 +174,11 @@ static const char* phongo_readpreference_get_mode_string(const mongoc_read_prefs
 /* Constructs a new ReadPreference */
 static PHP_METHOD(MongoDB_Driver_ReadPreference, __construct)
 {
-	phongo_readpreference_t* intern;
-	zend_string*             mode;
-	zval*                    tagSets = NULL;
-	zval*                    options = NULL;
+	PHONGO_INTERN_FROM_THIS(readpreference);
 
-	intern = Z_READPREFERENCE_OBJ_P(getThis());
+	zend_string* mode;
+	zval*        tagSets = NULL;
+	zval*        options = NULL;
 
 	/* Separate the tagSets zval, since we may end up modifying it in
 	 * phongo_read_preference_prep_tagsets() below. */
@@ -285,9 +284,8 @@ static PHP_METHOD(MongoDB_Driver_ReadPreference, __construct)
 
 static PHP_METHOD(MongoDB_Driver_ReadPreference, __set_state)
 {
-	phongo_readpreference_t* intern;
-	HashTable*               props;
-	zval*                    array;
+	HashTable* props;
+	zval*      array;
 
 	/* Separate the zval, since we may end up modifying the "tags" element in
 	 * phongo_read_preference_prep_tagsets(), which is called from
@@ -296,10 +294,8 @@ static PHP_METHOD(MongoDB_Driver_ReadPreference, __set_state)
 	Z_PARAM_ARRAY_EX(array, 0, 1)
 	PHONGO_PARSE_PARAMETERS_END();
 
-	object_init_ex(return_value, phongo_readpreference_ce);
-
-	intern = Z_READPREFERENCE_OBJ_P(return_value);
-	props  = Z_ARRVAL_P(array);
+	PHONGO_INTERN_INIT_EX(readpreference, return_value);
+	props = Z_ARRVAL_P(array);
 
 	phongo_readpreference_init_from_hash(intern, props);
 }
@@ -307,10 +303,9 @@ static PHP_METHOD(MongoDB_Driver_ReadPreference, __set_state)
 /* Returns the ReadPreference hedge document */
 static PHP_METHOD(MongoDB_Driver_ReadPreference, getHedge)
 {
-	phongo_readpreference_t* intern;
-	const bson_t*            hedge;
+	PHONGO_INTERN_FROM_THIS(readpreference);
 
-	intern = Z_READPREFERENCE_OBJ_P(getThis());
+	const bson_t* hedge;
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -335,9 +330,7 @@ static PHP_METHOD(MongoDB_Driver_ReadPreference, getHedge)
 /* Returns the ReadPreference maxStalenessSeconds value */
 static PHP_METHOD(MongoDB_Driver_ReadPreference, getMaxStalenessSeconds)
 {
-	phongo_readpreference_t* intern;
-
-	intern = Z_READPREFERENCE_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(readpreference);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -347,9 +340,7 @@ static PHP_METHOD(MongoDB_Driver_ReadPreference, getMaxStalenessSeconds)
 /* Returns the ReadPreference mode as string */
 static PHP_METHOD(MongoDB_Driver_ReadPreference, getModeString)
 {
-	phongo_readpreference_t* intern;
-
-	intern = Z_READPREFERENCE_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(readpreference);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -359,10 +350,9 @@ static PHP_METHOD(MongoDB_Driver_ReadPreference, getModeString)
 /* Returns the ReadPreference tag sets */
 static PHP_METHOD(MongoDB_Driver_ReadPreference, getTagSets)
 {
-	phongo_readpreference_t* intern;
-	const bson_t*            tags;
+	PHONGO_INTERN_FROM_THIS(readpreference);
 
-	intern = Z_READPREFERENCE_OBJ_P(getThis());
+	const bson_t* tags;
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -386,12 +376,11 @@ static PHP_METHOD(MongoDB_Driver_ReadPreference, getTagSets)
 
 static HashTable* phongo_readpreference_get_properties_hash(zend_object* object, bool is_temp)
 {
-	phongo_readpreference_t* intern;
-	HashTable*               props;
-	const bson_t*            tags;
-	const bson_t*            hedge;
+	PHONGO_INTERN_FROM_Z_OBJ(readpreference, object);
 
-	intern = Z_OBJ_READPREFERENCE(object);
+	HashTable*    props;
+	const bson_t* tags;
+	const bson_t* hedge;
 
 	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_temp, intern, props, 4);
 
@@ -483,7 +472,7 @@ static zend_object_handlers phongo_handler_readpreference;
 
 static void phongo_readpreference_free_object(zend_object* object)
 {
-	phongo_readpreference_t* intern = Z_OBJ_READPREFERENCE(object);
+	PHONGO_INTERN_FROM_Z_OBJ(readpreference, object);
 
 	zend_object_std_dtor(&intern->std);
 
@@ -499,10 +488,7 @@ static void phongo_readpreference_free_object(zend_object* object)
 
 static zend_object* phongo_readpreference_create_object(zend_class_entry* class_type)
 {
-	phongo_readpreference_t* intern = zend_object_alloc(sizeof(phongo_readpreference_t), class_type);
-
-	zend_object_std_init(&intern->std, class_type);
-	object_properties_init(&intern->std, class_type);
+	PHONGO_INTERN_OBJECT_ALLOC(readpreference, class_type);
 
 	intern->std.handlers = &phongo_handler_readpreference;
 
@@ -534,18 +520,14 @@ void phongo_readpreference_init_ce(INIT_FUNC_ARGS)
 
 void phongo_readpreference_init(zval* return_value, const mongoc_read_prefs_t* read_prefs)
 {
-	phongo_readpreference_t* intern;
-
-	object_init_ex(return_value, phongo_readpreference_ce);
-
-	intern                  = Z_READPREFERENCE_OBJ_P(return_value);
+	PHONGO_INTERN_INIT_EX(readpreference, return_value);
 	intern->read_preference = mongoc_read_prefs_copy(read_prefs);
 }
 
 const mongoc_read_prefs_t* phongo_read_preference_from_zval(zval* zread_preference)
 {
 	if (zread_preference) {
-		phongo_readpreference_t* intern = Z_READPREFERENCE_OBJ_P(zread_preference);
+		PHONGO_INTERN_FROM_ZVAL(readpreference, zread_preference);
 
 		if (intern) {
 			return intern->read_preference;

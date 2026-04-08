@@ -87,14 +87,13 @@ static bool phongo_timestamp_init_from_hash(phongo_timestamp_t* intern, HashTabl
 
 static HashTable* phongo_timestamp_get_properties_hash(zend_object* object, bool is_temp)
 {
-	phongo_timestamp_t* intern;
-	HashTable*          props;
-	char                s_increment[24];
-	char                s_timestamp[24];
-	int                 s_increment_len;
-	int                 s_timestamp_len;
+	PHONGO_INTERN_FROM_Z_OBJ(timestamp, object);
 
-	intern = Z_OBJ_TIMESTAMP(object);
+	HashTable* props;
+	char       s_increment[24];
+	char       s_timestamp[24];
+	int        s_increment_len;
+	int        s_timestamp_len;
 
 	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_temp, intern, props, 2);
 
@@ -122,10 +121,9 @@ static HashTable* phongo_timestamp_get_properties_hash(zend_object* object, bool
    4-byte timestamp. */
 static PHP_METHOD(MongoDB_BSON_Timestamp, __construct)
 {
-	phongo_timestamp_t* intern;
-	zval *              increment = NULL, *timestamp = NULL;
+	PHONGO_INTERN_FROM_THIS(timestamp);
 
-	intern = Z_TIMESTAMP_OBJ_P(getThis());
+	zval *increment = NULL, *timestamp = NULL;
 
 	PHONGO_PARSE_PARAMETERS_START(2, 2)
 	Z_PARAM_ZVAL(increment)
@@ -160,9 +158,7 @@ static PHP_METHOD(MongoDB_BSON_Timestamp, __construct)
 
 static PHP_METHOD(MongoDB_BSON_Timestamp, getIncrement)
 {
-	phongo_timestamp_t* intern;
-
-	intern = Z_TIMESTAMP_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(timestamp);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -171,9 +167,7 @@ static PHP_METHOD(MongoDB_BSON_Timestamp, getIncrement)
 
 static PHP_METHOD(MongoDB_BSON_Timestamp, getTimestamp)
 {
-	phongo_timestamp_t* intern;
-
-	intern = Z_TIMESTAMP_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(timestamp);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -182,18 +176,15 @@ static PHP_METHOD(MongoDB_BSON_Timestamp, getTimestamp)
 
 static PHP_METHOD(MongoDB_BSON_Timestamp, __set_state)
 {
-	phongo_timestamp_t* intern;
-	HashTable*          props;
-	zval*               array;
+	HashTable* props;
+	zval*      array;
 
 	PHONGO_PARSE_PARAMETERS_START(1, 1)
 	Z_PARAM_ARRAY(array)
 	PHONGO_PARSE_PARAMETERS_END();
 
-	object_init_ex(return_value, phongo_timestamp_ce);
-
-	intern = Z_TIMESTAMP_OBJ_P(return_value);
-	props  = Z_ARRVAL_P(array);
+	PHONGO_INTERN_INIT_EX(timestamp, return_value);
+	props = Z_ARRVAL_P(array);
 
 	phongo_timestamp_init_from_hash(intern, props);
 }
@@ -201,11 +192,10 @@ static PHP_METHOD(MongoDB_BSON_Timestamp, __set_state)
 /* Returns a string in the form: [increment:timestamp] */
 static PHP_METHOD(MongoDB_BSON_Timestamp, __toString)
 {
-	phongo_timestamp_t* intern;
-	char*               retval;
-	int                 retval_len;
+	PHONGO_INTERN_FROM_THIS(timestamp);
 
-	intern = Z_TIMESTAMP_OBJ_P(getThis());
+	char* retval;
+	int   retval_len;
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -216,11 +206,9 @@ static PHP_METHOD(MongoDB_BSON_Timestamp, __toString)
 
 static PHP_METHOD(MongoDB_BSON_Timestamp, jsonSerialize)
 {
-	phongo_timestamp_t* intern;
+	PHONGO_INTERN_FROM_THIS(timestamp);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
-
-	intern = Z_TIMESTAMP_OBJ_P(getThis());
 
 	array_init_size(return_value, 1);
 
@@ -257,7 +245,7 @@ static zend_object_handlers phongo_handler_timestamp;
 
 static void phongo_timestamp_free_object(zend_object* object)
 {
-	phongo_timestamp_t* intern = Z_OBJ_TIMESTAMP(object);
+	PHONGO_INTERN_FROM_Z_OBJ(timestamp, object);
 
 	zend_object_std_dtor(&intern->std);
 
@@ -269,10 +257,7 @@ static void phongo_timestamp_free_object(zend_object* object)
 
 static zend_object* phongo_timestamp_create_object(zend_class_entry* class_type)
 {
-	phongo_timestamp_t* intern = zend_object_alloc(sizeof(phongo_timestamp_t), class_type);
-
-	zend_object_std_init(&intern->std, class_type);
-	object_properties_init(&intern->std, class_type);
+	PHONGO_INTERN_OBJECT_ALLOC(timestamp, class_type);
 
 	intern->std.handlers = &phongo_handler_timestamp;
 
@@ -281,11 +266,11 @@ static zend_object* phongo_timestamp_create_object(zend_class_entry* class_type)
 
 static zend_object* phongo_timestamp_clone_object(zend_object* object)
 {
-	phongo_timestamp_t* intern;
+	PHONGO_INTERN_FROM_Z_OBJ(timestamp, object);
+
 	phongo_timestamp_t* new_intern;
 	zend_object*        new_object;
 
-	intern     = Z_OBJ_TIMESTAMP(object);
 	new_object = phongo_timestamp_create_object(object->ce);
 
 	new_intern = Z_OBJ_TIMESTAMP(new_object);
@@ -344,11 +329,7 @@ void phongo_timestamp_init_ce(INIT_FUNC_ARGS)
 
 bool phongo_timestamp_new(zval* object, uint32_t increment, uint32_t timestamp)
 {
-	phongo_timestamp_t* intern;
-
-	object_init_ex(object, phongo_timestamp_ce);
-
-	intern              = Z_TIMESTAMP_OBJ_P(object);
+	PHONGO_INTERN_INIT_EX(timestamp, object);
 	intern->increment   = increment;
 	intern->timestamp   = timestamp;
 	intern->initialized = true;

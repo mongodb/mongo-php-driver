@@ -32,9 +32,7 @@ PHONGO_DISABLED_CONSTRUCTOR(MongoDB_Driver_WriteError)
 /* Returns the MongoDB error code */
 static PHP_METHOD(MongoDB_Driver_WriteError, getCode)
 {
-	phongo_writeerror_t* intern;
-
-	intern = Z_WRITEERROR_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(writeerror);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -45,9 +43,7 @@ static PHP_METHOD(MongoDB_Driver_WriteError, getCode)
    corresponds. */
 static PHP_METHOD(MongoDB_Driver_WriteError, getIndex)
 {
-	phongo_writeerror_t* intern;
-
-	intern = Z_WRITEERROR_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(writeerror);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -57,9 +53,7 @@ static PHP_METHOD(MongoDB_Driver_WriteError, getIndex)
 /* Returns the actual error message from the server */
 static PHP_METHOD(MongoDB_Driver_WriteError, getMessage)
 {
-	phongo_writeerror_t* intern;
-
-	intern = Z_WRITEERROR_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(writeerror);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -69,9 +63,7 @@ static PHP_METHOD(MongoDB_Driver_WriteError, getMessage)
 /* Returns additional metadata for the error */
 static PHP_METHOD(MongoDB_Driver_WriteError, getInfo)
 {
-	phongo_writeerror_t* intern;
-
-	intern = Z_WRITEERROR_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(writeerror);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -85,7 +77,7 @@ static zend_object_handlers phongo_handler_writeerror;
 
 static void phongo_writeerror_free_object(zend_object* object)
 {
-	phongo_writeerror_t* intern = Z_OBJ_WRITEERROR(object);
+	PHONGO_INTERN_FROM_Z_OBJ(writeerror, object);
 
 	zend_object_std_dtor(&intern->std);
 
@@ -100,10 +92,7 @@ static void phongo_writeerror_free_object(zend_object* object)
 
 static zend_object* phongo_writeerror_create_object(zend_class_entry* class_type)
 {
-	phongo_writeerror_t* intern = zend_object_alloc(sizeof(phongo_writeerror_t), class_type);
-
-	zend_object_std_init(&intern->std, class_type);
-	object_properties_init(&intern->std, class_type);
+	PHONGO_INTERN_OBJECT_ALLOC(writeerror, class_type);
 
 	intern->std.handlers = &phongo_handler_writeerror;
 
@@ -112,11 +101,11 @@ static zend_object* phongo_writeerror_create_object(zend_class_entry* class_type
 
 static HashTable* phongo_writeerror_get_debug_info(zend_object* object, int* is_temp)
 {
-	phongo_writeerror_t* intern;
-	zval                 retval = ZVAL_STATIC_INIT;
+	PHONGO_INTERN_FROM_Z_OBJ(writeerror, object);
+
+	zval retval = ZVAL_STATIC_INIT;
 
 	*is_temp = 1;
-	intern   = Z_OBJ_WRITEERROR(object);
 
 	array_init_size(&retval, 3);
 	ADD_ASSOC_STRING(&retval, "message", intern->message);
@@ -157,12 +146,9 @@ bool phongo_writeerror_init(zval* return_value, const bson_t* bson)
  * provided since the BSON document will not have an "index" field. */
 bool phongo_writeerror_init_ex(zval* return_value, const bson_t* bson, int32_t index)
 {
-	bson_iter_t          iter;
-	phongo_writeerror_t* intern;
+	bson_iter_t iter;
 
-	object_init_ex(return_value, phongo_writeerror_ce);
-
-	intern        = Z_WRITEERROR_OBJ_P(return_value);
+	PHONGO_INTERN_INIT_EX(writeerror, return_value);
 	intern->code  = 0;
 	intern->index = index;
 

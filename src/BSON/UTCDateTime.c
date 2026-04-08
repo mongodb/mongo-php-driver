@@ -123,10 +123,9 @@ static bool phongo_utcdatetime_init_from_object(phongo_utcdatetime_t* intern, ze
 
 static HashTable* phongo_utcdatetime_get_properties_hash(zend_object* object, bool is_temp)
 {
-	phongo_utcdatetime_t* intern;
-	HashTable*            props;
+	PHONGO_INTERN_FROM_Z_OBJ(utcdatetime, object);
 
-	intern = Z_OBJ_UTCDATETIME(object);
+	HashTable* props;
 
 	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_temp, intern, props, 1);
 
@@ -146,13 +145,12 @@ static HashTable* phongo_utcdatetime_get_properties_hash(zend_object* object, bo
 
 static void phongo_utcdatetime_to_php_date(zval* return_value, const zval* this, zend_class_entry* ce)
 {
-	phongo_utcdatetime_t* intern;
-	php_date_obj*         datetime_obj;
-	char*                 sec_str;
-	size_t                sec_len;
-	int64_t               sec, usec;
+	PHONGO_INTERN_FROM_ZVAL(utcdatetime, this);
 
-	intern = Z_UTCDATETIME_OBJ_P(this);
+	php_date_obj* datetime_obj;
+	char*         sec_str;
+	size_t        sec_len;
+	int64_t       sec, usec;
 
 	object_init_ex(return_value, ce);
 	datetime_obj = Z_PHPDATE_P(return_value);
@@ -181,10 +179,9 @@ static void phongo_utcdatetime_to_php_date(zval* return_value, const zval* this,
    current time. */
 static PHP_METHOD(MongoDB_BSON_UTCDateTime, __construct)
 {
-	phongo_utcdatetime_t* intern;
-	zval*                 milliseconds = NULL;
+	PHONGO_INTERN_FROM_THIS(utcdatetime);
 
-	intern = Z_UTCDATETIME_OBJ_P(getThis());
+	zval* milliseconds = NULL;
 
 	PHONGO_PARSE_PARAMETERS_START(0, 1)
 	Z_PARAM_OPTIONAL
@@ -211,18 +208,15 @@ static PHP_METHOD(MongoDB_BSON_UTCDateTime, __construct)
 
 static PHP_METHOD(MongoDB_BSON_UTCDateTime, __set_state)
 {
-	phongo_utcdatetime_t* intern;
-	HashTable*            props;
-	zval*                 array;
+	HashTable* props;
+	zval*      array;
 
 	PHONGO_PARSE_PARAMETERS_START(1, 1)
 	Z_PARAM_ARRAY(array)
 	PHONGO_PARSE_PARAMETERS_END();
 
-	object_init_ex(return_value, phongo_utcdatetime_ce);
-
-	intern = Z_UTCDATETIME_OBJ_P(return_value);
-	props  = Z_ARRVAL_P(array);
+	PHONGO_INTERN_INIT_EX(utcdatetime, return_value);
+	props = Z_ARRVAL_P(array);
 
 	phongo_utcdatetime_init_from_hash(intern, props);
 }
@@ -230,9 +224,7 @@ static PHP_METHOD(MongoDB_BSON_UTCDateTime, __set_state)
 /* Returns the UTCDateTime's milliseconds as a string */
 static PHP_METHOD(MongoDB_BSON_UTCDateTime, __toString)
 {
-	phongo_utcdatetime_t* intern;
-
-	intern = Z_UTCDATETIME_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(utcdatetime);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -257,11 +249,9 @@ static PHP_METHOD(MongoDB_BSON_UTCDateTime, toDateTimeImmutable)
 
 static PHP_METHOD(MongoDB_BSON_UTCDateTime, jsonSerialize)
 {
-	phongo_utcdatetime_t* intern;
+	PHONGO_INTERN_FROM_THIS(utcdatetime);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
-
-	intern = Z_UTCDATETIME_OBJ_P(getThis());
 
 	array_init_size(return_value, 1);
 
@@ -297,7 +287,7 @@ static zend_object_handlers phongo_handler_utcdatetime;
 
 static void phongo_utcdatetime_free_object(zend_object* object)
 {
-	phongo_utcdatetime_t* intern = Z_OBJ_UTCDATETIME(object);
+	PHONGO_INTERN_FROM_Z_OBJ(utcdatetime, object);
 
 	zend_object_std_dtor(&intern->std);
 
@@ -309,10 +299,7 @@ static void phongo_utcdatetime_free_object(zend_object* object)
 
 static zend_object* phongo_utcdatetime_create_object(zend_class_entry* class_type)
 {
-	phongo_utcdatetime_t* intern = zend_object_alloc(sizeof(phongo_utcdatetime_t), class_type);
-
-	zend_object_std_init(&intern->std, class_type);
-	object_properties_init(&intern->std, class_type);
+	PHONGO_INTERN_OBJECT_ALLOC(utcdatetime, class_type);
 
 	intern->std.handlers = &phongo_handler_utcdatetime;
 
@@ -321,11 +308,11 @@ static zend_object* phongo_utcdatetime_create_object(zend_class_entry* class_typ
 
 static zend_object* phongo_utcdatetime_clone_object(zend_object* object)
 {
-	phongo_utcdatetime_t* intern;
+	PHONGO_INTERN_FROM_Z_OBJ(utcdatetime, object);
+
 	phongo_utcdatetime_t* new_intern;
 	zend_object*          new_object;
 
-	intern     = Z_OBJ_UTCDATETIME(object);
 	new_object = phongo_utcdatetime_create_object(object->ce);
 
 	new_intern = Z_OBJ_UTCDATETIME(new_object);
@@ -379,11 +366,7 @@ void phongo_utcdatetime_init_ce(INIT_FUNC_ARGS)
 
 bool phongo_utcdatetime_new(zval* object, int64_t msec_since_epoch)
 {
-	phongo_utcdatetime_t* intern;
-
-	object_init_ex(object, phongo_utcdatetime_ce);
-
-	intern               = Z_UTCDATETIME_OBJ_P(object);
+	PHONGO_INTERN_INIT_EX(utcdatetime, object);
 	intern->milliseconds = msec_since_epoch;
 	intern->initialized  = true;
 

@@ -30,7 +30,7 @@ PHONGO_DISABLED_CONSTRUCTOR(MongoDB_Driver_Monitoring_TopologyClosedEvent)
 /* Returns this event's topology id */
 static PHP_METHOD(MongoDB_Driver_Monitoring_TopologyClosedEvent, getTopologyId)
 {
-	phongo_topologyclosedevent_t* intern = Z_TOPOLOGYCLOSEDEVENT_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(topologyclosedevent);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -42,17 +42,14 @@ static zend_object_handlers phongo_handler_topologyclosedevent;
 
 static void phongo_topologyclosedevent_free_object(zend_object* object)
 {
-	phongo_topologyclosedevent_t* intern = Z_OBJ_TOPOLOGYCLOSEDEVENT(object);
+	PHONGO_INTERN_FROM_Z_OBJ(topologyclosedevent, object);
 
 	zend_object_std_dtor(&intern->std);
 }
 
 static zend_object* phongo_topologyclosedevent_create_object(zend_class_entry* class_type)
 {
-	phongo_topologyclosedevent_t* intern = zend_object_alloc(sizeof(phongo_topologyclosedevent_t), class_type);
-
-	zend_object_std_init(&intern->std, class_type);
-	object_properties_init(&intern->std, class_type);
+	PHONGO_INTERN_OBJECT_ALLOC(topologyclosedevent, class_type);
 
 	intern->std.handlers = &phongo_handler_topologyclosedevent;
 
@@ -61,10 +58,10 @@ static zend_object* phongo_topologyclosedevent_create_object(zend_class_entry* c
 
 static HashTable* phongo_topologyclosedevent_get_debug_info(zend_object* object, int* is_temp)
 {
-	phongo_topologyclosedevent_t* intern;
-	zval                          retval = ZVAL_STATIC_INIT;
+	PHONGO_INTERN_FROM_Z_OBJ(topologyclosedevent, object);
 
-	intern   = Z_OBJ_TOPOLOGYCLOSEDEVENT(object);
+	zval retval = ZVAL_STATIC_INIT;
+
 	*is_temp = 1;
 	array_init_size(&retval, 1);
 

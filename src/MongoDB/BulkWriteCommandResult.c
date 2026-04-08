@@ -44,9 +44,7 @@ PHONGO_DISABLED_CONSTRUCTOR(MongoDB_Driver_BulkWriteCommandResult)
 /* Returns the number of documents that were inserted */
 static PHP_METHOD(MongoDB_Driver_BulkWriteCommandResult, getInsertedCount)
 {
-	phongo_bulkwritecommandresult_t* intern;
-
-	intern = Z_BULKWRITECOMMANDRESULT_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(bulkwritecommandresult);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -58,9 +56,7 @@ static PHP_METHOD(MongoDB_Driver_BulkWriteCommandResult, getInsertedCount)
 /* Returns the number of documents that matched the update criteria */
 static PHP_METHOD(MongoDB_Driver_BulkWriteCommandResult, getMatchedCount)
 {
-	phongo_bulkwritecommandresult_t* intern;
-
-	intern = Z_BULKWRITECOMMANDRESULT_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(bulkwritecommandresult);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -72,9 +68,7 @@ static PHP_METHOD(MongoDB_Driver_BulkWriteCommandResult, getMatchedCount)
 /* Returns the number of documents that were actually modified by an update */
 static PHP_METHOD(MongoDB_Driver_BulkWriteCommandResult, getModifiedCount)
 {
-	phongo_bulkwritecommandresult_t* intern;
-
-	intern = Z_BULKWRITECOMMANDRESULT_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(bulkwritecommandresult);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -86,9 +80,7 @@ static PHP_METHOD(MongoDB_Driver_BulkWriteCommandResult, getModifiedCount)
 /* Returns the number of documents that were deleted */
 static PHP_METHOD(MongoDB_Driver_BulkWriteCommandResult, getDeletedCount)
 {
-	phongo_bulkwritecommandresult_t* intern;
-
-	intern = Z_BULKWRITECOMMANDRESULT_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(bulkwritecommandresult);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -100,9 +92,7 @@ static PHP_METHOD(MongoDB_Driver_BulkWriteCommandResult, getDeletedCount)
 /* Returns the number of documents that were upserted */
 static PHP_METHOD(MongoDB_Driver_BulkWriteCommandResult, getUpsertedCount)
 {
-	phongo_bulkwritecommandresult_t* intern;
-
-	intern = Z_BULKWRITECOMMANDRESULT_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(bulkwritecommandresult);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -113,9 +103,7 @@ static PHP_METHOD(MongoDB_Driver_BulkWriteCommandResult, getUpsertedCount)
 
 static PHP_METHOD(MongoDB_Driver_BulkWriteCommandResult, getInsertResults)
 {
-	phongo_bulkwritecommandresult_t* intern;
-
-	intern = Z_BULKWRITECOMMANDRESULT_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(bulkwritecommandresult);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -128,9 +116,7 @@ static PHP_METHOD(MongoDB_Driver_BulkWriteCommandResult, getInsertResults)
 
 static PHP_METHOD(MongoDB_Driver_BulkWriteCommandResult, getUpdateResults)
 {
-	phongo_bulkwritecommandresult_t* intern;
-
-	intern = Z_BULKWRITECOMMANDRESULT_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(bulkwritecommandresult);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -143,9 +129,7 @@ static PHP_METHOD(MongoDB_Driver_BulkWriteCommandResult, getUpdateResults)
 
 static PHP_METHOD(MongoDB_Driver_BulkWriteCommandResult, getDeleteResults)
 {
-	phongo_bulkwritecommandresult_t* intern;
-
-	intern = Z_BULKWRITECOMMANDRESULT_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(bulkwritecommandresult);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -160,9 +144,7 @@ static PHP_METHOD(MongoDB_Driver_BulkWriteCommandResult, getDeleteResults)
    concern). */
 static PHP_METHOD(MongoDB_Driver_BulkWriteCommandResult, isAcknowledged)
 {
-	phongo_bulkwritecommandresult_t* intern;
-
-	intern = Z_BULKWRITECOMMANDRESULT_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(bulkwritecommandresult);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -174,7 +156,7 @@ static zend_object_handlers phongo_handler_bulkwritecommandresult;
 
 static void phongo_bulkwritecommandresult_free_object(zend_object* object)
 {
-	phongo_bulkwritecommandresult_t* intern = Z_OBJ_BULKWRITECOMMANDRESULT(object);
+	PHONGO_INTERN_FROM_Z_OBJ(bulkwritecommandresult, object);
 
 	zend_object_std_dtor(&intern->std);
 
@@ -185,10 +167,7 @@ static void phongo_bulkwritecommandresult_free_object(zend_object* object)
 
 static zend_object* phongo_bulkwritecommandresult_create_object(zend_class_entry* class_type)
 {
-	phongo_bulkwritecommandresult_t* intern = zend_object_alloc(sizeof(phongo_bulkwritecommandresult_t), class_type);
-
-	zend_object_std_init(&intern->std, class_type);
-	object_properties_init(&intern->std, class_type);
+	PHONGO_INTERN_OBJECT_ALLOC(bulkwritecommandresult, class_type);
 
 	intern->std.handlers = &phongo_handler_bulkwritecommandresult;
 
@@ -197,10 +176,10 @@ static zend_object* phongo_bulkwritecommandresult_create_object(zend_class_entry
 
 static HashTable* phongo_bulkwritecommandresult_get_debug_info(zend_object* object, int* is_temp)
 {
-	phongo_bulkwritecommandresult_t* intern;
-	zval                             retval = ZVAL_STATIC_INIT;
+	PHONGO_INTERN_FROM_Z_OBJ(bulkwritecommandresult, object);
 
-	intern   = Z_OBJ_BULKWRITECOMMANDRESULT(object);
+	zval retval = ZVAL_STATIC_INIT;
+
 	*is_temp = 1;
 	array_init_size(&retval, 12);
 
@@ -259,11 +238,7 @@ static inline bson_t* _bson_copy_or_null(const bson_t* bson)
 
 phongo_bulkwritecommandresult_t* phongo_bulkwritecommandresult_init(zval* return_value, mongoc_bulkwriteresult_t* bw_res)
 {
-	phongo_bulkwritecommandresult_t* intern;
-
-	object_init_ex(return_value, phongo_bulkwritecommandresult_ce);
-
-	intern                  = Z_BULKWRITECOMMANDRESULT_OBJ_P(return_value);
+	PHONGO_INTERN_INIT_EX(bulkwritecommandresult, return_value);
 	intern->is_acknowledged = (bw_res != NULL);
 
 	// Copy mongoc_bulkwriteresult_t fields

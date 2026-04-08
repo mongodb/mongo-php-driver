@@ -54,10 +54,9 @@ static bool phongo_symbol_init_from_hash(phongo_symbol_t* intern, HashTable* pro
 
 HashTable* phongo_symbol_get_properties_hash(zend_object* object, bool is_temp)
 {
-	phongo_symbol_t* intern;
-	HashTable*       props;
+	PHONGO_INTERN_FROM_Z_OBJ(symbol, object);
 
-	intern = Z_OBJ_SYMBOL(object);
+	HashTable* props;
 
 	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_temp, intern, props, 2);
 
@@ -80,40 +79,33 @@ PHONGO_DISABLED_CONSTRUCTOR(MongoDB_BSON_Symbol)
 /* Return the Symbol's symbol string. */
 static PHP_METHOD(MongoDB_BSON_Symbol, __toString)
 {
-	phongo_symbol_t* intern;
+	PHONGO_INTERN_FROM_THIS(symbol);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
-
-	intern = Z_SYMBOL_OBJ_P(getThis());
 
 	RETURN_STRINGL(intern->symbol, intern->symbol_len);
 }
 
 static PHP_METHOD(MongoDB_BSON_Symbol, __set_state)
 {
-	phongo_symbol_t* intern;
-	HashTable*       props;
-	zval*            array;
+	HashTable* props;
+	zval*      array;
 
 	PHONGO_PARSE_PARAMETERS_START(1, 1)
 	Z_PARAM_ARRAY(array)
 	PHONGO_PARSE_PARAMETERS_END();
 
-	object_init_ex(return_value, phongo_symbol_ce);
-
-	intern = Z_SYMBOL_OBJ_P(return_value);
-	props  = Z_ARRVAL_P(array);
+	PHONGO_INTERN_INIT_EX(symbol, return_value);
+	props = Z_ARRVAL_P(array);
 
 	phongo_symbol_init_from_hash(intern, props);
 }
 
 static PHP_METHOD(MongoDB_BSON_Symbol, jsonSerialize)
 {
-	phongo_symbol_t* intern;
+	PHONGO_INTERN_FROM_THIS(symbol);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
-
-	intern = Z_SYMBOL_OBJ_P(getThis());
 
 	array_init_size(return_value, 1);
 	ADD_ASSOC_STRINGL(return_value, "$symbol", intern->symbol, intern->symbol_len);
@@ -142,7 +134,7 @@ static zend_object_handlers phongo_handler_symbol;
 
 static void phongo_symbol_free_object(zend_object* object)
 {
-	phongo_symbol_t* intern = Z_OBJ_SYMBOL(object);
+	PHONGO_INTERN_FROM_Z_OBJ(symbol, object);
 
 	zend_object_std_dtor(&intern->std);
 
@@ -158,10 +150,7 @@ static void phongo_symbol_free_object(zend_object* object)
 
 zend_object* phongo_symbol_create_object(zend_class_entry* class_type)
 {
-	phongo_symbol_t* intern = zend_object_alloc(sizeof(phongo_symbol_t), class_type);
-
-	zend_object_std_init(&intern->std, class_type);
-	object_properties_init(&intern->std, class_type);
+	PHONGO_INTERN_OBJECT_ALLOC(symbol, class_type);
 
 	intern->std.handlers = &phongo_handler_symbol;
 
@@ -170,11 +159,11 @@ zend_object* phongo_symbol_create_object(zend_class_entry* class_type)
 
 static zend_object* phongo_symbol_clone_object(zend_object* object)
 {
-	phongo_symbol_t* intern;
+	PHONGO_INTERN_FROM_Z_OBJ(symbol, object);
+
 	phongo_symbol_t* new_intern;
 	zend_object*     new_object;
 
-	intern     = Z_OBJ_SYMBOL(object);
 	new_object = phongo_symbol_create_object(object->ce);
 
 	new_intern = Z_OBJ_SYMBOL(new_object);
@@ -224,11 +213,7 @@ void phongo_symbol_init_ce(INIT_FUNC_ARGS)
 
 bool phongo_symbol_new(zval* object, const char* symbol, size_t symbol_len)
 {
-	phongo_symbol_t* intern;
-
-	object_init_ex(object, phongo_symbol_ce);
-
-	intern             = Z_SYMBOL_OBJ_P(object);
+	PHONGO_INTERN_INIT_EX(symbol, object);
 	intern->symbol     = estrndup(symbol, symbol_len);
 	intern->symbol_len = symbol_len;
 

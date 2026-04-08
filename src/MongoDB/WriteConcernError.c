@@ -32,9 +32,7 @@ PHONGO_DISABLED_CONSTRUCTOR(MongoDB_Driver_WriteConcernError)
 /* Returns the MongoDB error code */
 static PHP_METHOD(MongoDB_Driver_WriteConcernError, getCode)
 {
-	phongo_writeconcernerror_t* intern;
-
-	intern = Z_WRITECONCERNERROR_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(writeconcernerror);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -44,9 +42,7 @@ static PHP_METHOD(MongoDB_Driver_WriteConcernError, getCode)
 /* Returns additional metadata for the error */
 static PHP_METHOD(MongoDB_Driver_WriteConcernError, getInfo)
 {
-	phongo_writeconcernerror_t* intern;
-
-	intern = Z_WRITECONCERNERROR_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(writeconcernerror);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -58,9 +54,7 @@ static PHP_METHOD(MongoDB_Driver_WriteConcernError, getInfo)
 /* Returns the actual error message from the server */
 static PHP_METHOD(MongoDB_Driver_WriteConcernError, getMessage)
 {
-	phongo_writeconcernerror_t* intern;
-
-	intern = Z_WRITECONCERNERROR_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(writeconcernerror);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -76,7 +70,7 @@ static zend_object_handlers phongo_handler_writeconcernerror;
 
 static void phongo_writeconcernerror_free_object(zend_object* object)
 {
-	phongo_writeconcernerror_t* intern = Z_OBJ_WRITECONCERNERROR(object);
+	PHONGO_INTERN_FROM_Z_OBJ(writeconcernerror, object);
 
 	zend_object_std_dtor(&intern->std);
 
@@ -91,10 +85,7 @@ static void phongo_writeconcernerror_free_object(zend_object* object)
 
 static zend_object* phongo_writeconcernerror_create_object(zend_class_entry* class_type)
 {
-	phongo_writeconcernerror_t* intern = zend_object_alloc(sizeof(phongo_writeconcernerror_t), class_type);
-
-	zend_object_std_init(&intern->std, class_type);
-	object_properties_init(&intern->std, class_type);
+	PHONGO_INTERN_OBJECT_ALLOC(writeconcernerror, class_type);
 
 	intern->std.handlers = &phongo_handler_writeconcernerror;
 
@@ -103,11 +94,11 @@ static zend_object* phongo_writeconcernerror_create_object(zend_class_entry* cla
 
 static HashTable* phongo_writeconcernerror_get_debug_info(zend_object* object, int* is_temp)
 {
-	phongo_writeconcernerror_t* intern;
-	zval                        retval = ZVAL_STATIC_INIT;
+	PHONGO_INTERN_FROM_Z_OBJ(writeconcernerror, object);
+
+	zval retval = ZVAL_STATIC_INIT;
 
 	*is_temp = 1;
-	intern   = Z_OBJ_WRITECONCERNERROR(object);
 
 	array_init_size(&retval, 3);
 	ADD_ASSOC_STRING(&retval, "message", intern->message ? intern->message : "");
@@ -141,12 +132,9 @@ void phongo_writeconcernerror_init_ce(INIT_FUNC_ARGS)
  * mongoc_bulkwriteexception_t (returned by mongoc_bulkwrite_execute). */
 bool phongo_writeconcernerror_init(zval* return_value, const bson_t* bson)
 {
-	bson_iter_t                 iter;
-	phongo_writeconcernerror_t* intern;
+	bson_iter_t iter;
 
-	object_init_ex(return_value, phongo_writeconcernerror_ce);
-
-	intern       = Z_WRITECONCERNERROR_OBJ_P(return_value);
+	PHONGO_INTERN_INIT_EX(writeconcernerror, return_value);
 	intern->code = 0;
 
 	if (bson_iter_init_find(&iter, bson, "code") && BSON_ITER_HOLDS_INT32(&iter)) {

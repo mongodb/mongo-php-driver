@@ -49,11 +49,10 @@ PHONGO_DISABLED_CONSTRUCTOR(MongoDB_Driver_ServerDescription)
 /* Returns the most recent "hello" response */
 static PHP_METHOD(MongoDB_Driver_ServerDescription, getHelloResponse)
 {
-	phongo_serverdescription_t* intern;
-	const bson_t*               helloResponse;
-	phongo_bson_state           state;
+	PHONGO_INTERN_FROM_THIS(serverdescription);
 
-	intern = Z_SERVERDESCRIPTION_OBJ_P(getThis());
+	const bson_t*     helloResponse;
+	phongo_bson_state state;
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -78,9 +77,7 @@ static PHP_METHOD(MongoDB_Driver_ServerDescription, getHelloResponse)
 /* Returns the server's hostname */
 static PHP_METHOD(MongoDB_Driver_ServerDescription, getHost)
 {
-	phongo_serverdescription_t* intern;
-
-	intern = Z_SERVERDESCRIPTION_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(serverdescription);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -90,10 +87,9 @@ static PHP_METHOD(MongoDB_Driver_ServerDescription, getHost)
 /* Returns the server's last update time, in microseconds */
 static PHP_METHOD(MongoDB_Driver_ServerDescription, getLastUpdateTime)
 {
-	phongo_serverdescription_t* intern;
-	int64_t                     last_update_time;
+	PHONGO_INTERN_FROM_THIS(serverdescription);
 
-	intern = Z_SERVERDESCRIPTION_OBJ_P(getThis());
+	int64_t last_update_time;
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -111,9 +107,7 @@ static PHP_METHOD(MongoDB_Driver_ServerDescription, getLastUpdateTime)
 /* Returns the server's port */
 static PHP_METHOD(MongoDB_Driver_ServerDescription, getPort)
 {
-	phongo_serverdescription_t* intern;
-
-	intern = Z_SERVERDESCRIPTION_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(serverdescription);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -123,9 +117,7 @@ static PHP_METHOD(MongoDB_Driver_ServerDescription, getPort)
 /* Returns the server's round trip time, in milliseconds */
 static PHP_METHOD(MongoDB_Driver_ServerDescription, getRoundTripTime)
 {
-	phongo_serverdescription_t* intern;
-
-	intern = Z_SERVERDESCRIPTION_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(serverdescription);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -140,9 +132,7 @@ static PHP_METHOD(MongoDB_Driver_ServerDescription, getRoundTripTime)
 /* Returns the server's node type */
 static PHP_METHOD(MongoDB_Driver_ServerDescription, getType)
 {
-	phongo_serverdescription_t* intern;
-
-	intern = Z_SERVERDESCRIPTION_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(serverdescription);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -154,7 +144,7 @@ static zend_object_handlers phongo_handler_serverdescription;
 
 static void phongo_serverdescription_free_object(zend_object* object)
 {
-	phongo_serverdescription_t* intern = Z_OBJ_SERVERDESCRIPTION(object);
+	PHONGO_INTERN_FROM_Z_OBJ(serverdescription, object);
 
 	zend_object_std_dtor(&intern->std);
 
@@ -170,10 +160,7 @@ static void phongo_serverdescription_free_object(zend_object* object)
 
 static zend_object* phongo_serverdescription_create_object(zend_class_entry* class_type)
 {
-	phongo_serverdescription_t* intern = zend_object_alloc(sizeof(phongo_serverdescription_t), class_type);
-
-	zend_object_std_init(&intern->std, class_type);
-	object_properties_init(&intern->std, class_type);
+	PHONGO_INTERN_OBJECT_ALLOC(serverdescription, class_type);
 
 	intern->std.handlers = &phongo_handler_serverdescription;
 
@@ -182,10 +169,9 @@ static zend_object* phongo_serverdescription_create_object(zend_class_entry* cla
 
 HashTable* phongo_serverdescription_get_properties_hash(zend_object* object, bool is_debug)
 {
-	phongo_serverdescription_t* intern = NULL;
-	HashTable*                  props;
+	PHONGO_INTERN_FROM_Z_OBJ(serverdescription, object);
 
-	intern = Z_OBJ_SERVERDESCRIPTION(object);
+	HashTable* props;
 
 	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_debug, intern, props, 6);
 
@@ -281,11 +267,7 @@ void phongo_serverdescription_init_ce(INIT_FUNC_ARGS)
 
 void phongo_serverdescription_init_ex(zval* return_value, mongoc_server_description_t* server_description, bool copy)
 {
-	phongo_serverdescription_t* intern;
-
-	object_init_ex(return_value, phongo_serverdescription_ce);
-
-	intern                     = Z_SERVERDESCRIPTION_OBJ_P(return_value);
+	PHONGO_INTERN_INIT_EX(serverdescription, return_value);
 	intern->server_description = copy ? mongoc_server_description_new_copy(server_description) : server_description;
 }
 

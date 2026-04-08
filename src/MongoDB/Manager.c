@@ -198,13 +198,12 @@ static bool phongo_manager_select_server(bool for_writes, bool inherit_read_pref
 /* Constructs a new Manager */
 static PHP_METHOD(MongoDB_Driver_Manager, __construct)
 {
-	phongo_manager_t* intern;
-	char*             uri_string     = NULL;
-	size_t            uri_string_len = 0;
-	zval*             options        = NULL;
-	zval*             driverOptions  = NULL;
+	PHONGO_INTERN_FROM_THIS(manager);
 
-	intern = Z_MANAGER_OBJ_P(getThis());
+	char*  uri_string     = NULL;
+	size_t uri_string_len = 0;
+	zval*  options        = NULL;
+	zval*  driverOptions  = NULL;
 
 	/* Separate the options zval, since it may be modified in
 	 * phongo_manager_prep_uri_options(). Also separate driverOptions, since
@@ -235,8 +234,9 @@ static PHP_METHOD(MongoDB_Driver_Manager, __construct)
 /* Registers an event subscriber for this Manager */
 static PHP_METHOD(MongoDB_Driver_Manager, addSubscriber)
 {
-	phongo_manager_t* intern;
-	zval*             subscriber;
+	PHONGO_INTERN_FROM_THIS(manager);
+
+	zval* subscriber;
 
 	PHONGO_PARSE_PARAMETERS_START(1, 1)
 	Z_PARAM_OBJECT_OF_CLASS(subscriber, phongo_subscriber_ce)
@@ -245,8 +245,6 @@ static PHP_METHOD(MongoDB_Driver_Manager, addSubscriber)
 	if (instanceof_function(Z_OBJCE_P(subscriber), phongo_logsubscriber_ce)) {
 		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "LogSubscriber instances cannot be registered with a Manager");
 	}
-
-	intern = Z_MANAGER_OBJ_P(getThis());
 
 	/* Lazily initialize the subscriber HashTable */
 	if (!intern->subscribers) {
@@ -275,14 +273,15 @@ static PHP_METHOD(MongoDB_Driver_Manager, createClientEncryption)
 /* Execute a Command */
 static PHP_METHOD(MongoDB_Driver_Manager, executeCommand)
 {
-	phongo_manager_t* intern;
-	char*             db;
-	size_t            db_len;
-	zval*             command;
-	zval*             options         = NULL;
-	zval*             zreadPreference = NULL;
-	zval*             zsession        = NULL;
-	uint32_t          server_id       = 0;
+	PHONGO_INTERN_FROM_THIS(manager);
+
+	char*    db;
+	size_t   db_len;
+	zval*    command;
+	zval*    options         = NULL;
+	zval*    zreadPreference = NULL;
+	zval*    zsession        = NULL;
+	uint32_t server_id       = 0;
 
 	PHONGO_PARSE_PARAMETERS_START(2, 3)
 	Z_PARAM_STRING(db, db_len)
@@ -290,8 +289,6 @@ static PHP_METHOD(MongoDB_Driver_Manager, executeCommand)
 	Z_PARAM_OPTIONAL
 	Z_PARAM_ZVAL_OR_NULL(options)
 	PHONGO_PARSE_PARAMETERS_END();
-
-	intern = Z_MANAGER_OBJ_P(getThis());
 
 	if (!phongo_parse_session(options, intern->client, NULL, &zsession)) {
 		/* Exception should already have been thrown */
@@ -319,14 +316,15 @@ static PHP_METHOD(MongoDB_Driver_Manager, executeCommand)
 /* Execute a ReadCommand */
 static PHP_METHOD(MongoDB_Driver_Manager, executeReadCommand)
 {
-	phongo_manager_t* intern;
-	char*             db;
-	size_t            db_len;
-	zval*             command;
-	zval*             options         = NULL;
-	zval*             zreadPreference = NULL;
-	uint32_t          server_id       = 0;
-	zval*             zsession        = NULL;
+	PHONGO_INTERN_FROM_THIS(manager);
+
+	char*    db;
+	size_t   db_len;
+	zval*    command;
+	zval*    options         = NULL;
+	zval*    zreadPreference = NULL;
+	uint32_t server_id       = 0;
+	zval*    zsession        = NULL;
 
 	PHONGO_PARSE_PARAMETERS_START(2, 3)
 	Z_PARAM_STRING(db, db_len)
@@ -334,8 +332,6 @@ static PHP_METHOD(MongoDB_Driver_Manager, executeReadCommand)
 	Z_PARAM_OPTIONAL
 	Z_PARAM_ARRAY_OR_NULL(options)
 	PHONGO_PARSE_PARAMETERS_END();
-
-	intern = Z_MANAGER_OBJ_P(getThis());
 
 	if (!phongo_parse_session(options, intern->client, NULL, &zsession)) {
 		/* Exception should already have been thrown */
@@ -363,13 +359,14 @@ static PHP_METHOD(MongoDB_Driver_Manager, executeReadCommand)
 /* Execute a WriteCommand */
 static PHP_METHOD(MongoDB_Driver_Manager, executeWriteCommand)
 {
-	phongo_manager_t* intern;
-	char*             db;
-	size_t            db_len;
-	zval*             command;
-	zval*             options   = NULL;
-	uint32_t          server_id = 0;
-	zval*             zsession  = NULL;
+	PHONGO_INTERN_FROM_THIS(manager);
+
+	char*    db;
+	size_t   db_len;
+	zval*    command;
+	zval*    options   = NULL;
+	uint32_t server_id = 0;
+	zval*    zsession  = NULL;
 
 	PHONGO_PARSE_PARAMETERS_START(2, 3)
 	Z_PARAM_STRING(db, db_len)
@@ -377,8 +374,6 @@ static PHP_METHOD(MongoDB_Driver_Manager, executeWriteCommand)
 	Z_PARAM_OPTIONAL
 	Z_PARAM_ARRAY_OR_NULL(options)
 	PHONGO_PARSE_PARAMETERS_END();
-
-	intern = Z_MANAGER_OBJ_P(getThis());
 
 	if (!phongo_parse_session(options, intern->client, NULL, &zsession)) {
 		/* Exception should already have been thrown */
@@ -401,13 +396,14 @@ static PHP_METHOD(MongoDB_Driver_Manager, executeWriteCommand)
 /* Execute a ReadWriteCommand */
 static PHP_METHOD(MongoDB_Driver_Manager, executeReadWriteCommand)
 {
-	phongo_manager_t* intern;
-	char*             db;
-	size_t            db_len;
-	zval*             command;
-	zval*             options   = NULL;
-	uint32_t          server_id = 0;
-	zval*             zsession  = NULL;
+	PHONGO_INTERN_FROM_THIS(manager);
+
+	char*    db;
+	size_t   db_len;
+	zval*    command;
+	zval*    options   = NULL;
+	uint32_t server_id = 0;
+	zval*    zsession  = NULL;
 
 	PHONGO_PARSE_PARAMETERS_START(2, 3)
 	Z_PARAM_STRING(db, db_len)
@@ -415,8 +411,6 @@ static PHP_METHOD(MongoDB_Driver_Manager, executeReadWriteCommand)
 	Z_PARAM_OPTIONAL
 	Z_PARAM_ARRAY_OR_NULL(options)
 	PHONGO_PARSE_PARAMETERS_END();
-
-	intern = Z_MANAGER_OBJ_P(getThis());
 
 	if (!phongo_parse_session(options, intern->client, NULL, &zsession)) {
 		/* Exception should already have been thrown */
@@ -439,7 +433,8 @@ static PHP_METHOD(MongoDB_Driver_Manager, executeReadWriteCommand)
 /* Execute a Query */
 static PHP_METHOD(MongoDB_Driver_Manager, executeQuery)
 {
-	phongo_manager_t* intern;
+	PHONGO_INTERN_FROM_THIS(manager);
+
 	char* namespace;
 	size_t   namespace_len;
 	zval*    query;
@@ -454,8 +449,6 @@ static PHP_METHOD(MongoDB_Driver_Manager, executeQuery)
 	Z_PARAM_OPTIONAL
 	Z_PARAM_ZVAL_OR_NULL(options)
 	PHONGO_PARSE_PARAMETERS_END();
-
-	intern = Z_MANAGER_OBJ_P(getThis());
 
 	if (!phongo_parse_session(options, intern->client, NULL, &zsession)) {
 		/* Exception should already have been thrown */
@@ -483,7 +476,8 @@ static PHP_METHOD(MongoDB_Driver_Manager, executeQuery)
 /* Executes a BulkWrite (i.e. any number of insert, update, and delete ops) */
 static PHP_METHOD(MongoDB_Driver_Manager, executeBulkWrite)
 {
-	phongo_manager_t* intern;
+	PHONGO_INTERN_FROM_THIS(manager);
+
 	char* namespace;
 	size_t              namespace_len;
 	zval*               zbulk;
@@ -499,8 +493,7 @@ static PHP_METHOD(MongoDB_Driver_Manager, executeBulkWrite)
 	Z_PARAM_ZVAL_OR_NULL(options)
 	PHONGO_PARSE_PARAMETERS_END();
 
-	intern = Z_MANAGER_OBJ_P(getThis());
-	bulk   = Z_BULKWRITE_OBJ_P(zbulk);
+	bulk = Z_BULKWRITE_OBJ_P(zbulk);
 
 	if (!phongo_parse_session(options, intern->client, NULL, &zsession)) {
 		/* Exception should already have been thrown */
@@ -522,7 +515,8 @@ static PHP_METHOD(MongoDB_Driver_Manager, executeBulkWrite)
 /* Executes a BulkWriteCommand (i.e. bulkWrite command for MongoDB 8.0+) */
 static PHP_METHOD(MongoDB_Driver_Manager, executeBulkWriteCommand)
 {
-	phongo_manager_t*          intern;
+	PHONGO_INTERN_FROM_THIS(manager);
+
 	zval*                      zbwc;
 	phongo_bulkwritecommand_t* bwc;
 	zval*                      zoptions  = NULL;
@@ -535,8 +529,7 @@ static PHP_METHOD(MongoDB_Driver_Manager, executeBulkWriteCommand)
 	Z_PARAM_ZVAL_OR_NULL(zoptions)
 	PHONGO_PARSE_PARAMETERS_END();
 
-	intern = Z_MANAGER_OBJ_P(getThis());
-	bwc    = Z_BULKWRITECOMMAND_OBJ_P(zbwc);
+	bwc = Z_BULKWRITECOMMAND_OBJ_P(zbwc);
 
 	if (!phongo_parse_session(zoptions, intern->client, NULL, &zsession)) {
 		/* Exception should already have been thrown */
@@ -558,9 +551,7 @@ static PHP_METHOD(MongoDB_Driver_Manager, executeBulkWriteCommand)
 /* Returns the autoEncryption.encryptedFieldsMap driver option */
 static PHP_METHOD(MongoDB_Driver_Manager, getEncryptedFieldsMap)
 {
-	phongo_manager_t* intern;
-
-	intern = Z_MANAGER_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(manager);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -572,9 +563,7 @@ static PHP_METHOD(MongoDB_Driver_Manager, getEncryptedFieldsMap)
 /* Returns the ReadConcern associated with this Manager */
 static PHP_METHOD(MongoDB_Driver_Manager, getReadConcern)
 {
-	phongo_manager_t* intern;
-
-	intern = Z_MANAGER_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(manager);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -584,9 +573,7 @@ static PHP_METHOD(MongoDB_Driver_Manager, getReadConcern)
 /* Returns the ReadPreference associated with this Manager */
 static PHP_METHOD(MongoDB_Driver_Manager, getReadPreference)
 {
-	phongo_manager_t* intern;
-
-	intern = Z_MANAGER_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(manager);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -596,11 +583,10 @@ static PHP_METHOD(MongoDB_Driver_Manager, getReadPreference)
 /* Returns the Servers associated with this Manager */
 static PHP_METHOD(MongoDB_Driver_Manager, getServers)
 {
-	phongo_manager_t*             intern;
+	PHONGO_INTERN_FROM_THIS(manager);
+
 	mongoc_server_description_t** sds;
 	size_t                        i, n = 0;
-
-	intern = Z_MANAGER_OBJ_P(getThis());
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -620,9 +606,7 @@ static PHP_METHOD(MongoDB_Driver_Manager, getServers)
 /* Returns the WriteConcern associated with this Manager */
 static PHP_METHOD(MongoDB_Driver_Manager, getWriteConcern)
 {
-	phongo_manager_t* intern;
-
-	intern = Z_MANAGER_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(manager);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -632,14 +616,13 @@ static PHP_METHOD(MongoDB_Driver_Manager, getWriteConcern)
 /* Unregisters an event subscriber for this Manager */
 static PHP_METHOD(MongoDB_Driver_Manager, removeSubscriber)
 {
-	phongo_manager_t* intern;
-	zval*             subscriber;
+	PHONGO_INTERN_FROM_THIS(manager);
+
+	zval* subscriber;
 
 	PHONGO_PARSE_PARAMETERS_START(1, 1)
 	Z_PARAM_OBJECT_OF_CLASS(subscriber, phongo_subscriber_ce)
 	PHONGO_PARSE_PARAMETERS_END();
-
-	intern = Z_MANAGER_OBJ_P(getThis());
 
 	/* NOP if subscribers HashTable was never initialized by addSubscriber */
 	if (!intern->subscribers) {
@@ -652,16 +635,15 @@ static PHP_METHOD(MongoDB_Driver_Manager, removeSubscriber)
 /* Selects a Server for the given ReadPreference (default: primary). */
 static PHP_METHOD(MongoDB_Driver_Manager, selectServer)
 {
-	phongo_manager_t* intern;
-	zval*             zreadPreference = NULL;
-	uint32_t          server_id       = 0;
+	PHONGO_INTERN_FROM_THIS(manager);
+
+	zval*    zreadPreference = NULL;
+	uint32_t server_id       = 0;
 
 	PHONGO_PARSE_PARAMETERS_START(0, 1)
 	Z_PARAM_OPTIONAL
 	Z_PARAM_OBJECT_OF_CLASS_OR_NULL(zreadPreference, phongo_readpreference_ce)
 	PHONGO_PARSE_PARAMETERS_END();
-
-	intern = Z_MANAGER_OBJ_P(getThis());
 
 	if (!phongo_manager_select_server(false, false, zreadPreference, NULL, intern->client, &server_id)) {
 		/* Exception should already have been thrown */
@@ -674,14 +656,13 @@ static PHP_METHOD(MongoDB_Driver_Manager, selectServer)
 /* Returns a new client session */
 static PHP_METHOD(MongoDB_Driver_Manager, startSession)
 {
-	phongo_manager_t*         intern;
+	PHONGO_INTERN_FROM_THIS(manager);
+
 	zval*                     options = NULL;
 	mongoc_session_opt_t*     cs_opts = NULL;
 	mongoc_client_session_t*  cs;
 	bson_error_t              error    = { 0 };
 	mongoc_transaction_opt_t* txn_opts = NULL;
-
-	intern = Z_MANAGER_OBJ_P(getThis());
 
 	PHONGO_PARSE_PARAMETERS_START(0, 1)
 	Z_PARAM_OPTIONAL
@@ -761,7 +742,7 @@ static zend_object_handlers phongo_handler_manager;
 
 static void phongo_manager_free_object(zend_object* object)
 {
-	phongo_manager_t* intern = Z_OBJ_MANAGER(object);
+	PHONGO_INTERN_FROM_Z_OBJ(manager, object);
 
 	zend_object_std_dtor(&intern->std);
 
@@ -805,10 +786,7 @@ static void phongo_manager_free_object(zend_object* object)
 
 static zend_object* phongo_manager_create_object(zend_class_entry* class_type)
 {
-	phongo_manager_t* intern = zend_object_alloc(sizeof(phongo_manager_t), class_type);
-
-	zend_object_std_init(&intern->std, class_type);
-	object_properties_init(&intern->std, class_type);
+	PHONGO_INTERN_OBJECT_ALLOC(manager, class_type);
 
 	PHONGO_SET_CREATED_BY_PID(intern);
 

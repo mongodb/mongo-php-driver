@@ -108,11 +108,10 @@ failure:
 /* Constructs a new WriteConcern */
 static PHP_METHOD(MongoDB_Driver_WriteConcern, __construct)
 {
-	phongo_writeconcern_t* intern;
-	zval *                 w, *journal = NULL;
-	zend_long              wtimeout = 0;
+	PHONGO_INTERN_FROM_THIS(writeconcern);
 
-	intern = Z_WRITECONCERN_OBJ_P(getThis());
+	zval *    w, *journal = NULL;
+	zend_long wtimeout = 0;
 
 	PHONGO_PARSE_PARAMETERS_START(1, 3)
 	Z_PARAM_ZVAL(w)
@@ -169,18 +168,15 @@ static PHP_METHOD(MongoDB_Driver_WriteConcern, __construct)
 
 static PHP_METHOD(MongoDB_Driver_WriteConcern, __set_state)
 {
-	phongo_writeconcern_t* intern;
-	HashTable*             props;
-	zval*                  array;
+	HashTable* props;
+	zval*      array;
 
 	PHONGO_PARSE_PARAMETERS_START(1, 1)
 	Z_PARAM_ARRAY(array)
 	PHONGO_PARSE_PARAMETERS_END();
 
-	object_init_ex(return_value, phongo_writeconcern_ce);
-
-	intern = Z_WRITECONCERN_OBJ_P(return_value);
-	props  = Z_ARRVAL_P(array);
+	PHONGO_INTERN_INIT_EX(writeconcern, return_value);
+	props = Z_ARRVAL_P(array);
 
 	phongo_writeconcern_init_from_hash(intern, props);
 }
@@ -188,10 +184,9 @@ static PHP_METHOD(MongoDB_Driver_WriteConcern, __set_state)
 /* Returns the WriteConcern "w" option */
 static PHP_METHOD(MongoDB_Driver_WriteConcern, getW)
 {
-	phongo_writeconcern_t* intern;
-	const char*            wtag;
+	PHONGO_INTERN_FROM_THIS(writeconcern);
 
-	intern = Z_WRITECONCERN_OBJ_P(getThis());
+	const char* wtag;
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -215,10 +210,9 @@ static PHP_METHOD(MongoDB_Driver_WriteConcern, getW)
 /* Returns the WriteConcern "wtimeout" option */
 static PHP_METHOD(MongoDB_Driver_WriteConcern, getWtimeout)
 {
-	phongo_writeconcern_t* intern;
-	int64_t                wtimeout;
+	PHONGO_INTERN_FROM_THIS(writeconcern);
 
-	intern = Z_WRITECONCERN_OBJ_P(getThis());
+	int64_t wtimeout;
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -236,9 +230,7 @@ static PHP_METHOD(MongoDB_Driver_WriteConcern, getWtimeout)
 /* Returns the WriteConcern "journal" option */
 static PHP_METHOD(MongoDB_Driver_WriteConcern, getJournal)
 {
-	phongo_writeconcern_t* intern;
-
-	intern = Z_WRITECONCERN_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(writeconcern);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -253,9 +245,7 @@ static PHP_METHOD(MongoDB_Driver_WriteConcern, getJournal)
    with no write concern URI options). */
 static PHP_METHOD(MongoDB_Driver_WriteConcern, isDefault)
 {
-	phongo_writeconcern_t* intern;
-
-	intern = Z_WRITECONCERN_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(writeconcern);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -264,13 +254,12 @@ static PHP_METHOD(MongoDB_Driver_WriteConcern, isDefault)
 
 static HashTable* phongo_writeconcern_get_properties_hash(zend_object* object, bool is_temp, bool is_bson, bool is_serialize)
 {
-	phongo_writeconcern_t* intern;
-	HashTable*             props;
-	const char*            wtag;
-	int32_t                w;
-	int64_t                wtimeout;
+	PHONGO_INTERN_FROM_Z_OBJ(writeconcern, object);
 
-	intern = Z_OBJ_WRITECONCERN(object);
+	HashTable*  props;
+	const char* wtag;
+	int32_t     w;
+	int64_t     wtimeout;
 
 	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_temp, intern, props, 4);
 
@@ -364,7 +353,7 @@ static zend_object_handlers phongo_handler_writeconcern;
 
 static void phongo_writeconcern_free_object(zend_object* object)
 {
-	phongo_writeconcern_t* intern = Z_OBJ_WRITECONCERN(object);
+	PHONGO_INTERN_FROM_Z_OBJ(writeconcern, object);
 
 	zend_object_std_dtor(&intern->std);
 
@@ -380,10 +369,7 @@ static void phongo_writeconcern_free_object(zend_object* object)
 
 static zend_object* phongo_writeconcern_create_object(zend_class_entry* class_type)
 {
-	phongo_writeconcern_t* intern = zend_object_alloc(sizeof(phongo_writeconcern_t), class_type);
-
-	zend_object_std_init(&intern->std, class_type);
-	object_properties_init(&intern->std, class_type);
+	PHONGO_INTERN_OBJECT_ALLOC(writeconcern, class_type);
 
 	intern->std.handlers = &phongo_handler_writeconcern;
 
@@ -415,18 +401,14 @@ void phongo_writeconcern_init_ce(INIT_FUNC_ARGS)
 
 void phongo_writeconcern_init(zval* return_value, const mongoc_write_concern_t* write_concern)
 {
-	phongo_writeconcern_t* intern;
-
-	object_init_ex(return_value, phongo_writeconcern_ce);
-
-	intern                = Z_WRITECONCERN_OBJ_P(return_value);
+	PHONGO_INTERN_INIT_EX(writeconcern, return_value);
 	intern->write_concern = mongoc_write_concern_copy(write_concern);
 }
 
 const mongoc_write_concern_t* phongo_write_concern_from_zval(zval* zwrite_concern)
 {
 	if (zwrite_concern) {
-		phongo_writeconcern_t* intern = Z_WRITECONCERN_OBJ_P(zwrite_concern);
+		PHONGO_INTERN_FROM_ZVAL(writeconcern, zwrite_concern);
 
 		if (intern) {
 			return intern->write_concern;

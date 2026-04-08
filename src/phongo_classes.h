@@ -33,6 +33,25 @@
  * Helpers assume the presence of a phongo_foo_t struct in phongo_structs.h
  */
 
+#define PHONGO_INTERN_FROM_ZVAL(name, z) phongo_##name##_t* intern = php_##name##_fetch_object(Z_OBJ_P(z))
+#define PHONGO_INTERN_FROM_Z_OBJ(name, obj) phongo_##name##_t* intern = php_##name##_fetch_object((obj))
+#define PHONGO_INTERN_FROM_THIS(name) PHONGO_INTERN_FROM_ZVAL(name, getThis())
+
+#define PHONGO_INTERN_OBJECT_ALLOC(name, class_type)                       \
+	phongo_##name##_t* intern;                                             \
+	do {                                                                   \
+		intern = zend_object_alloc(sizeof(phongo_##name##_t), class_type); \
+		zend_object_std_init(&intern->std, class_type);                    \
+		object_properties_init(&intern->std, class_type);                  \
+	} while (0)
+
+#define PHONGO_INTERN_INIT_EX(name, z)                  \
+	phongo_##name##_t* intern;                          \
+	do {                                                \
+		object_init_ex(z, phongo_##name##_ce);          \
+		intern = php_##name##_fetch_object(Z_OBJ_P(z)); \
+	} while (0)
+
 #define CLASS_FETCH_OBJ_DECL(name)                                                      \
 	static inline phongo_##name##_t* php_##name##_fetch_object(const zend_object* obj)  \
 	{                                                                                   \

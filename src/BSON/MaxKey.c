@@ -63,17 +63,14 @@ static zend_object_handlers phongo_handler_maxkey;
 
 static void phongo_maxkey_free_object(zend_object* object)
 {
-	phongo_maxkey_t* intern = Z_OBJ_MAXKEY(object);
+	PHONGO_INTERN_FROM_Z_OBJ(maxkey, object);
 
 	zend_object_std_dtor(&intern->std);
 }
 
 static zend_object* phongo_maxkey_create_object(zend_class_entry* class_type)
 {
-	phongo_maxkey_t* intern = zend_object_alloc(sizeof(phongo_maxkey_t), class_type);
-
-	zend_object_std_init(&intern->std, class_type);
-	object_properties_init(&intern->std, class_type);
+	PHONGO_INTERN_OBJECT_ALLOC(maxkey, class_type);
 
 	intern->std.handlers = &phongo_handler_maxkey;
 

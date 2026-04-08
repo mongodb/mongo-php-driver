@@ -93,14 +93,13 @@ static bool phongo_serverapi_init_from_hash(phongo_serverapi_t* intern, HashTabl
 /* Constructs a new ServerApi object */
 static PHP_METHOD(MongoDB_Driver_ServerApi, __construct)
 {
-	phongo_serverapi_t* intern;
-	zend_string*        version;
-	zend_bool           strict                  = 0;
-	zend_bool           strict_null             = 1;
-	zend_bool           deprecation_errors      = 0;
-	zend_bool           deprecation_errors_null = 1;
+	PHONGO_INTERN_FROM_THIS(serverapi);
 
-	intern = Z_SERVERAPI_OBJ_P(getThis());
+	zend_string* version;
+	zend_bool    strict                  = 0;
+	zend_bool    strict_null             = 1;
+	zend_bool    deprecation_errors      = 0;
+	zend_bool    deprecation_errors_null = 1;
 
 	PHONGO_PARSE_PARAMETERS_START(1, 3)
 	Z_PARAM_STR(version)
@@ -121,30 +120,26 @@ static PHP_METHOD(MongoDB_Driver_ServerApi, __construct)
 
 static PHP_METHOD(MongoDB_Driver_ServerApi, __set_state)
 {
-	phongo_serverapi_t* intern;
-	HashTable*          props;
-	zval*               array;
+	HashTable* props;
+	zval*      array;
 
 	PHONGO_PARSE_PARAMETERS_START(1, 1)
 	Z_PARAM_ARRAY(array)
 	PHONGO_PARSE_PARAMETERS_END();
 
-	object_init_ex(return_value, phongo_serverapi_ce);
-
-	intern = Z_SERVERAPI_OBJ_P(return_value);
-	props  = Z_ARRVAL_P(array);
+	PHONGO_INTERN_INIT_EX(serverapi, return_value);
+	props = Z_ARRVAL_P(array);
 
 	phongo_serverapi_init_from_hash(intern, props);
 }
 
 static HashTable* phongo_serverapi_get_properties_hash(zend_object* object, bool is_temp, bool include_null)
 {
-	phongo_serverapi_t* intern;
-	HashTable*          props;
-	zval                version, strict, deprecation_errors;
-	bool                is_set;
+	PHONGO_INTERN_FROM_Z_OBJ(serverapi, object);
 
-	intern = Z_OBJ_SERVERAPI(object);
+	HashTable* props;
+	zval       version, strict, deprecation_errors;
+	bool       is_set;
 
 	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_temp, intern, props, 1);
 
@@ -207,7 +202,7 @@ static zend_object_handlers phongo_handler_serverapi;
 
 static void phongo_serverapi_free_object(zend_object* object)
 {
-	phongo_serverapi_t* intern = Z_OBJ_SERVERAPI(object);
+	PHONGO_INTERN_FROM_Z_OBJ(serverapi, object);
 
 	zend_object_std_dtor(&intern->std);
 
@@ -223,10 +218,7 @@ static void phongo_serverapi_free_object(zend_object* object)
 
 static zend_object* phongo_serverapi_create_object(zend_class_entry* class_type)
 {
-	phongo_serverapi_t* intern = zend_object_alloc(sizeof(phongo_serverapi_t), class_type);
-
-	zend_object_std_init(&intern->std, class_type);
-	object_properties_init(&intern->std, class_type);
+	PHONGO_INTERN_OBJECT_ALLOC(serverapi, class_type);
 
 	intern->std.handlers = &phongo_handler_serverapi;
 

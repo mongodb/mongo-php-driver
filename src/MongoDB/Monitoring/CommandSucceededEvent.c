@@ -33,9 +33,7 @@ PHONGO_DISABLED_CONSTRUCTOR(MongoDB_Driver_Monitoring_CommandSucceededEvent)
 
 static PHP_METHOD(MongoDB_Driver_Monitoring_CommandSucceededEvent, getCommandName)
 {
-	phongo_commandsucceededevent_t* intern;
-
-	intern = Z_COMMANDSUCCEEDEDEVENT_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(commandsucceededevent);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -44,9 +42,7 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_CommandSucceededEvent, getCommandNam
 
 static PHP_METHOD(MongoDB_Driver_Monitoring_CommandSucceededEvent, getDatabaseName)
 {
-	phongo_commandsucceededevent_t* intern;
-
-	intern = Z_COMMANDSUCCEEDEDEVENT_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(commandsucceededevent);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -55,9 +51,7 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_CommandSucceededEvent, getDatabaseNa
 
 static PHP_METHOD(MongoDB_Driver_Monitoring_CommandSucceededEvent, getDurationMicros)
 {
-	phongo_commandsucceededevent_t* intern;
-
-	intern = Z_COMMANDSUCCEEDEDEVENT_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(commandsucceededevent);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -66,7 +60,7 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_CommandSucceededEvent, getDurationMi
 
 static PHP_METHOD(MongoDB_Driver_Monitoring_CommandSucceededEvent, getHost)
 {
-	phongo_commandsucceededevent_t* intern = Z_COMMANDSUCCEEDEDEVENT_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(commandsucceededevent);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -75,10 +69,9 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_CommandSucceededEvent, getHost)
 
 static PHP_METHOD(MongoDB_Driver_Monitoring_CommandSucceededEvent, getOperationId)
 {
-	phongo_commandsucceededevent_t* intern;
-	char                            operation_id[24];
+	PHONGO_INTERN_FROM_THIS(commandsucceededevent);
 
-	intern = Z_COMMANDSUCCEEDEDEVENT_OBJ_P(getThis());
+	char operation_id[24];
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -88,7 +81,7 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_CommandSucceededEvent, getOperationI
 
 static PHP_METHOD(MongoDB_Driver_Monitoring_CommandSucceededEvent, getPort)
 {
-	phongo_commandsucceededevent_t* intern = Z_COMMANDSUCCEEDEDEVENT_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(commandsucceededevent);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -97,12 +90,11 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_CommandSucceededEvent, getPort)
 
 static PHP_METHOD(MongoDB_Driver_Monitoring_CommandSucceededEvent, getReply)
 {
-	phongo_commandsucceededevent_t* intern;
-	phongo_bson_state               state;
+	PHONGO_INTERN_FROM_THIS(commandsucceededevent);
+
+	phongo_bson_state state;
 
 	PHONGO_BSON_INIT_STATE(state);
-
-	intern = Z_COMMANDSUCCEEDEDEVENT_OBJ_P(getThis());
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -116,10 +108,9 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_CommandSucceededEvent, getReply)
 
 static PHP_METHOD(MongoDB_Driver_Monitoring_CommandSucceededEvent, getRequestId)
 {
-	phongo_commandsucceededevent_t* intern;
-	char                            request_id[24];
+	PHONGO_INTERN_FROM_THIS(commandsucceededevent);
 
-	intern = Z_COMMANDSUCCEEDEDEVENT_OBJ_P(getThis());
+	char request_id[24];
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -129,7 +120,7 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_CommandSucceededEvent, getRequestId)
 
 static PHP_METHOD(MongoDB_Driver_Monitoring_CommandSucceededEvent, getServiceId)
 {
-	phongo_commandsucceededevent_t* intern = Z_COMMANDSUCCEEDEDEVENT_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(commandsucceededevent);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -142,7 +133,7 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_CommandSucceededEvent, getServiceId)
 
 static PHP_METHOD(MongoDB_Driver_Monitoring_CommandSucceededEvent, getServerConnectionId)
 {
-	phongo_commandsucceededevent_t* intern = Z_COMMANDSUCCEEDEDEVENT_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(commandsucceededevent);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -165,7 +156,7 @@ static zend_object_handlers phongo_handler_commandsucceededevent;
 
 static void phongo_commandsucceededevent_free_object(zend_object* object)
 {
-	phongo_commandsucceededevent_t* intern = Z_OBJ_COMMANDSUCCEEDEDEVENT(object);
+	PHONGO_INTERN_FROM_Z_OBJ(commandsucceededevent, object);
 
 	zend_object_std_dtor(&intern->std);
 
@@ -184,10 +175,7 @@ static void phongo_commandsucceededevent_free_object(zend_object* object)
 
 static zend_object* phongo_commandsucceededevent_create_object(zend_class_entry* class_type)
 {
-	phongo_commandsucceededevent_t* intern = zend_object_alloc(sizeof(phongo_commandsucceededevent_t), class_type);
-
-	zend_object_std_init(&intern->std, class_type);
-	object_properties_init(&intern->std, class_type);
+	PHONGO_INTERN_OBJECT_ALLOC(commandsucceededevent, class_type);
 
 	intern->std.handlers = &phongo_handler_commandsucceededevent;
 
@@ -196,14 +184,14 @@ static zend_object* phongo_commandsucceededevent_create_object(zend_class_entry*
 
 static HashTable* phongo_commandsucceededevent_get_debug_info(zend_object* object, int* is_temp)
 {
-	phongo_commandsucceededevent_t* intern;
-	zval                            retval = ZVAL_STATIC_INIT;
-	char                            operation_id[24], request_id[24];
-	phongo_bson_state               reply_state;
+	PHONGO_INTERN_FROM_Z_OBJ(commandsucceededevent, object);
+
+	zval              retval = ZVAL_STATIC_INIT;
+	char              operation_id[24], request_id[24];
+	phongo_bson_state reply_state;
 
 	PHONGO_BSON_INIT_STATE(reply_state);
 
-	intern   = Z_OBJ_COMMANDSUCCEEDEDEVENT(object);
 	*is_temp = 1;
 	array_init_size(&retval, 9);
 

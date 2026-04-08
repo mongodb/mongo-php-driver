@@ -28,7 +28,7 @@ PHONGO_DISABLED_CONSTRUCTOR(MongoDB_Driver_Monitoring_ServerHeartbeatStartedEven
 /* Returns this event's host */
 static PHP_METHOD(MongoDB_Driver_Monitoring_ServerHeartbeatStartedEvent, getHost)
 {
-	phongo_serverheartbeatstartedevent_t* intern = Z_SERVERHEARTBEATSTARTEDEVENT_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(serverheartbeatstartedevent);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -38,7 +38,7 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_ServerHeartbeatStartedEvent, getHost
 /* Returns this event's port */
 static PHP_METHOD(MongoDB_Driver_Monitoring_ServerHeartbeatStartedEvent, getPort)
 {
-	phongo_serverheartbeatstartedevent_t* intern = Z_SERVERHEARTBEATSTARTEDEVENT_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(serverheartbeatstartedevent);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -48,7 +48,7 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_ServerHeartbeatStartedEvent, getPort
 /* Returns whether this event came from an awaitable hello */
 static PHP_METHOD(MongoDB_Driver_Monitoring_ServerHeartbeatStartedEvent, isAwaited)
 {
-	phongo_serverheartbeatstartedevent_t* intern = Z_SERVERHEARTBEATSTARTEDEVENT_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(serverheartbeatstartedevent);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -60,17 +60,14 @@ static zend_object_handlers phongo_handler_serverheartbeatstartedevent;
 
 static void phongo_serverheartbeatstartedevent_free_object(zend_object* object)
 {
-	phongo_serverheartbeatstartedevent_t* intern = Z_OBJ_SERVERHEARTBEATSTARTEDEVENT(object);
+	PHONGO_INTERN_FROM_Z_OBJ(serverheartbeatstartedevent, object);
 
 	zend_object_std_dtor(&intern->std);
 }
 
 static zend_object* phongo_serverheartbeatstartedevent_create_object(zend_class_entry* class_type)
 {
-	phongo_serverheartbeatstartedevent_t* intern = zend_object_alloc(sizeof(phongo_serverheartbeatstartedevent_t), class_type);
-
-	zend_object_std_init(&intern->std, class_type);
-	object_properties_init(&intern->std, class_type);
+	PHONGO_INTERN_OBJECT_ALLOC(serverheartbeatstartedevent, class_type);
 
 	intern->std.handlers = &phongo_handler_serverheartbeatstartedevent;
 
@@ -79,10 +76,10 @@ static zend_object* phongo_serverheartbeatstartedevent_create_object(zend_class_
 
 static HashTable* phongo_serverheartbeatstartedevent_get_debug_info(zend_object* object, int* is_temp)
 {
-	phongo_serverheartbeatstartedevent_t* intern;
-	zval                                  retval = ZVAL_STATIC_INIT;
+	PHONGO_INTERN_FROM_Z_OBJ(serverheartbeatstartedevent, object);
 
-	intern   = Z_OBJ_SERVERHEARTBEATSTARTEDEVENT(object);
+	zval retval = ZVAL_STATIC_INIT;
+
 	*is_temp = 1;
 	array_init_size(&retval, 4);
 

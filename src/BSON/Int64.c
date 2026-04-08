@@ -64,10 +64,9 @@ static bool phongo_int64_init_from_hash(phongo_int64_t* intern, HashTable* props
 
 HashTable* phongo_int64_get_properties_hash(zend_object* object, bool is_temp)
 {
-	phongo_int64_t* intern;
-	HashTable*      props;
+	PHONGO_INTERN_FROM_Z_OBJ(int64, object);
 
-	intern = Z_OBJ_INT64(object);
+	HashTable* props;
 
 	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_temp, intern, props, 2);
 
@@ -87,10 +86,9 @@ HashTable* phongo_int64_get_properties_hash(zend_object* object, bool is_temp)
 
 static PHP_METHOD(MongoDB_BSON_Int64, __construct)
 {
-	phongo_int64_t* intern;
-	zval*           value;
+	PHONGO_INTERN_FROM_THIS(int64);
 
-	intern = Z_INT64_OBJ_P(getThis());
+	zval* value;
 
 	PHONGO_PARSE_PARAMETERS_START(1, 1)
 	Z_PARAM_ZVAL(value);
@@ -108,40 +106,33 @@ static PHP_METHOD(MongoDB_BSON_Int64, __construct)
 /* Return the Int64's value as a string. */
 static PHP_METHOD(MongoDB_BSON_Int64, __toString)
 {
-	phongo_int64_t* intern;
+	PHONGO_INTERN_FROM_THIS(int64);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
-
-	intern = Z_INT64_OBJ_P(getThis());
 
 	ZVAL_INT64_STRING(return_value, intern->integer);
 }
 
 static PHP_METHOD(MongoDB_BSON_Int64, __set_state)
 {
-	phongo_int64_t* intern;
-	HashTable*      props;
-	zval*           array;
+	HashTable* props;
+	zval*      array;
 
 	PHONGO_PARSE_PARAMETERS_START(1, 1)
 	Z_PARAM_ARRAY(array)
 	PHONGO_PARSE_PARAMETERS_END();
 
-	object_init_ex(return_value, phongo_int64_ce);
-
-	intern = Z_INT64_OBJ_P(return_value);
-	props  = Z_ARRVAL_P(array);
+	PHONGO_INTERN_INIT_EX(int64, return_value);
+	props = Z_ARRVAL_P(array);
 
 	phongo_int64_init_from_hash(intern, props);
 }
 
 static PHP_METHOD(MongoDB_BSON_Int64, jsonSerialize)
 {
-	phongo_int64_t* intern;
+	PHONGO_INTERN_FROM_THIS(int64);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
-
-	intern = Z_INT64_OBJ_P(getThis());
 
 	array_init_size(return_value, 1);
 
@@ -171,7 +162,7 @@ static zend_object_handlers phongo_handler_int64;
 
 static void phongo_int64_free_object(zend_object* object)
 {
-	phongo_int64_t* intern = Z_OBJ_INT64(object);
+	PHONGO_INTERN_FROM_Z_OBJ(int64, object);
 
 	zend_object_std_dtor(&intern->std);
 
@@ -183,10 +174,7 @@ static void phongo_int64_free_object(zend_object* object)
 
 zend_object* phongo_int64_create_object(zend_class_entry* class_type)
 {
-	phongo_int64_t* intern = zend_object_alloc(sizeof(phongo_int64_t), class_type);
-
-	zend_object_std_init(&intern->std, class_type);
-	object_properties_init(&intern->std, class_type);
+	PHONGO_INTERN_OBJECT_ALLOC(int64, class_type);
 
 	intern->std.handlers = &phongo_handler_int64;
 
@@ -195,11 +183,11 @@ zend_object* phongo_int64_create_object(zend_class_entry* class_type)
 
 static zend_object* phongo_int64_clone_object(zend_object* object)
 {
-	phongo_int64_t* intern;
+	PHONGO_INTERN_FROM_Z_OBJ(int64, object);
+
 	phongo_int64_t* new_intern;
 	zend_object*    new_object;
 
-	intern     = Z_OBJ_INT64(object);
 	new_object = phongo_int64_create_object(object->ce);
 
 	new_intern = Z_OBJ_INT64(new_object);
@@ -240,11 +228,10 @@ static int phongo_int64_compare_int64_objects(zval* o1, zval* o2)
 
 static int phongo_int64_compare_with_long_or_float(zval* object, zval* value)
 {
-	phongo_int64_t* intern;
-	int64_t         long_value;
-	double          double_value;
+	PHONGO_INTERN_FROM_ZVAL(int64, object);
 
-	intern = Z_INT64_OBJ_P(object);
+	int64_t long_value;
+	double  double_value;
 
 	assert(phongo_int64_is_long_or_double(value));
 
@@ -292,9 +279,7 @@ static int phongo_int64_compare_objects(zval* o1, zval* o2)
 
 static zend_result phongo_int64_cast_object(zend_object* readobj, zval* retval, int type)
 {
-	phongo_int64_t* intern;
-
-	intern = Z_OBJ_INT64(readobj);
+	PHONGO_INTERN_FROM_Z_OBJ(int64, readobj);
 
 	switch (type) {
 		case IS_DOUBLE:
@@ -572,11 +557,7 @@ void phongo_int64_init_ce(INIT_FUNC_ARGS)
 
 bool phongo_int64_new(zval* object, int64_t integer)
 {
-	phongo_int64_t* intern;
-
-	object_init_ex(object, phongo_int64_ce);
-
-	intern              = Z_INT64_OBJ_P(object);
+	PHONGO_INTERN_INIT_EX(int64, object);
 	intern->integer     = integer;
 	intern->initialized = true;
 

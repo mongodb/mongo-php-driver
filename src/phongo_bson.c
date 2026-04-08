@@ -767,11 +767,7 @@ static bool phongo_bson_visit_document(const bson_iter_t* iter ARG_UNUSED, const
 
 	switch (state.field_type.type) {
 		case PHONGO_TYPEMAP_BSON: {
-			phongo_document_t* intern;
-
-			object_init_ex(&state.zchild, phongo_document_ce);
-
-			intern       = Z_DOCUMENT_OBJ_P(&state.zchild);
+			PHONGO_INTERN_INIT_EX(document, &state.zchild);
 			intern->bson = bson_copy(v_document);
 			break;
 		}
@@ -853,11 +849,7 @@ static bool phongo_bson_visit_array(const bson_iter_t* iter ARG_UNUSED, const ch
 
 	switch (state.field_type.type) {
 		case PHONGO_TYPEMAP_BSON: {
-			phongo_packedarray_t* intern;
-
-			object_init_ex(&state.zchild, phongo_packedarray_ce);
-
-			intern       = Z_PACKEDARRAY_OBJ_P(&state.zchild);
+			PHONGO_INTERN_INIT_EX(packedarray, &state.zchild);
 			intern->bson = bson_copy(v_array);
 			break;
 		}

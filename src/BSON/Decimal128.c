@@ -55,11 +55,10 @@ static bool phongo_decimal128_init_from_hash(phongo_decimal128_t* intern, HashTa
 
 static HashTable* phongo_decimal128_get_properties_hash(zend_object* object, bool is_temp)
 {
-	phongo_decimal128_t* intern;
-	HashTable*           props;
-	char                 outbuf[BSON_DECIMAL128_STRING] = "";
+	PHONGO_INTERN_FROM_Z_OBJ(decimal128, object);
 
-	intern = Z_OBJ_DECIMAL128(object);
+	HashTable* props;
+	char       outbuf[BSON_DECIMAL128_STRING] = "";
 
 	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_temp, intern, props, 1);
 
@@ -82,11 +81,9 @@ static HashTable* phongo_decimal128_get_properties_hash(zend_object* object, boo
 /* Construct a new BSON Decimal128 type */
 static PHP_METHOD(MongoDB_BSON_Decimal128, __construct)
 {
-	phongo_decimal128_t* intern;
-	char*                value;
-	size_t               value_len;
-
-	intern = Z_DECIMAL128_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(decimal128);
+	char*  value;
+	size_t value_len;
 
 	PHONGO_PARSE_PARAMETERS_START(1, 1)
 	Z_PARAM_STRING(value, value_len)
@@ -97,28 +94,23 @@ static PHP_METHOD(MongoDB_BSON_Decimal128, __construct)
 
 static PHP_METHOD(MongoDB_BSON_Decimal128, __set_state)
 {
-	phongo_decimal128_t* intern;
-	HashTable*           props;
-	zval*                array;
+	HashTable* props;
+	zval*      array;
 
 	PHONGO_PARSE_PARAMETERS_START(1, 1)
 	Z_PARAM_ARRAY(array)
 	PHONGO_PARSE_PARAMETERS_END();
 
-	object_init_ex(return_value, phongo_decimal128_ce);
-
-	intern = Z_DECIMAL128_OBJ_P(return_value);
-	props  = Z_ARRVAL_P(array);
+	PHONGO_INTERN_INIT_EX(decimal128, return_value);
+	props = Z_ARRVAL_P(array);
 
 	phongo_decimal128_init_from_hash(intern, props);
 }
 
 static PHP_METHOD(MongoDB_BSON_Decimal128, __toString)
 {
-	phongo_decimal128_t* intern;
-	char                 outbuf[BSON_DECIMAL128_STRING];
-
-	intern = Z_DECIMAL128_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(decimal128);
+	char outbuf[BSON_DECIMAL128_STRING];
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -129,12 +121,10 @@ static PHP_METHOD(MongoDB_BSON_Decimal128, __toString)
 
 static PHP_METHOD(MongoDB_BSON_Decimal128, jsonSerialize)
 {
-	phongo_decimal128_t* intern;
-	char                 outbuf[BSON_DECIMAL128_STRING] = "";
+	PHONGO_INTERN_FROM_THIS(decimal128);
+	char outbuf[BSON_DECIMAL128_STRING] = "";
 
 	PHONGO_PARSE_PARAMETERS_NONE();
-
-	intern = Z_DECIMAL128_OBJ_P(getThis());
 
 	array_init_size(return_value, 1);
 	bson_decimal128_to_string(&intern->decimal, outbuf);
@@ -164,7 +154,7 @@ static zend_object_handlers phongo_handler_decimal128;
 
 static void phongo_decimal128_free_object(zend_object* object)
 {
-	phongo_decimal128_t* intern = Z_OBJ_DECIMAL128(object);
+	PHONGO_INTERN_FROM_Z_OBJ(decimal128, object);
 
 	zend_object_std_dtor(&intern->std);
 
@@ -176,10 +166,7 @@ static void phongo_decimal128_free_object(zend_object* object)
 
 static zend_object* phongo_decimal128_create_object(zend_class_entry* class_type)
 {
-	phongo_decimal128_t* intern = zend_object_alloc(sizeof(phongo_decimal128_t), class_type);
-
-	zend_object_std_init(&intern->std, class_type);
-	object_properties_init(&intern->std, class_type);
+	PHONGO_INTERN_OBJECT_ALLOC(decimal128, class_type);
 
 	intern->std.handlers = &phongo_handler_decimal128;
 
@@ -188,11 +175,11 @@ static zend_object* phongo_decimal128_create_object(zend_class_entry* class_type
 
 static zend_object* phongo_decimal128_clone_object(zend_object* object)
 {
-	phongo_decimal128_t* intern;
+	PHONGO_INTERN_FROM_Z_OBJ(decimal128, object);
+
 	phongo_decimal128_t* new_intern;
 	zend_object*         new_object;
 
-	intern     = Z_OBJ_DECIMAL128(object);
 	new_object = phongo_decimal128_create_object(object->ce);
 
 	new_intern = Z_OBJ_DECIMAL128(new_object);
@@ -231,11 +218,7 @@ void phongo_decimal128_init_ce(INIT_FUNC_ARGS)
 
 bool phongo_decimal128_new(zval* object, const bson_decimal128_t* decimal)
 {
-	phongo_decimal128_t* intern;
-
-	object_init_ex(object, phongo_decimal128_ce);
-
-	intern = Z_DECIMAL128_OBJ_P(object);
+	PHONGO_INTERN_INIT_EX(decimal128, object);
 	memcpy(&intern->decimal, decimal, sizeof(bson_decimal128_t));
 	intern->initialized = true;
 
