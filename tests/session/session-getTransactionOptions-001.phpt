@@ -19,6 +19,12 @@ $options = [
     ['readConcern' => new \MongoDB\Driver\ReadConcern('majority')],
     ['readPreference' => new \MongoDB\Driver\ReadPreference('primaryPreferred')],
     ['writeConcern' => new \MongoDB\Driver\WriteConcern('majority')],
+    [
+        'maxCommitTimeMS' => 5000,
+        'readConcern' => new \MongoDB\Driver\ReadConcern(\MongoDB\Driver\ReadConcern::MAJORITY),
+        'readPreference' => new \MongoDB\Driver\ReadPreference(\MongoDB\Driver\ReadPreference::PRIMARY),
+        'writeConcern' => new \MongoDB\Driver\WriteConcern(\MongoDB\Driver\WriteConcern::MAJORITY),
+    ],
 ];
 
 foreach ($options as $test) {
@@ -71,6 +77,25 @@ array(1) {
   }
 }
 array(2) {
+  ["readPreference"]=>
+  object(MongoDB\Driver\ReadPreference)#%d (1) {
+    ["mode"]=>
+    string(7) "primary"
+  }
+  ["writeConcern"]=>
+  object(MongoDB\Driver\WriteConcern)#%d (1) {
+    ["w"]=>
+    string(8) "majority"
+  }
+}
+array(4) {
+  ["maxCommitTimeMS"]=>
+  int(5000)
+  ["readConcern"]=>
+  object(MongoDB\Driver\ReadConcern)#%d (1) {
+    ["level"]=>
+    string(8) "majority"
+  }
   ["readPreference"]=>
   object(MongoDB\Driver\ReadPreference)#%d (1) {
     ["mode"]=>
