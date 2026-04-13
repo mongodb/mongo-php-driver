@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: df810b4d4876637e555a0e129e940acc5177b892 */
+ * Stub hash: a62a947a0884e0f9709e923cd22d203b61781c87 */
 
 ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_MongoDB_BSON_MaxKey___set_state, 0, 1, MongoDB\\BSON\\MaxKey, 0)
 	ZEND_ARG_TYPE_INFO(0, properties, IS_ARRAY, 0)
@@ -15,12 +15,10 @@ ZEND_END_ARG_INFO()
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_BSON_MaxKey_jsonSerialize, 0, 0, IS_MIXED, 0)
 ZEND_END_ARG_INFO()
 
-
 static ZEND_METHOD(MongoDB_BSON_MaxKey, __set_state);
 static ZEND_METHOD(MongoDB_BSON_MaxKey, __unserialize);
 static ZEND_METHOD(MongoDB_BSON_MaxKey, __serialize);
 static ZEND_METHOD(MongoDB_BSON_MaxKey, jsonSerialize);
-
 
 static const zend_function_entry class_MongoDB_BSON_MaxKey_methods[] = {
 	ZEND_ME(MongoDB_BSON_MaxKey, __set_state, arginfo_class_MongoDB_BSON_MaxKey___set_state, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC|ZEND_ACC_FINAL)
@@ -35,8 +33,12 @@ static zend_class_entry *register_class_MongoDB_BSON_MaxKey(zend_class_entry *cl
 	zend_class_entry ce, *class_entry;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\BSON", "MaxKey", class_MongoDB_BSON_MaxKey_methods);
+#if (PHP_VERSION_ID >= 80400)
+	class_entry = zend_register_internal_class_with_flags(&ce, NULL, ZEND_ACC_FINAL);
+#else
 	class_entry = zend_register_internal_class_ex(&ce, NULL);
 	class_entry->ce_flags |= ZEND_ACC_FINAL;
+#endif
 	zend_class_implements(class_entry, 3, class_entry_MongoDB_BSON_MaxKeyInterface, class_entry_JsonSerializable, class_entry_MongoDB_BSON_Type);
 
 	return class_entry;

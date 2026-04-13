@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 4f9631736bdc048203268e88e70cc395b383aee4 */
+ * Stub hash: a3f2e651402ca9aa948ec9462d793db58dc964da */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_BSON_Undefined___construct, 0, 0, 0)
 ZEND_END_ARG_INFO()
@@ -21,14 +21,12 @@ ZEND_END_ARG_INFO()
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_BSON_Undefined_jsonSerialize, 0, 0, IS_MIXED, 0)
 ZEND_END_ARG_INFO()
 
-
 static ZEND_METHOD(MongoDB_BSON_Undefined, __construct);
 static ZEND_METHOD(MongoDB_BSON_Undefined, __toString);
 static ZEND_METHOD(MongoDB_BSON_Undefined, __set_state);
 static ZEND_METHOD(MongoDB_BSON_Undefined, __unserialize);
 static ZEND_METHOD(MongoDB_BSON_Undefined, __serialize);
 static ZEND_METHOD(MongoDB_BSON_Undefined, jsonSerialize);
-
 
 static const zend_function_entry class_MongoDB_BSON_Undefined_methods[] = {
 	ZEND_ME(MongoDB_BSON_Undefined, __construct, arginfo_class_MongoDB_BSON_Undefined___construct, ZEND_ACC_PRIVATE|ZEND_ACC_FINAL)
@@ -45,8 +43,12 @@ static zend_class_entry *register_class_MongoDB_BSON_Undefined(zend_class_entry 
 	zend_class_entry ce, *class_entry;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\BSON", "Undefined", class_MongoDB_BSON_Undefined_methods);
+#if (PHP_VERSION_ID >= 80400)
+	class_entry = zend_register_internal_class_with_flags(&ce, NULL, ZEND_ACC_FINAL);
+#else
 	class_entry = zend_register_internal_class_ex(&ce, NULL);
 	class_entry->ce_flags |= ZEND_ACC_FINAL;
+#endif
 	zend_class_implements(class_entry, 3, class_entry_JsonSerializable, class_entry_MongoDB_BSON_Type, class_entry_Stringable);
 
 	return class_entry;

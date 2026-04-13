@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 3c433c48b47c68051a55617ddbb9ed0f50c21484 */
+ * Stub hash: 897b6b28554999a55d29f4fa299a210c608b400e */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_BSON_Binary___construct, 0, 0, 1)
 	ZEND_ARG_TYPE_INFO(0, data, IS_STRING, 0)
@@ -38,7 +38,6 @@ ZEND_END_ARG_INFO()
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_BSON_Binary_jsonSerialize, 0, 0, IS_MIXED, 0)
 ZEND_END_ARG_INFO()
 
-
 static ZEND_METHOD(MongoDB_BSON_Binary, __construct);
 static ZEND_METHOD(MongoDB_BSON_Binary, fromVector);
 static ZEND_METHOD(MongoDB_BSON_Binary, getData);
@@ -50,7 +49,6 @@ static ZEND_METHOD(MongoDB_BSON_Binary, __toString);
 static ZEND_METHOD(MongoDB_BSON_Binary, __unserialize);
 static ZEND_METHOD(MongoDB_BSON_Binary, __serialize);
 static ZEND_METHOD(MongoDB_BSON_Binary, jsonSerialize);
-
 
 static const zend_function_entry class_MongoDB_BSON_Binary_methods[] = {
 	ZEND_ME(MongoDB_BSON_Binary, __construct, arginfo_class_MongoDB_BSON_Binary___construct, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
@@ -72,8 +70,12 @@ static zend_class_entry *register_class_MongoDB_BSON_Binary(zend_class_entry *cl
 	zend_class_entry ce, *class_entry;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\BSON", "Binary", class_MongoDB_BSON_Binary_methods);
+#if (PHP_VERSION_ID >= 80400)
+	class_entry = zend_register_internal_class_with_flags(&ce, NULL, ZEND_ACC_FINAL);
+#else
 	class_entry = zend_register_internal_class_ex(&ce, NULL);
 	class_entry->ce_flags |= ZEND_ACC_FINAL;
+#endif
 	zend_class_implements(class_entry, 4, class_entry_MongoDB_BSON_BinaryInterface, class_entry_JsonSerializable, class_entry_MongoDB_BSON_Type, class_entry_Stringable);
 
 	zval const_TYPE_GENERIC_value;
