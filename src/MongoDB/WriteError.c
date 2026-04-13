@@ -99,26 +99,17 @@ static zend_object* phongo_writeerror_create_object(zend_class_entry* class_type
 	return &intern->std;
 }
 
-static HashTable* phongo_writeerror_get_debug_info(zend_object* object, int* is_temp)
+static void phongo_writeerror_update_properties(phongo_writeerror_t* intern)
 {
-	PHONGO_INTERN_FROM_Z_OBJ(writeerror, object);
+	zend_update_property_string(phongo_writeerror_ce, &intern->std, ZEND_STRL("message"), intern->message ? intern->message : "");
+	zend_update_property_long(phongo_writeerror_ce, &intern->std, ZEND_STRL("code"), intern->code);
+	zend_update_property_long(phongo_writeerror_ce, &intern->std, ZEND_STRL("index"), intern->index);
 
-	zval retval = ZVAL_STATIC_INIT;
-
-	*is_temp = 1;
-
-	array_init_size(&retval, 3);
-	ADD_ASSOC_STRING(&retval, "message", intern->message);
-	ADD_ASSOC_LONG_EX(&retval, "code", intern->code);
-	ADD_ASSOC_LONG_EX(&retval, "index", intern->index);
 	if (!Z_ISUNDEF(intern->info)) {
-		Z_ADDREF(intern->info);
-		ADD_ASSOC_ZVAL_EX(&retval, "info", &intern->info);
+		zend_update_property(phongo_writeerror_ce, &intern->std, ZEND_STRL("info"), &intern->info);
 	} else {
-		ADD_ASSOC_NULL_EX(&retval, "info");
+		zend_update_property_null(phongo_writeerror_ce, &intern->std, ZEND_STRL("info"));
 	}
-
-	return Z_ARRVAL(retval);
 }
 
 void phongo_writeerror_init_ce(INIT_FUNC_ARGS)
@@ -127,9 +118,8 @@ void phongo_writeerror_init_ce(INIT_FUNC_ARGS)
 	phongo_writeerror_ce->create_object = phongo_writeerror_create_object;
 
 	memcpy(&phongo_handler_writeerror, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
-	phongo_handler_writeerror.get_debug_info = phongo_writeerror_get_debug_info;
-	phongo_handler_writeerror.free_obj       = phongo_writeerror_free_object;
-	phongo_handler_writeerror.offset         = XtOffsetOf(phongo_writeerror_t, std);
+	phongo_handler_writeerror.free_obj = phongo_writeerror_free_object;
+	phongo_handler_writeerror.offset   = XtOffsetOf(phongo_writeerror_t, std);
 }
 
 bool phongo_writeerror_init(zval* return_value, const bson_t* bson)
@@ -187,6 +177,8 @@ bool phongo_writeerror_init_ex(zval* return_value, const bson_t* bson, int32_t i
 	if (!intern->index && bson_iter_init_find(&iter, bson, "index") && BSON_ITER_HOLDS_INT32(&iter)) {
 		intern->index = bson_iter_int32(&iter);
 	}
+
+	phongo_writeerror_update_properties(intern);
 
 	return true;
 }

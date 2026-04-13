@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: d681e2e9936f0846fe8ee7fa6eb25bb218d85902 */
+ * Stub hash: 3433024518babbd96607749cfd0380ddb21cc5ce */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_Driver_Monitoring_ServerChangedEvent___construct, 0, 0, 0)
 ZEND_END_ARG_INFO()
@@ -44,6 +44,39 @@ static zend_class_entry *register_class_MongoDB_Driver_Monitoring_ServerChangedE
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver\\Monitoring", "ServerChangedEvent", class_MongoDB_Driver_Monitoring_ServerChangedEvent_methods);
 	class_entry = zend_register_internal_class_ex(&ce, NULL);
 	class_entry->ce_flags |= ZEND_ACC_FINAL|ZEND_ACC_NOT_SERIALIZABLE;
+
+	zval property_host_default_value;
+	ZVAL_UNDEF(&property_host_default_value);
+	zend_string *property_host_name = zend_string_init("host", sizeof("host") - 1, 1);
+	zend_declare_typed_property(class_entry, property_host_name, &property_host_default_value, ZEND_ACC_PUBLIC|ZEND_ACC_READONLY, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_STRING));
+	zend_string_release(property_host_name);
+
+	zval property_port_default_value;
+	ZVAL_UNDEF(&property_port_default_value);
+	zend_string *property_port_name = zend_string_init("port", sizeof("port") - 1, 1);
+	zend_declare_typed_property(class_entry, property_port_name, &property_port_default_value, ZEND_ACC_PUBLIC|ZEND_ACC_READONLY, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(property_port_name);
+
+	zend_string *property_topologyId_class_MongoDB_BSON_ObjectId = zend_string_init("MongoDB\\BSON\\ObjectId", sizeof("MongoDB\\BSON\\ObjectId")-1, 1);
+	zval property_topologyId_default_value;
+	ZVAL_UNDEF(&property_topologyId_default_value);
+	zend_string *property_topologyId_name = zend_string_init("topologyId", sizeof("topologyId") - 1, 1);
+	zend_declare_typed_property(class_entry, property_topologyId_name, &property_topologyId_default_value, ZEND_ACC_PUBLIC|ZEND_ACC_READONLY, NULL, (zend_type) ZEND_TYPE_INIT_CLASS(property_topologyId_class_MongoDB_BSON_ObjectId, 0, 0));
+	zend_string_release(property_topologyId_name);
+
+	zend_string *property_newDescription_class_MongoDB_Driver_ServerDescription = zend_string_init("MongoDB\\Driver\\ServerDescription", sizeof("MongoDB\\Driver\\ServerDescription")-1, 1);
+	zval property_newDescription_default_value;
+	ZVAL_UNDEF(&property_newDescription_default_value);
+	zend_string *property_newDescription_name = zend_string_init("newDescription", sizeof("newDescription") - 1, 1);
+	zend_declare_typed_property(class_entry, property_newDescription_name, &property_newDescription_default_value, ZEND_ACC_PUBLIC|ZEND_ACC_READONLY, NULL, (zend_type) ZEND_TYPE_INIT_CLASS(property_newDescription_class_MongoDB_Driver_ServerDescription, 0, 0));
+	zend_string_release(property_newDescription_name);
+
+	zend_string *property_previousDescription_class_MongoDB_Driver_ServerDescription = zend_string_init("MongoDB\\Driver\\ServerDescription", sizeof("MongoDB\\Driver\\ServerDescription")-1, 1);
+	zval property_previousDescription_default_value;
+	ZVAL_UNDEF(&property_previousDescription_default_value);
+	zend_string *property_previousDescription_name = zend_string_init("previousDescription", sizeof("previousDescription") - 1, 1);
+	zend_declare_typed_property(class_entry, property_previousDescription_name, &property_previousDescription_default_value, ZEND_ACC_PUBLIC|ZEND_ACC_READONLY, NULL, (zend_type) ZEND_TYPE_INIT_CLASS(property_previousDescription_class_MongoDB_Driver_ServerDescription, 0, 0));
+	zend_string_release(property_previousDescription_name);
 
 	return class_entry;
 }

@@ -16,6 +16,7 @@ $tests = [
 foreach ($tests as $test) {
     $rp = new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::SECONDARY, null, ['maxStalenessSeconds' => $test]);
     var_dump($rp->getMaxStalenessSeconds());
+    var_dump($rp->maxStalenessSeconds);
 }
 
 ?>
@@ -23,8 +24,13 @@ foreach ($tests as $test) {
 <?php exit(0); ?>
 --EXPECT--
 int(-1)
+int(-1)
+int(90)
+int(90)
 int(90)
 int(90)
 int(1000)
+int(1000)
+int(2147483647)
 int(2147483647)
 ===DONE===

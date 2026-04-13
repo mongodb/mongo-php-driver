@@ -10,6 +10,10 @@ namespace MongoDB\Driver\Monitoring;
 /** @not-serializable */
 final class ServerOpeningEvent
 {
+    public readonly string $host;
+    public readonly int $port;
+    public readonly \MongoDB\BSON\ObjectId $topologyId;
+
     final private function __construct() {}
 
     final public function getPort(): int {}

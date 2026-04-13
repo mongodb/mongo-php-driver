@@ -20,37 +20,55 @@ var_dump(new MongoDB\Driver\WriteConcern("string", 6000, null));
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-object(MongoDB\Driver\WriteConcern)#%d (%d) {
+object(MongoDB\Driver\WriteConcern)#%d (3) {
   ["w"]=>
   string(8) "majority"
+  ["j"]=>
+  NULL
+  ["wtimeout"]=>
+  int(0)
 }
-object(MongoDB\Driver\WriteConcern)#%d (%d) {
+object(MongoDB\Driver\WriteConcern)#%d (3) {
   ["w"]=>
   string(8) "majority"
+  ["j"]=>
+  NULL
   ["wtimeout"]=>
   int(1000)
 }
-object(MongoDB\Driver\WriteConcern)#%d (%d) {
+object(MongoDB\Driver\WriteConcern)#%d (3) {
   ["w"]=>
   int(2)
+  ["j"]=>
+  NULL
+  ["wtimeout"]=>
+  int(0)
 }
-object(MongoDB\Driver\WriteConcern)#%d (%d) {
+object(MongoDB\Driver\WriteConcern)#%d (3) {
   ["w"]=>
   int(2)
+  ["j"]=>
+  NULL
   ["wtimeout"]=>
   int(2000)
 }
-object(MongoDB\Driver\WriteConcern)#%d (%d) {
+object(MongoDB\Driver\WriteConcern)#%d (3) {
   ["w"]=>
   string(7) "tagname"
+  ["j"]=>
+  NULL
+  ["wtimeout"]=>
+  int(0)
 }
-object(MongoDB\Driver\WriteConcern)#%d (%d) {
+object(MongoDB\Driver\WriteConcern)#%d (3) {
   ["w"]=>
   string(6) "string"
+  ["j"]=>
+  NULL
   ["wtimeout"]=>
   int(3000)
 }
-object(MongoDB\Driver\WriteConcern)#%d (%d) {
+object(MongoDB\Driver\WriteConcern)#%d (3) {
   ["w"]=>
   string(6) "string"
   ["j"]=>
@@ -58,7 +76,7 @@ object(MongoDB\Driver\WriteConcern)#%d (%d) {
   ["wtimeout"]=>
   int(4000)
 }
-object(MongoDB\Driver\WriteConcern)#%d (%d) {
+object(MongoDB\Driver\WriteConcern)#%d (3) {
   ["w"]=>
   string(6) "string"
   ["j"]=>
@@ -66,9 +84,11 @@ object(MongoDB\Driver\WriteConcern)#%d (%d) {
   ["wtimeout"]=>
   int(5000)
 }
-object(MongoDB\Driver\WriteConcern)#%d (%d) {
+object(MongoDB\Driver\WriteConcern)#%d (3) {
   ["w"]=>
   string(6) "string"
+  ["j"]=>
+  NULL
   ["wtimeout"]=>
   int(6000)
 }

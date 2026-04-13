@@ -27,15 +27,25 @@ class MySubscriber implements MongoDB\Driver\Monitoring\CommandSubscriber
     public function commandFailed(MongoDB\Driver\Monitoring\CommandFailedEvent $event): void
     {
         var_dump($event->getCommandName());
+        var_dump($event->commandName);
         var_dump($event->getDatabaseName());
+        var_dump($event->databaseName);
         var_dump($event->getDurationMicros());
+        var_dump($event->durationMicros);
         echo "getDurationMicros() returns > 0: ", $event->getDurationMicros() > 0 ? 'yes' : 'no', "\n";
+        echo "durationMicros returns > 0: ", $event->durationMicros > 0 ? 'yes' : 'no', "\n";
         var_dump($event->getError() instanceof MongoDB\Driver\Exception\Exception);
+        var_dump($event->error instanceof MongoDB\Driver\Exception\Exception);
         var_dump($event->getHost());
+        var_dump($event->host);
         var_dump($event->getOperationId());
+        var_dump($event->operationId);
         var_dump($event->getPort());
+        var_dump($event->port);
         var_dump($event->getReply());
+        var_dump($event->reply);
         var_dump($event->getRequestId());
+        var_dump($event->requestId);
 
         /* Note: getServerConnectionId() and getServiceId() have more stringent
          * requirements and are tested separately. */
@@ -55,16 +65,30 @@ try {
 }
 
 ?>
+===DONE===
 --EXPECTF--
 string(18) "unsupportedCommand"
+string(18) "unsupportedCommand"
+string(5) "admin"
 string(5) "admin"
 int(%d)
+int(%d)
 getDurationMicros() returns > 0: yes
+durationMicros returns > 0: yes
+bool(true)
 bool(true)
 string(%d) "%s"
+string(%d) "%s"
 string(%d) "%d"
+string(%d) "%d"
+int(%d)
 int(%d)
 object(stdClass)#%d (%d) {
   %A
 }
+object(stdClass)#%d (%d) {
+  %A
+}
 string(%d) "%d"
+string(%d) "%d"
+===DONE===

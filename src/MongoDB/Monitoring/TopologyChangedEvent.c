@@ -60,6 +60,24 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_TopologyChangedEvent, getTopologyId)
 	phongo_objectid_new(return_value, &intern->topology_id);
 }
 
+static void phongo_topologychangedevent_update_properties(phongo_topologychangedevent_t* intern)
+{
+	zval topology_id, new_td, old_td;
+
+	if (phongo_objectid_new(&topology_id, &intern->topology_id)) {
+		zend_update_property(phongo_topologychangedevent_ce, &intern->std, ZEND_STRL("topologyId"), &topology_id);
+		zval_ptr_dtor(&topology_id);
+	}
+
+	phongo_topologydescription_init(&new_td, intern->new_topology_description);
+	zend_update_property(phongo_topologychangedevent_ce, &intern->std, ZEND_STRL("newDescription"), &new_td);
+	zval_ptr_dtor(&new_td);
+
+	phongo_topologydescription_init(&old_td, intern->old_topology_description);
+	zend_update_property(phongo_topologychangedevent_ce, &intern->std, ZEND_STRL("previousDescription"), &old_td);
+	zval_ptr_dtor(&old_td);
+}
+
 /* MongoDB\Driver\Monitoring\TopologyChangedEvent object handlers */
 static zend_object_handlers phongo_handler_topologychangedevent;
 
@@ -87,49 +105,23 @@ static zend_object* phongo_topologychangedevent_create_object(zend_class_entry* 
 	return &intern->std;
 }
 
-static HashTable* phongo_topologychangedevent_get_debug_info(zend_object* object, int* is_temp)
-{
-	PHONGO_INTERN_FROM_Z_OBJ(topologychangedevent, object);
-
-	zval retval = ZVAL_STATIC_INIT;
-
-	*is_temp = 1;
-	array_init_size(&retval, 3);
-
-	{
-		zval topology_id;
-
-		if (!phongo_objectid_new(&topology_id, &intern->topology_id)) {
-			/* Exception should already have been thrown */
-			goto done;
-		}
-
-		ADD_ASSOC_ZVAL_EX(&retval, "topologyId", &topology_id);
-	}
-
-	{
-		zval new_td;
-		phongo_topologydescription_init(&new_td, intern->new_topology_description);
-		ADD_ASSOC_ZVAL_EX(&retval, "newDescription", &new_td);
-	}
-
-	{
-		zval old_td;
-		phongo_topologydescription_init(&old_td, intern->old_topology_description);
-		ADD_ASSOC_ZVAL_EX(&retval, "oldDescription", &old_td);
-	}
-
-done:
-	return Z_ARRVAL(retval);
-}
-
 void phongo_topologychangedevent_init_ce(INIT_FUNC_ARGS)
 {
 	phongo_topologychangedevent_ce                = register_class_MongoDB_Driver_Monitoring_TopologyChangedEvent();
 	phongo_topologychangedevent_ce->create_object = phongo_topologychangedevent_create_object;
 
 	memcpy(&phongo_handler_topologychangedevent, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
-	phongo_handler_topologychangedevent.get_debug_info = phongo_topologychangedevent_get_debug_info;
-	phongo_handler_topologychangedevent.free_obj       = phongo_topologychangedevent_free_object;
-	phongo_handler_topologychangedevent.offset         = XtOffsetOf(phongo_topologychangedevent_t, std);
+	phongo_handler_topologychangedevent.free_obj = phongo_topologychangedevent_free_object;
+	phongo_handler_topologychangedevent.offset   = XtOffsetOf(phongo_topologychangedevent_t, std);
+}
+
+void phongo_topologychangedevent_init(zval* return_value, const mongoc_apm_topology_changed_t* event)
+{
+	PHONGO_INTERN_INIT_EX(topologychangedevent, return_value);
+
+	mongoc_apm_topology_changed_get_topology_id(event, &intern->topology_id);
+	intern->new_topology_description = mongoc_topology_description_new_copy(mongoc_apm_topology_changed_get_new_description(event));
+	intern->old_topology_description = mongoc_topology_description_new_copy(mongoc_apm_topology_changed_get_previous_description(event));
+
+	phongo_topologychangedevent_update_properties(intern);
 }

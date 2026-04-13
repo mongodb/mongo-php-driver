@@ -121,13 +121,11 @@ typedef struct {
 
 typedef struct {
 	mongoc_read_concern_t* read_concern;
-	HashTable*             properties;
 	zend_object            std;
 } phongo_readconcern_t;
 
 typedef struct {
 	mongoc_read_prefs_t* read_preference;
-	HashTable*           properties;
 	zend_object          std;
 } phongo_readpreference_t;
 
@@ -164,7 +162,6 @@ typedef struct {
 } phongo_topologydescription_t;
 
 typedef struct {
-	HashTable*              properties;
 	mongoc_write_concern_t* write_concern;
 	zend_object             std;
 } phongo_writeconcern_t;

@@ -10,6 +10,17 @@ namespace MongoDB\Driver\Monitoring;
 /** @not-serializable */
 final class CommandSucceededEvent
 {
+    public readonly string $host;
+    public readonly int $port;
+    public readonly string $commandName;
+    public readonly string $databaseName;
+    public readonly int $durationMicros;
+    public readonly object $reply;
+    public readonly string $operationId;
+    public readonly string $requestId;
+    public readonly ?\MongoDB\BSON\ObjectId $serviceId;
+    public readonly ?int $serverConnectionId;
+
     final private function __construct() {}
 
     final public function getCommandName(): string {}

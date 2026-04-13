@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 05a48b4966fb49c82a6ef48b360a93fdc2919f77 */
+ * Stub hash: a2c6e5876d344618d543ff0e4c76794d9f82624c */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_Driver_Monitoring_ServerClosedEvent___construct, 0, 0, 0)
 ZEND_END_ARG_INFO()
@@ -35,6 +35,25 @@ static zend_class_entry *register_class_MongoDB_Driver_Monitoring_ServerClosedEv
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver\\Monitoring", "ServerClosedEvent", class_MongoDB_Driver_Monitoring_ServerClosedEvent_methods);
 	class_entry = zend_register_internal_class_ex(&ce, NULL);
 	class_entry->ce_flags |= ZEND_ACC_FINAL|ZEND_ACC_NOT_SERIALIZABLE;
+
+	zval property_host_default_value;
+	ZVAL_UNDEF(&property_host_default_value);
+	zend_string *property_host_name = zend_string_init("host", sizeof("host") - 1, 1);
+	zend_declare_typed_property(class_entry, property_host_name, &property_host_default_value, ZEND_ACC_PUBLIC|ZEND_ACC_READONLY, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_STRING));
+	zend_string_release(property_host_name);
+
+	zval property_port_default_value;
+	ZVAL_UNDEF(&property_port_default_value);
+	zend_string *property_port_name = zend_string_init("port", sizeof("port") - 1, 1);
+	zend_declare_typed_property(class_entry, property_port_name, &property_port_default_value, ZEND_ACC_PUBLIC|ZEND_ACC_READONLY, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(property_port_name);
+
+	zend_string *property_topologyId_class_MongoDB_BSON_ObjectId = zend_string_init("MongoDB\\BSON\\ObjectId", sizeof("MongoDB\\BSON\\ObjectId")-1, 1);
+	zval property_topologyId_default_value;
+	ZVAL_UNDEF(&property_topologyId_default_value);
+	zend_string *property_topologyId_name = zend_string_init("topologyId", sizeof("topologyId") - 1, 1);
+	zend_declare_typed_property(class_entry, property_topologyId_name, &property_topologyId_default_value, ZEND_ACC_PUBLIC|ZEND_ACC_READONLY, NULL, (zend_type) ZEND_TYPE_INIT_CLASS(property_topologyId_class_MongoDB_BSON_ObjectId, 0, 0));
+	zend_string_release(property_topologyId_name);
 
 	return class_entry;
 }

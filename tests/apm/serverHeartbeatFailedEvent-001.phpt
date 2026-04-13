@@ -19,10 +19,15 @@ class MySubscriber implements MongoDB\Driver\Monitoring\SDAMSubscriber
     public function serverHeartbeatFailed(MongoDB\Driver\Monitoring\ServerHeartbeatFailedEvent $event): void
     {
         printf("getDurationMicros() returns an integer: %s\n", is_integer($event->getDurationMicros()) ? 'yes' : 'no');
+        printf("durationMicros returns an integer: %s\n", is_integer($event->durationMicros) ? 'yes' : 'no');
         printf("getError() returns an Exception: %s\n", ($event->getError() instanceof Exception) ? 'yes' : 'no');
+        printf("error returns an Exception: %s\n", ($event->error instanceof Exception) ? 'yes' : 'no');
         printf("getHost() returns a string: %s\n", is_string($event->getHost()) ? 'yes' : 'no');
+        printf("host returns a string: %s\n", is_string($event->host) ? 'yes' : 'no');
         printf("getPort() returns an integer: %s\n", is_integer($event->getPort()) ? 'yes' : 'no');
+        printf("port returns an integer: %s\n", is_integer($event->port) ? 'yes' : 'no');
         printf("isAwaited() returns a bool: %s\n", is_bool($event->isAwaited()) ? 'yes' : 'no');
+        printf("awaited returns a bool: %s\n", is_bool($event->awaited) ? 'yes' : 'no');
 
         var_dump($event);
     }
@@ -62,10 +67,15 @@ configureFailPoint($m2, 'failCommand', 'off');
 <?php exit(0); ?>
 --EXPECTF--
 getDurationMicros() returns an integer: yes
+durationMicros returns an integer: yes
 getError() returns an Exception: yes
+error returns an Exception: yes
 getHost() returns a string: yes
+host returns a string: yes
 getPort() returns an integer: yes
+port returns an integer: yes
 isAwaited() returns a bool: yes
+awaited returns a bool: yes
 object(MongoDB\Driver\Monitoring\ServerHeartbeatFailedEvent)#%d (%d) {
   ["host"]=>
   string(%d) "%s"

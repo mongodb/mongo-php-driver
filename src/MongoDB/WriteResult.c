@@ -42,6 +42,13 @@
 	}                                                                                  \
 	RETURN_LONG(0);
 
+#define PHONGO_WRITERESULT_UPDATE_PROP(prop, field)                                                                                                          \
+	if (mongoc_write_concern_is_acknowledged(intern->write_concern) && bson_iter_init_find(&iter, intern->reply, (field)) && BSON_ITER_HOLDS_INT32(&iter)) { \
+		zend_update_property_long(phongo_writeresult_ce, &intern->std, ZEND_STRL(prop), bson_iter_int32(&iter));                                             \
+	} else {                                                                                                                                                 \
+		zend_update_property_null(phongo_writeresult_ce, &intern->std, ZEND_STRL(prop));                                                                     \
+	}
+
 zend_class_entry* phongo_writeresult_ce;
 
 /* Populates return_value with a WriteConcernError object (if available).
@@ -149,6 +156,40 @@ static bool phongo_writeresult_get_error_replies(phongo_writeresult_t* intern, z
 	return true;
 }
 
+static void phongo_writeresult_get_upserted_ids(phongo_writeresult_t* intern, zval* return_value)
+{
+	bson_iter_t iter, child;
+
+	array_init(return_value);
+
+	if (bson_iter_init_find(&iter, intern->reply, "upserted") && BSON_ITER_HOLDS_ARRAY(&iter) && bson_iter_recurse(&iter, &child)) {
+		while (bson_iter_next(&child)) {
+			uint32_t          data_len;
+			const uint8_t*    data = NULL;
+			phongo_bson_state state;
+
+			/* Use PHONGO_TYPEMAP_NATIVE_ARRAY for the root type so we can
+			 * easily access the "index" and "_id" fields. */
+			PHONGO_BSON_INIT_STATE(state);
+			state.map.root.type = PHONGO_TYPEMAP_NATIVE_ARRAY;
+
+			if (!BSON_ITER_HOLDS_DOCUMENT(&child)) {
+				continue;
+			}
+
+			bson_iter_document(&child, &data_len, &data);
+
+			if (phongo_bson_data_to_zval_ex(data, data_len, &state)) {
+				zval* zid = php_array_fetchc(&state.zchild, "_id");
+				add_index_zval(return_value, php_array_fetchc_long(&state.zchild, "index"), zid);
+				zval_add_ref(zid);
+			}
+
+			zval_ptr_dtor(&state.zchild);
+		}
+	}
+}
+
 PHONGO_DISABLED_CONSTRUCTOR(MongoDB_Driver_WriteResult)
 
 /* Returns the number of documents that were inserted */
@@ -236,40 +277,11 @@ static PHP_METHOD(MongoDB_Driver_WriteResult, getUpsertedIds)
 {
 	PHONGO_INTERN_FROM_THIS(writeresult);
 
-	bson_iter_t iter, child;
-
 	PHONGO_PARSE_PARAMETERS_NONE();
 
 	PHONGO_WRITERESULT_CHECK_ACKNOWLEDGED("getUpsertedIds");
 
-	array_init(return_value);
-
-	if (bson_iter_init_find(&iter, intern->reply, "upserted") && BSON_ITER_HOLDS_ARRAY(&iter) && bson_iter_recurse(&iter, &child)) {
-		while (bson_iter_next(&child)) {
-			uint32_t          data_len;
-			const uint8_t*    data = NULL;
-			phongo_bson_state state;
-
-			/* Use PHONGO_TYPEMAP_NATIVE_ARRAY for the root type so we can
-			 * easily access the "index" and "_id" fields. */
-			PHONGO_BSON_INIT_STATE(state);
-			state.map.root.type = PHONGO_TYPEMAP_NATIVE_ARRAY;
-
-			if (!BSON_ITER_HOLDS_DOCUMENT(&child)) {
-				continue;
-			}
-
-			bson_iter_document(&child, &data_len, &data);
-
-			if (phongo_bson_data_to_zval_ex(data, data_len, &state)) {
-				zval* zid = php_array_fetchc(&state.zchild, "_id");
-				add_index_zval(return_value, php_array_fetchc_long(&state.zchild, "index"), zid);
-				zval_add_ref(zid);
-			}
-
-			zval_ptr_dtor(&state.zchild);
-		}
-	}
+	phongo_writeresult_get_upserted_ids(intern, return_value);
 }
 
 /* Return any write concern error that occurred */
@@ -343,81 +355,60 @@ static zend_object* phongo_writeresult_create_object(zend_class_entry* class_typ
 	return &intern->std;
 }
 
-static HashTable* phongo_writeresult_get_debug_info(zend_object* object, int* is_temp)
+static void phongo_writeresult_update_properties(phongo_writeresult_t* intern)
 {
-	PHONGO_INTERN_FROM_Z_OBJ(writeresult, object);
-
-	zval        retval = ZVAL_STATIC_INIT;
 	bson_iter_t iter;
 
-	*is_temp = 1;
-	array_init_size(&retval, 10);
+	PHONGO_WRITERESULT_UPDATE_PROP("insertedCount", "nInserted");
+	PHONGO_WRITERESULT_UPDATE_PROP("matchedCount", "nMatched");
+	PHONGO_WRITERESULT_UPDATE_PROP("modifiedCount", "nModified");
+	PHONGO_WRITERESULT_UPDATE_PROP("deletedCount", "nRemoved");
+	PHONGO_WRITERESULT_UPDATE_PROP("upsertedCount", "nUpserted");
 
-#define PHONGO_WRITERESULT_SCP(field)                                                         \
-	if (bson_iter_init_find(&iter, intern->reply, (field)) && BSON_ITER_HOLDS_INT32(&iter)) { \
-		ADD_ASSOC_LONG_EX(&retval, (field), bson_iter_int32(&iter));                          \
-	} else {                                                                                  \
-		ADD_ASSOC_NULL_EX(&retval, (field));                                                  \
-	}
-
-	PHONGO_WRITERESULT_SCP("nInserted");
-	PHONGO_WRITERESULT_SCP("nMatched");
-	PHONGO_WRITERESULT_SCP("nModified");
-	PHONGO_WRITERESULT_SCP("nRemoved");
-	PHONGO_WRITERESULT_SCP("nUpserted");
-#undef PHONGO_WRITERESULT_SCP
-
-	if (bson_iter_init_find(&iter, intern->reply, "upserted") && BSON_ITER_HOLDS_ARRAY(&iter)) {
-		uint32_t          len;
-		const uint8_t*    data;
-		phongo_bson_state state;
-
-		PHONGO_BSON_INIT_DEBUG_STATE(state);
-		bson_iter_array(&iter, &len, &data);
-		if (!phongo_bson_data_to_zval_ex(data, len, &state)) {
-			zval_ptr_dtor(&state.zchild);
-			goto done;
-		}
-
-		ADD_ASSOC_ZVAL_EX(&retval, "upsertedIds", &state.zchild);
-	} else {
+	{
 		zval upsertedIds;
-		array_init(&upsertedIds);
-		ADD_ASSOC_ZVAL_EX(&retval, "upsertedIds", &upsertedIds);
+
+		phongo_writeresult_get_upserted_ids(intern, &upsertedIds);
+		zend_update_property(phongo_writeresult_ce, &intern->std, ZEND_STRL("upsertedIds"), &upsertedIds);
+		zval_ptr_dtor(&upsertedIds);
 	}
 
 	{
 		zval writeerrors;
-
 		phongo_writeresult_get_writeerrors(intern, &writeerrors);
-		ADD_ASSOC_ZVAL_EX(&retval, "writeErrors", &writeerrors);
+		zend_update_property(phongo_writeresult_ce, &intern->std, ZEND_STRL("writeErrors"), &writeerrors);
+		zval_ptr_dtor(&writeerrors);
 	}
 
 	{
 		zval writeconcernerror;
-
 		phongo_writeresult_get_writeconcernerror(intern, &writeconcernerror);
-		ADD_ASSOC_ZVAL_EX(&retval, "writeConcernError", &writeconcernerror);
+		zend_update_property(phongo_writeresult_ce, &intern->std, ZEND_STRL("writeConcernError"), &writeconcernerror);
+		zval_ptr_dtor(&writeconcernerror);
 	}
 
 	if (intern->write_concern) {
 		zval write_concern;
-
 		phongo_writeconcern_init(&write_concern, intern->write_concern);
-		ADD_ASSOC_ZVAL_EX(&retval, "writeConcern", &write_concern);
+		zend_update_property(phongo_writeresult_ce, &intern->std, ZEND_STRL("writeConcern"), &write_concern);
+		zval_ptr_dtor(&write_concern);
 	} else {
-		ADD_ASSOC_NULL_EX(&retval, "writeConcern");
+		zend_update_property_null(phongo_writeresult_ce, &intern->std, ZEND_STRL("writeConcern"));
 	}
 
 	{
 		zval error_replies;
-
 		phongo_writeresult_get_error_replies(intern, &error_replies);
-		ADD_ASSOC_ZVAL_EX(&retval, "errorReplies", &error_replies);
+		zend_update_property(phongo_writeresult_ce, &intern->std, ZEND_STRL("errorReplies"), &error_replies);
+		zval_ptr_dtor(&error_replies);
 	}
 
-done:
-	return Z_ARRVAL(retval);
+	{
+		zval server;
+		phongo_server_init(&server, &intern->manager, intern->server_id);
+		zend_update_property(phongo_writeresult_ce, &intern->std, ZEND_STRL("server"), &server);
+		zval_ptr_dtor(&server);
+	}
 }
 
 void phongo_writeresult_init_ce(INIT_FUNC_ARGS)
@@ -426,22 +417,26 @@ void phongo_writeresult_init_ce(INIT_FUNC_ARGS)
 	phongo_writeresult_ce->create_object = phongo_writeresult_create_object;
 
 	memcpy(&phongo_handler_writeresult, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
-	phongo_handler_writeresult.get_debug_info = phongo_writeresult_get_debug_info;
-	phongo_handler_writeresult.free_obj       = phongo_writeresult_free_object;
-	phongo_handler_writeresult.offset         = XtOffsetOf(phongo_writeresult_t, std);
+	phongo_handler_writeresult.free_obj = phongo_writeresult_free_object;
+	phongo_handler_writeresult.offset   = XtOffsetOf(phongo_writeresult_t, std);
 }
 
-phongo_writeresult_t* phongo_writeresult_init(zval* return_value, bson_t* reply, zval* manager, uint32_t server_id)
+void phongo_writeresult_init(zval* return_value, bson_t* reply, zval* manager, uint32_t server_id, const mongoc_write_concern_t* write_concern)
 {
 	phongo_writeresult_t* writeresult;
 
 	object_init_ex(return_value, phongo_writeresult_ce);
 
-	writeresult            = Z_WRITERESULT_OBJ_P(return_value);
-	writeresult->reply     = bson_copy(reply);
-	writeresult->server_id = server_id;
+	writeresult                = Z_WRITERESULT_OBJ_P(return_value);
+	writeresult->reply         = bson_copy(reply);
+	writeresult->server_id     = server_id;
+	writeresult->write_concern = mongoc_write_concern_copy(write_concern);
 
 	ZVAL_ZVAL(&writeresult->manager, manager, 1, 0);
 
-	return writeresult;
+	phongo_writeresult_update_properties(writeresult);
 }
+
+#undef PHONGO_WRITERESULT_CHECK_ACKNOWLEDGED
+#undef PHONGO_WRITERESULT_RETURN_LONG_FROM_BSON_INT32
+#undef PHONGO_WRITERESULT_UPDATE_PROP

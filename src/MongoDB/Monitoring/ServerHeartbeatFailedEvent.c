@@ -16,6 +16,7 @@
 
 #include <php.h>
 #include <Zend/zend_interfaces.h>
+#include <Zend/zend_exceptions.h>
 
 #include "phongo.h"
 #include "phongo_error.h"
@@ -75,6 +76,15 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_ServerHeartbeatFailedEvent, isAwaite
 	RETVAL_BOOL(intern->awaited);
 }
 
+static void phongo_serverheartbeatfailedevent_update_properties(phongo_serverheartbeatfailedevent_t* intern)
+{
+	zend_update_property_string(phongo_serverheartbeatfailedevent_ce, &intern->std, ZEND_STRL("host"), intern->host.host);
+	zend_update_property_long(phongo_serverheartbeatfailedevent_ce, &intern->std, ZEND_STRL("port"), intern->host.port);
+	zend_update_property_bool(phongo_serverheartbeatfailedevent_ce, &intern->std, ZEND_STRL("awaited"), intern->awaited);
+	zend_update_property_long(phongo_serverheartbeatfailedevent_ce, &intern->std, ZEND_STRL("durationMicros"), intern->duration_micros);
+	zend_update_property(phongo_serverheartbeatfailedevent_ce, &intern->std, ZEND_STRL("error"), &intern->z_error);
+}
+
 /* MongoDB\Driver\Monitoring\ServerHeartbeatFailedEvent object handlers */
 static zend_object_handlers phongo_handler_serverheartbeatfailedevent;
 
@@ -98,33 +108,34 @@ static zend_object* phongo_serverheartbeatfailedevent_create_object(zend_class_e
 	return &intern->std;
 }
 
-static HashTable* phongo_serverheartbeatfailedevent_get_debug_info(zend_object* object, int* is_temp)
-{
-	PHONGO_INTERN_FROM_Z_OBJ(serverheartbeatfailedevent, object);
-
-	zval retval = ZVAL_STATIC_INIT;
-
-	*is_temp = 1;
-	array_init_size(&retval, 5);
-
-	ADD_ASSOC_STRING(&retval, "host", intern->host.host);
-	ADD_ASSOC_LONG_EX(&retval, "port", intern->host.port);
-	ADD_ASSOC_BOOL_EX(&retval, "awaited", intern->awaited);
-	ADD_ASSOC_INT64(&retval, "durationMicros", intern->duration_micros);
-
-	ADD_ASSOC_ZVAL_EX(&retval, "error", &intern->z_error);
-	Z_ADDREF(intern->z_error);
-
-	return Z_ARRVAL(retval);
-}
-
 void phongo_serverheartbeatfailedevent_init_ce(INIT_FUNC_ARGS)
 {
 	phongo_serverheartbeatfailedevent_ce                = register_class_MongoDB_Driver_Monitoring_ServerHeartbeatFailedEvent();
 	phongo_serverheartbeatfailedevent_ce->create_object = phongo_serverheartbeatfailedevent_create_object;
 
 	memcpy(&phongo_handler_serverheartbeatfailedevent, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
-	phongo_handler_serverheartbeatfailedevent.get_debug_info = phongo_serverheartbeatfailedevent_get_debug_info;
-	phongo_handler_serverheartbeatfailedevent.free_obj       = phongo_serverheartbeatfailedevent_free_object;
-	phongo_handler_serverheartbeatfailedevent.offset         = XtOffsetOf(phongo_serverheartbeatfailedevent_t, std);
+	phongo_handler_serverheartbeatfailedevent.free_obj = phongo_serverheartbeatfailedevent_free_object;
+	phongo_handler_serverheartbeatfailedevent.offset   = XtOffsetOf(phongo_serverheartbeatfailedevent_t, std);
+}
+
+void phongo_serverheartbeatfailedevent_init(zval* return_value, const mongoc_apm_server_heartbeat_failed_t* event)
+{
+	PHONGO_INTERN_INIT_EX(serverheartbeatfailedevent, return_value);
+
+	bson_error_t tmp_error = { 0 };
+
+	memcpy(&intern->host, mongoc_apm_server_heartbeat_failed_get_host(event), sizeof(mongoc_host_list_t));
+	intern->awaited         = mongoc_apm_server_heartbeat_failed_get_awaited(event);
+	intern->duration_micros = mongoc_apm_server_heartbeat_failed_get_duration(event);
+
+	/* We need to process and convert the error right here, otherwise
+	 * debug_info will turn into a recursive loop, and with the wrong trace
+	 * locations */
+	mongoc_apm_server_heartbeat_failed_get_error(event, &tmp_error);
+
+	object_init_ex(&intern->z_error, phongo_exception_from_mongoc_domain(tmp_error.domain, tmp_error.code));
+	zend_update_property_string(zend_ce_exception, Z_OBJ_P(&intern->z_error), ZEND_STRL("message"), tmp_error.message);
+	zend_update_property_long(zend_ce_exception, Z_OBJ_P(&intern->z_error), ZEND_STRL("code"), tmp_error.code);
+
+	phongo_serverheartbeatfailedevent_update_properties(intern);
 }

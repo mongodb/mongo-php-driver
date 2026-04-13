@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 2eb20e3e6be24e99cbbfe9d7888d5b8b99fc609f */
+ * Stub hash: 814c09622ce8f209f6573cbb3d4945bc377824e7 */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_Driver_ReadConcern___construct, 0, 0, 0)
 	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, level, IS_STRING, 1, "null")
@@ -22,9 +22,6 @@ ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_Driver_ReadConcern
 	ZEND_ARG_TYPE_INFO(0, data, IS_ARRAY, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_Driver_ReadConcern___serialize, 0, 0, IS_ARRAY, 0)
-ZEND_END_ARG_INFO()
-
 
 static ZEND_METHOD(MongoDB_Driver_ReadConcern, __construct);
 static ZEND_METHOD(MongoDB_Driver_ReadConcern, getLevel);
@@ -32,7 +29,6 @@ static ZEND_METHOD(MongoDB_Driver_ReadConcern, isDefault);
 static ZEND_METHOD(MongoDB_Driver_ReadConcern, __set_state);
 static ZEND_METHOD(MongoDB_Driver_ReadConcern, bsonSerialize);
 static ZEND_METHOD(MongoDB_Driver_ReadConcern, __unserialize);
-static ZEND_METHOD(MongoDB_Driver_ReadConcern, __serialize);
 
 
 static const zend_function_entry class_MongoDB_Driver_ReadConcern_methods[] = {
@@ -42,7 +38,6 @@ static const zend_function_entry class_MongoDB_Driver_ReadConcern_methods[] = {
 	ZEND_ME(MongoDB_Driver_ReadConcern, __set_state, arginfo_class_MongoDB_Driver_ReadConcern___set_state, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_Driver_ReadConcern, bsonSerialize, arginfo_class_MongoDB_Driver_ReadConcern_bsonSerialize, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_Driver_ReadConcern, __unserialize, arginfo_class_MongoDB_Driver_ReadConcern___unserialize, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	ZEND_ME(MongoDB_Driver_ReadConcern, __serialize, arginfo_class_MongoDB_Driver_ReadConcern___serialize, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_FE_END
 };
 
@@ -89,6 +84,12 @@ static zend_class_entry *register_class_MongoDB_Driver_ReadConcern(zend_class_en
 	zend_string *const_SNAPSHOT_name = zend_string_init_interned("SNAPSHOT", sizeof("SNAPSHOT") - 1, 1);
 	zend_declare_class_constant_ex(class_entry, const_SNAPSHOT_name, &const_SNAPSHOT_value, ZEND_ACC_PUBLIC, NULL);
 	zend_string_release(const_SNAPSHOT_name);
+
+	zval property_level_default_value;
+	ZVAL_UNDEF(&property_level_default_value);
+	zend_string *property_level_name = zend_string_init("level", sizeof("level") - 1, 1);
+	zend_declare_typed_property(class_entry, property_level_name, &property_level_default_value, ZEND_ACC_PUBLIC|ZEND_ACC_READONLY, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_STRING|MAY_BE_NULL));
+	zend_string_release(property_level_name);
 
 	return class_entry;
 }

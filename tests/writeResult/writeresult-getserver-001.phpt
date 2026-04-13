@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\Driver\WriteResult::getUpsertedIds()
+MongoDB\Driver\WriteResult::getServer()
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_live(); ?>
@@ -17,10 +17,12 @@ $bulk->insert(['x' => 1]);
 $result = $server->executeBulkWrite(NS, $bulk);
 
 var_dump($result->getServer() == $server);
+var_dump($result->server == $server);
 
 ?>
 ===DONE===
 <?php exit(0); ?>
 --EXPECT--
+bool(true)
 bool(true)
 ===DONE===

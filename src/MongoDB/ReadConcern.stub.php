@@ -39,6 +39,8 @@ final class ReadConcern implements \MongoDB\BSON\Serializable
      */
     public const SNAPSHOT = UNKNOWN;
 
+    public readonly string|null $level;
+
     final public function __construct(?string $level = null) {}
 
     final public function getLevel(): ?string {}
@@ -50,7 +52,4 @@ final class ReadConcern implements \MongoDB\BSON\Serializable
     final public function bsonSerialize(): \stdClass {}
 
     final public function __unserialize(array $data): void {}
-
-    final public function __serialize(): array {}
-
 }
