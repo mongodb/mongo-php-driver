@@ -157,9 +157,26 @@ static zend_class_entry* phongo_fetch_internal_class(const char* class_name, siz
 
 static HashTable* phongo_std_get_gc(zend_object* object, zval** table, int* n)
 {
-	*table = NULL;
-	*n     = 0;
-	return zend_std_get_properties(object);
+	/* Classes defining a custom get_properties handler (BSON value types,
+	 * ServerApi, ServerDescription, TopologyDescription) expose a
+	 * property cache in intern->properties. Do not invoke that handler from the
+	 * GC, and do not materialize object->properties: the ZEND_FE_RESET_R opcode
+	 * prefers object->properties over get_properties, so materializing it
+	 * changes how foreach iterates the object. User-assigned dynamic properties
+	 * live in object->properties and are still scanned for cycles.
+	 *
+	 * These classes declare no PHP properties, so there is nothing to scan in
+	 * properties_table. If that ever changes (e.g. PHPC-2705 adds typed
+	 * properties), this handler must scan both sources. */
+	if (object->handlers->get_properties != zend_std_get_properties) {
+		ZEND_ASSERT(object->ce->default_properties_count == 0);
+
+		*table = NULL;
+		*n     = 0;
+		return object->properties;
+	}
+
+	return zend_std_get_gc(object, table, n);
 }
 
 PHP_MINIT_FUNCTION(mongodb) /* {{{ */
@@ -197,8 +214,10 @@ PHP_MINIT_FUNCTION(mongodb) /* {{{ */
 	/* Disable cloning by default. Individual classes can opt in if they need to
 	 * support this (e.g. BSON objects). */
 	phongo_std_object_handlers.clone_obj = NULL;
-	/* Ensure that get_gc delegates to zend_std_get_properties directly in case
-	 * our class defines a get_properties handler for debugging purposes. */
+	/* Ensure get_gc does not invoke a custom get_properties handler, whose
+	 * result is a cache that must not be exposed to the GC (PHPC-1598),
+	 * and does not materialize object->properties, which would make foreach
+	 * iteration inconsistent before and after a GC run (PHPC-2505). */
 	phongo_std_object_handlers.get_gc = phongo_std_get_gc;
 
 	/* Initialize zend_class_entry dependencies.
