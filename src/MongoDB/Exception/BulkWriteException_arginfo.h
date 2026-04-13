@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 66b1cbab461cd3955a2487923a2f1b08dc6a55bf */
+ * Stub hash: ef1bf3a5b851c5e1e6c80ffb3daad587913f639f */
 
 ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_MongoDB_Driver_Exception_BulkWriteException_getWriteResult, 0, 0, MongoDB\\Driver\\WriteResult, 0)
 ZEND_END_ARG_INFO()
@@ -23,9 +23,10 @@ static zend_class_entry *register_class_MongoDB_Driver_Exception_BulkWriteExcept
 #endif
 
 	zval property_writeResult_default_value;
-	ZVAL_NULL(&property_writeResult_default_value);
+	ZVAL_UNDEF(&property_writeResult_default_value);
 	zend_string *property_writeResult_name = zend_string_init("writeResult", sizeof("writeResult") - 1, 1);
-	zend_declare_typed_property(class_entry, property_writeResult_name, &property_writeResult_default_value, ZEND_ACC_PROTECTED, NULL, (zend_type) ZEND_TYPE_INIT_NONE(0));
+	zend_string *property_writeResult_class_MongoDB_Driver_WriteResult = zend_string_init("MongoDB\\Driver\\WriteResult", sizeof("MongoDB\\Driver\\WriteResult")-1, 1);
+	zend_declare_typed_property(class_entry, property_writeResult_name, &property_writeResult_default_value, ZEND_ACC_PUBLIC|ZEND_ACC_READONLY, NULL, (zend_type) ZEND_TYPE_INIT_CLASS(property_writeResult_class_MongoDB_Driver_WriteResult, 0, 0));
 	zend_string_release(property_writeResult_name);
 
 	return class_entry;

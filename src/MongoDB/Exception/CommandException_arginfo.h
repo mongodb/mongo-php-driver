@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 40be27bab918f1c80863dc38526c2b236e8fb328 */
+ * Stub hash: 5c92211a99c6771f13c7ae6e37f01bd387bc6f2a */
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_Driver_Exception_CommandException_getResultDocument, 0, 0, IS_OBJECT, 0)
 ZEND_END_ARG_INFO()
@@ -23,9 +23,9 @@ static zend_class_entry *register_class_MongoDB_Driver_Exception_CommandExceptio
 #endif
 
 	zval property_resultDocument_default_value;
-	ZVAL_NULL(&property_resultDocument_default_value);
+	ZVAL_UNDEF(&property_resultDocument_default_value);
 	zend_string *property_resultDocument_name = zend_string_init("resultDocument", sizeof("resultDocument") - 1, 1);
-	zend_declare_typed_property(class_entry, property_resultDocument_name, &property_resultDocument_default_value, ZEND_ACC_PROTECTED, NULL, (zend_type) ZEND_TYPE_INIT_NONE(0));
+	zend_declare_typed_property(class_entry, property_resultDocument_name, &property_resultDocument_default_value, ZEND_ACC_PUBLIC|ZEND_ACC_READONLY, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_OBJECT));
 	zend_string_release(property_resultDocument_name);
 
 	return class_entry;

@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: e60621aae01cd3f4198aa03b8d5f851f76b71d24 */
+ * Stub hash: b12f4bd39fb4ec5dcb13e603b9fbfba629d32094 */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_Driver_Monitoring_ServerHeartbeatStartedEvent___construct, 0, 0, 0)
 ZEND_END_ARG_INFO()
@@ -37,6 +37,20 @@ static zend_class_entry *register_class_MongoDB_Driver_Monitoring_ServerHeartbea
 	class_entry = zend_register_internal_class_ex(&ce, NULL);
 	class_entry->ce_flags |= ZEND_ACC_FINAL|ZEND_ACC_NOT_SERIALIZABLE;
 #endif
+
+	zval property_host_default_value;
+	ZVAL_UNDEF(&property_host_default_value);
+	zend_declare_typed_property(class_entry, ZSTR_KNOWN(ZEND_STR_HOST), &property_host_default_value, ZEND_ACC_PUBLIC|ZEND_ACC_READONLY, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_STRING));
+
+	zval property_port_default_value;
+	ZVAL_UNDEF(&property_port_default_value);
+	zend_declare_typed_property(class_entry, ZSTR_KNOWN(ZEND_STR_PORT), &property_port_default_value, ZEND_ACC_PUBLIC|ZEND_ACC_READONLY, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+
+	zval property_awaited_default_value;
+	ZVAL_UNDEF(&property_awaited_default_value);
+	zend_string *property_awaited_name = zend_string_init("awaited", sizeof("awaited") - 1, 1);
+	zend_declare_typed_property(class_entry, property_awaited_name, &property_awaited_default_value, ZEND_ACC_PUBLIC|ZEND_ACC_READONLY, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_BOOL));
+	zend_string_release(property_awaited_name);
 
 	return class_entry;
 }
