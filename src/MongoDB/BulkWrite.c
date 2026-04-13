@@ -642,7 +642,7 @@ static HashTable* phongo_bulkwrite_get_debug_info(zend_object* object, int* is_t
 	if (mongoc_bulk_operation_get_write_concern(intern->bulk)) {
 		zval write_concern;
 
-		phongo_write_concern_to_zval(&write_concern, mongoc_bulk_operation_get_write_concern(intern->bulk));
+		phongo_writeconcern_init(&write_concern, mongoc_bulk_operation_get_write_concern(intern->bulk));
 		ADD_ASSOC_ZVAL_EX(&retval, "write_concern", &write_concern);
 	} else {
 		ADD_ASSOC_NULL_EX(&retval, "write_concern");
