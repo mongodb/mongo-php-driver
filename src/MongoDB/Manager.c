@@ -802,6 +802,7 @@ static HashTable* phongo_manager_get_debug_info(zend_object* object, int* is_tem
 	size_t                        i, n = 0;
 	zval                          retval = ZVAL_STATIC_INIT;
 	zval                          cluster;
+	zval                          manager_zval;
 
 	*is_temp = 1;
 	intern   = Z_OBJ_MANAGER(object);
@@ -814,16 +815,12 @@ static HashTable* phongo_manager_get_debug_info(zend_object* object, int* is_tem
 
 	array_init_size(&cluster, n);
 
+	ZVAL_OBJ(&manager_zval, object);
+
 	for (i = 0; i < n; i++) {
 		zval obj;
 
-		if (!phongo_server_to_zval(&obj, intern->client, sds[i])) {
-			/* Exception already thrown */
-			zval_ptr_dtor(&obj);
-			zval_ptr_dtor(&cluster);
-			goto done;
-		}
-
+		phongo_server_init(&obj, &manager_zval, mongoc_server_description_id(sds[i]));
 		add_next_index_zval(&cluster, &obj);
 	}
 
@@ -839,7 +836,6 @@ static HashTable* phongo_manager_get_debug_info(zend_object* object, int* is_tem
 		}
 	}
 
-done:
 	mongoc_server_descriptions_destroy_all(sds, n);
 
 	return Z_ARRVAL(retval);
