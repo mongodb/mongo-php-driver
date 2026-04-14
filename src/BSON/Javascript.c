@@ -277,7 +277,7 @@ static zend_object* phongo_javascript_clone_object(zend_object* object)
 	zend_objects_clone_members(&new_intern->std, &intern->std);
 
 	phongo_javascript_init(new_intern, intern->code, intern->code_len, NULL);
-	new_intern->scope = bson_copy(intern->scope);
+	new_intern->scope = intern->scope ? bson_copy(intern->scope) : NULL;
 
 	return new_object;
 }
