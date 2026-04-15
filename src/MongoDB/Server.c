@@ -685,4 +685,3 @@ void phongo_server_init(zval* return_value, zval* manager, uint32_t server_id)
 
 	ZVAL_ZVAL(&server->manager, manager, 1, 0);
 }
-

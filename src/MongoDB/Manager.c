@@ -815,6 +815,10 @@ static HashTable* phongo_manager_get_debug_info(zend_object* object, int* is_tem
 
 	array_init_size(&cluster, n);
 
+	/* phongo_server_init requires a zval* but get_debug_info only provides a
+	 * zend_object*. Wrap the object pointer in a temporary zval without
+	 * incrementing the refcount, since phongo_server_init will do so itself
+	 * when it stores the manager reference via ZVAL_ZVAL. */
 	ZVAL_OBJ(&manager_zval, object);
 
 	for (i = 0; i < n; i++) {
