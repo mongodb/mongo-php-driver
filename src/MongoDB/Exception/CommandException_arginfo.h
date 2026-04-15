@@ -1,12 +1,10 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: a34c85582624ddbc462e429ba71d3309c4bcb4a3 */
+ * Stub hash: 5c92211a99c6771f13c7ae6e37f01bd387bc6f2a */
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_Driver_Exception_CommandException_getResultDocument, 0, 0, IS_OBJECT, 0)
 ZEND_END_ARG_INFO()
 
-
 static ZEND_METHOD(MongoDB_Driver_Exception_CommandException, getResultDocument);
-
 
 static const zend_function_entry class_MongoDB_Driver_Exception_CommandException_methods[] = {
 	ZEND_ME(MongoDB_Driver_Exception_CommandException, getResultDocument, arginfo_class_MongoDB_Driver_Exception_CommandException_getResultDocument, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
@@ -18,7 +16,11 @@ static zend_class_entry *register_class_MongoDB_Driver_Exception_CommandExceptio
 	zend_class_entry ce, *class_entry;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver\\Exception", "CommandException", class_MongoDB_Driver_Exception_CommandException_methods);
+#if (PHP_VERSION_ID >= 80400)
+	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_MongoDB_Driver_Exception_ServerException, 0);
+#else
 	class_entry = zend_register_internal_class_ex(&ce, class_entry_MongoDB_Driver_Exception_ServerException);
+#endif
 
 	zval property_resultDocument_default_value;
 	ZVAL_UNDEF(&property_resultDocument_default_value);

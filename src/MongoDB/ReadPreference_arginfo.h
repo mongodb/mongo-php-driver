@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: e7204ca51d594bcc92f399d4c2d5fe728114c1e4 */
+ * Stub hash: c96f44c362fe158f620b96b7ce44be7a048daf1d */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_Driver_ReadPreference___construct, 0, 0, 1)
 	ZEND_ARG_TYPE_INFO(0, mode, IS_STRING, 0)
@@ -30,7 +30,6 @@ ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_Driver_ReadPrefere
 	ZEND_ARG_TYPE_INFO(0, data, IS_ARRAY, 0)
 ZEND_END_ARG_INFO()
 
-
 static ZEND_METHOD(MongoDB_Driver_ReadPreference, __construct);
 static ZEND_METHOD(MongoDB_Driver_ReadPreference, getHedge);
 static ZEND_METHOD(MongoDB_Driver_ReadPreference, getMaxStalenessSeconds);
@@ -39,7 +38,6 @@ static ZEND_METHOD(MongoDB_Driver_ReadPreference, getTagSets);
 static ZEND_METHOD(MongoDB_Driver_ReadPreference, __set_state);
 static ZEND_METHOD(MongoDB_Driver_ReadPreference, bsonSerialize);
 static ZEND_METHOD(MongoDB_Driver_ReadPreference, __unserialize);
-
 
 static const zend_function_entry class_MongoDB_Driver_ReadPreference_methods[] = {
 	ZEND_ME(MongoDB_Driver_ReadPreference, __construct, arginfo_class_MongoDB_Driver_ReadPreference___construct, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
@@ -58,8 +56,12 @@ static zend_class_entry *register_class_MongoDB_Driver_ReadPreference(zend_class
 	zend_class_entry ce, *class_entry;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver", "ReadPreference", class_MongoDB_Driver_ReadPreference_methods);
+#if (PHP_VERSION_ID >= 80400)
+	class_entry = zend_register_internal_class_with_flags(&ce, NULL, ZEND_ACC_FINAL);
+#else
 	class_entry = zend_register_internal_class_ex(&ce, NULL);
 	class_entry->ce_flags |= ZEND_ACC_FINAL;
+#endif
 	zend_class_implements(class_entry, 1, class_entry_MongoDB_BSON_Serializable);
 
 	zval const_PRIMARY_value;

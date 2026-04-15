@@ -60,7 +60,7 @@ PHP method signatures are defined in `*.stub.php` files alongside each class's `
 ./build/gen_stub.php
 ```
 
-This requires `phpize` to have been run with **PHP 8.2** to use all features. Commit both the stub and the generated arginfo file.
+This requires `phpize` to have been run with the latest stable PHP version to use all features. Commit both the stub and the generated arginfo file.
 
 ## Architecture
 

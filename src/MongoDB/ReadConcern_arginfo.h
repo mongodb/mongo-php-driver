@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 814c09622ce8f209f6573cbb3d4945bc377824e7 */
+ * Stub hash: dc2dbca018378c16253293bee52c6931e427c118 */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_Driver_ReadConcern___construct, 0, 0, 0)
 	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, level, IS_STRING, 1, "null")
@@ -22,14 +22,12 @@ ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_Driver_ReadConcern
 	ZEND_ARG_TYPE_INFO(0, data, IS_ARRAY, 0)
 ZEND_END_ARG_INFO()
 
-
 static ZEND_METHOD(MongoDB_Driver_ReadConcern, __construct);
 static ZEND_METHOD(MongoDB_Driver_ReadConcern, getLevel);
 static ZEND_METHOD(MongoDB_Driver_ReadConcern, isDefault);
 static ZEND_METHOD(MongoDB_Driver_ReadConcern, __set_state);
 static ZEND_METHOD(MongoDB_Driver_ReadConcern, bsonSerialize);
 static ZEND_METHOD(MongoDB_Driver_ReadConcern, __unserialize);
-
 
 static const zend_function_entry class_MongoDB_Driver_ReadConcern_methods[] = {
 	ZEND_ME(MongoDB_Driver_ReadConcern, __construct, arginfo_class_MongoDB_Driver_ReadConcern___construct, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
@@ -46,8 +44,12 @@ static zend_class_entry *register_class_MongoDB_Driver_ReadConcern(zend_class_en
 	zend_class_entry ce, *class_entry;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver", "ReadConcern", class_MongoDB_Driver_ReadConcern_methods);
+#if (PHP_VERSION_ID >= 80400)
+	class_entry = zend_register_internal_class_with_flags(&ce, NULL, ZEND_ACC_FINAL);
+#else
 	class_entry = zend_register_internal_class_ex(&ce, NULL);
 	class_entry->ce_flags |= ZEND_ACC_FINAL;
+#endif
 	zend_class_implements(class_entry, 1, class_entry_MongoDB_BSON_Serializable);
 
 	zval const_LINEARIZABLE_value;

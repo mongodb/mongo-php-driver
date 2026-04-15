@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 419a3a5ab13c377900e08013c3c91bd7a2b07200 */
+ * Stub hash: ad76e5683d263a0f0f0f07099d651dc8afd25199 */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_Driver_WriteConcern___construct, 0, 0, 1)
 	ZEND_ARG_TYPE_MASK(0, w, MAY_BE_STRING|MAY_BE_LONG, NULL)
@@ -30,7 +30,6 @@ ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_Driver_WriteConcer
 	ZEND_ARG_TYPE_INFO(0, data, IS_ARRAY, 0)
 ZEND_END_ARG_INFO()
 
-
 static ZEND_METHOD(MongoDB_Driver_WriteConcern, __construct);
 static ZEND_METHOD(MongoDB_Driver_WriteConcern, getJournal);
 static ZEND_METHOD(MongoDB_Driver_WriteConcern, getW);
@@ -39,7 +38,6 @@ static ZEND_METHOD(MongoDB_Driver_WriteConcern, isDefault);
 static ZEND_METHOD(MongoDB_Driver_WriteConcern, __set_state);
 static ZEND_METHOD(MongoDB_Driver_WriteConcern, bsonSerialize);
 static ZEND_METHOD(MongoDB_Driver_WriteConcern, __unserialize);
-
 
 static const zend_function_entry class_MongoDB_Driver_WriteConcern_methods[] = {
 	ZEND_ME(MongoDB_Driver_WriteConcern, __construct, arginfo_class_MongoDB_Driver_WriteConcern___construct, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
@@ -58,8 +56,12 @@ static zend_class_entry *register_class_MongoDB_Driver_WriteConcern(zend_class_e
 	zend_class_entry ce, *class_entry;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver", "WriteConcern", class_MongoDB_Driver_WriteConcern_methods);
+#if (PHP_VERSION_ID >= 80400)
+	class_entry = zend_register_internal_class_with_flags(&ce, NULL, ZEND_ACC_FINAL);
+#else
 	class_entry = zend_register_internal_class_ex(&ce, NULL);
 	class_entry->ce_flags |= ZEND_ACC_FINAL;
+#endif
 	zend_class_implements(class_entry, 1, class_entry_MongoDB_BSON_Serializable);
 
 	zval const_MAJORITY_value;

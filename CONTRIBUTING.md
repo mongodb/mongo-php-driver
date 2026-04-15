@@ -31,9 +31,14 @@ $ php --ri mongodb
 ## Generating arginfo from stub files
 
 Arginfo structures are generated from stub files using the `gen_stub.php`
-file. Note that this requires `phpize` to be run for **PHP 8.2** to make use
-of all features. After changing a stub file, run `./build/gen_stub.php`
-to regenerate the corresponding arginfo files and commit the results.
+file. After changing a stub file, run `./build/gen_stub.php` to regenerate the
+corresponding arginfo files and commit the results.
+
+The `gen_stub.php` file is added to the `build` directory when calling `phpize`.
+Arginfo structures are generated with the latest version of PHP. The
+`@generate-legacy-arginfo` directive ensures that the generated files are
+compatible with the indicated version of PHP. When bumping the minimum PHP
+requirement, this directive needs to be updated accordingly.
 
 ## Generating function maps for static analysis tools
 
