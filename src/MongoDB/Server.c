@@ -559,6 +559,9 @@ static HashTable* phongo_server_get_debug_info(zend_object* object, int* is_temp
 	zval                         retval = ZVAL_STATIC_INIT;
 	mongoc_client_t*             client;
 	mongoc_server_description_t* sd;
+	const mongoc_host_list_t*    host;
+	const bson_t*                hello_response;
+	bson_iter_t                  iter;
 
 	*is_temp = 1;
 	intern   = Z_OBJ_SERVER(object);
@@ -569,7 +572,91 @@ static HashTable* phongo_server_get_debug_info(zend_object* object, int* is_temp
 		return NULL;
 	}
 
-	phongo_server_to_zval(&retval, client, sd);
+	host           = mongoc_server_description_host(sd);
+	hello_response = mongoc_server_description_hello_response(sd);
+
+	array_init(&retval);
+
+	ADD_ASSOC_STRING(&retval, "host", host->host);
+	ADD_ASSOC_LONG_EX(&retval, "port", host->port);
+	ADD_ASSOC_LONG_EX(&retval, "type", phongo_server_description_type(sd));
+	ADD_ASSOC_BOOL_EX(&retval, "is_primary", !strcmp(mongoc_server_description_type(sd), phongo_server_description_type_map[PHONGO_SERVER_RS_PRIMARY].name));
+	ADD_ASSOC_BOOL_EX(&retval, "is_secondary", !strcmp(mongoc_server_description_type(sd), phongo_server_description_type_map[PHONGO_SERVER_RS_SECONDARY].name));
+	ADD_ASSOC_BOOL_EX(&retval, "is_arbiter", !strcmp(mongoc_server_description_type(sd), phongo_server_description_type_map[PHONGO_SERVER_RS_ARBITER].name));
+	ADD_ASSOC_BOOL_EX(&retval, "is_hidden", bson_iter_init_find_case(&iter, hello_response, "hidden") && bson_iter_as_bool(&iter));
+	ADD_ASSOC_BOOL_EX(&retval, "is_passive", bson_iter_init_find_case(&iter, hello_response, "passive") && bson_iter_as_bool(&iter));
+
+	if (bson_iter_init_find(&iter, hello_response, "tags") && BSON_ITER_HOLDS_DOCUMENT(&iter)) {
+		const uint8_t*    bytes;
+		uint32_t          len;
+		phongo_bson_state state;
+
+		PHONGO_BSON_INIT_DEBUG_STATE(state);
+		bson_iter_document(&iter, &len, &bytes);
+		if (!phongo_bson_data_to_zval_ex(bytes, len, &state)) {
+			/* Exception already thrown */
+			zval_ptr_dtor(&state.zchild);
+			mongoc_server_description_destroy(sd);
+			zval_ptr_dtor(&retval);
+			return NULL;
+		}
+
+		ADD_ASSOC_ZVAL_EX(&retval, "tags", &state.zchild);
+	}
+
+	/* If the server description is a load balancer, its hello_response will be
+	 * empty. Instead, report the hello_response from the handshake description
+	 * (i.e. backing server). */
+	if (!strcmp(mongoc_server_description_type(sd), phongo_server_description_type_map[PHONGO_SERVER_LOAD_BALANCER].name)) {
+		const bson_t*                handshake_response;
+		mongoc_server_description_t* handshake_sd;
+		bson_error_t                 error = { 0 };
+		phongo_bson_state            state;
+
+		if (!(handshake_sd = mongoc_client_get_handshake_description(client, mongoc_server_description_id(sd), NULL, &error))) {
+			phongo_throw_exception(PHONGO_ERROR_RUNTIME, "Failed to get handshake server description: %s", error.message);
+			mongoc_server_description_destroy(sd);
+			zval_ptr_dtor(&retval);
+			return NULL;
+		}
+
+		PHONGO_BSON_INIT_DEBUG_STATE(state);
+		handshake_response = mongoc_server_description_hello_response(handshake_sd);
+
+		if (!phongo_bson_to_zval_ex(handshake_response, &state)) {
+			/* Exception already thrown */
+			mongoc_server_description_destroy(handshake_sd);
+			zval_ptr_dtor(&state.zchild);
+			mongoc_server_description_destroy(sd);
+			zval_ptr_dtor(&retval);
+			return NULL;
+		}
+
+		ADD_ASSOC_ZVAL_EX(&retval, "last_hello_response", &state.zchild);
+		mongoc_server_description_destroy(handshake_sd);
+	} else {
+		phongo_bson_state state;
+
+		PHONGO_BSON_INIT_DEBUG_STATE(state);
+
+		if (!phongo_bson_to_zval_ex(hello_response, &state)) {
+			/* Exception already thrown */
+			zval_ptr_dtor(&state.zchild);
+			mongoc_server_description_destroy(sd);
+			zval_ptr_dtor(&retval);
+			return NULL;
+		}
+
+		ADD_ASSOC_ZVAL_EX(&retval, "last_hello_response", &state.zchild);
+	}
+
+	/* TODO: Use MONGOC_RTT_UNSET once it is added to libmongoc's public API (CDRIVER-4176) */
+	if (mongoc_server_description_round_trip_time(sd) == -1) {
+		ADD_ASSOC_NULL_EX(&retval, "round_trip_time");
+	} else {
+		ADD_ASSOC_LONG_EX(&retval, "round_trip_time", mongoc_server_description_round_trip_time(sd));
+	}
+
 	mongoc_server_description_destroy(sd);
 
 	return Z_ARRVAL(retval);
@@ -597,87 +684,4 @@ void phongo_server_init(zval* return_value, zval* manager, uint32_t server_id)
 	server->server_id = server_id;
 
 	ZVAL_ZVAL(&server->manager, manager, 1, 0);
-}
-
-bool phongo_server_to_zval(zval* retval, mongoc_client_t* client, mongoc_server_description_t* sd)
-{
-	const mongoc_host_list_t* host           = mongoc_server_description_host(sd);
-	const bson_t*             hello_response = mongoc_server_description_hello_response(sd);
-	bson_iter_t               iter;
-
-	array_init(retval);
-
-	ADD_ASSOC_STRING(retval, "host", host->host);
-	ADD_ASSOC_LONG_EX(retval, "port", host->port);
-	ADD_ASSOC_LONG_EX(retval, "type", phongo_server_description_type(sd));
-	ADD_ASSOC_BOOL_EX(retval, "is_primary", !strcmp(mongoc_server_description_type(sd), phongo_server_description_type_map[PHONGO_SERVER_RS_PRIMARY].name));
-	ADD_ASSOC_BOOL_EX(retval, "is_secondary", !strcmp(mongoc_server_description_type(sd), phongo_server_description_type_map[PHONGO_SERVER_RS_SECONDARY].name));
-	ADD_ASSOC_BOOL_EX(retval, "is_arbiter", !strcmp(mongoc_server_description_type(sd), phongo_server_description_type_map[PHONGO_SERVER_RS_ARBITER].name));
-	ADD_ASSOC_BOOL_EX(retval, "is_hidden", bson_iter_init_find_case(&iter, hello_response, "hidden") && bson_iter_as_bool(&iter));
-	ADD_ASSOC_BOOL_EX(retval, "is_passive", bson_iter_init_find_case(&iter, hello_response, "passive") && bson_iter_as_bool(&iter));
-
-	if (bson_iter_init_find(&iter, hello_response, "tags") && BSON_ITER_HOLDS_DOCUMENT(&iter)) {
-		const uint8_t*    bytes;
-		uint32_t          len;
-		phongo_bson_state state;
-
-		PHONGO_BSON_INIT_DEBUG_STATE(state);
-		bson_iter_document(&iter, &len, &bytes);
-		if (!phongo_bson_data_to_zval_ex(bytes, len, &state)) {
-			/* Exception already thrown */
-			zval_ptr_dtor(&state.zchild);
-			return false;
-		}
-
-		ADD_ASSOC_ZVAL_EX(retval, "tags", &state.zchild);
-	}
-
-	/* If the server description is a load balancer, its hello_response will be
-	 * empty. Instead, report the hello_response from the handshake description
-	 * (i.e. backing server). */
-	if (!strcmp(mongoc_server_description_type(sd), phongo_server_description_type_map[PHONGO_SERVER_LOAD_BALANCER].name)) {
-		const bson_t*                handshake_response;
-		mongoc_server_description_t* handshake_sd;
-		bson_error_t                 error = { 0 };
-		phongo_bson_state            state;
-
-		if (!(handshake_sd = mongoc_client_get_handshake_description(client, mongoc_server_description_id(sd), NULL, &error))) {
-			phongo_throw_exception(PHONGO_ERROR_RUNTIME, "Failed to get handshake server description: %s", error.message);
-			return false;
-		}
-
-		PHONGO_BSON_INIT_DEBUG_STATE(state);
-		handshake_response = mongoc_server_description_hello_response(handshake_sd);
-
-		if (!phongo_bson_to_zval_ex(handshake_response, &state)) {
-			/* Exception already thrown */
-			mongoc_server_description_destroy(handshake_sd);
-			zval_ptr_dtor(&state.zchild);
-			return false;
-		}
-
-		ADD_ASSOC_ZVAL_EX(retval, "last_hello_response", &state.zchild);
-		mongoc_server_description_destroy(handshake_sd);
-	} else {
-		phongo_bson_state state;
-
-		PHONGO_BSON_INIT_DEBUG_STATE(state);
-
-		if (!phongo_bson_to_zval_ex(hello_response, &state)) {
-			/* Exception already thrown */
-			zval_ptr_dtor(&state.zchild);
-			return false;
-		}
-
-		ADD_ASSOC_ZVAL_EX(retval, "last_hello_response", &state.zchild);
-	}
-
-	/* TODO: Use MONGOC_RTT_UNSET once it is added to libmongoc's public API (CDRIVER-4176) */
-	if (mongoc_server_description_round_trip_time(sd) == -1) {
-		ADD_ASSOC_NULL_EX(retval, "round_trip_time");
-	} else {
-		ADD_ASSOC_LONG_EX(retval, "round_trip_time", mongoc_server_description_round_trip_time(sd));
-	}
-
-	return true;
 }

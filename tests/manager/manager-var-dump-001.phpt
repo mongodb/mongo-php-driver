@@ -37,7 +37,7 @@ object(MongoDB\Driver\Manager)#%d (%d) {
   ["cluster"]=>
   array(1) {
     [0]=>
-    array(10) {
+    object(MongoDB\Driver\Server)#%d (%d) {
       ["host"]=>
       string(%d) "%s"
       ["port"]=>

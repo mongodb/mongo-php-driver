@@ -23,6 +23,4 @@
 
 void phongo_server_init(zval* return_value, zval* manager, uint32_t server_id);
 
-bool phongo_server_to_zval(zval* retval, mongoc_client_t* client, mongoc_server_description_t* sd);
-
 #endif /* PHONGO_SERVER_H */
