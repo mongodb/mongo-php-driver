@@ -19,7 +19,7 @@ class MySubscriber implements MongoDB\Driver\Monitoring\SDAMSubscriber
     public function serverHeartbeatFailed(MongoDB\Driver\Monitoring\ServerHeartbeatFailedEvent $event): void
     {
         printf("getDurationMicros() returns an integer: %s\n", is_integer($event->getDurationMicros()) ? 'yes' : 'no');
-        printf("durationMicros returns an integer: %s\n", is_integer($event->durationMicros) ? 'yes' : 'no');
+        printf("duration returns an integer: %s\n", is_integer($event->duration) ? 'yes' : 'no');
         printf("getError() returns an Exception: %s\n", ($event->getError() instanceof Exception) ? 'yes' : 'no');
         printf("error returns an Exception: %s\n", ($event->error instanceof Exception) ? 'yes' : 'no');
         printf("getHost() returns a string: %s\n", is_string($event->getHost()) ? 'yes' : 'no');
@@ -67,7 +67,7 @@ configureFailPoint($m2, 'failCommand', 'off');
 <?php exit(0); ?>
 --EXPECTF--
 getDurationMicros() returns an integer: yes
-durationMicros returns an integer: yes
+duration returns an integer: yes
 getError() returns an Exception: yes
 error returns an Exception: yes
 getHost() returns a string: yes
@@ -83,7 +83,7 @@ object(MongoDB\Driver\Monitoring\ServerHeartbeatFailedEvent)#%d (%d) {
   int(%d)
   ["awaited"]=>
   bool(%s)
-  ["durationMicros"]=>
+  ["duration"]=>
   int(%d)
   ["error"]=>
   object(MongoDB\Driver\Exception\RuntimeException)#%d (%d) {%A

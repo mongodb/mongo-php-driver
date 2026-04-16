@@ -93,7 +93,7 @@ static void phongo_serverheartbeatsucceededevent_update_properties(phongo_server
 	zend_update_property_string(phongo_serverheartbeatsucceededevent_ce, &intern->std, ZEND_STRL("host"), intern->host.host);
 	zend_update_property_long(phongo_serverheartbeatsucceededevent_ce, &intern->std, ZEND_STRL("port"), intern->host.port);
 	zend_update_property_bool(phongo_serverheartbeatsucceededevent_ce, &intern->std, ZEND_STRL("awaited"), intern->awaited);
-	zend_update_property_long(phongo_serverheartbeatsucceededevent_ce, &intern->std, ZEND_STRL("durationMicros"), intern->duration_micros);
+	zend_update_property_long(phongo_serverheartbeatsucceededevent_ce, &intern->std, ZEND_STRL("duration"), intern->duration_micros);
 
 	if (phongo_bson_to_zval_ex(intern->reply, &reply_state)) {
 		zend_update_property(phongo_serverheartbeatsucceededevent_ce, &intern->std, ZEND_STRL("reply"), &reply_state.zchild);

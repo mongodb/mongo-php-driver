@@ -13,7 +13,7 @@ final class ServerHeartbeatSucceededEvent
     public readonly string $host;
     public readonly int $port;
     public readonly bool $awaited;
-    public readonly int $durationMicros;
+    public readonly int $duration;
     public readonly object $reply;
 
     final private function __construct() {}

@@ -81,7 +81,7 @@ static void phongo_serverheartbeatfailedevent_update_properties(phongo_serverhea
 	zend_update_property_string(phongo_serverheartbeatfailedevent_ce, &intern->std, ZEND_STRL("host"), intern->host.host);
 	zend_update_property_long(phongo_serverheartbeatfailedevent_ce, &intern->std, ZEND_STRL("port"), intern->host.port);
 	zend_update_property_bool(phongo_serverheartbeatfailedevent_ce, &intern->std, ZEND_STRL("awaited"), intern->awaited);
-	zend_update_property_long(phongo_serverheartbeatfailedevent_ce, &intern->std, ZEND_STRL("durationMicros"), intern->duration_micros);
+	zend_update_property_long(phongo_serverheartbeatfailedevent_ce, &intern->std, ZEND_STRL("duration"), intern->duration_micros);
 	zend_update_property(phongo_serverheartbeatfailedevent_ce, &intern->std, ZEND_STRL("error"), &intern->z_error);
 }
 

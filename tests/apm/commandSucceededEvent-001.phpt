@@ -29,9 +29,9 @@ class MySubscriber implements MongoDB\Driver\Monitoring\CommandSubscriber
         var_dump($event->getDatabaseName());
         var_dump($event->databaseName);
         var_dump($event->getDurationMicros());
-        var_dump($event->durationMicros);
+        var_dump($event->duration);
         echo "getDurationMicros() returns > 0: ", $event->getDurationMicros() > 0 ? 'yes' : 'no', "\n";
-        echo "durationMicros returns > 0: ", $event->durationMicros > 0 ? 'yes' : 'no', "\n";
+        echo "duration returns > 0: ", $event->duration > 0 ? 'yes' : 'no', "\n";
         var_dump($event->getHost());
         var_dump($event->host);
         var_dump($event->getOperationId());
@@ -70,7 +70,7 @@ string(5) "admin"
 int(%d)
 int(%d)
 getDurationMicros() returns > 0: yes
-durationMicros returns > 0: yes
+duration returns > 0: yes
 string(%d) "%s"
 string(%d) "%s"
 string(%d) "%d"

@@ -29,7 +29,7 @@ class MySubscriber implements MongoDB\Driver\Monitoring\SDAMSubscriber
         $this->isObserved = true;
 
         printf("getDurationMicros() returns an integer: %s\n", is_integer($event->getDurationMicros()) ? 'yes' : 'no');
-        printf("durationMicros returns an integer: %s\n", is_integer($event->durationMicros) ? 'yes' : 'no');
+        printf("duration returns an integer: %s\n", is_integer($event->duration) ? 'yes' : 'no');
         printf("getHost() returns a string: %s\n", is_string($event->getHost()) ? 'yes' : 'no');
         printf("host returns a string: %s\n", is_string($event->host) ? 'yes' : 'no');
         printf("getPort() returns an integer: %s\n", is_integer($event->getPort()) ? 'yes' : 'no');
@@ -62,7 +62,7 @@ $m->executeCommand(DATABASE_NAME, $command);
 <?php exit(0); ?>
 --EXPECTF--
 getDurationMicros() returns an integer: yes
-durationMicros returns an integer: yes
+duration returns an integer: yes
 getHost() returns a string: yes
 host returns a string: yes
 getPort() returns an integer: yes
@@ -78,7 +78,7 @@ object(MongoDB\Driver\Monitoring\ServerHeartbeatSucceededEvent)#%d (%d) {
   int(%d)
   ["awaited"]=>
   bool(%s)
-  ["durationMicros"]=>
+  ["duration"]=>
   int(%d)
   ["reply"]=>
   object(stdClass)#%d (%d) {%A
