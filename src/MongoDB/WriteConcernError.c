@@ -92,25 +92,16 @@ static zend_object* phongo_writeconcernerror_create_object(zend_class_entry* cla
 	return &intern->std;
 }
 
-static HashTable* phongo_writeconcernerror_get_debug_info(zend_object* object, int* is_temp)
+static void phongo_writeconcernerror_update_properties(phongo_writeconcernerror_t* intern)
 {
-	PHONGO_INTERN_FROM_Z_OBJ(writeconcernerror, object);
+	zend_update_property_string(phongo_writeconcernerror_ce, &intern->std, ZEND_STRL("message"), intern->message ? intern->message : "");
+	zend_update_property_long(phongo_writeconcernerror_ce, &intern->std, ZEND_STRL("code"), intern->code);
 
-	zval retval = ZVAL_STATIC_INIT;
-
-	*is_temp = 1;
-
-	array_init_size(&retval, 3);
-	ADD_ASSOC_STRING(&retval, "message", intern->message ? intern->message : "");
-	ADD_ASSOC_LONG_EX(&retval, "code", intern->code);
 	if (!Z_ISUNDEF(intern->info)) {
-		Z_ADDREF(intern->info);
-		ADD_ASSOC_ZVAL_EX(&retval, "info", &intern->info);
+		zend_update_property(phongo_writeconcernerror_ce, &intern->std, ZEND_STRL("info"), &intern->info);
 	} else {
-		ADD_ASSOC_NULL_EX(&retval, "info");
+		zend_update_property_null(phongo_writeconcernerror_ce, &intern->std, ZEND_STRL("info"));
 	}
-
-	return Z_ARRVAL(retval);
 }
 
 void phongo_writeconcernerror_init_ce(INIT_FUNC_ARGS)
@@ -119,9 +110,8 @@ void phongo_writeconcernerror_init_ce(INIT_FUNC_ARGS)
 	phongo_writeconcernerror_ce->create_object = phongo_writeconcernerror_create_object;
 
 	memcpy(&phongo_handler_writeconcernerror, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
-	phongo_handler_writeconcernerror.get_debug_info = phongo_writeconcernerror_get_debug_info;
-	phongo_handler_writeconcernerror.free_obj       = phongo_writeconcernerror_free_object;
-	phongo_handler_writeconcernerror.offset         = XtOffsetOf(phongo_writeconcernerror_t, std);
+	phongo_handler_writeconcernerror.free_obj = phongo_writeconcernerror_free_object;
+	phongo_handler_writeconcernerror.offset   = XtOffsetOf(phongo_writeconcernerror_t, std);
 }
 
 /* Initializes a new WriteConcernError in return_value using the BSON document.
@@ -165,6 +155,8 @@ bool phongo_writeconcernerror_init(zval* return_value, const bson_t* bson)
 			return false;
 		}
 	}
+
+	phongo_writeconcernerror_update_properties(intern);
 
 	return true;
 }

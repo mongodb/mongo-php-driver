@@ -45,11 +45,23 @@ try {
     $server->executeBulkWrite(NS, $bulk);
 } catch (MongoDB\Driver\Exception\BulkWriteException $e) {
     var_dump($e->getWriteResult()->getWriteConcernError()->getInfo());
+    var_dump($e->getWriteResult()->getWriteConcernError()->info);
 }
 
 ?>
 ===DONE===
 --EXPECTF--
+object(stdClass)#%d (%d) {
+  ["writeConcern"]=>
+  object(stdClass)#%d (%d) {
+    ["w"]=>
+    int(2)
+    ["wtimeout"]=>
+    int(0)
+    ["provenance"]=>
+    string(14) "clientSupplied"
+  }
+}
 object(stdClass)#%d (%d) {
   ["writeConcern"]=>
   object(stdClass)#%d (%d) {
