@@ -396,7 +396,7 @@ static HashTable* phongo_query_get_debug_info(zend_object* object, int* is_temp)
 	if (intern->read_concern) {
 		zval read_concern;
 
-		phongo_read_concern_to_zval(&read_concern, intern->read_concern);
+		phongo_readconcern_init(&read_concern, intern->read_concern);
 		ADD_ASSOC_ZVAL_EX(&retval, "readConcern", &read_concern);
 	} else {
 		ADD_ASSOC_NULL_EX(&retval, "readConcern");

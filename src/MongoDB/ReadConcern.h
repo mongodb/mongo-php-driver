@@ -25,6 +25,4 @@ void phongo_readconcern_init(zval* return_value, const mongoc_read_concern_t* re
 
 const mongoc_read_concern_t* phongo_read_concern_from_zval(zval* zread_concern);
 
-void phongo_read_concern_to_zval(zval* retval, const mongoc_read_concern_t* read_concern);
-
 #endif /* PHONGO_READCONCERN_H */

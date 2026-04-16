@@ -218,14 +218,3 @@ const mongoc_read_concern_t* phongo_read_concern_from_zval(zval* zread_concern)
 
 	return NULL;
 }
-
-void phongo_read_concern_to_zval(zval* retval, const mongoc_read_concern_t* read_concern)
-{
-	const char* level = mongoc_read_concern_get_level(read_concern);
-
-	array_init_size(retval, 1);
-
-	if (level) {
-		ADD_ASSOC_STRING(retval, "level", level);
-	}
-}
