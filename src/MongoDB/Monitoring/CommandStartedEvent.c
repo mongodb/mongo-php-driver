@@ -45,6 +45,7 @@ static void phongo_commandstartedevent_update_properties(zend_object* object, co
 {
 	char              operation_id[24], request_id[24];
 	phongo_bson_state command_state;
+	int64_t           server_connection_id = mongoc_apm_command_started_get_server_connection_id_int64(event);
 
 	PHONGO_BSON_INIT_STATE(command_state);
 
@@ -76,10 +77,16 @@ static void phongo_commandstartedevent_update_properties(zend_object* object, co
 	}
 
 	/* TODO: Use MONGOC_NO_SERVER_CONNECTION_ID once it is added to libmongoc's public API (CDRIVER-4176) */
-	if (mongoc_apm_command_started_get_server_connection_id_int64(event) == -1) {
+	if (server_connection_id == -1) {
 		zend_update_property_null(phongo_commandstartedevent_ce, object, ZEND_STRL("serverConnectionId"));
 	} else {
-		zend_update_property_long(phongo_commandstartedevent_ce, object, ZEND_STRL("serverConnectionId"), mongoc_apm_command_started_get_server_connection_id_int64(event));
+#if SIZEOF_ZEND_LONG == 4
+		if (server_connection_id > INT32_MAX || server_connection_id < INT32_MIN) {
+			zend_error(E_WARNING, "Truncating 64-bit value %" PRId64 " for serverConnectionId", server_connection_id);
+		}
+#endif
+
+		zend_update_property_long(phongo_commandstartedevent_ce, object, ZEND_STRL("serverConnectionId"), server_connection_id);
 	}
 }
 
