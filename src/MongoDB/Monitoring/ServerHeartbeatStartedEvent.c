@@ -28,75 +28,42 @@ PHONGO_DISABLED_CONSTRUCTOR(MongoDB_Driver_Monitoring_ServerHeartbeatStartedEven
 /* Returns this event's host */
 static PHP_METHOD(MongoDB_Driver_Monitoring_ServerHeartbeatStartedEvent, getHost)
 {
-	PHONGO_INTERN_FROM_THIS(serverheartbeatstartedevent);
-
 	PHONGO_PARSE_PARAMETERS_NONE();
 
-	RETVAL_STRING(intern->host.host);
+	PHONGO_RETURN_PROPERTY(serverheartbeatstartedevent, "host");
 }
 
 /* Returns this event's port */
 static PHP_METHOD(MongoDB_Driver_Monitoring_ServerHeartbeatStartedEvent, getPort)
 {
-	PHONGO_INTERN_FROM_THIS(serverheartbeatstartedevent);
-
 	PHONGO_PARSE_PARAMETERS_NONE();
 
-	RETVAL_LONG(intern->host.port);
+	PHONGO_RETURN_PROPERTY(serverheartbeatstartedevent, "port");
 }
 
 /* Returns whether this event came from an awaitable hello */
 static PHP_METHOD(MongoDB_Driver_Monitoring_ServerHeartbeatStartedEvent, isAwaited)
 {
-	PHONGO_INTERN_FROM_THIS(serverheartbeatstartedevent);
-
 	PHONGO_PARSE_PARAMETERS_NONE();
 
-	RETVAL_BOOL(intern->awaited);
+	PHONGO_RETURN_PROPERTY(serverheartbeatstartedevent, "awaited");
 }
 
-static void phongo_serverheartbeatstartedevent_update_properties(phongo_serverheartbeatstartedevent_t* intern)
+static void phongo_serverheartbeatstartedevent_update_properties(zend_object* object, const mongoc_apm_server_heartbeat_started_t* event)
 {
-	zend_update_property_string(phongo_serverheartbeatstartedevent_ce, &intern->std, ZEND_STRL("host"), intern->host.host);
-	zend_update_property_long(phongo_serverheartbeatstartedevent_ce, &intern->std, ZEND_STRL("port"), intern->host.port);
-	zend_update_property_bool(phongo_serverheartbeatstartedevent_ce, &intern->std, ZEND_STRL("awaited"), intern->awaited);
-}
-
-/* MongoDB\Driver\Monitoring\ServerHeartbeatStartedEvent object handlers */
-static zend_object_handlers phongo_handler_serverheartbeatstartedevent;
-
-static void phongo_serverheartbeatstartedevent_free_object(zend_object* object)
-{
-	PHONGO_INTERN_FROM_Z_OBJ(serverheartbeatstartedevent, object);
-
-	zend_object_std_dtor(&intern->std);
-}
-
-static zend_object* phongo_serverheartbeatstartedevent_create_object(zend_class_entry* class_type)
-{
-	PHONGO_INTERN_OBJECT_ALLOC(serverheartbeatstartedevent, class_type);
-
-	intern->std.handlers = &phongo_handler_serverheartbeatstartedevent;
-
-	return &intern->std;
+	zend_update_property_string(phongo_serverheartbeatstartedevent_ce, object, ZEND_STRL("host"), mongoc_apm_server_heartbeat_started_get_host(event)->host);
+	zend_update_property_long(phongo_serverheartbeatstartedevent_ce, object, ZEND_STRL("port"), mongoc_apm_server_heartbeat_started_get_host(event)->port);
+	zend_update_property_bool(phongo_serverheartbeatstartedevent_ce, object, ZEND_STRL("awaited"), mongoc_apm_server_heartbeat_started_get_awaited(event));
 }
 
 void phongo_serverheartbeatstartedevent_init_ce(INIT_FUNC_ARGS)
 {
-	phongo_serverheartbeatstartedevent_ce                = register_class_MongoDB_Driver_Monitoring_ServerHeartbeatStartedEvent();
-	phongo_serverheartbeatstartedevent_ce->create_object = phongo_serverheartbeatstartedevent_create_object;
-
-	memcpy(&phongo_handler_serverheartbeatstartedevent, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
-	phongo_handler_serverheartbeatstartedevent.free_obj = phongo_serverheartbeatstartedevent_free_object;
-	phongo_handler_serverheartbeatstartedevent.offset   = XtOffsetOf(phongo_serverheartbeatstartedevent_t, std);
+	phongo_serverheartbeatstartedevent_ce = register_class_MongoDB_Driver_Monitoring_ServerHeartbeatStartedEvent();
 }
 
 void phongo_serverheartbeatstartedevent_init(zval* return_value, const mongoc_apm_server_heartbeat_started_t* event)
 {
-	PHONGO_INTERN_INIT_EX(serverheartbeatstartedevent, return_value);
+	PHONGO_OBJECT_INIT_EX(serverheartbeatstartedevent, return_value);
 
-	memcpy(&intern->host, mongoc_apm_server_heartbeat_started_get_host(event), sizeof(mongoc_host_list_t));
-	intern->awaited = mongoc_apm_server_heartbeat_started_get_awaited(event);
-
-	phongo_serverheartbeatstartedevent_update_properties(intern);
+	phongo_serverheartbeatstartedevent_update_properties(object, event);
 }

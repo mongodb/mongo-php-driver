@@ -167,21 +167,6 @@ typedef struct {
 } phongo_writeconcern_t;
 
 typedef struct {
-	int         code;
-	char*       message;
-	zval        info;
-	zend_object std;
-} phongo_writeconcernerror_t;
-
-typedef struct {
-	int         code;
-	char*       message;
-	zval        info;
-	uint32_t    index;
-	zend_object std;
-} phongo_writeerror_t;
-
-typedef struct {
 	mongoc_write_concern_t* write_concern;
 	bson_t*                 reply;
 	zval                    manager;
@@ -301,51 +286,6 @@ typedef struct {
 } phongo_utcdatetime_t;
 
 typedef struct {
-	char*              command_name;
-	char*              database_name;
-	uint32_t           server_id;
-	int64_t            operation_id;
-	int64_t            request_id;
-	int64_t            duration_micros;
-	bson_t*            reply;
-	zval               z_error;
-	bool               has_service_id;
-	bson_oid_t         service_id;
-	int64_t            server_connection_id;
-	mongoc_host_list_t host;
-	zend_object        std;
-} phongo_commandfailedevent_t;
-
-typedef struct {
-	char*              command_name;
-	char*              database_name;
-	uint32_t           server_id;
-	int64_t            operation_id;
-	int64_t            request_id;
-	bson_t*            command;
-	bool               has_service_id;
-	bson_oid_t         service_id;
-	int64_t            server_connection_id;
-	mongoc_host_list_t host;
-	zend_object        std;
-} phongo_commandstartedevent_t;
-
-typedef struct {
-	char*              command_name;
-	char*              database_name;
-	uint32_t           server_id;
-	int64_t            operation_id;
-	int64_t            request_id;
-	int64_t            duration_micros;
-	bson_t*            reply;
-	bool               has_service_id;
-	bson_oid_t         service_id;
-	int64_t            server_connection_id;
-	mongoc_host_list_t host;
-	zend_object        std;
-} phongo_commandsucceededevent_t;
-
-typedef struct {
 	bson_oid_t                   topology_id;
 	mongoc_host_list_t           host;
 	mongoc_server_description_t* new_server_description;
@@ -354,54 +294,10 @@ typedef struct {
 } phongo_serverchangedevent_t;
 
 typedef struct {
-	bson_oid_t         topology_id;
-	mongoc_host_list_t host;
-	zend_object        std;
-} phongo_serverclosedevent_t;
-
-typedef struct {
-	bool               awaited;
-	int64_t            duration_micros;
-	zval               z_error;
-	mongoc_host_list_t host;
-	zend_object        std;
-} phongo_serverheartbeatfailedevent_t;
-
-typedef struct {
-	bool               awaited;
-	mongoc_host_list_t host;
-	zend_object        std;
-} phongo_serverheartbeatstartedevent_t;
-
-typedef struct {
-	bool               awaited;
-	int64_t            duration_micros;
-	mongoc_host_list_t host;
-	bson_t*            reply;
-	zend_object        std;
-} phongo_serverheartbeatsucceededevent_t;
-
-typedef struct {
-	bson_oid_t         topology_id;
-	mongoc_host_list_t host;
-	zend_object        std;
-} phongo_serveropeningevent_t;
-
-typedef struct {
 	bson_oid_t                     topology_id;
 	mongoc_topology_description_t* new_topology_description;
 	mongoc_topology_description_t* old_topology_description;
 	zend_object                    std;
 } phongo_topologychangedevent_t;
-
-typedef struct {
-	bson_oid_t  topology_id;
-	zend_object std;
-} phongo_topologyclosedevent_t;
-
-typedef struct {
-	bson_oid_t  topology_id;
-	zend_object std;
-} phongo_topologyopeningevent_t;
 
 #endif /* PHONGO_STRUCTS */

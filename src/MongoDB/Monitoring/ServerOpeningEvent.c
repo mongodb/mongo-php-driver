@@ -30,81 +30,51 @@ PHONGO_DISABLED_CONSTRUCTOR(MongoDB_Driver_Monitoring_ServerOpeningEvent)
 /* Returns this event's host */
 static PHP_METHOD(MongoDB_Driver_Monitoring_ServerOpeningEvent, getHost)
 {
-	PHONGO_INTERN_FROM_THIS(serveropeningevent);
-
 	PHONGO_PARSE_PARAMETERS_NONE();
 
-	RETVAL_STRING(intern->host.host);
+	PHONGO_RETURN_PROPERTY(serveropeningevent, "host");
 }
 
 /* Returns this event's port */
 static PHP_METHOD(MongoDB_Driver_Monitoring_ServerOpeningEvent, getPort)
 {
-	PHONGO_INTERN_FROM_THIS(serveropeningevent);
-
 	PHONGO_PARSE_PARAMETERS_NONE();
 
-	RETVAL_LONG(intern->host.port);
+	PHONGO_RETURN_PROPERTY(serveropeningevent, "port");
 }
 
 /* Returns this event's topology id */
 static PHP_METHOD(MongoDB_Driver_Monitoring_ServerOpeningEvent, getTopologyId)
 {
-	PHONGO_INTERN_FROM_THIS(serveropeningevent);
-
 	PHONGO_PARSE_PARAMETERS_NONE();
 
-	phongo_objectid_new(return_value, &intern->topology_id);
+	PHONGO_RETURN_PROPERTY(serveropeningevent, "topologyId");
 }
 
-static void phongo_serveropeningevent_update_properties(phongo_serveropeningevent_t* intern)
+static void phongo_serveropeningevent_update_properties(zend_object* object, const mongoc_apm_server_opening_t* event)
 {
-	zval topology_id;
+	zval       ztopology_id;
+	bson_oid_t topology_id;
 
-	zend_update_property_string(phongo_serveropeningevent_ce, &intern->std, ZEND_STRL("host"), intern->host.host);
-	zend_update_property_long(phongo_serveropeningevent_ce, &intern->std, ZEND_STRL("port"), intern->host.port);
+	zend_update_property_string(phongo_serveropeningevent_ce, object, ZEND_STRL("host"), mongoc_apm_server_opening_get_host(event)->host);
+	zend_update_property_long(phongo_serveropeningevent_ce, object, ZEND_STRL("port"), mongoc_apm_server_opening_get_host(event)->port);
 
-	if (phongo_objectid_new(&topology_id, &intern->topology_id)) {
-		zend_update_property(phongo_serveropeningevent_ce, &intern->std, ZEND_STRL("topologyId"), &topology_id);
-		zval_ptr_dtor(&topology_id);
+	mongoc_apm_server_opening_get_topology_id(event, &topology_id);
+
+	if (phongo_objectid_new(&ztopology_id, &topology_id)) {
+		zend_update_property(phongo_serveropeningevent_ce, object, ZEND_STRL("topologyId"), &ztopology_id);
+		zval_ptr_dtor(&ztopology_id);
 	}
-}
-
-/* MongoDB\Driver\Monitoring\ServerOpeningEvent object handlers */
-static zend_object_handlers phongo_handler_serveropeningevent;
-
-static void phongo_serveropeningevent_free_object(zend_object* object)
-{
-	PHONGO_INTERN_FROM_Z_OBJ(serveropeningevent, object);
-
-	zend_object_std_dtor(&intern->std);
-}
-
-static zend_object* phongo_serveropeningevent_create_object(zend_class_entry* class_type)
-{
-	PHONGO_INTERN_OBJECT_ALLOC(serveropeningevent, class_type);
-
-	intern->std.handlers = &phongo_handler_serveropeningevent;
-
-	return &intern->std;
 }
 
 void phongo_serveropeningevent_init_ce(INIT_FUNC_ARGS)
 {
-	phongo_serveropeningevent_ce                = register_class_MongoDB_Driver_Monitoring_ServerOpeningEvent();
-	phongo_serveropeningevent_ce->create_object = phongo_serveropeningevent_create_object;
-
-	memcpy(&phongo_handler_serveropeningevent, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
-	phongo_handler_serveropeningevent.free_obj = phongo_serveropeningevent_free_object;
-	phongo_handler_serveropeningevent.offset   = XtOffsetOf(phongo_serveropeningevent_t, std);
+	phongo_serveropeningevent_ce = register_class_MongoDB_Driver_Monitoring_ServerOpeningEvent();
 }
 
 void phongo_serveropeningevent_init(zval* return_value, const mongoc_apm_server_opening_t* event)
 {
-	PHONGO_INTERN_INIT_EX(serveropeningevent, return_value);
+	PHONGO_OBJECT_INIT_EX(serveropeningevent, return_value);
 
-	memcpy(&intern->host, mongoc_apm_server_opening_get_host(event), sizeof(mongoc_host_list_t));
-	mongoc_apm_server_opening_get_topology_id(event, &intern->topology_id);
-
-	phongo_serveropeningevent_update_properties(intern);
+	phongo_serveropeningevent_update_properties(object, event);
 }
