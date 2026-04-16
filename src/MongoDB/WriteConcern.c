@@ -388,36 +388,3 @@ const mongoc_write_concern_t* phongo_write_concern_from_zval(zval* zwrite_concer
 
 	return NULL;
 }
-
-void phongo_write_concern_to_zval(zval* retval, const mongoc_write_concern_t* write_concern)
-{
-	const char*   wtag     = mongoc_write_concern_get_wtag(write_concern);
-	const int32_t w        = mongoc_write_concern_get_w(write_concern);
-	const int64_t wtimeout = mongoc_write_concern_get_wtimeout_int64(write_concern);
-
-	array_init_size(retval, 4);
-
-	if (wtag) {
-		ADD_ASSOC_STRING(retval, "w", wtag);
-	} else if (mongoc_write_concern_get_wmajority(write_concern)) {
-		ADD_ASSOC_STRING(retval, "w", PHONGO_WRITE_CONCERN_W_MAJORITY);
-	} else if (w != MONGOC_WRITE_CONCERN_W_DEFAULT) {
-		ADD_ASSOC_LONG_EX(retval, "w", w);
-	}
-
-	if (mongoc_write_concern_journal_is_set(write_concern)) {
-		ADD_ASSOC_BOOL_EX(retval, "j", mongoc_write_concern_get_journal(write_concern));
-	}
-
-	if (wtimeout != 0) {
-#if SIZEOF_ZEND_LONG == 4
-		if (wtimeout > INT32_MAX || wtimeout < INT32_MIN) {
-			ADD_ASSOC_INT64_AS_STRING(retval, "wtimeout", wtimeout);
-		} else {
-			ADD_ASSOC_LONG_EX(retval, "wtimeout", wtimeout);
-		}
-#else
-		ADD_ASSOC_LONG_EX(retval, "wtimeout", wtimeout);
-#endif
-	}
-}
