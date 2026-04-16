@@ -765,7 +765,7 @@ function getDeletedCount($retval) {
     return $retval->deletedCount;
 }
 function getUpsertedCount($retval) {
-    return $retval->usertedCount;
+    return $retval->upsertedCount;
 }
 function getWriteErrors($retval) {
     return $retval->writeErrors;
