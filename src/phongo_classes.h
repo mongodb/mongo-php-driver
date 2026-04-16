@@ -65,6 +65,14 @@
 		RETURN_ZVAL(zend_read_property(phongo_##name##_ce, Z_OBJ_P(getThis()), ZEND_STRL((prop)), false, &rv), 1, 0); \
 	} while (0);
 
+#define PHONGO_PROPERTY_GETTER(className, getter, name, property) \
+	static PHP_METHOD(className, getter)                          \
+	{                                                             \
+		PHONGO_PARSE_PARAMETERS_NONE();                           \
+                                                                  \
+		PHONGO_RETURN_PROPERTY(name, property);                   \
+	}
+
 #define CLASS_FETCH_OBJ_DECL(name)                                                      \
 	static inline phongo_##name##_t* php_##name##_fetch_object(const zend_object* obj)  \
 	{                                                                                   \

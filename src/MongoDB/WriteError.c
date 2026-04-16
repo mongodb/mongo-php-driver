@@ -29,38 +29,10 @@ zend_class_entry* phongo_writeerror_ce;
 
 PHONGO_DISABLED_CONSTRUCTOR(MongoDB_Driver_WriteError)
 
-/* Returns the MongoDB error code */
-static PHP_METHOD(MongoDB_Driver_WriteError, getCode)
-{
-	PHONGO_PARSE_PARAMETERS_NONE();
-
-	PHONGO_RETURN_PROPERTY(writeerror, "code");
-}
-
-/* Returns the index of the operation in the BulkWrite to which this WriteError
-   corresponds. */
-static PHP_METHOD(MongoDB_Driver_WriteError, getIndex)
-{
-	PHONGO_PARSE_PARAMETERS_NONE();
-
-	PHONGO_RETURN_PROPERTY(writeerror, "index");
-}
-
-/* Returns the actual error message from the server */
-static PHP_METHOD(MongoDB_Driver_WriteError, getMessage)
-{
-	PHONGO_PARSE_PARAMETERS_NONE();
-
-	PHONGO_RETURN_PROPERTY(writeerror, "message");
-}
-
-/* Returns additional metadata for the error */
-static PHP_METHOD(MongoDB_Driver_WriteError, getInfo)
-{
-	PHONGO_PARSE_PARAMETERS_NONE();
-
-	PHONGO_RETURN_PROPERTY(writeerror, "info");
-}
+PHONGO_PROPERTY_GETTER(MongoDB_Driver_WriteError, getCode, writeerror, "code")
+PHONGO_PROPERTY_GETTER(MongoDB_Driver_WriteError, getIndex, writeerror, "index")
+PHONGO_PROPERTY_GETTER(MongoDB_Driver_WriteError, getMessage, writeerror, "message")
+PHONGO_PROPERTY_GETTER(MongoDB_Driver_WriteError, getInfo, writeerror, "info")
 
 static bool phongo_writeerror_update_properties(zend_object* object, const bson_t* bson, int32_t index)
 {

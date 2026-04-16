@@ -27,29 +27,9 @@ zend_class_entry* phongo_serverclosedevent_ce;
 
 PHONGO_DISABLED_CONSTRUCTOR(MongoDB_Driver_Monitoring_ServerClosedEvent)
 
-/* Returns this event's host */
-static PHP_METHOD(MongoDB_Driver_Monitoring_ServerClosedEvent, getHost)
-{
-	PHONGO_PARSE_PARAMETERS_NONE();
-
-	PHONGO_RETURN_PROPERTY(serverclosedevent, "host");
-}
-
-/* Returns this event's port */
-static PHP_METHOD(MongoDB_Driver_Monitoring_ServerClosedEvent, getPort)
-{
-	PHONGO_PARSE_PARAMETERS_NONE();
-
-	PHONGO_RETURN_PROPERTY(serverclosedevent, "port");
-}
-
-/* Returns this event's topology id */
-static PHP_METHOD(MongoDB_Driver_Monitoring_ServerClosedEvent, getTopologyId)
-{
-	PHONGO_PARSE_PARAMETERS_NONE();
-
-	PHONGO_RETURN_PROPERTY(serverclosedevent, "topologyId");
-}
+PHONGO_PROPERTY_GETTER(MongoDB_Driver_Monitoring_ServerClosedEvent, getHost, serverclosedevent, "host")
+PHONGO_PROPERTY_GETTER(MongoDB_Driver_Monitoring_ServerClosedEvent, getPort, serverclosedevent, "port")
+PHONGO_PROPERTY_GETTER(MongoDB_Driver_Monitoring_ServerClosedEvent, getTopologyId, serverclosedevent, "topologyId")
 
 static void phongo_serverclosedevent_update_properties(zend_object* object, const mongoc_apm_server_closed_t* event)
 {

@@ -25,45 +25,11 @@ zend_class_entry* phongo_serverheartbeatsucceededevent_ce;
 
 PHONGO_DISABLED_CONSTRUCTOR(MongoDB_Driver_Monitoring_ServerHeartbeatSucceededEvent)
 
-/* Returns this event's duration in microseconds */
-static PHP_METHOD(MongoDB_Driver_Monitoring_ServerHeartbeatSucceededEvent, getDurationMicros)
-{
-	PHONGO_PARSE_PARAMETERS_NONE();
-
-	PHONGO_RETURN_PROPERTY(serverheartbeatsucceededevent, "duration");
-}
-
-/* Returns this event's host */
-static PHP_METHOD(MongoDB_Driver_Monitoring_ServerHeartbeatSucceededEvent, getHost)
-{
-	PHONGO_PARSE_PARAMETERS_NONE();
-
-	PHONGO_RETURN_PROPERTY(serverheartbeatsucceededevent, "host");
-}
-
-/* Returns this event's port */
-static PHP_METHOD(MongoDB_Driver_Monitoring_ServerHeartbeatSucceededEvent, getPort)
-{
-	PHONGO_PARSE_PARAMETERS_NONE();
-
-	PHONGO_RETURN_PROPERTY(serverheartbeatsucceededevent, "port");
-}
-
-/* Returns this event's reply */
-static PHP_METHOD(MongoDB_Driver_Monitoring_ServerHeartbeatSucceededEvent, getReply)
-{
-	PHONGO_PARSE_PARAMETERS_NONE();
-
-	PHONGO_RETURN_PROPERTY(serverheartbeatsucceededevent, "reply");
-}
-
-/* Returns whether this event came from an awaitable hello */
-static PHP_METHOD(MongoDB_Driver_Monitoring_ServerHeartbeatSucceededEvent, isAwaited)
-{
-	PHONGO_PARSE_PARAMETERS_NONE();
-
-	PHONGO_RETURN_PROPERTY(serverheartbeatsucceededevent, "awaited");
-}
+PHONGO_PROPERTY_GETTER(MongoDB_Driver_Monitoring_ServerHeartbeatSucceededEvent, getDurationMicros, serverheartbeatsucceededevent, "duration")
+PHONGO_PROPERTY_GETTER(MongoDB_Driver_Monitoring_ServerHeartbeatSucceededEvent, getHost, serverheartbeatsucceededevent, "host")
+PHONGO_PROPERTY_GETTER(MongoDB_Driver_Monitoring_ServerHeartbeatSucceededEvent, getPort, serverheartbeatsucceededevent, "port")
+PHONGO_PROPERTY_GETTER(MongoDB_Driver_Monitoring_ServerHeartbeatSucceededEvent, getReply, serverheartbeatsucceededevent, "reply")
+PHONGO_PROPERTY_GETTER(MongoDB_Driver_Monitoring_ServerHeartbeatSucceededEvent, isAwaited, serverheartbeatsucceededevent, "awaited")
 
 static void phongo_serverheartbeatsucceededevent_update_properties(zend_object* object, const mongoc_apm_server_heartbeat_succeeded_t* event)
 {

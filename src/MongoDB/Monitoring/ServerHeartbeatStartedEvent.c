@@ -25,29 +25,9 @@ zend_class_entry* phongo_serverheartbeatstartedevent_ce;
 
 PHONGO_DISABLED_CONSTRUCTOR(MongoDB_Driver_Monitoring_ServerHeartbeatStartedEvent)
 
-/* Returns this event's host */
-static PHP_METHOD(MongoDB_Driver_Monitoring_ServerHeartbeatStartedEvent, getHost)
-{
-	PHONGO_PARSE_PARAMETERS_NONE();
-
-	PHONGO_RETURN_PROPERTY(serverheartbeatstartedevent, "host");
-}
-
-/* Returns this event's port */
-static PHP_METHOD(MongoDB_Driver_Monitoring_ServerHeartbeatStartedEvent, getPort)
-{
-	PHONGO_PARSE_PARAMETERS_NONE();
-
-	PHONGO_RETURN_PROPERTY(serverheartbeatstartedevent, "port");
-}
-
-/* Returns whether this event came from an awaitable hello */
-static PHP_METHOD(MongoDB_Driver_Monitoring_ServerHeartbeatStartedEvent, isAwaited)
-{
-	PHONGO_PARSE_PARAMETERS_NONE();
-
-	PHONGO_RETURN_PROPERTY(serverheartbeatstartedevent, "awaited");
-}
+PHONGO_PROPERTY_GETTER(MongoDB_Driver_Monitoring_ServerHeartbeatStartedEvent, getHost, serverheartbeatstartedevent, "host")
+PHONGO_PROPERTY_GETTER(MongoDB_Driver_Monitoring_ServerHeartbeatStartedEvent, getPort, serverheartbeatstartedevent, "port")
+PHONGO_PROPERTY_GETTER(MongoDB_Driver_Monitoring_ServerHeartbeatStartedEvent, isAwaited, serverheartbeatstartedevent, "awaited")
 
 static void phongo_serverheartbeatstartedevent_update_properties(zend_object* object, const mongoc_apm_server_heartbeat_started_t* event)
 {

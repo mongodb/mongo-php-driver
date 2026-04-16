@@ -32,82 +32,17 @@ zend_class_entry* phongo_commandfailedevent_ce;
 
 PHONGO_DISABLED_CONSTRUCTOR(MongoDB_Driver_Monitoring_CommandFailedEvent)
 
-static PHP_METHOD(MongoDB_Driver_Monitoring_CommandFailedEvent, getCommandName)
-{
-	PHONGO_PARSE_PARAMETERS_NONE();
-
-	PHONGO_RETURN_PROPERTY(commandfailedevent, "commandName");
-}
-
-static PHP_METHOD(MongoDB_Driver_Monitoring_CommandFailedEvent, getDatabaseName)
-{
-	PHONGO_PARSE_PARAMETERS_NONE();
-
-	PHONGO_RETURN_PROPERTY(commandfailedevent, "databaseName");
-}
-
-static PHP_METHOD(MongoDB_Driver_Monitoring_CommandFailedEvent, getDurationMicros)
-{
-	PHONGO_PARSE_PARAMETERS_NONE();
-
-	PHONGO_RETURN_PROPERTY(commandfailedevent, "duration");
-}
-
-static PHP_METHOD(MongoDB_Driver_Monitoring_CommandFailedEvent, getError)
-{
-	PHONGO_PARSE_PARAMETERS_NONE();
-
-	PHONGO_RETURN_PROPERTY(commandfailedevent, "error");
-}
-
-static PHP_METHOD(MongoDB_Driver_Monitoring_CommandFailedEvent, getHost)
-{
-	PHONGO_PARSE_PARAMETERS_NONE();
-
-	PHONGO_RETURN_PROPERTY(commandfailedevent, "host");
-}
-
-static PHP_METHOD(MongoDB_Driver_Monitoring_CommandFailedEvent, getOperationId)
-{
-	PHONGO_PARSE_PARAMETERS_NONE();
-
-	PHONGO_RETURN_PROPERTY(commandfailedevent, "operationId");
-}
-
-static PHP_METHOD(MongoDB_Driver_Monitoring_CommandFailedEvent, getPort)
-{
-	PHONGO_PARSE_PARAMETERS_NONE();
-
-	PHONGO_RETURN_PROPERTY(commandfailedevent, "port");
-}
-
-static PHP_METHOD(MongoDB_Driver_Monitoring_CommandFailedEvent, getReply)
-{
-	PHONGO_PARSE_PARAMETERS_NONE();
-
-	PHONGO_RETURN_PROPERTY(commandfailedevent, "reply");
-}
-
-static PHP_METHOD(MongoDB_Driver_Monitoring_CommandFailedEvent, getRequestId)
-{
-	PHONGO_PARSE_PARAMETERS_NONE();
-
-	PHONGO_RETURN_PROPERTY(commandfailedevent, "requestId");
-}
-
-static PHP_METHOD(MongoDB_Driver_Monitoring_CommandFailedEvent, getServiceId)
-{
-	PHONGO_PARSE_PARAMETERS_NONE();
-
-	PHONGO_RETURN_PROPERTY(commandfailedevent, "serviceId");
-}
-
-static PHP_METHOD(MongoDB_Driver_Monitoring_CommandFailedEvent, getServerConnectionId)
-{
-	PHONGO_PARSE_PARAMETERS_NONE();
-
-	PHONGO_RETURN_PROPERTY(commandfailedevent, "serverConnectionId");
-}
+PHONGO_PROPERTY_GETTER(MongoDB_Driver_Monitoring_CommandFailedEvent, getCommandName, commandfailedevent, "commandName")
+PHONGO_PROPERTY_GETTER(MongoDB_Driver_Monitoring_CommandFailedEvent, getDatabaseName, commandfailedevent, "databaseName")
+PHONGO_PROPERTY_GETTER(MongoDB_Driver_Monitoring_CommandFailedEvent, getDurationMicros, commandfailedevent, "duration")
+PHONGO_PROPERTY_GETTER(MongoDB_Driver_Monitoring_CommandFailedEvent, getError, commandfailedevent, "error")
+PHONGO_PROPERTY_GETTER(MongoDB_Driver_Monitoring_CommandFailedEvent, getHost, commandfailedevent, "host")
+PHONGO_PROPERTY_GETTER(MongoDB_Driver_Monitoring_CommandFailedEvent, getOperationId, commandfailedevent, "operationId")
+PHONGO_PROPERTY_GETTER(MongoDB_Driver_Monitoring_CommandFailedEvent, getPort, commandfailedevent, "port")
+PHONGO_PROPERTY_GETTER(MongoDB_Driver_Monitoring_CommandFailedEvent, getReply, commandfailedevent, "reply")
+PHONGO_PROPERTY_GETTER(MongoDB_Driver_Monitoring_CommandFailedEvent, getRequestId, commandfailedevent, "requestId")
+PHONGO_PROPERTY_GETTER(MongoDB_Driver_Monitoring_CommandFailedEvent, getServiceId, commandfailedevent, "serviceId")
+PHONGO_PROPERTY_GETTER(MongoDB_Driver_Monitoring_CommandFailedEvent, getServerConnectionId, commandfailedevent, "serverConnectionId")
 
 static void phongo_commandfailedevent_update_properties(zend_object* object, const mongoc_apm_command_failed_t* event)
 {

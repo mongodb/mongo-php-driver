@@ -26,45 +26,11 @@ zend_class_entry* phongo_serverheartbeatfailedevent_ce;
 
 PHONGO_DISABLED_CONSTRUCTOR(MongoDB_Driver_Monitoring_ServerHeartbeatFailedEvent)
 
-/* Returns this event's duration in microseconds */
-static PHP_METHOD(MongoDB_Driver_Monitoring_ServerHeartbeatFailedEvent, getDurationMicros)
-{
-	PHONGO_PARSE_PARAMETERS_NONE();
-
-	PHONGO_RETURN_PROPERTY(serverheartbeatfailedevent, "duration");
-}
-
-/* Returns the error associated with the event */
-static PHP_METHOD(MongoDB_Driver_Monitoring_ServerHeartbeatFailedEvent, getError)
-{
-	PHONGO_PARSE_PARAMETERS_NONE();
-
-	PHONGO_RETURN_PROPERTY(serverheartbeatfailedevent, "error");
-}
-
-/* Returns this event's host */
-static PHP_METHOD(MongoDB_Driver_Monitoring_ServerHeartbeatFailedEvent, getHost)
-{
-	PHONGO_PARSE_PARAMETERS_NONE();
-
-	PHONGO_RETURN_PROPERTY(serverheartbeatfailedevent, "host");
-}
-
-/* Returns this event's port */
-static PHP_METHOD(MongoDB_Driver_Monitoring_ServerHeartbeatFailedEvent, getPort)
-{
-	PHONGO_PARSE_PARAMETERS_NONE();
-
-	PHONGO_RETURN_PROPERTY(serverheartbeatfailedevent, "port");
-}
-
-/* Returns whether this event came from an awaitable hello */
-static PHP_METHOD(MongoDB_Driver_Monitoring_ServerHeartbeatFailedEvent, isAwaited)
-{
-	PHONGO_PARSE_PARAMETERS_NONE();
-
-	PHONGO_RETURN_PROPERTY(serverheartbeatfailedevent, "awaited");
-}
+PHONGO_PROPERTY_GETTER(MongoDB_Driver_Monitoring_ServerHeartbeatFailedEvent, getDurationMicros, serverheartbeatfailedevent, "duration")
+PHONGO_PROPERTY_GETTER(MongoDB_Driver_Monitoring_ServerHeartbeatFailedEvent, getError, serverheartbeatfailedevent, "error")
+PHONGO_PROPERTY_GETTER(MongoDB_Driver_Monitoring_ServerHeartbeatFailedEvent, getHost, serverheartbeatfailedevent, "host")
+PHONGO_PROPERTY_GETTER(MongoDB_Driver_Monitoring_ServerHeartbeatFailedEvent, getPort, serverheartbeatfailedevent, "port")
+PHONGO_PROPERTY_GETTER(MongoDB_Driver_Monitoring_ServerHeartbeatFailedEvent, isAwaited, serverheartbeatfailedevent, "awaited")
 
 static void phongo_serverheartbeatfailedevent_update_properties(zend_object* object, const mongoc_apm_server_heartbeat_failed_t* event)
 {

@@ -29,29 +29,9 @@ zend_class_entry* phongo_writeconcernerror_ce;
 
 PHONGO_DISABLED_CONSTRUCTOR(MongoDB_Driver_WriteConcernError)
 
-/* Returns the MongoDB error code */
-static PHP_METHOD(MongoDB_Driver_WriteConcernError, getCode)
-{
-	PHONGO_PARSE_PARAMETERS_NONE();
-
-	PHONGO_RETURN_PROPERTY(writeconcernerror, "code");
-}
-
-/* Returns additional metadata for the error */
-static PHP_METHOD(MongoDB_Driver_WriteConcernError, getInfo)
-{
-	PHONGO_PARSE_PARAMETERS_NONE();
-
-	PHONGO_RETURN_PROPERTY(writeconcernerror, "info");
-}
-
-/* Returns the actual error message from the server */
-static PHP_METHOD(MongoDB_Driver_WriteConcernError, getMessage)
-{
-	PHONGO_PARSE_PARAMETERS_NONE();
-
-	PHONGO_RETURN_PROPERTY(writeconcernerror, "message");
-}
+PHONGO_PROPERTY_GETTER(MongoDB_Driver_WriteConcernError, getCode, writeconcernerror, "code")
+PHONGO_PROPERTY_GETTER(MongoDB_Driver_WriteConcernError, getMessage, writeconcernerror, "message")
+PHONGO_PROPERTY_GETTER(MongoDB_Driver_WriteConcernError, getInfo, writeconcernerror, "info")
 
 static bool phongo_writeconcernerror_update_properties(zend_object* object, const bson_t* bson)
 {

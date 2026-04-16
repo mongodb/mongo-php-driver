@@ -27,13 +27,7 @@ zend_class_entry* phongo_topologyclosedevent_ce;
 
 PHONGO_DISABLED_CONSTRUCTOR(MongoDB_Driver_Monitoring_TopologyClosedEvent)
 
-/* Returns this event's topology id */
-static PHP_METHOD(MongoDB_Driver_Monitoring_TopologyClosedEvent, getTopologyId)
-{
-	PHONGO_PARSE_PARAMETERS_NONE();
-
-	PHONGO_RETURN_PROPERTY(topologyclosedevent, "topologyId");
-}
+PHONGO_PROPERTY_GETTER(MongoDB_Driver_Monitoring_TopologyClosedEvent, getTopologyId, topologyclosedevent, "topologyId")
 
 static void phongo_topologyclosedevent_update_properties(zend_object* object, const mongoc_apm_topology_closed_t* event)
 {

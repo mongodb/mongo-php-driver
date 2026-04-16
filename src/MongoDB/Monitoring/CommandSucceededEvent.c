@@ -31,75 +31,16 @@ zend_class_entry* phongo_commandsucceededevent_ce;
 
 PHONGO_DISABLED_CONSTRUCTOR(MongoDB_Driver_Monitoring_CommandSucceededEvent)
 
-static PHP_METHOD(MongoDB_Driver_Monitoring_CommandSucceededEvent, getCommandName)
-{
-	PHONGO_PARSE_PARAMETERS_NONE();
-
-	PHONGO_RETURN_PROPERTY(commandsucceededevent, "commandName");
-}
-
-static PHP_METHOD(MongoDB_Driver_Monitoring_CommandSucceededEvent, getDatabaseName)
-{
-	PHONGO_PARSE_PARAMETERS_NONE();
-
-	PHONGO_RETURN_PROPERTY(commandsucceededevent, "databaseName");
-}
-
-static PHP_METHOD(MongoDB_Driver_Monitoring_CommandSucceededEvent, getDurationMicros)
-{
-	PHONGO_PARSE_PARAMETERS_NONE();
-
-	PHONGO_RETURN_PROPERTY(commandsucceededevent, "duration");
-}
-
-static PHP_METHOD(MongoDB_Driver_Monitoring_CommandSucceededEvent, getHost)
-{
-	PHONGO_PARSE_PARAMETERS_NONE();
-
-	PHONGO_RETURN_PROPERTY(commandsucceededevent, "host");
-}
-
-static PHP_METHOD(MongoDB_Driver_Monitoring_CommandSucceededEvent, getOperationId)
-{
-	PHONGO_PARSE_PARAMETERS_NONE();
-
-	PHONGO_RETURN_PROPERTY(commandsucceededevent, "operationId");
-}
-
-static PHP_METHOD(MongoDB_Driver_Monitoring_CommandSucceededEvent, getPort)
-{
-	PHONGO_PARSE_PARAMETERS_NONE();
-
-	PHONGO_RETURN_PROPERTY(commandsucceededevent, "port");
-}
-
-static PHP_METHOD(MongoDB_Driver_Monitoring_CommandSucceededEvent, getReply)
-{
-	PHONGO_PARSE_PARAMETERS_NONE();
-
-	PHONGO_RETURN_PROPERTY(commandsucceededevent, "reply");
-}
-
-static PHP_METHOD(MongoDB_Driver_Monitoring_CommandSucceededEvent, getRequestId)
-{
-	PHONGO_PARSE_PARAMETERS_NONE();
-
-	PHONGO_RETURN_PROPERTY(commandsucceededevent, "requestId");
-}
-
-static PHP_METHOD(MongoDB_Driver_Monitoring_CommandSucceededEvent, getServiceId)
-{
-	PHONGO_PARSE_PARAMETERS_NONE();
-
-	PHONGO_RETURN_PROPERTY(commandsucceededevent, "serviceId");
-}
-
-static PHP_METHOD(MongoDB_Driver_Monitoring_CommandSucceededEvent, getServerConnectionId)
-{
-	PHONGO_PARSE_PARAMETERS_NONE();
-
-	PHONGO_RETURN_PROPERTY(commandsucceededevent, "serverConnectionId");
-}
+PHONGO_PROPERTY_GETTER(MongoDB_Driver_Monitoring_CommandSucceededEvent, getCommandName, commandsucceededevent, "commandName")
+PHONGO_PROPERTY_GETTER(MongoDB_Driver_Monitoring_CommandSucceededEvent, getDatabaseName, commandsucceededevent, "databaseName")
+PHONGO_PROPERTY_GETTER(MongoDB_Driver_Monitoring_CommandSucceededEvent, getDurationMicros, commandsucceededevent, "duration")
+PHONGO_PROPERTY_GETTER(MongoDB_Driver_Monitoring_CommandSucceededEvent, getHost, commandsucceededevent, "host")
+PHONGO_PROPERTY_GETTER(MongoDB_Driver_Monitoring_CommandSucceededEvent, getOperationId, commandsucceededevent, "operationId")
+PHONGO_PROPERTY_GETTER(MongoDB_Driver_Monitoring_CommandSucceededEvent, getPort, commandsucceededevent, "port")
+PHONGO_PROPERTY_GETTER(MongoDB_Driver_Monitoring_CommandSucceededEvent, getReply, commandsucceededevent, "reply")
+PHONGO_PROPERTY_GETTER(MongoDB_Driver_Monitoring_CommandSucceededEvent, getRequestId, commandsucceededevent, "requestId")
+PHONGO_PROPERTY_GETTER(MongoDB_Driver_Monitoring_CommandSucceededEvent, getServiceId, commandsucceededevent, "serviceId")
+PHONGO_PROPERTY_GETTER(MongoDB_Driver_Monitoring_CommandSucceededEvent, getServerConnectionId, commandsucceededevent, "serverConnectionId")
 
 static void phongo_commandsucceededevent_update_properties(zend_object* object, const mongoc_apm_command_succeeded_t* event)
 {
