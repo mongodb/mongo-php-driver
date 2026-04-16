@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 290fcb84655aea3822ce90394e198c1055ab75a9 */
+ * Stub hash: a8c6d822dc54c673adeb79b31e5df8d1277df4dd */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_Driver_Monitoring_CommandFailedEvent___construct, 0, 0, 0)
 ZEND_END_ARG_INFO()
@@ -93,11 +93,11 @@ static zend_class_entry *register_class_MongoDB_Driver_Monitoring_CommandFailedE
 	zend_declare_typed_property(class_entry, property_databaseName_name, &property_databaseName_default_value, ZEND_ACC_PUBLIC|ZEND_ACC_READONLY, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_STRING));
 	zend_string_release(property_databaseName_name);
 
-	zval property_durationMicros_default_value;
-	ZVAL_UNDEF(&property_durationMicros_default_value);
-	zend_string *property_durationMicros_name = zend_string_init("durationMicros", sizeof("durationMicros") - 1, 1);
-	zend_declare_typed_property(class_entry, property_durationMicros_name, &property_durationMicros_default_value, ZEND_ACC_PUBLIC|ZEND_ACC_READONLY, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
-	zend_string_release(property_durationMicros_name);
+	zval property_duration_default_value;
+	ZVAL_UNDEF(&property_duration_default_value);
+	zend_string *property_duration_name = zend_string_init("duration", sizeof("duration") - 1, 1);
+	zend_declare_typed_property(class_entry, property_duration_name, &property_duration_default_value, ZEND_ACC_PUBLIC|ZEND_ACC_READONLY, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(property_duration_name);
 
 	zval property_error_default_value;
 	ZVAL_UNDEF(&property_error_default_value);

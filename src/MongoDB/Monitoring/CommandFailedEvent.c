@@ -172,7 +172,7 @@ static void phongo_commandfailedevent_update_properties(phongo_commandfailedeven
 	zend_update_property_long(phongo_commandfailedevent_ce, &intern->std, ZEND_STRL("port"), intern->host.port);
 	zend_update_property_string(phongo_commandfailedevent_ce, &intern->std, ZEND_STRL("commandName"), intern->command_name);
 	zend_update_property_string(phongo_commandfailedevent_ce, &intern->std, ZEND_STRL("databaseName"), intern->database_name);
-	zend_update_property_long(phongo_commandfailedevent_ce, &intern->std, ZEND_STRL("durationMicros"), intern->duration_micros);
+	zend_update_property_long(phongo_commandfailedevent_ce, &intern->std, ZEND_STRL("duration"), intern->duration_micros);
 	zend_update_property(phongo_commandfailedevent_ce, &intern->std, ZEND_STRL("error"), &intern->z_error);
 
 	if (phongo_bson_to_zval_ex(intern->reply, &reply_state)) {

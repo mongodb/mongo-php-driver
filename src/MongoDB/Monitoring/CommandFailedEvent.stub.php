@@ -14,7 +14,7 @@ final class CommandFailedEvent
     public readonly int $port;
     public readonly string $commandName;
     public readonly string $databaseName;
-    public readonly int $durationMicros;
+    public readonly int $duration;
     public readonly \Exception $error;
     public readonly object $reply;
     public readonly string $operationId;

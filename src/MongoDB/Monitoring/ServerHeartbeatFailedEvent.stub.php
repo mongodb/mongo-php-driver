@@ -13,7 +13,7 @@ final class ServerHeartbeatFailedEvent
     public readonly string $host;
     public readonly int $port;
     public readonly bool $awaited;
-    public readonly int $durationMicros;
+    public readonly int $duration;
     public readonly \Exception $error;
 
     final private function __construct() {}

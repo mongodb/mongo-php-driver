@@ -41,7 +41,7 @@ object(MongoDB\Driver\Monitoring\CommandSucceededEvent)#%d (10) {
   string(4) "ping"
   ["databaseName"]=>
   string(%d) "%s"
-  ["durationMicros"]=>
+  ["duration"]=>
   int(%d)
   ["reply"]=>
   object(stdClass)#%d (%d) {%A

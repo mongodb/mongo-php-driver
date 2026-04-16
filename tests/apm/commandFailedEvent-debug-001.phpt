@@ -50,7 +50,7 @@ object(MongoDB\Driver\Monitoring\CommandFailedEvent)#%d (11) {
   string(9) "aggregate"
   ["databaseName"]=>
   string(%d) "%s"
-  ["durationMicros"]=>
+  ["duration"]=>
   int(%d)
   ["error"]=>
   object(MongoDB\Driver\Exception\ServerException)#%d (%d) {%A
