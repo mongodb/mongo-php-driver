@@ -2,7 +2,7 @@
 PHPC-1598: WriteConcern get_gc should delegate to zend_std_get_properties
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
-<?php skip_if_php_version('>=', '8.1.99'); ?>
+<?php skip_if_php_version('>=', '8.2'); ?>
 --FILE--
 <?php
 
