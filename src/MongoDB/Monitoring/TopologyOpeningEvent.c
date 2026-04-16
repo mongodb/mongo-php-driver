@@ -27,60 +27,29 @@ zend_class_entry* phongo_topologyopeningevent_ce;
 
 PHONGO_DISABLED_CONSTRUCTOR(MongoDB_Driver_Monitoring_TopologyOpeningEvent)
 
-/* Returns this event's topology id */
-static PHP_METHOD(MongoDB_Driver_Monitoring_TopologyOpeningEvent, getTopologyId)
+PHONGO_PROPERTY_GETTER(MongoDB_Driver_Monitoring_TopologyOpeningEvent, getTopologyId, topologyopeningevent, "topologyId")
+
+static void phongo_topologyopeningevent_update_properties(zend_object* object, const mongoc_apm_topology_opening_t* event)
 {
-	PHONGO_INTERN_FROM_THIS(topologyopeningevent);
+	zval       ztopology_id;
+	bson_oid_t topology_id;
 
-	PHONGO_PARSE_PARAMETERS_NONE();
+	mongoc_apm_topology_opening_get_topology_id(event, &topology_id);
 
-	phongo_objectid_new(return_value, &intern->topology_id);
-}
-
-static void phongo_topologyopeningevent_update_properties(phongo_topologyopeningevent_t* intern)
-{
-	zval topology_id;
-
-	if (phongo_objectid_new(&topology_id, &intern->topology_id)) {
-		zend_update_property(phongo_topologyopeningevent_ce, &intern->std, ZEND_STRL("topologyId"), &topology_id);
-		zval_ptr_dtor(&topology_id);
+	if (phongo_objectid_new(&ztopology_id, &topology_id)) {
+		zend_update_property(phongo_topologyopeningevent_ce, object, ZEND_STRL("topologyId"), &ztopology_id);
+		zval_ptr_dtor(&ztopology_id);
 	}
-}
-
-/* MongoDB\Driver\Monitoring\TopologyOpeningEvent object handlers */
-static zend_object_handlers phongo_handler_topologyopeningevent;
-
-static void phongo_topologyopeningevent_free_object(zend_object* object)
-{
-	PHONGO_INTERN_FROM_Z_OBJ(topologyopeningevent, object);
-
-	zend_object_std_dtor(&intern->std);
-}
-
-static zend_object* phongo_topologyopeningevent_create_object(zend_class_entry* class_type)
-{
-	PHONGO_INTERN_OBJECT_ALLOC(topologyopeningevent, class_type);
-
-	intern->std.handlers = &phongo_handler_topologyopeningevent;
-
-	return &intern->std;
 }
 
 void phongo_topologyopeningevent_init_ce(INIT_FUNC_ARGS)
 {
-	phongo_topologyopeningevent_ce                = register_class_MongoDB_Driver_Monitoring_TopologyOpeningEvent();
-	phongo_topologyopeningevent_ce->create_object = phongo_topologyopeningevent_create_object;
-
-	memcpy(&phongo_handler_topologyopeningevent, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
-	phongo_handler_topologyopeningevent.free_obj = phongo_topologyopeningevent_free_object;
-	phongo_handler_topologyopeningevent.offset   = XtOffsetOf(phongo_topologyopeningevent_t, std);
+	phongo_topologyopeningevent_ce = register_class_MongoDB_Driver_Monitoring_TopologyOpeningEvent();
 }
 
 void phongo_topologyopeningevent_init(zval* return_value, const mongoc_apm_topology_opening_t* event)
 {
-	PHONGO_INTERN_INIT_EX(topologyopeningevent, return_value);
+	PHONGO_OBJECT_INIT_EX(topologyopeningevent, return_value);
 
-	mongoc_apm_topology_opening_get_topology_id(event, &intern->topology_id);
-
-	phongo_topologyopeningevent_update_properties(intern);
+	phongo_topologyopeningevent_update_properties(object, event);
 }

@@ -52,6 +52,27 @@
 		intern = php_##name##_fetch_object(Z_OBJ_P(z)); \
 	} while (0)
 
+#define PHONGO_OBJECT_INIT_EX(name, z)         \
+	zend_object* object;                       \
+	do {                                       \
+		object_init_ex(z, phongo_##name##_ce); \
+		object = Z_OBJ_P(z);                   \
+	} while (0)
+
+#define PHONGO_RETURN_PROPERTY(name, prop)                                                                            \
+	do {                                                                                                              \
+		zval rv;                                                                                                      \
+		RETURN_ZVAL(zend_read_property(phongo_##name##_ce, Z_OBJ_P(getThis()), ZEND_STRL((prop)), false, &rv), 1, 0); \
+	} while (0);
+
+#define PHONGO_PROPERTY_GETTER(className, getter, name, property) \
+	static PHP_METHOD(className, getter)                          \
+	{                                                             \
+		PHONGO_PARSE_PARAMETERS_NONE();                           \
+                                                                  \
+		PHONGO_RETURN_PROPERTY(name, property);                   \
+	}
+
 #define CLASS_FETCH_OBJ_DECL(name)                                                      \
 	static inline phongo_##name##_t* php_##name##_fetch_object(const zend_object* obj)  \
 	{                                                                                   \
@@ -103,8 +124,6 @@ PHONGO_DECLARE_CLASS_WITH_HELPERS(BULKWRITE, bulkwrite)
 PHONGO_DECLARE_CLASS_WITH_HELPERS(BULKWRITECOMMAND, bulkwritecommand)
 PHONGO_DECLARE_CLASS_WITH_HELPERS(BULKWRITECOMMANDRESULT, bulkwritecommandresult)
 PHONGO_DECLARE_CLASS_WITH_HELPERS(WRITECONCERN, writeconcern)
-PHONGO_DECLARE_CLASS_WITH_HELPERS(WRITECONCERNERROR, writeconcernerror)
-PHONGO_DECLARE_CLASS_WITH_HELPERS(WRITEERROR, writeerror)
 PHONGO_DECLARE_CLASS_WITH_HELPERS(WRITERESULT, writeresult)
 PHONGO_DECLARE_CLASS_WITH_HELPERS(BINARY, binary)
 PHONGO_DECLARE_CLASS_WITH_HELPERS(DOCUMENT, document)
@@ -121,18 +140,8 @@ PHONGO_DECLARE_CLASS_WITH_HELPERS(SYMBOL, symbol)
 PHONGO_DECLARE_CLASS_WITH_HELPERS(TIMESTAMP, timestamp)
 PHONGO_DECLARE_CLASS_WITH_HELPERS(UNDEFINED, undefined)
 PHONGO_DECLARE_CLASS_WITH_HELPERS(UTCDATETIME, utcdatetime)
-PHONGO_DECLARE_CLASS_WITH_HELPERS(COMMANDFAILEDEVENT, commandfailedevent)
-PHONGO_DECLARE_CLASS_WITH_HELPERS(COMMANDSTARTEDEVENT, commandstartedevent)
-PHONGO_DECLARE_CLASS_WITH_HELPERS(COMMANDSUCCEEDEDEVENT, commandsucceededevent)
 PHONGO_DECLARE_CLASS_WITH_HELPERS(SERVERCHANGEDEVENT, serverchangedevent)
-PHONGO_DECLARE_CLASS_WITH_HELPERS(SERVERCLOSEDEVENT, serverclosedevent)
-PHONGO_DECLARE_CLASS_WITH_HELPERS(SERVERHEARTBEATFAILEDEVENT, serverheartbeatfailedevent)
-PHONGO_DECLARE_CLASS_WITH_HELPERS(SERVERHEARTBEATSTARTEDEVENT, serverheartbeatstartedevent)
-PHONGO_DECLARE_CLASS_WITH_HELPERS(SERVERHEARTBEATSUCCEEDEDEVENT, serverheartbeatsucceededevent)
-PHONGO_DECLARE_CLASS_WITH_HELPERS(SERVEROPENINGEVENT, serveropeningevent)
 PHONGO_DECLARE_CLASS_WITH_HELPERS(TOPOLOGYCHANGEDEVENT, topologychangedevent)
-PHONGO_DECLARE_CLASS_WITH_HELPERS(TOPOLOGYCLOSEDEVENT, topologyclosedevent)
-PHONGO_DECLARE_CLASS_WITH_HELPERS(TOPOLOGYOPENINGEVENT, topologyopeningevent)
 
 /*
  * On PHP < 8.4 the preprocessor version used for windows builds can cause issues when replacing ##name## macro tokens
@@ -150,6 +159,9 @@ static inline phongo_regex_t* Z_OBJ_REGEX(const zend_object* zo)
 {
 	return php_regex_fetch_object(zo);
 }
+
+PHONGO_DECLARE_CLASS(writeerror)
+PHONGO_DECLARE_CLASS(writeconcernerror)
 
 PHONGO_DECLARE_CLASS(cursor_interface)
 
@@ -188,6 +200,17 @@ PHONGO_DECLARE_CLASS(subscriber)
 PHONGO_DECLARE_CLASS(commandsubscriber)
 PHONGO_DECLARE_CLASS(logsubscriber)
 PHONGO_DECLARE_CLASS(sdamsubscriber)
+
+PHONGO_DECLARE_CLASS(commandstartedevent)
+PHONGO_DECLARE_CLASS(commandfailedevent)
+PHONGO_DECLARE_CLASS(commandsucceededevent)
+PHONGO_DECLARE_CLASS(serverclosedevent)
+PHONGO_DECLARE_CLASS(serverheartbeatfailedevent)
+PHONGO_DECLARE_CLASS(serverheartbeatstartedevent)
+PHONGO_DECLARE_CLASS(serverheartbeatsucceededevent)
+PHONGO_DECLARE_CLASS(serveropeningevent)
+PHONGO_DECLARE_CLASS(topologyclosedevent)
+PHONGO_DECLARE_CLASS(topologyopeningevent)
 
 #undef CLASS_FETCH_OBJ_DECL
 #undef CLASS_ENTRY_DECL

@@ -29,89 +29,59 @@ zend_class_entry* phongo_writeconcernerror_ce;
 
 PHONGO_DISABLED_CONSTRUCTOR(MongoDB_Driver_WriteConcernError)
 
-/* Returns the MongoDB error code */
-static PHP_METHOD(MongoDB_Driver_WriteConcernError, getCode)
+PHONGO_PROPERTY_GETTER(MongoDB_Driver_WriteConcernError, getCode, writeconcernerror, "code")
+PHONGO_PROPERTY_GETTER(MongoDB_Driver_WriteConcernError, getMessage, writeconcernerror, "message")
+PHONGO_PROPERTY_GETTER(MongoDB_Driver_WriteConcernError, getInfo, writeconcernerror, "info")
+
+static bool phongo_writeconcernerror_update_properties(zend_object* object, const bson_t* bson)
 {
-	PHONGO_INTERN_FROM_THIS(writeconcernerror);
+	bson_iter_t iter;
 
-	PHONGO_PARSE_PARAMETERS_NONE();
-
-	RETURN_LONG(intern->code);
-}
-
-/* Returns additional metadata for the error */
-static PHP_METHOD(MongoDB_Driver_WriteConcernError, getInfo)
-{
-	PHONGO_INTERN_FROM_THIS(writeconcernerror);
-
-	PHONGO_PARSE_PARAMETERS_NONE();
-
-	if (!Z_ISUNDEF(intern->info)) {
-		RETURN_ZVAL(&intern->info, 1, 0);
-	}
-}
-
-/* Returns the actual error message from the server */
-static PHP_METHOD(MongoDB_Driver_WriteConcernError, getMessage)
-{
-	PHONGO_INTERN_FROM_THIS(writeconcernerror);
-
-	PHONGO_PARSE_PARAMETERS_NONE();
-
-	if (!intern->message) {
-		RETURN_STRING("");
-	}
-
-	RETURN_STRING(intern->message);
-}
-
-/* MongoDB\Driver\WriteConcernError object handlers */
-static zend_object_handlers phongo_handler_writeconcernerror;
-
-static void phongo_writeconcernerror_free_object(zend_object* object)
-{
-	PHONGO_INTERN_FROM_Z_OBJ(writeconcernerror, object);
-
-	zend_object_std_dtor(&intern->std);
-
-	if (intern->message) {
-		efree(intern->message);
-	}
-
-	if (!Z_ISUNDEF(intern->info)) {
-		zval_ptr_dtor(&intern->info);
-	}
-}
-
-static zend_object* phongo_writeconcernerror_create_object(zend_class_entry* class_type)
-{
-	PHONGO_INTERN_OBJECT_ALLOC(writeconcernerror, class_type);
-
-	intern->std.handlers = &phongo_handler_writeconcernerror;
-
-	return &intern->std;
-}
-
-static void phongo_writeconcernerror_update_properties(phongo_writeconcernerror_t* intern)
-{
-	zend_update_property_string(phongo_writeconcernerror_ce, &intern->std, ZEND_STRL("message"), intern->message ? intern->message : "");
-	zend_update_property_long(phongo_writeconcernerror_ce, &intern->std, ZEND_STRL("code"), intern->code);
-
-	if (!Z_ISUNDEF(intern->info)) {
-		zend_update_property(phongo_writeconcernerror_ce, &intern->std, ZEND_STRL("info"), &intern->info);
+	if (bson_iter_init_find(&iter, bson, "code") && BSON_ITER_HOLDS_INT32(&iter)) {
+		zend_update_property_long(phongo_writeconcernerror_ce, object, ZEND_STRL("code"), bson_iter_int32(&iter));
 	} else {
-		zend_update_property_null(phongo_writeconcernerror_ce, &intern->std, ZEND_STRL("info"));
+		zend_update_property_long(phongo_writeconcernerror_ce, object, ZEND_STRL("code"), 0);
 	}
+
+	// Additionally check for field name used by mongoc_bulkwriteexception_t
+	if ((bson_iter_init_find(&iter, bson, "errmsg") && BSON_ITER_HOLDS_UTF8(&iter)) ||
+		(bson_iter_init_find(&iter, bson, "message") && BSON_ITER_HOLDS_UTF8(&iter))) {
+		uint32_t    errmsg_len;
+		const char* message = bson_iter_utf8(&iter, &errmsg_len);
+
+		zend_update_property_string(phongo_writeconcernerror_ce, object, ZEND_STRL("message"), message ? message : "");
+	} else {
+		zend_update_property_string(phongo_writeconcernerror_ce, object, ZEND_STRL("message"), "");
+	}
+
+	// Additionally check for field name used by mongoc_bulkwriteexception_t
+	if ((bson_iter_init_find(&iter, bson, "errInfo") && BSON_ITER_HOLDS_DOCUMENT(&iter)) ||
+		(bson_iter_init_find(&iter, bson, "details") && BSON_ITER_HOLDS_DOCUMENT(&iter))) {
+		uint32_t       len;
+		const uint8_t* data = NULL;
+		zval           zinfo;
+
+		bson_iter_document(&iter, &len, &data);
+
+		if (!phongo_bson_data_to_zval(data, len, &zinfo)) {
+			/* Exception already thrown */
+			zval_ptr_dtor(&zinfo);
+
+			return false;
+		}
+
+		zend_update_property(phongo_writeconcernerror_ce, object, ZEND_STRL("info"), &zinfo);
+		zval_ptr_dtor(&zinfo);
+	} else {
+		zend_update_property_null(phongo_writeconcernerror_ce, object, ZEND_STRL("info"));
+	}
+
+	return true;
 }
 
 void phongo_writeconcernerror_init_ce(INIT_FUNC_ARGS)
 {
-	phongo_writeconcernerror_ce                = register_class_MongoDB_Driver_WriteConcernError();
-	phongo_writeconcernerror_ce->create_object = phongo_writeconcernerror_create_object;
-
-	memcpy(&phongo_handler_writeconcernerror, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
-	phongo_handler_writeconcernerror.free_obj = phongo_writeconcernerror_free_object;
-	phongo_handler_writeconcernerror.offset   = XtOffsetOf(phongo_writeconcernerror_t, std);
+	phongo_writeconcernerror_ce = register_class_MongoDB_Driver_WriteConcernError();
 }
 
 /* Initializes a new WriteConcernError in return_value using the BSON document.
@@ -122,41 +92,7 @@ void phongo_writeconcernerror_init_ce(INIT_FUNC_ARGS)
  * mongoc_bulkwriteexception_t (returned by mongoc_bulkwrite_execute). */
 bool phongo_writeconcernerror_init(zval* return_value, const bson_t* bson)
 {
-	bson_iter_t iter;
+	PHONGO_OBJECT_INIT_EX(writeconcernerror, return_value);
 
-	PHONGO_INTERN_INIT_EX(writeconcernerror, return_value);
-	intern->code = 0;
-
-	if (bson_iter_init_find(&iter, bson, "code") && BSON_ITER_HOLDS_INT32(&iter)) {
-		intern->code = bson_iter_int32(&iter);
-	}
-
-	// Additionally check for field name used by mongoc_bulkwriteexception_t
-	if ((bson_iter_init_find(&iter, bson, "errmsg") && BSON_ITER_HOLDS_UTF8(&iter)) ||
-		(bson_iter_init_find(&iter, bson, "message") && BSON_ITER_HOLDS_UTF8(&iter))) {
-		uint32_t    len;
-		const char* message = bson_iter_utf8(&iter, &len);
-
-		intern->message = estrndup(message, len);
-	}
-
-	// Additionally check for field name used by mongoc_bulkwriteexception_t
-	if ((bson_iter_init_find(&iter, bson, "errInfo") && BSON_ITER_HOLDS_DOCUMENT(&iter)) ||
-		(bson_iter_init_find(&iter, bson, "details") && BSON_ITER_HOLDS_DOCUMENT(&iter))) {
-		uint32_t       len;
-		const uint8_t* data = NULL;
-
-		bson_iter_document(&iter, &len, &data);
-
-		if (!phongo_bson_data_to_zval(data, len, &intern->info)) {
-			zval_ptr_dtor(&intern->info);
-			ZVAL_UNDEF(&intern->info);
-
-			return false;
-		}
-	}
-
-	phongo_writeconcernerror_update_properties(intern);
-
-	return true;
+	return phongo_writeconcernerror_update_properties(object, bson);
 }
