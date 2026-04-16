@@ -339,10 +339,17 @@ static int phongo_utcdatetime_compare_objects(zval* o1, zval* o2)
 	return 0;
 }
 
-static HashTable* phongo_utcdatetime_get_debug_info(zend_object* object, int* is_temp)
+static HashTable* phongo_utcdatetime_get_properties_for(zend_object* object, zend_prop_purpose purpose)
 {
-	*is_temp = 1;
-	return phongo_utcdatetime_get_properties_hash(object, true);
+	switch (purpose) {
+		case ZEND_PROP_PURPOSE_DEBUG:
+		case ZEND_PROP_PURPOSE_ARRAY_CAST:
+		case ZEND_PROP_PURPOSE_VAR_EXPORT:
+		case ZEND_PROP_PURPOSE_GET_OBJECT_VARS:
+			return phongo_utcdatetime_get_properties_hash(object, true);
+		default:
+			return NULL;
+	}
 }
 
 static HashTable* phongo_utcdatetime_get_properties(zend_object* object)
@@ -356,12 +363,12 @@ void phongo_utcdatetime_init_ce(INIT_FUNC_ARGS)
 	phongo_utcdatetime_ce->create_object = phongo_utcdatetime_create_object;
 
 	memcpy(&phongo_handler_utcdatetime, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
-	phongo_handler_utcdatetime.compare        = phongo_utcdatetime_compare_objects;
-	phongo_handler_utcdatetime.clone_obj      = phongo_utcdatetime_clone_object;
-	phongo_handler_utcdatetime.get_debug_info = phongo_utcdatetime_get_debug_info;
-	phongo_handler_utcdatetime.get_properties = phongo_utcdatetime_get_properties;
-	phongo_handler_utcdatetime.free_obj       = phongo_utcdatetime_free_object;
-	phongo_handler_utcdatetime.offset         = XtOffsetOf(phongo_utcdatetime_t, std);
+	phongo_handler_utcdatetime.compare            = phongo_utcdatetime_compare_objects;
+	phongo_handler_utcdatetime.clone_obj          = phongo_utcdatetime_clone_object;
+	phongo_handler_utcdatetime.get_properties_for = phongo_utcdatetime_get_properties_for;
+	phongo_handler_utcdatetime.get_properties     = phongo_utcdatetime_get_properties;
+	phongo_handler_utcdatetime.free_obj           = phongo_utcdatetime_free_object;
+	phongo_handler_utcdatetime.offset             = XtOffsetOf(phongo_utcdatetime_t, std);
 }
 
 bool phongo_utcdatetime_new(zval* object, int64_t msec_since_epoch)

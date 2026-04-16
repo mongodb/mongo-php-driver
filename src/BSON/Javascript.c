@@ -295,10 +295,17 @@ static int phongo_javascript_compare_objects(zval* o1, zval* o2)
 	return strcmp(intern1->code, intern2->code);
 }
 
-static HashTable* phongo_javascript_get_debug_info(zend_object* object, int* is_temp)
+static HashTable* phongo_javascript_get_properties_for(zend_object* object, zend_prop_purpose purpose)
 {
-	*is_temp = 1;
-	return phongo_javascript_get_properties_hash(object, true);
+	switch (purpose) {
+		case ZEND_PROP_PURPOSE_DEBUG:
+		case ZEND_PROP_PURPOSE_ARRAY_CAST:
+		case ZEND_PROP_PURPOSE_VAR_EXPORT:
+		case ZEND_PROP_PURPOSE_GET_OBJECT_VARS:
+			return phongo_javascript_get_properties_hash(object, true);
+		default:
+			return NULL;
+	}
 }
 
 static HashTable* phongo_javascript_get_properties(zend_object* object)
@@ -312,12 +319,12 @@ void phongo_javascript_init_ce(INIT_FUNC_ARGS)
 	phongo_javascript_ce->create_object = phongo_javascript_create_object;
 
 	memcpy(&phongo_handler_javascript, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
-	phongo_handler_javascript.compare        = phongo_javascript_compare_objects;
-	phongo_handler_javascript.clone_obj      = phongo_javascript_clone_object;
-	phongo_handler_javascript.get_debug_info = phongo_javascript_get_debug_info;
-	phongo_handler_javascript.get_properties = phongo_javascript_get_properties;
-	phongo_handler_javascript.free_obj       = phongo_javascript_free_object;
-	phongo_handler_javascript.offset         = XtOffsetOf(phongo_javascript_t, std);
+	phongo_handler_javascript.compare            = phongo_javascript_compare_objects;
+	phongo_handler_javascript.clone_obj          = phongo_javascript_clone_object;
+	phongo_handler_javascript.get_properties_for = phongo_javascript_get_properties_for;
+	phongo_handler_javascript.get_properties     = phongo_javascript_get_properties;
+	phongo_handler_javascript.free_obj           = phongo_javascript_free_object;
+	phongo_handler_javascript.offset             = XtOffsetOf(phongo_javascript_t, std);
 }
 
 bool phongo_javascript_new(zval* object, const char* code, size_t code_len, const bson_t* scope)

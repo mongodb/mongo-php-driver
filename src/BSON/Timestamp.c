@@ -302,10 +302,17 @@ static int phongo_timestamp_compare_objects(zval* o1, zval* o2)
 	return 0;
 }
 
-static HashTable* phongo_timestamp_get_debug_info(zend_object* object, int* is_temp)
+static HashTable* phongo_timestamp_get_properties_for(zend_object* object, zend_prop_purpose purpose)
 {
-	*is_temp = 1;
-	return phongo_timestamp_get_properties_hash(object, true);
+	switch (purpose) {
+		case ZEND_PROP_PURPOSE_DEBUG:
+		case ZEND_PROP_PURPOSE_ARRAY_CAST:
+		case ZEND_PROP_PURPOSE_VAR_EXPORT:
+		case ZEND_PROP_PURPOSE_GET_OBJECT_VARS:
+			return phongo_timestamp_get_properties_hash(object, true);
+		default:
+			return NULL;
+	}
 }
 
 static HashTable* phongo_timestamp_get_properties(zend_object* object)
@@ -319,12 +326,12 @@ void phongo_timestamp_init_ce(INIT_FUNC_ARGS)
 	phongo_timestamp_ce->create_object = phongo_timestamp_create_object;
 
 	memcpy(&phongo_handler_timestamp, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
-	phongo_handler_timestamp.compare        = phongo_timestamp_compare_objects;
-	phongo_handler_timestamp.clone_obj      = phongo_timestamp_clone_object;
-	phongo_handler_timestamp.get_debug_info = phongo_timestamp_get_debug_info;
-	phongo_handler_timestamp.get_properties = phongo_timestamp_get_properties;
-	phongo_handler_timestamp.free_obj       = phongo_timestamp_free_object;
-	phongo_handler_timestamp.offset         = XtOffsetOf(phongo_timestamp_t, std);
+	phongo_handler_timestamp.compare            = phongo_timestamp_compare_objects;
+	phongo_handler_timestamp.clone_obj          = phongo_timestamp_clone_object;
+	phongo_handler_timestamp.get_properties_for = phongo_timestamp_get_properties_for;
+	phongo_handler_timestamp.get_properties     = phongo_timestamp_get_properties;
+	phongo_handler_timestamp.free_obj           = phongo_timestamp_free_object;
+	phongo_handler_timestamp.offset             = XtOffsetOf(phongo_timestamp_t, std);
 }
 
 bool phongo_timestamp_new(zval* object, uint32_t increment, uint32_t timestamp)

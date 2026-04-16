@@ -192,10 +192,17 @@ static zend_object* phongo_decimal128_clone_object(zend_object* object)
 	return new_object;
 }
 
-static HashTable* phongo_decimal128_get_debug_info(zend_object* object, int* is_temp)
+static HashTable* phongo_decimal128_get_properties_for(zend_object* object, zend_prop_purpose purpose)
 {
-	*is_temp = 1;
-	return phongo_decimal128_get_properties_hash(object, true);
+	switch (purpose) {
+		case ZEND_PROP_PURPOSE_DEBUG:
+		case ZEND_PROP_PURPOSE_ARRAY_CAST:
+		case ZEND_PROP_PURPOSE_VAR_EXPORT:
+		case ZEND_PROP_PURPOSE_GET_OBJECT_VARS:
+			return phongo_decimal128_get_properties_hash(object, true);
+		default:
+			return NULL;
+	}
 }
 
 static HashTable* phongo_decimal128_get_properties(zend_object* object)
@@ -209,11 +216,11 @@ void phongo_decimal128_init_ce(INIT_FUNC_ARGS)
 	phongo_decimal128_ce->create_object = phongo_decimal128_create_object;
 
 	memcpy(&phongo_handler_decimal128, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
-	phongo_handler_decimal128.clone_obj      = phongo_decimal128_clone_object;
-	phongo_handler_decimal128.get_debug_info = phongo_decimal128_get_debug_info;
-	phongo_handler_decimal128.get_properties = phongo_decimal128_get_properties;
-	phongo_handler_decimal128.free_obj       = phongo_decimal128_free_object;
-	phongo_handler_decimal128.offset         = XtOffsetOf(phongo_decimal128_t, std);
+	phongo_handler_decimal128.clone_obj          = phongo_decimal128_clone_object;
+	phongo_handler_decimal128.get_properties_for = phongo_decimal128_get_properties_for;
+	phongo_handler_decimal128.get_properties     = phongo_decimal128_get_properties;
+	phongo_handler_decimal128.free_obj           = phongo_decimal128_free_object;
+	phongo_handler_decimal128.offset             = XtOffsetOf(phongo_decimal128_t, std);
 }
 
 bool phongo_decimal128_new(zval* object, const bson_decimal128_t* decimal)

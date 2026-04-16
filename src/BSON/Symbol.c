@@ -186,10 +186,17 @@ static int phongo_symbol_compare_objects(zval* o1, zval* o2)
 	return strcmp(intern1->symbol, intern2->symbol);
 }
 
-static HashTable* phongo_symbol_get_debug_info(zend_object* object, int* is_temp)
+static HashTable* phongo_symbol_get_properties_for(zend_object* object, zend_prop_purpose purpose)
 {
-	*is_temp = 1;
-	return phongo_symbol_get_properties_hash(object, true);
+	switch (purpose) {
+		case ZEND_PROP_PURPOSE_DEBUG:
+		case ZEND_PROP_PURPOSE_ARRAY_CAST:
+		case ZEND_PROP_PURPOSE_VAR_EXPORT:
+		case ZEND_PROP_PURPOSE_GET_OBJECT_VARS:
+			return phongo_symbol_get_properties_hash(object, true);
+		default:
+			return NULL;
+	}
 }
 
 static HashTable* phongo_symbol_get_properties(zend_object* object)
@@ -203,12 +210,12 @@ void phongo_symbol_init_ce(INIT_FUNC_ARGS)
 	phongo_symbol_ce->create_object = phongo_symbol_create_object;
 
 	memcpy(&phongo_handler_symbol, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
-	phongo_handler_symbol.compare        = phongo_symbol_compare_objects;
-	phongo_handler_symbol.clone_obj      = phongo_symbol_clone_object;
-	phongo_handler_symbol.get_debug_info = phongo_symbol_get_debug_info;
-	phongo_handler_symbol.get_properties = phongo_symbol_get_properties;
-	phongo_handler_symbol.free_obj       = phongo_symbol_free_object;
-	phongo_handler_symbol.offset         = XtOffsetOf(phongo_symbol_t, std);
+	phongo_handler_symbol.compare            = phongo_symbol_compare_objects;
+	phongo_handler_symbol.clone_obj          = phongo_symbol_clone_object;
+	phongo_handler_symbol.get_properties_for = phongo_symbol_get_properties_for;
+	phongo_handler_symbol.get_properties     = phongo_symbol_get_properties;
+	phongo_handler_symbol.free_obj           = phongo_symbol_free_object;
+	phongo_handler_symbol.offset             = XtOffsetOf(phongo_symbol_t, std);
 }
 
 bool phongo_symbol_new(zval* object, const char* symbol, size_t symbol_len)

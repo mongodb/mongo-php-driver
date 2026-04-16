@@ -468,18 +468,14 @@ static int phongo_document_compare_objects(zval* o1, zval* o2)
 	return bson_compare(intern1->bson, intern2->bson);
 }
 
-static HashTable* phongo_document_get_debug_info(zend_object* object, int* is_temp)
+static HashTable* phongo_document_get_debug_props(zend_object* object)
 {
 	PHONGO_INTERN_FROM_Z_OBJ(document, object);
 
-	HashTable* props;
-
-	*is_temp = 1;
-
-	/* This get_debug_info handler reports an additional property. This does not
-	 * conflict with other uses of phongo_document_get_properties_hash since
-	 * we always allocated a new HashTable with is_temp=true. */
-	props = phongo_document_get_properties_hash(object, true, 2);
+	/* This reports an additional "value" property. This does not conflict with
+	 * other uses of phongo_document_get_properties_hash since we always
+	 * allocate a new HashTable with is_temp=true. */
+	HashTable* props = phongo_document_get_properties_hash(object, true, 2);
 
 	{
 		phongo_bson_state state;
@@ -489,17 +485,27 @@ static HashTable* phongo_document_get_debug_info(zend_object* object, int* is_te
 		state.map.document.type = PHONGO_TYPEMAP_BSON;
 		if (!phongo_bson_to_zval_ex(intern->bson, &state)) {
 			zval_ptr_dtor(&state.zchild);
-			goto failure;
+			return props;
 		}
 
 		zend_hash_str_update(props, "value", sizeof("value") - 1, &state.zchild);
 	}
 
 	return props;
+}
 
-failure:
-	PHONGO_GET_PROPERTY_HASH_FREE_PROPS(is_temp, props);
-	return NULL;
+static HashTable* phongo_document_get_properties_for(zend_object* object, zend_prop_purpose purpose)
+{
+	switch (purpose) {
+		case ZEND_PROP_PURPOSE_DEBUG:
+			return phongo_document_get_debug_props(object);
+		case ZEND_PROP_PURPOSE_ARRAY_CAST:
+		case ZEND_PROP_PURPOSE_VAR_EXPORT:
+		case ZEND_PROP_PURPOSE_GET_OBJECT_VARS:
+			return phongo_document_get_properties_hash(object, true, 1);
+		default:
+			return NULL;
+	}
 }
 
 static HashTable* phongo_document_get_properties(zend_object* object)
@@ -572,20 +578,20 @@ void phongo_document_init_ce(INIT_FUNC_ARGS)
 	phongo_document_ce->create_object = phongo_document_create_object;
 
 	memcpy(&phongo_handler_document, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
-	phongo_handler_document.compare         = phongo_document_compare_objects;
-	phongo_handler_document.clone_obj       = phongo_document_clone_object;
-	phongo_handler_document.get_debug_info  = phongo_document_get_debug_info;
-	phongo_handler_document.get_properties  = phongo_document_get_properties;
-	phongo_handler_document.free_obj        = phongo_document_free_object;
-	phongo_handler_document.read_property   = phongo_document_read_property;
-	phongo_handler_document.write_property  = phongo_document_write_property;
-	phongo_handler_document.has_property    = phongo_document_has_property;
-	phongo_handler_document.unset_property  = phongo_document_unset_property;
-	phongo_handler_document.read_dimension  = phongo_document_read_dimension;
-	phongo_handler_document.write_dimension = phongo_document_write_dimension;
-	phongo_handler_document.has_dimension   = phongo_document_has_dimension;
-	phongo_handler_document.unset_dimension = phongo_document_unset_dimension;
-	phongo_handler_document.offset          = XtOffsetOf(phongo_document_t, std);
+	phongo_handler_document.compare            = phongo_document_compare_objects;
+	phongo_handler_document.clone_obj          = phongo_document_clone_object;
+	phongo_handler_document.get_properties_for = phongo_document_get_properties_for;
+	phongo_handler_document.get_properties     = phongo_document_get_properties;
+	phongo_handler_document.free_obj           = phongo_document_free_object;
+	phongo_handler_document.read_property      = phongo_document_read_property;
+	phongo_handler_document.write_property     = phongo_document_write_property;
+	phongo_handler_document.has_property       = phongo_document_has_property;
+	phongo_handler_document.unset_property     = phongo_document_unset_property;
+	phongo_handler_document.read_dimension     = phongo_document_read_dimension;
+	phongo_handler_document.write_dimension    = phongo_document_write_dimension;
+	phongo_handler_document.has_dimension      = phongo_document_has_dimension;
+	phongo_handler_document.unset_dimension    = phongo_document_unset_dimension;
+	phongo_handler_document.offset             = XtOffsetOf(phongo_document_t, std);
 }
 
 bool phongo_document_new(zval* object, bson_t* bson, bool copy)

@@ -99,9 +99,7 @@
 #define PHONGO_RETVAL_SMART_STR(val) RETVAL_STRINGL(ZSTR_VAL((val).s), ZSTR_LEN((val).s));
 #define ZVAL_STATIC_INIT \
 	{                    \
-		{                \
-			0            \
-		}                \
+		{ 0 }            \
 	}
 
 #define ADD_NEXT_INDEX_INT64_OBJ(_zv, _value) \

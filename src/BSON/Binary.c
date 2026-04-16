@@ -269,9 +269,8 @@ static int phongo_binary_compare_objects(zval* o1, zval* o2)
 	return zend_binary_strcmp(intern1->data, intern1->data_len, intern2->data, intern2->data_len);
 }
 
-static HashTable* phongo_binary_get_debug_info(zend_object* object, int* is_temp)
+static HashTable* phongo_binary_get_debug_props(zend_object* object)
 {
-	*is_temp         = 1;
 	HashTable* props = phongo_binary_get_properties_hash(object, true, true);
 
 	PHONGO_INTERN_FROM_Z_OBJ(binary, object);
@@ -303,6 +302,20 @@ static HashTable* phongo_binary_get_debug_info(zend_object* object, int* is_temp
 	return props;
 }
 
+static HashTable* phongo_binary_get_properties_for(zend_object* object, zend_prop_purpose purpose)
+{
+	switch (purpose) {
+		case ZEND_PROP_PURPOSE_DEBUG:
+			return phongo_binary_get_debug_props(object);
+		case ZEND_PROP_PURPOSE_ARRAY_CAST:
+		case ZEND_PROP_PURPOSE_VAR_EXPORT:
+		case ZEND_PROP_PURPOSE_GET_OBJECT_VARS:
+			return phongo_binary_get_properties_hash(object, true, false);
+		default:
+			return NULL;
+	}
+}
+
 static HashTable* phongo_binary_get_properties(zend_object* object)
 {
 	return phongo_binary_get_properties_hash(object, false, false);
@@ -314,12 +327,12 @@ void phongo_binary_init_ce(INIT_FUNC_ARGS)
 	phongo_binary_ce->create_object = phongo_binary_create_object;
 
 	memcpy(&phongo_handler_binary, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
-	phongo_handler_binary.compare        = phongo_binary_compare_objects;
-	phongo_handler_binary.clone_obj      = phongo_binary_clone_object;
-	phongo_handler_binary.get_debug_info = phongo_binary_get_debug_info;
-	phongo_handler_binary.get_properties = phongo_binary_get_properties;
-	phongo_handler_binary.free_obj       = phongo_binary_free_object;
-	phongo_handler_binary.offset         = XtOffsetOf(phongo_binary_t, std);
+	phongo_handler_binary.compare            = phongo_binary_compare_objects;
+	phongo_handler_binary.clone_obj          = phongo_binary_clone_object;
+	phongo_handler_binary.get_properties_for = phongo_binary_get_properties_for;
+	phongo_handler_binary.get_properties     = phongo_binary_get_properties;
+	phongo_handler_binary.free_obj           = phongo_binary_free_object;
+	phongo_handler_binary.offset             = XtOffsetOf(phongo_binary_t, std);
 }
 
 bool phongo_binary_new(zval* object, const char* data, size_t data_len, bson_subtype_t type)

@@ -528,10 +528,17 @@ static zend_result phongo_int64_do_operation(zend_uchar opcode, zval* result, zv
 #undef PHONGO_GET_INT64
 #undef INT64_SIGN_MASK
 
-static HashTable* phongo_int64_get_debug_info(zend_object* object, int* is_temp)
+static HashTable* phongo_int64_get_properties_for(zend_object* object, zend_prop_purpose purpose)
 {
-	*is_temp = 1;
-	return phongo_int64_get_properties_hash(object, true);
+	switch (purpose) {
+		case ZEND_PROP_PURPOSE_DEBUG:
+		case ZEND_PROP_PURPOSE_ARRAY_CAST:
+		case ZEND_PROP_PURPOSE_VAR_EXPORT:
+		case ZEND_PROP_PURPOSE_GET_OBJECT_VARS:
+			return phongo_int64_get_properties_hash(object, true);
+		default:
+			return NULL;
+	}
 }
 
 static HashTable* phongo_int64_get_properties(zend_object* object)
@@ -545,14 +552,14 @@ void phongo_int64_init_ce(INIT_FUNC_ARGS)
 	phongo_int64_ce->create_object = phongo_int64_create_object;
 
 	memcpy(&phongo_handler_int64, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
-	phongo_handler_int64.compare        = phongo_int64_compare_objects;
-	phongo_handler_int64.clone_obj      = phongo_int64_clone_object;
-	phongo_handler_int64.get_debug_info = phongo_int64_get_debug_info;
-	phongo_handler_int64.get_properties = phongo_int64_get_properties;
-	phongo_handler_int64.free_obj       = phongo_int64_free_object;
-	phongo_handler_int64.offset         = XtOffsetOf(phongo_int64_t, std);
-	phongo_handler_int64.cast_object    = phongo_int64_cast_object;
-	phongo_handler_int64.do_operation   = phongo_int64_do_operation;
+	phongo_handler_int64.compare            = phongo_int64_compare_objects;
+	phongo_handler_int64.clone_obj          = phongo_int64_clone_object;
+	phongo_handler_int64.get_properties_for = phongo_int64_get_properties_for;
+	phongo_handler_int64.get_properties     = phongo_int64_get_properties;
+	phongo_handler_int64.free_obj           = phongo_int64_free_object;
+	phongo_handler_int64.offset             = XtOffsetOf(phongo_int64_t, std);
+	phongo_handler_int64.cast_object        = phongo_int64_cast_object;
+	phongo_handler_int64.do_operation       = phongo_int64_do_operation;
 }
 
 bool phongo_int64_new(zval* object, int64_t integer)

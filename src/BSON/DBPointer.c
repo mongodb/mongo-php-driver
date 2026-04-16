@@ -221,10 +221,17 @@ static int phongo_dbpointer_compare_objects(zval* o1, zval* o2)
 	return strcmp(intern1->id, intern2->id);
 }
 
-static HashTable* phongo_dbpointer_get_debug_info(zend_object* object, int* is_temp)
+static HashTable* phongo_dbpointer_get_properties_for(zend_object* object, zend_prop_purpose purpose)
 {
-	*is_temp = 1;
-	return phongo_dbpointer_get_properties_hash(object, true);
+	switch (purpose) {
+		case ZEND_PROP_PURPOSE_DEBUG:
+		case ZEND_PROP_PURPOSE_ARRAY_CAST:
+		case ZEND_PROP_PURPOSE_VAR_EXPORT:
+		case ZEND_PROP_PURPOSE_GET_OBJECT_VARS:
+			return phongo_dbpointer_get_properties_hash(object, true);
+		default:
+			return NULL;
+	}
 }
 
 static HashTable* phongo_dbpointer_get_properties(zend_object* object)
@@ -238,12 +245,12 @@ void phongo_dbpointer_init_ce(INIT_FUNC_ARGS)
 	phongo_dbpointer_ce->create_object = phongo_dbpointer_create_object;
 
 	memcpy(&phongo_handler_dbpointer, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
-	phongo_handler_dbpointer.compare        = phongo_dbpointer_compare_objects;
-	phongo_handler_dbpointer.clone_obj      = phongo_dbpointer_clone_object;
-	phongo_handler_dbpointer.get_debug_info = phongo_dbpointer_get_debug_info;
-	phongo_handler_dbpointer.get_properties = phongo_dbpointer_get_properties;
-	phongo_handler_dbpointer.free_obj       = phongo_dbpointer_free_object;
-	phongo_handler_dbpointer.offset         = XtOffsetOf(phongo_dbpointer_t, std);
+	phongo_handler_dbpointer.compare            = phongo_dbpointer_compare_objects;
+	phongo_handler_dbpointer.clone_obj          = phongo_dbpointer_clone_object;
+	phongo_handler_dbpointer.get_properties_for = phongo_dbpointer_get_properties_for;
+	phongo_handler_dbpointer.get_properties     = phongo_dbpointer_get_properties;
+	phongo_handler_dbpointer.free_obj           = phongo_dbpointer_free_object;
+	phongo_handler_dbpointer.offset             = XtOffsetOf(phongo_dbpointer_t, std);
 }
 
 bool phongo_dbpointer_new(zval* object, const char* ref, size_t ref_len, const bson_oid_t* oid)

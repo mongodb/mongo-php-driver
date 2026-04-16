@@ -280,10 +280,17 @@ static zend_object* phongo_iterator_clone_object(zend_object* object)
 	return new_object;
 }
 
-static HashTable* phongo_iterator_get_debug_info(zend_object* object, int* is_temp)
+static HashTable* phongo_iterator_get_properties_for(zend_object* object, zend_prop_purpose purpose)
 {
-	*is_temp = 1;
-	return phongo_iterator_get_properties_hash(object, true);
+	switch (purpose) {
+		case ZEND_PROP_PURPOSE_DEBUG:
+		case ZEND_PROP_PURPOSE_ARRAY_CAST:
+		case ZEND_PROP_PURPOSE_VAR_EXPORT:
+		case ZEND_PROP_PURPOSE_GET_OBJECT_VARS:
+			return phongo_iterator_get_properties_hash(object, true);
+		default:
+			return NULL;
+	}
 }
 
 static HashTable* phongo_iterator_get_properties(zend_object* object)
@@ -379,9 +386,9 @@ void phongo_iterator_init_ce(INIT_FUNC_ARGS)
 	phongo_iterator_ce->get_iterator  = phongo_iterator_get_iterator;
 
 	memcpy(&phongo_handler_iterator, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
-	phongo_handler_iterator.clone_obj      = phongo_iterator_clone_object;
-	phongo_handler_iterator.get_debug_info = phongo_iterator_get_debug_info;
-	phongo_handler_iterator.get_properties = phongo_iterator_get_properties;
-	phongo_handler_iterator.free_obj       = phongo_iterator_free_object;
-	phongo_handler_iterator.offset         = XtOffsetOf(phongo_iterator_t, std);
+	phongo_handler_iterator.clone_obj          = phongo_iterator_clone_object;
+	phongo_handler_iterator.get_properties_for = phongo_iterator_get_properties_for;
+	phongo_handler_iterator.get_properties     = phongo_iterator_get_properties;
+	phongo_handler_iterator.free_obj           = phongo_iterator_free_object;
+	phongo_handler_iterator.offset             = XtOffsetOf(phongo_iterator_t, std);
 }

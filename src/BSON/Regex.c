@@ -268,10 +268,17 @@ static int phongo_regex_compare_objects(zval* o1, zval* o2)
 	return strcmp(intern1->flags, intern2->flags);
 }
 
-static HashTable* phongo_regex_get_debug_info(zend_object* object, int* is_temp)
+static HashTable* phongo_regex_get_properties_for(zend_object* object, zend_prop_purpose purpose)
 {
-	*is_temp = 1;
-	return phongo_regex_get_properties_hash(object, true);
+	switch (purpose) {
+		case ZEND_PROP_PURPOSE_DEBUG:
+		case ZEND_PROP_PURPOSE_ARRAY_CAST:
+		case ZEND_PROP_PURPOSE_VAR_EXPORT:
+		case ZEND_PROP_PURPOSE_GET_OBJECT_VARS:
+			return phongo_regex_get_properties_hash(object, true);
+		default:
+			return NULL;
+	}
 }
 
 static HashTable* phongo_regex_get_properties(zend_object* object)
@@ -285,12 +292,12 @@ void phongo_regex_init_ce(INIT_FUNC_ARGS)
 	phongo_regex_ce->create_object = phongo_regex_create_object;
 
 	memcpy(&phongo_handler_regex, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
-	phongo_handler_regex.compare        = phongo_regex_compare_objects;
-	phongo_handler_regex.clone_obj      = phongo_regex_clone_object;
-	phongo_handler_regex.get_debug_info = phongo_regex_get_debug_info;
-	phongo_handler_regex.get_properties = phongo_regex_get_properties;
-	phongo_handler_regex.free_obj       = phongo_regex_free_object;
-	phongo_handler_regex.offset         = XtOffsetOf(phongo_regex_t, std);
+	phongo_handler_regex.compare            = phongo_regex_compare_objects;
+	phongo_handler_regex.clone_obj          = phongo_regex_clone_object;
+	phongo_handler_regex.get_properties_for = phongo_regex_get_properties_for;
+	phongo_handler_regex.get_properties     = phongo_regex_get_properties;
+	phongo_handler_regex.free_obj           = phongo_regex_free_object;
+	phongo_handler_regex.offset             = XtOffsetOf(phongo_regex_t, std);
 }
 
 bool phongo_regex_new(zval* object, const char* pattern, const char* flags)
