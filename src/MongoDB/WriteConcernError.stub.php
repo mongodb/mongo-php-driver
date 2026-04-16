@@ -12,6 +12,12 @@ final class WriteConcernError
 {
     final private function __construct() {}
 
+    public readonly string $message;
+
+    public readonly int $code;
+
+    public readonly object|null $info;
+
     final public function getCode(): int {}
 
     final public function getInfo(): ?object {}
