@@ -182,7 +182,7 @@ jobs:
       # Note: omit the patch version when referring to the libmongocrypt package
       LIBMONGOCRYPT_VERSION: "1.17"
       # Note: include the patch version when referring to a libmongoc release tarball
-      LIBMONGOC_VERSION: "2.2.2"
+      LIBMONGOC_VERSION: "2.3.0"
       SERVER_VERSION: "8.0"
 
     steps:
