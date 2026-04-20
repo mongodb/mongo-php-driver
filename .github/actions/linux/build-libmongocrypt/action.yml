@@ -2,7 +2,7 @@ name: "Build libmongocrypt"
 description: "Installs libmongocrypt"
 inputs:
   version:
-    description: "Libmongocrypt version to install (major.minor)"
+    description: "Libmongocrypt version to install (major.minor.patch)"
     required: true
 runs:
   using: composite
@@ -15,9 +15,7 @@ runs:
     - name: Add repository
       shell: bash
       working-directory: /tmp
-      run: echo "deb https://libmongocrypt.s3.amazonaws.com/apt/ubuntu noble/libmongocrypt/${LIBMONGOCRYPT_VERSION} universe" | sudo tee /etc/apt/sources.list.d/libmongocrypt.list
-      env:
-        LIBMONGOCRYPT_VERSION: ${{ inputs.version }}
+      run: echo "deb https://libmongocrypt.s3.amazonaws.com/apt/ubuntu noble/libmongocrypt/release universe" | sudo tee /etc/apt/sources.list.d/libmongocrypt.list
 
     - name: Update apt sources
       shell: bash
@@ -25,4 +23,6 @@ runs:
 
     - name: Install libmongocrypt
       shell: bash
-      run: sudo apt-get install -y libmongocrypt-dev
+      run: sudo apt-get install -y "libmongocrypt-dev=${LIBMONGOCRYPT_VERSION}*"
+      env:
+        LIBMONGOCRYPT_VERSION: ${{ inputs.version }}
