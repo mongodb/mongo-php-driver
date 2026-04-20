@@ -219,7 +219,7 @@ jobs:
         id: setup-mongodb
         uses: ./tests/drivers-evergreen-tools
         with:
-          version: ${{ ENV.SERVER_VERSION }}
+          version: ${{ env.SERVER_VERSION }}
           topology: "server"
 
       - name: "Run Tests"
@@ -234,5 +234,5 @@ jobs:
         with:
           disable_search: true
           files: test-results.xml
-          flags: "${{ ENV.SERVER_VERSION }}-server"
+          flags: "${{ env.SERVER_VERSION }}-server"
           token: ${{ secrets.CODECOV_TOKEN }}
