@@ -179,10 +179,9 @@ jobs:
     runs-on: "ubuntu-latest"
     env:
       PHP_VERSION: "8.3"
-      # Note: omit the patch version when referring to the libmongocrypt package
-      LIBMONGOCRYPT_VERSION: "1.17"
+      LIBMONGOCRYPT_VERSION: "1.17.3"
       # Note: include the patch version when referring to a libmongoc release tarball
-      LIBMONGOC_VERSION: "2.2.2"
+      LIBMONGOC_VERSION: "2.3.0"
       SERVER_VERSION: "8.0"
 
     steps:
@@ -219,7 +218,7 @@ jobs:
         id: setup-mongodb
         uses: ./tests/drivers-evergreen-tools
         with:
-          version: ${{ ENV.SERVER_VERSION }}
+          version: ${{ env.SERVER_VERSION }}
           topology: "server"
 
       - name: "Run Tests"
@@ -234,5 +233,5 @@ jobs:
         with:
           disable_search: true
           files: test-results.xml
-          flags: "${{ ENV.SERVER_VERSION }}-server"
+          flags: "${{ env.SERVER_VERSION }}-server"
           token: ${{ secrets.CODECOV_TOKEN }}
