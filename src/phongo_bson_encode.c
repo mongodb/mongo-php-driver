@@ -129,7 +129,7 @@ static void phongo_bson_append_object(bson_t* bson, phongo_field_path* field_pat
 				phongo_zval_to_bson_internal(&obj_data, field_path, flags, &child, NULL);
 				bson_append_document_end(bson, &child);
 			} else {
-				bson_append_array_begin(bson, key, key_len, &child);
+				bson_append_array_unsafe_begin(bson, key, key_len, &child);
 				phongo_zval_to_bson_internal(&obj_data, field_path, flags, &child, NULL);
 				bson_append_array_end(bson, &child);
 			}
@@ -303,7 +303,7 @@ try_again:
 					break;
 				}
 
-				bson_append_array_begin(bson, key, key_len, &child);
+				bson_append_array_unsafe_begin(bson, key, key_len, &child);
 				phongo_zval_to_bson_internal(entry, field_path, flags, &child, NULL);
 				phongo_field_path_pop(field_path);
 				bson_append_array_end(bson, &child);
