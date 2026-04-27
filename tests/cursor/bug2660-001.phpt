@@ -5,6 +5,7 @@ PHPC-2660: killCursors is sent after a connection error during getMore
 <?php skip_if_not_libmongoc_crypto(); ?>
 <?php skip_if_test_commands_disabled(); ?>
 <?php skip_if_not_live(); ?>
+<?php skip_if_load_balanced(); ?>
 <?php skip_if_not_clean(); ?>
 --FILE--
 <?php
