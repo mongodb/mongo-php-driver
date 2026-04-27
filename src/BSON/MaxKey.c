@@ -58,33 +58,7 @@ static PHP_METHOD(MongoDB_BSON_MaxKey, __unserialize)
 	PHONGO_PARSE_PARAMETERS_END();
 }
 
-/* MongoDB\BSON\MaxKey object handlers */
-static zend_object_handlers phongo_handler_maxkey;
-
-static void phongo_maxkey_free_object(zend_object* object)
-{
-	PHONGO_INTERN_FROM_Z_OBJ(maxkey, object);
-
-	zend_object_std_dtor(&intern->std);
-}
-
-static zend_object* phongo_maxkey_create_object(zend_class_entry* class_type)
-{
-	PHONGO_INTERN_OBJECT_ALLOC(maxkey, class_type);
-
-	intern->std.handlers = &phongo_handler_maxkey;
-
-	return &intern->std;
-}
-
 void phongo_maxkey_init_ce(INIT_FUNC_ARGS)
 {
-	phongo_maxkey_ce                = register_class_MongoDB_BSON_MaxKey(phongo_maxkey_interface_ce, phongo_json_serializable_ce, phongo_type_ce);
-	phongo_maxkey_ce->create_object = phongo_maxkey_create_object;
-
-	memcpy(&phongo_handler_maxkey, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
-	/* Re-assign default handler previously removed in phongo.c */
-	phongo_handler_maxkey.clone_obj = zend_objects_clone_obj;
-	phongo_handler_maxkey.free_obj  = phongo_maxkey_free_object;
-	phongo_handler_maxkey.offset    = XtOffsetOf(phongo_maxkey_t, std);
+	phongo_maxkey_ce = register_class_MongoDB_BSON_MaxKey(phongo_maxkey_interface_ce, phongo_json_serializable_ce, phongo_type_ce);
 }
