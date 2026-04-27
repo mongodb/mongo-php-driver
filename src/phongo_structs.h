@@ -236,14 +236,6 @@ typedef struct {
 } phongo_javascript_t;
 
 typedef struct {
-	zend_object std;
-} phongo_maxkey_t;
-
-typedef struct {
-	zend_object std;
-} phongo_minkey_t;
-
-typedef struct {
 	bool        initialized;
 	char        oid[25];
 	HashTable*  properties;
