@@ -487,6 +487,23 @@ static zend_object* phongo_readpreference_create_object(zend_class_entry* class_
 	return &intern->std;
 }
 
+static zend_object* phongo_readpreference_clone_object(zend_object* object)
+{
+	PHONGO_INTERN_FROM_Z_OBJ(readpreference, object);
+
+	phongo_readpreference_t* new_intern;
+	zend_object*             new_object;
+
+	new_object = phongo_readpreference_create_object(object->ce);
+
+	new_intern = Z_OBJ_READPREFERENCE(new_object);
+	zend_objects_clone_members(&new_intern->std, &intern->std);
+
+	new_intern->read_preference = mongoc_read_prefs_copy(intern->read_preference);
+
+	return new_object;
+}
+
 static zval* phongo_readpreference_read_property(zend_object* zobj, zend_string* name, int type, void** cache_slot, zval* rv)
 {
 	if (!strcmp(ZSTR_VAL(name), "hedge")) {
@@ -502,6 +519,7 @@ void phongo_readpreference_init_ce(INIT_FUNC_ARGS)
 	phongo_readpreference_ce->create_object = phongo_readpreference_create_object;
 
 	memcpy(&phongo_handler_readpreference, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
+	phongo_handler_readpreference.clone_obj     = phongo_readpreference_clone_object;
 	phongo_handler_readpreference.read_property = phongo_readpreference_read_property;
 	phongo_handler_readpreference.free_obj      = phongo_readpreference_free_object;
 	phongo_handler_readpreference.offset        = XtOffsetOf(phongo_readpreference_t, std);
