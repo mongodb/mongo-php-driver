@@ -358,14 +358,32 @@ static zend_object* phongo_writeconcern_create_object(zend_class_entry* class_ty
 	return &intern->std;
 }
 
+static zend_object* phongo_writeconcern_clone_object(zend_object* object)
+{
+	PHONGO_INTERN_FROM_Z_OBJ(writeconcern, object);
+
+	phongo_writeconcern_t* new_intern;
+	zend_object*           new_object;
+
+	new_object = phongo_writeconcern_create_object(object->ce);
+
+	new_intern = Z_OBJ_WRITECONCERN(new_object);
+	zend_objects_clone_members(&new_intern->std, &intern->std);
+
+	new_intern->write_concern = mongoc_write_concern_copy(intern->write_concern);
+
+	return new_object;
+}
+
 void phongo_writeconcern_init_ce(INIT_FUNC_ARGS)
 {
 	phongo_writeconcern_ce                = register_class_MongoDB_Driver_WriteConcern(phongo_serializable_ce);
 	phongo_writeconcern_ce->create_object = phongo_writeconcern_create_object;
 
 	memcpy(&phongo_handler_writeconcern, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
-	phongo_handler_writeconcern.free_obj = phongo_writeconcern_free_object;
-	phongo_handler_writeconcern.offset   = XtOffsetOf(phongo_writeconcern_t, std);
+	phongo_handler_writeconcern.clone_obj = phongo_writeconcern_clone_object;
+	phongo_handler_writeconcern.free_obj  = phongo_writeconcern_free_object;
+	phongo_handler_writeconcern.offset    = XtOffsetOf(phongo_writeconcern_t, std);
 }
 
 void phongo_writeconcern_init(zval* return_value, const mongoc_write_concern_t* write_concern)
