@@ -64,31 +64,14 @@ Examples for valid pre-release versions include:
 ## Publish release notes
 
 The GitHub release notes are created as a draft, and without any release 
-highlights. Fill in release highlights and publish the release notes once the
-entire release workflow has completed. 
+highlights. Fill in release highlights and wait for the entire packaging
+workflow to complete. Once all release assets have been uploaded, you can
+publish the release. Note that since releases are immutable, publishing release
+notes before all packages have been added will result in a broken release.
 
 ## Upload package to PECL
 
 Once the packaging workflow has finished creating the PECL package, it will be
-published as a build artifact of the package workflow, as well as a release
-asset in the draft release. This package may be published via the
-[Release Upload](https://pecl.php.net/release-upload.php) form. You will have one chance to confirm the package
-information after uploading.
-
-> [!NOTE]
-> If downloading the package from the build artifacts, be aware that these are
-> always provided as zip files. You'll have to unpack the tgz archive prior to
-> uploading it to PECL. This is not the case when downloading the release asset.
-
-## Update compatibility tables in MongoDB docs
-
-For minor releases, create a DOCSP ticket indicating whether there are changes
-to MongoDB Server or PHP version compatibility. The [compatibility tables](https://docs.mongodb.com/drivers/driver-compatibility-reference#php-driver-compatibility)
-in the MongoDB documentation must be updated to account for new releases. Make
-sure to update both MongoDB and Language compatibility tables, as shown in
-[this pull request](https://github.com/mongodb/docs-ecosystem/pull/642).
-
-## Announce release
-
-Significant release announcements should also be posted in the
-[MongoDB Product & Driver Announcements: Driver Releases](https://www.mongodb.com/community/forums/tags/c/announcements/driver-releases/110/php) forum.
+published as a release asset in the draft release. This package may be published
+via the [Release Upload](https://pecl.php.net/release-upload.php) form. You will
+have one chance to confirm the package information after uploading.
