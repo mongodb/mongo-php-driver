@@ -295,3 +295,31 @@ jobs:
         run: |
           "$GITHUB_WORKSPACE/php-src/sapi/cli/php" -m | grep -ix mongodb
           "$GITHUB_WORKSPACE/php-src/sapi/cli/php" --ri mongodb
+
+  test-out-of-source-build:
+    name: "Out-of-source Build"
+    runs-on: "ubuntu-latest"
+    env:
+      PHP_VERSION: "8.5"
+
+    steps:
+      - name: "Checkout"
+        uses: "actions/checkout@v6"
+        with:
+          submodules: true
+
+      - name: "Install PHP"
+        uses: "shivammathur/setup-php@v2"
+        with:
+          php-version: "${{ env.PHP_VERSION }}-debug"
+          extensions: "none,date,json,spl,standard,xml"
+
+      - name: "phpize"
+        run: phpize
+
+      - name: "Build driver (out-of-source)"
+        run: |
+          mkdir -p /tmp/mongodb-build
+          cd /tmp/mongodb-build
+          ${GITHUB_WORKSPACE}/configure --enable-mongodb-developer-flags
+          make all
