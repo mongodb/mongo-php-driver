@@ -236,6 +236,10 @@ jobs:
           flags: "${{ env.SERVER_VERSION }}-server"
           token: ${{ secrets.CODECOV_TOKEN }}
 
+  # Verifies that the extension can be compiled statically into PHP (i.e. with
+  # --enable-mongodb instead of --enable-mongodb=shared), as done by projects
+  # like StaticPHP.  This exercises the PHP in-tree build path where configure
+  # is invoked from the PHP source root rather than the extension directory.
   test-static-php-build:
     name: "Static PHP Build"
     runs-on: "ubuntu-latest"
@@ -255,10 +259,12 @@ jobs:
           sudo apt-get update -q
           sudo apt-get install -y \
             autoconf \
+            bison \
             libsqlite3-dev \
             libssl-dev \
             libxml2-dev \
-            pkg-config
+            pkg-config \
+            re2c
 
       - name: "Download PHP ${{ env.PHP_VERSION }} source"
         run: |

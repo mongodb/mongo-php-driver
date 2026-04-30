@@ -375,6 +375,10 @@ if test "$PHP_MONGODB" != "no"; then
     PHP_MONGODB_ADD_SOURCES([src/libmongoc/src/libmongoc/src/mongoc/], $PHP_MONGODB_MONGOC_SOURCES, $PHP_MONGODB_BUNDLED_CFLAGS)
 
     dnl TODO: Use $ext_builddir/$ext_srcdir once this block can move after PHP_NEW_EXTENSION.
+    dnl $ext_builddir and $ext_srcdir are set by PHP_NEW_EXTENSION, but PHP_ADD_INCLUDE
+    dnl and PHP_MONGODB_ADD_SOURCES calls must precede PHP_NEW_EXTENSION, so the whole
+    dnl block cannot be deferred.  PHP_EXT_BUILDDIR/PHP_EXT_SRCDIR are M4 macros that
+    dnl are always available and provide equivalent values without that constraint.
     dnl
     dnl PHP_EXT_BUILDDIR expands to the extension's directory relative to the build
     dnl root: "ext/mongodb" for PHP in-tree builds, "." for phpize builds.  Pairing
@@ -382,13 +386,13 @@ if test "$PHP_MONGODB" != "no"; then
     dnl produces the correct absolute path to the generated config headers regardless
     dnl of build layout.  Using $PWD here breaks PHP in-tree builds because $PWD is
     dnl the PHP source/build root, not the extension's subdirectory within it.
-    ac_ext_builddir=PHP_EXT_BUILDDIR(mongodb)
+    php_mongodb_ext_builddir=PHP_EXT_BUILDDIR(mongodb)
 
     dnl Add the build directories as include paths so the compiler finds generated
     dnl config headers (common-config.h, bson/config.h, mongoc-config.h, etc.).
-    PHP_ADD_INCLUDE([$abs_builddir/$ac_ext_builddir/src/libmongoc/src/common/src])
-    PHP_ADD_INCLUDE([$abs_builddir/$ac_ext_builddir/src/libmongoc/src/libbson/src])
-    PHP_ADD_INCLUDE([$abs_builddir/$ac_ext_builddir/src/libmongoc/src/libmongoc/src])
+    PHP_ADD_INCLUDE([$abs_builddir/$php_mongodb_ext_builddir/src/libmongoc/src/common/src])
+    PHP_ADD_INCLUDE([$abs_builddir/$php_mongodb_ext_builddir/src/libmongoc/src/libbson/src])
+    PHP_ADD_INCLUDE([$abs_builddir/$php_mongodb_ext_builddir/src/libmongoc/src/libmongoc/src])
 
     PHP_MONGODB_ADD_INCLUDE([src/libmongoc/src/common/src/])
     PHP_MONGODB_ADD_INCLUDE([src/libmongoc/src/uthash/])
@@ -411,16 +415,16 @@ if test "$PHP_MONGODB" != "no"; then
     fi
 
     dnl Write generated config headers into the extension's build directory
-    dnl (${ac_ext_builddir}/... relative to the configure invocation directory).
+    dnl (${php_mongodb_ext_builddir}/... relative to the configure invocation directory).
     dnl For standalone out-of-source builds this stays in the build tree; for
     dnl PHP in-tree builds it lands under ext/mongodb/ rather than the PHP root.
     AC_CONFIG_FILES([
-      ${ac_ext_builddir}/src/libmongoc/src/common/src/common-config.h
-      ${ac_ext_builddir}/src/libmongoc/src/libbson/src/bson/config.h
-      ${ac_ext_builddir}/src/libmongoc/src/libbson/src/bson/version.h
-      ${ac_ext_builddir}/src/libmongoc/src/libmongoc/src/mongoc/mongoc-config.h
-      ${ac_ext_builddir}/src/libmongoc/src/libmongoc/src/mongoc/mongoc-config-private.h
-      ${ac_ext_builddir}/src/libmongoc/src/libmongoc/src/mongoc/mongoc-version.h
+      ${php_mongodb_ext_builddir}/src/libmongoc/src/common/src/common-config.h
+      ${php_mongodb_ext_builddir}/src/libmongoc/src/libbson/src/bson/config.h
+      ${php_mongodb_ext_builddir}/src/libmongoc/src/libbson/src/bson/version.h
+      ${php_mongodb_ext_builddir}/src/libmongoc/src/libmongoc/src/mongoc/mongoc-config.h
+      ${php_mongodb_ext_builddir}/src/libmongoc/src/libmongoc/src/mongoc/mongoc-config-private.h
+      ${php_mongodb_ext_builddir}/src/libmongoc/src/libmongoc/src/mongoc/mongoc-version.h
     ])
 
     if test "x$bundled_utf8proc" = "xyes"; then
@@ -435,7 +439,7 @@ if test "$PHP_MONGODB" != "no"; then
       PHP_MONGODB_ADD_SOURCES([src/libmongoc/src/zlib-1.3.1/], $PHP_MONGODB_ZLIB_SOURCES, $PHP_MONGODB_ZLIB_CFLAGS)
       PHP_MONGODB_ADD_INCLUDE([src/libmongoc/src/zlib-1.3.1/])
       PHP_MONGODB_ADD_BUILD_DIR([src/libmongoc/src/zlib-1.3.1/])
-      AC_CONFIG_FILES([${ac_ext_builddir}/src/libmongoc/src/zlib-1.3.1/zconf.h])
+      AC_CONFIG_FILES([${php_mongodb_ext_builddir}/src/libmongoc/src/zlib-1.3.1/zconf.h])
     fi
 
     if test "$PHP_MONGODB_CLIENT_SIDE_ENCRYPTION" = "yes"; then
@@ -474,7 +478,7 @@ if test "$PHP_MONGODB" != "no"; then
       PHP_MONGODB_ADD_BUILD_DIR([src/libmongocrypt/kms-message/src/])
 
       AC_CONFIG_FILES([
-        ${ac_ext_builddir}/src/libmongocrypt/src/mongocrypt-config.h
+        ${php_mongodb_ext_builddir}/src/libmongocrypt/src/mongocrypt-config.h
       ])
     fi
   fi
