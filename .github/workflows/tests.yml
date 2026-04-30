@@ -235,3 +235,63 @@ jobs:
           files: test-results.xml
           flags: "${{ env.SERVER_VERSION }}-server"
           token: ${{ secrets.CODECOV_TOKEN }}
+
+  # Verifies that the extension can be compiled statically into PHP (i.e. with
+  # --enable-mongodb instead of --enable-mongodb=shared), as done by projects
+  # like StaticPHP.  This exercises the PHP in-tree build path where configure
+  # is invoked from the PHP source root rather than the extension directory.
+  test-static-php-build:
+    name: "Static PHP Build"
+    runs-on: "ubuntu-latest"
+    env:
+      # Update this when cutting a new PHP 8.3 patch release
+      PHP_VERSION: "8.3.21"
+
+    steps:
+      - name: "Checkout"
+        uses: "actions/checkout@v6"
+        with:
+          submodules: true
+          path: "mongo-php-driver"
+
+      - name: "Install build dependencies"
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y \
+            autoconf \
+            bison \
+            libsqlite3-dev \
+            libssl-dev \
+            libxml2-dev \
+            pkg-config \
+            re2c
+
+      - name: "Download PHP ${{ env.PHP_VERSION }} source"
+        run: |
+          curl -fsSL "https://www.php.net/distributions/php-${{ env.PHP_VERSION }}.tar.gz" | tar -xz
+          mv "php-${{ env.PHP_VERSION }}" php-src
+
+      - name: "Link extension into PHP source tree"
+        run: ln -s "$GITHUB_WORKSPACE/mongo-php-driver" "$GITHUB_WORKSPACE/php-src/ext/mongodb"
+
+      - name: "Generate PHP build scripts"
+        run: cd "$GITHUB_WORKSPACE/php-src" && ./buildconf --force
+
+        # Note: --with-openssl is needed for the bundled libmongoc's TLS support.
+      - name: "Configure PHP with MongoDB extension (static)"
+        run: |
+          cd "$GITHUB_WORKSPACE/php-src"
+          ./configure \
+            --enable-debug \
+            --enable-cli \
+            --enable-mongodb \
+            --enable-mongodb-developer-flags \
+            --with-openssl
+
+      - name: "Build PHP"
+        run: cd "$GITHUB_WORKSPACE/php-src" && make -j$(nproc)
+
+      - name: "Verify MongoDB extension is compiled in"
+        run: |
+          "$GITHUB_WORKSPACE/php-src/sapi/cli/php" -m | grep -ix mongodb
+          "$GITHUB_WORKSPACE/php-src/sapi/cli/php" --ri mongodb
