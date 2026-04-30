@@ -65,7 +65,7 @@ Examples for valid pre-release versions include:
 
 The GitHub release notes are created as a draft, and without any release 
 highlights. Fill in release highlights and wait for the entire packaging
-workflow to complete. Once all releases assets have been uploaded, you can
+workflow to complete. Once all release assets have been uploaded, you can
 publish the release. Note that since releases are immutable, publishing release
 notes before all packages have been added will result in a broken release.
 
@@ -73,5 +73,5 @@ notes before all packages have been added will result in a broken release.
 
 Once the packaging workflow has finished creating the PECL package, it will be
 published as a release asset in the draft release. This package may be published
-via the [Release Upload](https://pecl.php.net/release-upload.php) form. You will have one chance to confirm the
-package information after uploading.
+via the [Release Upload](https://pecl.php.net/release-upload.php) form. You will
+have one chance to confirm the package information after uploading.
