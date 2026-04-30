@@ -262,7 +262,7 @@ void phongo_serverdescription_init_ce(INIT_FUNC_ARGS)
 	phongo_handler_serverdescription.get_debug_info = phongo_serverdescription_get_debug_info;
 	phongo_handler_serverdescription.get_properties = phongo_serverdescription_get_properties;
 	phongo_handler_serverdescription.free_obj       = phongo_serverdescription_free_object;
-	phongo_handler_serverdescription.offset         = XtOffsetOf(phongo_serverdescription_t, std);
+	phongo_handler_serverdescription.offset         = offsetof(phongo_serverdescription_t, std);
 }
 
 void phongo_serverdescription_init_ex(zval* return_value, mongoc_server_description_t* server_description, bool copy)

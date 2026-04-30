@@ -520,7 +520,7 @@ void phongo_clientencryption_init_ce(INIT_FUNC_ARGS)
 	memcpy(&phongo_handler_clientencryption, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	phongo_handler_clientencryption.get_debug_info = phongo_clientencryption_get_debug_info;
 	phongo_handler_clientencryption.free_obj       = phongo_clientencryption_free_object;
-	phongo_handler_clientencryption.offset         = XtOffsetOf(phongo_clientencryption_t, std);
+	phongo_handler_clientencryption.offset         = offsetof(phongo_clientencryption_t, std);
 }
 
 #ifdef MONGOC_ENABLE_CLIENT_SIDE_ENCRYPTION

@@ -172,5 +172,5 @@ void phongo_command_init_ce(INIT_FUNC_ARGS)
 	memcpy(&phongo_handler_command, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	phongo_handler_command.get_debug_info = phongo_command_get_debug_info;
 	phongo_handler_command.free_obj       = phongo_command_free_object;
-	phongo_handler_command.offset         = XtOffsetOf(phongo_command_t, std);
+	phongo_handler_command.offset         = offsetof(phongo_command_t, std);
 }

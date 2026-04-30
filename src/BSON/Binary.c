@@ -319,7 +319,7 @@ void phongo_binary_init_ce(INIT_FUNC_ARGS)
 	phongo_handler_binary.get_debug_info = phongo_binary_get_debug_info;
 	phongo_handler_binary.get_properties = phongo_binary_get_properties;
 	phongo_handler_binary.free_obj       = phongo_binary_free_object;
-	phongo_handler_binary.offset         = XtOffsetOf(phongo_binary_t, std);
+	phongo_handler_binary.offset         = offsetof(phongo_binary_t, std);
 }
 
 bool phongo_binary_new(zval* object, const char* data, size_t data_len, bson_subtype_t type)

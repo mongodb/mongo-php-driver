@@ -208,7 +208,7 @@ void phongo_symbol_init_ce(INIT_FUNC_ARGS)
 	phongo_handler_symbol.get_debug_info = phongo_symbol_get_debug_info;
 	phongo_handler_symbol.get_properties = phongo_symbol_get_properties;
 	phongo_handler_symbol.free_obj       = phongo_symbol_free_object;
-	phongo_handler_symbol.offset         = XtOffsetOf(phongo_symbol_t, std);
+	phongo_handler_symbol.offset         = offsetof(phongo_symbol_t, std);
 }
 
 bool phongo_symbol_new(zval* object, const char* symbol, size_t symbol_len)

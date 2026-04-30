@@ -418,7 +418,7 @@ void phongo_writeresult_init_ce(INIT_FUNC_ARGS)
 
 	memcpy(&phongo_handler_writeresult, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	phongo_handler_writeresult.free_obj = phongo_writeresult_free_object;
-	phongo_handler_writeresult.offset   = XtOffsetOf(phongo_writeresult_t, std);
+	phongo_handler_writeresult.offset   = offsetof(phongo_writeresult_t, std);
 }
 
 void phongo_writeresult_init(zval* return_value, bson_t* reply, zval* manager, uint32_t server_id, const mongoc_write_concern_t* write_concern)

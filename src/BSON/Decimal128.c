@@ -213,7 +213,7 @@ void phongo_decimal128_init_ce(INIT_FUNC_ARGS)
 	phongo_handler_decimal128.get_debug_info = phongo_decimal128_get_debug_info;
 	phongo_handler_decimal128.get_properties = phongo_decimal128_get_properties;
 	phongo_handler_decimal128.free_obj       = phongo_decimal128_free_object;
-	phongo_handler_decimal128.offset         = XtOffsetOf(phongo_decimal128_t, std);
+	phongo_handler_decimal128.offset         = offsetof(phongo_decimal128_t, std);
 }
 
 bool phongo_decimal128_new(zval* object, const bson_decimal128_t* decimal)

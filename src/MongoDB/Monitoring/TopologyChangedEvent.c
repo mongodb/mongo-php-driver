@@ -112,7 +112,7 @@ void phongo_topologychangedevent_init_ce(INIT_FUNC_ARGS)
 
 	memcpy(&phongo_handler_topologychangedevent, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	phongo_handler_topologychangedevent.free_obj = phongo_topologychangedevent_free_object;
-	phongo_handler_topologychangedevent.offset   = XtOffsetOf(phongo_topologychangedevent_t, std);
+	phongo_handler_topologychangedevent.offset   = offsetof(phongo_topologychangedevent_t, std);
 }
 
 void phongo_topologychangedevent_init(zval* return_value, const mongoc_apm_topology_changed_t* event)
