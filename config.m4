@@ -374,10 +374,21 @@ if test "$PHP_MONGODB" != "no"; then
     PHP_MONGODB_ADD_SOURCES([src/libmongoc/src/libbson/src/jsonsl/], $PHP_MONGODB_JSONSL_SOURCES, $PHP_MONGODB_BUNDLED_CFLAGS)
     PHP_MONGODB_ADD_SOURCES([src/libmongoc/src/libmongoc/src/mongoc/], $PHP_MONGODB_MONGOC_SOURCES, $PHP_MONGODB_BUNDLED_CFLAGS)
 
-    dnl Add the build directories as include paths to some generated files
-    PHP_ADD_INCLUDE([$PWD/src/libmongoc/src/common/src])
-    PHP_ADD_INCLUDE([$PWD/src/libmongoc/src/libbson/src])
-    PHP_ADD_INCLUDE([$PWD/src/libmongoc/src/libmongoc/src])
+    dnl TODO: Use $ext_builddir/$ext_srcdir once this block can move after PHP_NEW_EXTENSION.
+    dnl
+    dnl PHP_EXT_BUILDDIR expands to the extension's directory relative to the build
+    dnl root: "ext/mongodb" for PHP in-tree builds, "." for phpize builds.  Pairing
+    dnl it with $abs_builddir (the absolute path to wherever configure was invoked)
+    dnl produces the correct absolute path to the generated config headers regardless
+    dnl of build layout.  Using $PWD here breaks PHP in-tree builds because $PWD is
+    dnl the PHP source/build root, not the extension's subdirectory within it.
+    ac_ext_builddir=PHP_EXT_BUILDDIR(mongodb)
+
+    dnl Add the build directories as include paths so the compiler finds generated
+    dnl config headers (common-config.h, bson/config.h, mongoc-config.h, etc.).
+    PHP_ADD_INCLUDE([$abs_builddir/$ac_ext_builddir/src/libmongoc/src/common/src])
+    PHP_ADD_INCLUDE([$abs_builddir/$ac_ext_builddir/src/libmongoc/src/libbson/src])
+    PHP_ADD_INCLUDE([$abs_builddir/$ac_ext_builddir/src/libmongoc/src/libmongoc/src])
 
     PHP_MONGODB_ADD_INCLUDE([src/libmongoc/src/common/src/])
     PHP_MONGODB_ADD_INCLUDE([src/libmongoc/src/uthash/])
@@ -399,16 +410,17 @@ if test "$PHP_MONGODB" != "no"; then
       PHP_MONGODB_ADD_BUILD_DIR([src/libmongoc/src/kms-message/src/])
     fi
 
-    dnl TODO: Use $ext_srcdir if we can move this after PHP_NEW_EXTENSION
-    ac_config_dir=PHP_EXT_SRCDIR(mongodb)
-
+    dnl Write generated config headers into the extension's build directory
+    dnl (${ac_ext_builddir}/... relative to the configure invocation directory).
+    dnl For standalone out-of-source builds this stays in the build tree; for
+    dnl PHP in-tree builds it lands under ext/mongodb/ rather than the PHP root.
     AC_CONFIG_FILES([
-      src/libmongoc/src/common/src/common-config.h
-      src/libmongoc/src/libbson/src/bson/config.h
-      src/libmongoc/src/libbson/src/bson/version.h
-      src/libmongoc/src/libmongoc/src/mongoc/mongoc-config.h
-      src/libmongoc/src/libmongoc/src/mongoc/mongoc-config-private.h
-      src/libmongoc/src/libmongoc/src/mongoc/mongoc-version.h
+      ${ac_ext_builddir}/src/libmongoc/src/common/src/common-config.h
+      ${ac_ext_builddir}/src/libmongoc/src/libbson/src/bson/config.h
+      ${ac_ext_builddir}/src/libmongoc/src/libbson/src/bson/version.h
+      ${ac_ext_builddir}/src/libmongoc/src/libmongoc/src/mongoc/mongoc-config.h
+      ${ac_ext_builddir}/src/libmongoc/src/libmongoc/src/mongoc/mongoc-config-private.h
+      ${ac_ext_builddir}/src/libmongoc/src/libmongoc/src/mongoc/mongoc-version.h
     ])
 
     if test "x$bundled_utf8proc" = "xyes"; then
@@ -423,7 +435,7 @@ if test "$PHP_MONGODB" != "no"; then
       PHP_MONGODB_ADD_SOURCES([src/libmongoc/src/zlib-1.3.1/], $PHP_MONGODB_ZLIB_SOURCES, $PHP_MONGODB_ZLIB_CFLAGS)
       PHP_MONGODB_ADD_INCLUDE([src/libmongoc/src/zlib-1.3.1/])
       PHP_MONGODB_ADD_BUILD_DIR([src/libmongoc/src/zlib-1.3.1/])
-      AC_CONFIG_FILES([${ac_config_dir}/src/libmongoc/src/zlib-1.3.1/zconf.h])
+      AC_CONFIG_FILES([${ac_ext_builddir}/src/libmongoc/src/zlib-1.3.1/zconf.h])
     fi
 
     if test "$PHP_MONGODB_CLIENT_SIDE_ENCRYPTION" = "yes"; then
@@ -462,7 +474,7 @@ if test "$PHP_MONGODB" != "no"; then
       PHP_MONGODB_ADD_BUILD_DIR([src/libmongocrypt/kms-message/src/])
 
       AC_CONFIG_FILES([
-        ${ac_config_dir}/src/libmongocrypt/src/mongocrypt-config.h
+        ${ac_ext_builddir}/src/libmongocrypt/src/mongocrypt-config.h
       ])
     fi
   fi
