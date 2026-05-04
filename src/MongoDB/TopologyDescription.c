@@ -183,7 +183,7 @@ void phongo_topologydescription_init_ce(INIT_FUNC_ARGS)
 	phongo_handler_topologydescription.get_debug_info = phongo_topologydescription_get_debug_info;
 	phongo_handler_topologydescription.get_properties = phongo_topologydescription_get_properties;
 	phongo_handler_topologydescription.free_obj       = phongo_topologydescription_free_object;
-	phongo_handler_topologydescription.offset         = XtOffsetOf(phongo_topologydescription_t, std);
+	phongo_handler_topologydescription.offset         = offsetof(phongo_topologydescription_t, std);
 }
 
 void phongo_topologydescription_init(zval* return_value, mongoc_topology_description_t* topology_description)

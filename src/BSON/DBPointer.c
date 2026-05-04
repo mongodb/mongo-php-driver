@@ -243,7 +243,7 @@ void phongo_dbpointer_init_ce(INIT_FUNC_ARGS)
 	phongo_handler_dbpointer.get_debug_info = phongo_dbpointer_get_debug_info;
 	phongo_handler_dbpointer.get_properties = phongo_dbpointer_get_properties;
 	phongo_handler_dbpointer.free_obj       = phongo_dbpointer_free_object;
-	phongo_handler_dbpointer.offset         = XtOffsetOf(phongo_dbpointer_t, std);
+	phongo_handler_dbpointer.offset         = offsetof(phongo_dbpointer_t, std);
 }
 
 bool phongo_dbpointer_new(zval* object, const char* ref, size_t ref_len, const bson_oid_t* oid)

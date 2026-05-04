@@ -383,7 +383,7 @@ void phongo_writeconcern_init_ce(INIT_FUNC_ARGS)
 	memcpy(&phongo_handler_writeconcern, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	phongo_handler_writeconcern.clone_obj = phongo_writeconcern_clone_object;
 	phongo_handler_writeconcern.free_obj  = phongo_writeconcern_free_object;
-	phongo_handler_writeconcern.offset    = XtOffsetOf(phongo_writeconcern_t, std);
+	phongo_handler_writeconcern.offset    = offsetof(phongo_writeconcern_t, std);
 }
 
 void phongo_writeconcern_init(zval* return_value, const mongoc_write_concern_t* write_concern)

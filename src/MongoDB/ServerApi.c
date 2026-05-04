@@ -245,5 +245,5 @@ void phongo_serverapi_init_ce(INIT_FUNC_ARGS)
 	phongo_handler_serverapi.get_debug_info = phongo_serverapi_get_debug_info;
 	phongo_handler_serverapi.get_properties = phongo_serverapi_get_properties;
 	phongo_handler_serverapi.free_obj       = phongo_serverapi_free_object;
-	phongo_handler_serverapi.offset         = XtOffsetOf(phongo_serverapi_t, std);
+	phongo_handler_serverapi.offset         = offsetof(phongo_serverapi_t, std);
 }

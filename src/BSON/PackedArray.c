@@ -544,7 +544,7 @@ void phongo_packedarray_init_ce(INIT_FUNC_ARGS)
 	phongo_handler_packedarray.write_dimension = phongo_packedarray_write_dimension;
 	phongo_handler_packedarray.has_dimension   = phongo_packedarray_has_dimension;
 	phongo_handler_packedarray.unset_dimension = phongo_packedarray_unset_dimension;
-	phongo_handler_packedarray.offset          = XtOffsetOf(phongo_packedarray_t, std);
+	phongo_handler_packedarray.offset          = offsetof(phongo_packedarray_t, std);
 }
 
 bool phongo_packedarray_new(zval* object, bson_t* bson, bool copy)

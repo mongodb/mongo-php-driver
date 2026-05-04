@@ -213,7 +213,7 @@ void phongo_readconcern_init_ce(INIT_FUNC_ARGS)
 	memcpy(&phongo_handler_readconcern, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	phongo_handler_readconcern.clone_obj = phongo_readconcern_clone_object;
 	phongo_handler_readconcern.free_obj  = phongo_readconcern_free_object;
-	phongo_handler_readconcern.offset    = XtOffsetOf(phongo_readconcern_t, std);
+	phongo_handler_readconcern.offset    = offsetof(phongo_readconcern_t, std);
 }
 
 void phongo_readconcern_init(zval* return_value, const mongoc_read_concern_t* read_concern)

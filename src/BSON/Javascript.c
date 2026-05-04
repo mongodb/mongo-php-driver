@@ -317,7 +317,7 @@ void phongo_javascript_init_ce(INIT_FUNC_ARGS)
 	phongo_handler_javascript.get_debug_info = phongo_javascript_get_debug_info;
 	phongo_handler_javascript.get_properties = phongo_javascript_get_properties;
 	phongo_handler_javascript.free_obj       = phongo_javascript_free_object;
-	phongo_handler_javascript.offset         = XtOffsetOf(phongo_javascript_t, std);
+	phongo_handler_javascript.offset         = offsetof(phongo_javascript_t, std);
 }
 
 bool phongo_javascript_new(zval* object, const char* code, size_t code_len, const bson_t* scope)
