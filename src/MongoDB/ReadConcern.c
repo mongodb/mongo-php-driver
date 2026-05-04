@@ -188,14 +188,32 @@ static zend_object* phongo_readconcern_create_object(zend_class_entry* class_typ
 	return &intern->std;
 }
 
+static zend_object* phongo_readconcern_clone_object(zend_object* object)
+{
+	PHONGO_INTERN_FROM_Z_OBJ(readconcern, object);
+
+	phongo_readconcern_t* new_intern;
+	zend_object*          new_object;
+
+	new_object = phongo_readconcern_create_object(object->ce);
+
+	new_intern = Z_OBJ_READCONCERN(new_object);
+	zend_objects_clone_members(&new_intern->std, &intern->std);
+
+	new_intern->read_concern = mongoc_read_concern_copy(intern->read_concern);
+
+	return new_object;
+}
+
 void phongo_readconcern_init_ce(INIT_FUNC_ARGS)
 {
 	phongo_readconcern_ce                = register_class_MongoDB_Driver_ReadConcern(phongo_serializable_ce);
 	phongo_readconcern_ce->create_object = phongo_readconcern_create_object;
 
 	memcpy(&phongo_handler_readconcern, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
-	phongo_handler_readconcern.free_obj = phongo_readconcern_free_object;
-	phongo_handler_readconcern.offset   = offsetof(phongo_readconcern_t, std);
+	phongo_handler_readconcern.clone_obj = phongo_readconcern_clone_object;
+	phongo_handler_readconcern.free_obj  = phongo_readconcern_free_object;
+	phongo_handler_readconcern.offset    = offsetof(phongo_readconcern_t, std);
 }
 
 void phongo_readconcern_init(zval* return_value, const mongoc_read_concern_t* read_concern)
