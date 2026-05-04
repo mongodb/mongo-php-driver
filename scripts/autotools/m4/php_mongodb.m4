@@ -41,6 +41,17 @@ AC_DEFUN([PHP_MONGODB_ADD_INCLUDE],[
 ])
 
 dnl
+dnl PHP_MONGODB_ADD_BUILD_INCLUDE(path)
+dnl
+dnl Adds an include path relative to the extension build directory (i.e.
+dnl PHP_EXT_BUILDDIR). Use this for directories containing generated files
+dnl (e.g. config headers written by AC_CONFIG_FILES).
+dnl
+AC_DEFUN([PHP_MONGODB_ADD_BUILD_INCLUDE],[
+  PHP_ADD_INCLUDE(PHP_EXT_BUILDDIR(mongodb)[/][$1])
+])
+
+dnl
 dnl PHP_MONGODB_ADD_BUILD_DIR(path)
 dnl
 dnl Adds a build directory relative to the extension build directory (i.e.
