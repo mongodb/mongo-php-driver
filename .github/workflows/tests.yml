@@ -244,8 +244,7 @@ jobs:
     name: "Static PHP Build"
     runs-on: "ubuntu-latest"
     env:
-      # Update this when cutting a new PHP 8.3 patch release
-      PHP_VERSION: "8.3.21"
+      PHP_VERSION: "8.5.5"
 
     steps:
       - name: "Checkout"
