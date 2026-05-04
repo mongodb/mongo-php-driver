@@ -253,7 +253,7 @@ jobs:
 
     strategy:
       matrix:
-        mode: ['from-source', 'out-of-source']
+        mode: ['in-source', 'out-of-source']
 
     steps:
       - name: "Checkout"
@@ -290,8 +290,11 @@ jobs:
           if [ "${{ matrix.mode }}" = "out-of-source" ]; then
             mkdir -p /tmp/php-build
             echo "PHP_BUILD_DIR=/tmp/php-build" >> "$GITHUB_ENV"
-          else
+          elif [ "${{ matrix.mode }}" = "in-source" ]; then
             echo "PHP_BUILD_DIR=$GITHUB_WORKSPACE/php-src" >> "$GITHUB_ENV"
+          else
+            echo "Invalid mode"
+            exit 1
           fi
 
         # Note: --with-openssl is needed for the bundled libmongoc's TLS support.
