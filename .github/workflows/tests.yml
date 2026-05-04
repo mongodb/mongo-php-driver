@@ -179,7 +179,7 @@ jobs:
     runs-on: "ubuntu-latest"
     env:
       PHP_VERSION: "8.3"
-      LIBMONGOCRYPT_VERSION: "1.17.3"
+      LIBMONGOCRYPT_VERSION: "1.18.0"
       # Note: include the patch version when referring to a libmongoc release tarball
       LIBMONGOC_VERSION: "2.3.0"
       SERVER_VERSION: "8.0"
