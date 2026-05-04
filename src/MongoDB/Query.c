@@ -414,5 +414,5 @@ void phongo_query_init_ce(INIT_FUNC_ARGS)
 	memcpy(&phongo_handler_query, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	phongo_handler_query.get_debug_info = phongo_query_get_debug_info;
 	phongo_handler_query.free_obj       = phongo_query_free_object;
-	phongo_handler_query.offset         = XtOffsetOf(phongo_query_t, std);
+	phongo_handler_query.offset         = offsetof(phongo_query_t, std);
 }

@@ -416,7 +416,7 @@ void phongo_cursor_init_ce(INIT_FUNC_ARGS)
 	memcpy(&phongo_handler_cursor, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	phongo_handler_cursor.get_debug_info = phongo_cursor_get_debug_info;
 	phongo_handler_cursor.free_obj       = phongo_cursor_free_object;
-	phongo_handler_cursor.offset         = XtOffsetOf(phongo_cursor_t, std);
+	phongo_handler_cursor.offset         = offsetof(phongo_cursor_t, std);
 }
 
 static void phongo_cursor_init(zval* return_value, zval* manager, mongoc_cursor_t* cursor, zval* readPreference, zval* session)

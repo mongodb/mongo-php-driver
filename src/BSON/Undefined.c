@@ -96,5 +96,5 @@ void phongo_undefined_init_ce(INIT_FUNC_ARGS)
 	/* Re-assign default handler previously removed in phongo.c */
 	phongo_handler_undefined.clone_obj = zend_objects_clone_obj;
 	phongo_handler_undefined.free_obj  = phongo_undefined_free_object;
-	phongo_handler_undefined.offset    = XtOffsetOf(phongo_undefined_t, std);
+	phongo_handler_undefined.offset    = offsetof(phongo_undefined_t, std);
 }

@@ -693,7 +693,7 @@ void phongo_session_init_ce(INIT_FUNC_ARGS)
 	memcpy(&phongo_handler_session, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	phongo_handler_session.get_debug_info = phongo_session_get_debug_info;
 	phongo_handler_session.free_obj       = phongo_session_free_object;
-	phongo_handler_session.offset         = XtOffsetOf(phongo_session_t, std);
+	phongo_handler_session.offset         = offsetof(phongo_session_t, std);
 }
 
 void phongo_session_init(zval* return_value, zval* manager, mongoc_client_session_t* client_session)

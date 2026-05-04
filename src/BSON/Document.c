@@ -585,7 +585,7 @@ void phongo_document_init_ce(INIT_FUNC_ARGS)
 	phongo_handler_document.write_dimension = phongo_document_write_dimension;
 	phongo_handler_document.has_dimension   = phongo_document_has_dimension;
 	phongo_handler_document.unset_dimension = phongo_document_unset_dimension;
-	phongo_handler_document.offset          = XtOffsetOf(phongo_document_t, std);
+	phongo_handler_document.offset          = offsetof(phongo_document_t, std);
 }
 
 bool phongo_document_new(zval* object, bson_t* bson, bool copy)

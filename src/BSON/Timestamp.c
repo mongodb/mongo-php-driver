@@ -324,7 +324,7 @@ void phongo_timestamp_init_ce(INIT_FUNC_ARGS)
 	phongo_handler_timestamp.get_debug_info = phongo_timestamp_get_debug_info;
 	phongo_handler_timestamp.get_properties = phongo_timestamp_get_properties;
 	phongo_handler_timestamp.free_obj       = phongo_timestamp_free_object;
-	phongo_handler_timestamp.offset         = XtOffsetOf(phongo_timestamp_t, std);
+	phongo_handler_timestamp.offset         = offsetof(phongo_timestamp_t, std);
 }
 
 bool phongo_timestamp_new(zval* object, uint32_t increment, uint32_t timestamp)

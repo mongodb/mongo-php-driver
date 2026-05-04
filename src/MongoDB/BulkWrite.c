@@ -660,5 +660,5 @@ void phongo_bulkwrite_init_ce(INIT_FUNC_ARGS)
 	memcpy(&phongo_handler_bulkwrite, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	phongo_handler_bulkwrite.get_debug_info = phongo_bulkwrite_get_debug_info;
 	phongo_handler_bulkwrite.free_obj       = phongo_bulkwrite_free_object;
-	phongo_handler_bulkwrite.offset         = XtOffsetOf(phongo_bulkwrite_t, std);
+	phongo_handler_bulkwrite.offset         = offsetof(phongo_bulkwrite_t, std);
 }

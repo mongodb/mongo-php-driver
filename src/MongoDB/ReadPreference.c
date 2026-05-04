@@ -504,7 +504,7 @@ void phongo_readpreference_init_ce(INIT_FUNC_ARGS)
 	memcpy(&phongo_handler_readpreference, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	phongo_handler_readpreference.read_property = phongo_readpreference_read_property;
 	phongo_handler_readpreference.free_obj      = phongo_readpreference_free_object;
-	phongo_handler_readpreference.offset        = XtOffsetOf(phongo_readpreference_t, std);
+	phongo_handler_readpreference.offset        = offsetof(phongo_readpreference_t, std);
 }
 
 void phongo_readpreference_init(zval* return_value, const mongoc_read_prefs_t* read_prefs)

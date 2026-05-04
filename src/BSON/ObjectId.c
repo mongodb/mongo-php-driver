@@ -261,7 +261,7 @@ void phongo_objectid_init_ce(INIT_FUNC_ARGS)
 	phongo_handler_objectid.get_debug_info = phongo_objectid_get_debug_info;
 	phongo_handler_objectid.get_properties = phongo_objectid_get_properties;
 	phongo_handler_objectid.free_obj       = phongo_objectid_free_object;
-	phongo_handler_objectid.offset         = XtOffsetOf(phongo_objectid_t, std);
+	phongo_handler_objectid.offset         = offsetof(phongo_objectid_t, std);
 }
 
 bool phongo_objectid_new(zval* return_value, const bson_oid_t* oid)
