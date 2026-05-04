@@ -228,7 +228,7 @@ void phongo_bulkwritecommandresult_init_ce(INIT_FUNC_ARGS)
 	memcpy(&phongo_handler_bulkwritecommandresult, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	phongo_handler_bulkwritecommandresult.get_debug_info = phongo_bulkwritecommandresult_get_debug_info;
 	phongo_handler_bulkwritecommandresult.free_obj       = phongo_bulkwritecommandresult_free_object;
-	phongo_handler_bulkwritecommandresult.offset         = XtOffsetOf(phongo_bulkwritecommandresult_t, std);
+	phongo_handler_bulkwritecommandresult.offset         = offsetof(phongo_bulkwritecommandresult_t, std);
 }
 
 static inline bson_t* _bson_copy_or_null(const bson_t* bson)

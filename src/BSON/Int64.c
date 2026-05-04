@@ -550,7 +550,7 @@ void phongo_int64_init_ce(INIT_FUNC_ARGS)
 	phongo_handler_int64.get_debug_info = phongo_int64_get_debug_info;
 	phongo_handler_int64.get_properties = phongo_int64_get_properties;
 	phongo_handler_int64.free_obj       = phongo_int64_free_object;
-	phongo_handler_int64.offset         = XtOffsetOf(phongo_int64_t, std);
+	phongo_handler_int64.offset         = offsetof(phongo_int64_t, std);
 	phongo_handler_int64.cast_object    = phongo_int64_cast_object;
 	phongo_handler_int64.do_operation   = phongo_int64_do_operation;
 }

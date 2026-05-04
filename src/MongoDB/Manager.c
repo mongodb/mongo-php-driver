@@ -853,5 +853,5 @@ void phongo_manager_init_ce(INIT_FUNC_ARGS)
 	memcpy(&phongo_handler_manager, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	phongo_handler_manager.get_debug_info = phongo_manager_get_debug_info;
 	phongo_handler_manager.free_obj       = phongo_manager_free_object;
-	phongo_handler_manager.offset         = XtOffsetOf(phongo_manager_t, std);
+	phongo_handler_manager.offset         = offsetof(phongo_manager_t, std);
 }

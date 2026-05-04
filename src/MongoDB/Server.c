@@ -671,7 +671,7 @@ void phongo_server_init_ce(INIT_FUNC_ARGS)
 	phongo_handler_server.compare        = phongo_server_compare_objects;
 	phongo_handler_server.get_debug_info = phongo_server_get_debug_info;
 	phongo_handler_server.free_obj       = phongo_server_free_object;
-	phongo_handler_server.offset         = XtOffsetOf(phongo_server_t, std);
+	phongo_handler_server.offset         = offsetof(phongo_server_t, std);
 }
 
 void phongo_server_init(zval* return_value, zval* manager, uint32_t server_id)

@@ -136,7 +136,7 @@ void phongo_serverchangedevent_init_ce(INIT_FUNC_ARGS)
 
 	memcpy(&phongo_handler_serverchangedevent, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	phongo_handler_serverchangedevent.free_obj = phongo_serverchangedevent_free_object;
-	phongo_handler_serverchangedevent.offset   = XtOffsetOf(phongo_serverchangedevent_t, std);
+	phongo_handler_serverchangedevent.offset   = offsetof(phongo_serverchangedevent_t, std);
 }
 
 void phongo_serverchangedevent_init(zval* return_value, const mongoc_apm_server_changed_t* event)

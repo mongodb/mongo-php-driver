@@ -73,10 +73,10 @@
 		PHONGO_RETURN_PROPERTY(name, property);                   \
 	}
 
-#define CLASS_FETCH_OBJ_DECL(name)                                                      \
-	static inline phongo_##name##_t* php_##name##_fetch_object(const zend_object* obj)  \
-	{                                                                                   \
-		return (phongo_##name##_t*) ((char*) obj - XtOffsetOf(phongo_##name##_t, std)); \
+#define CLASS_FETCH_OBJ_DECL(name)                                                     \
+	static inline phongo_##name##_t* php_##name##_fetch_object(const zend_object* obj) \
+	{                                                                                  \
+		return (phongo_##name##_t*) ((char*) obj - offsetof(phongo_##name##_t, std));  \
 	}
 
 #define CLASS_ENTRY_DECL(name) extern zend_class_entry* phongo_##name##_ce

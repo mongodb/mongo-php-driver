@@ -383,5 +383,5 @@ void phongo_iterator_init_ce(INIT_FUNC_ARGS)
 	phongo_handler_iterator.get_debug_info = phongo_iterator_get_debug_info;
 	phongo_handler_iterator.get_properties = phongo_iterator_get_properties;
 	phongo_handler_iterator.free_obj       = phongo_iterator_free_object;
-	phongo_handler_iterator.offset         = XtOffsetOf(phongo_iterator_t, std);
+	phongo_handler_iterator.offset         = offsetof(phongo_iterator_t, std);
 }

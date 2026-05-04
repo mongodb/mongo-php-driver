@@ -290,7 +290,7 @@ void phongo_regex_init_ce(INIT_FUNC_ARGS)
 	phongo_handler_regex.get_debug_info = phongo_regex_get_debug_info;
 	phongo_handler_regex.get_properties = phongo_regex_get_properties;
 	phongo_handler_regex.free_obj       = phongo_regex_free_object;
-	phongo_handler_regex.offset         = XtOffsetOf(phongo_regex_t, std);
+	phongo_handler_regex.offset         = offsetof(phongo_regex_t, std);
 }
 
 bool phongo_regex_new(zval* object, const char* pattern, const char* flags)
