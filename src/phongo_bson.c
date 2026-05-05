@@ -205,6 +205,10 @@ bool phongo_field_path_push(phongo_field_path* field_path, const char* element, 
 
 bool phongo_field_path_pop(phongo_field_path* field_path)
 {
+	if (field_path->size == 0) {
+		return false;
+	}
+
 	phongo_field_path_ensure_allocation(field_path, field_path->size);
 
 	field_path->elements[field_path->size]      = NULL;
