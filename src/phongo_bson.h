@@ -109,8 +109,8 @@ bool               phongo_field_path_pop(phongo_field_path* field_path);
 bool phongo_bson_to_json(zval* return_value, const bson_t* bson, phongo_json_mode_t mode);
 bool phongo_bson_to_zval(const bson_t* b, zval* zv);
 bool phongo_bson_to_zval_ex(const bson_t* b, phongo_bson_state* state);
-bool phongo_bson_data_to_zval(const unsigned char* data, int data_len, zval* zv);
-bool phongo_bson_data_to_zval_ex(const unsigned char* data, int data_len, phongo_bson_state* state);
+bool phongo_bson_data_to_zval(const unsigned char* data, size_t data_len, zval* zv);
+bool phongo_bson_data_to_zval_ex(const unsigned char* data, size_t data_len, phongo_bson_state* state);
 
 bool phongo_bson_value_to_zval(const bson_value_t* value, zval* zv);
 bool phongo_bson_value_to_zval_legacy(const bson_value_t* value, zval* zv);

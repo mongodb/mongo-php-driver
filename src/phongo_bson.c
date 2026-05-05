@@ -927,7 +927,7 @@ bool phongo_bson_to_zval(const bson_t* b, zval* zv)
 }
 
 /* Converts BSON data to a PHP value using the default typemap. */
-bool phongo_bson_data_to_zval(const unsigned char* data, int data_len, zval* zv)
+bool phongo_bson_data_to_zval(const unsigned char* data, size_t data_len, zval* zv)
 {
 	bool              retval;
 	phongo_bson_state state;
@@ -1209,7 +1209,7 @@ cleanup:
  * as-is on PHP 7; however, it should have the type undefined if the state
  * was initialized to zero.
  */
-bool phongo_bson_data_to_zval_ex(const unsigned char* data, int data_len, phongo_bson_state* state)
+bool phongo_bson_data_to_zval_ex(const unsigned char* data, size_t data_len, phongo_bson_state* state)
 {
 	bson_reader_t* reader = NULL;
 	const bson_t*  b;
