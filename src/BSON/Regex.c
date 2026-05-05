@@ -296,10 +296,6 @@ void phongo_regex_init_ce(INIT_FUNC_ARGS)
 bool phongo_regex_new(zval* object, const char* pattern, const char* flags)
 {
 	PHONGO_INTERN_INIT_EX(regex, object);
-	intern->pattern_len = strlen(pattern);
-	intern->pattern     = estrndup(pattern, intern->pattern_len);
-	intern->flags_len   = strlen(flags);
-	intern->flags       = estrndup(flags, intern->flags_len);
 
-	return true;
+	return phongo_regex_init(intern, pattern, strlen(pattern), flags, strlen(flags));
 }
