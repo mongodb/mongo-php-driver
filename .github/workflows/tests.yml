@@ -300,6 +300,7 @@ jobs:
         # Note: --with-openssl is needed for the bundled libmongoc's TLS support.
       - name: "Configure PHP with MongoDB extension (static)"
         run: |
+          [ -n "$PHP_BUILD_DIR" ] || { echo "PHP_BUILD_DIR is not set"; exit 1; }
           "$GITHUB_WORKSPACE/php-src/configure" \
             --enable-debug \
             --enable-cli \
