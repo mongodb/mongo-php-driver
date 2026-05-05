@@ -46,6 +46,14 @@ static bool phongo_javascript_init(phongo_javascript_t* intern, const char* code
 	if (scope && (Z_TYPE_P(scope) == IS_OBJECT || Z_TYPE_P(scope) == IS_ARRAY)) {
 		intern->scope = bson_new();
 		phongo_zval_to_bson(scope, PHONGO_BSON_NONE, intern->scope, NULL);
+
+		if (EG(exception)) {
+			efree(intern->code);
+			intern->code = NULL;
+			bson_destroy(intern->scope);
+			intern->scope = NULL;
+			return false;
+		}
 	} else {
 		intern->scope = NULL;
 	}
