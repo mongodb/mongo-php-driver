@@ -241,7 +241,7 @@ jobs:
   # like StaticPHP.  This exercises the PHP in-tree build path where configure
   # is invoked from the PHP source root rather than the extension directory.
   # Two modes are tested:
-  #   from-source   — configure and build run from the PHP source directory
+  #   in-source     — configure and build run from the PHP source directory
   #                   (PHP source dir = PHP build dir, layout 3)
   #   out-of-source — configure and build run from a separate build directory
   #                   (PHP source dir ≠ PHP build dir, layout 4)
