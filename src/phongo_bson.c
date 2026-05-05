@@ -115,7 +115,11 @@ char* phongo_field_path_as_string(phongo_field_path* field_path)
 		ptr++;
 	}
 
-	ptr[-1] = '\0';
+	if (ptr == path) {
+		path[0] = '\0';
+	} else {
+		ptr[-1] = '\0';
+	}
 
 	return path;
 }
