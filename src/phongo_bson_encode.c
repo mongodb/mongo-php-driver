@@ -571,11 +571,12 @@ void phongo_zval_to_bson(zval* data, phongo_bson_flags_t flags, bson_t* bson, bs
 	phongo_field_path_free(field_path);
 }
 
-static void phongo_zval_to_bson_value_ex(zval* data, phongo_bson_flags_t flags, bson_value_t* value)
+static bool phongo_zval_to_bson_value_ex(zval* data, phongo_bson_flags_t flags, bson_value_t* value)
 {
 	bson_iter_t iter;
 	bson_t      bson = BSON_INITIALIZER;
 	zval        data_object;
+	bool        success = false;
 
 	array_init_size(&data_object, 1);
 	add_assoc_zval(&data_object, "data", data);
@@ -584,12 +585,15 @@ static void phongo_zval_to_bson_value_ex(zval* data, phongo_bson_flags_t flags, 
 
 	phongo_zval_to_bson(&data_object, flags, &bson, NULL);
 
-	if (bson_iter_init_find(&iter, &bson, "data")) {
+	if (!EG(exception) && bson_iter_init_find(&iter, &bson, "data")) {
 		bson_value_copy(bson_iter_value(&iter), value);
+		success = true;
 	}
 
 	bson_destroy(&bson);
 	zval_ptr_dtor(&data_object);
+
+	return success;
 }
 
 /* Converts the argument to a bson_value_t. If the object is an instance of
@@ -651,8 +655,7 @@ bool phongo_zval_to_bson_value(zval* data, bson_value_t* value)
 		case IS_ARRAY:
 		case IS_OBJECT:
 			/* Use phongo_zval_to_bson internally to convert arrays and documents */
-			phongo_zval_to_bson_value_ex(data, PHONGO_BSON_NONE, value);
-			return true;
+			return phongo_zval_to_bson_value_ex(data, PHONGO_BSON_NONE, value);
 	}
 
 	phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Unsupported type %s", zend_zval_type_name(data));
