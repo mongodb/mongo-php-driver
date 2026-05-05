@@ -18,6 +18,8 @@
 #include "mongoc/mongoc.h"
 
 #include <php.h>
+#include <ext/hash/php_hash.h>
+#include <ext/hash/php_hash_sha.h>
 #include <ext/standard/php_var.h>
 #include <Zend/zend_smart_str.h>
 
@@ -820,7 +822,7 @@ static zval* phongo_manager_prepare_manager_for_hash(zval* driverOptions, bool* 
 	return driverOptionsClone;
 }
 
-/* Creates a hash for a client by concatenating the URI string with serialized
+/* Creates a hash for a client from a digest of the URI string and serialized
  * options arrays. On success, a persistent string is returned (i.e. pefree()
  * should be used to free it) and hash_len will be set to the string's length.
  * On error, an exception will have been thrown and NULL will be returned. */
@@ -831,12 +833,21 @@ static char* phongo_manager_make_client_hash(const char* uri_string, zval* optio
 	php_serialize_data_t var_hash;
 	zval*                serializable_driver_options = NULL;
 	bool                 free_driver_options         = false;
+	PHP_SHA256_CTX       sha_ctx;
+	unsigned char        sha_digest[32];
+	char                 sha_hex[65];
 
 	zval args;
 
+	PHP_SHA256Init(&sha_ctx);
+	PHP_SHA256Update(&sha_ctx, (const unsigned char*) uri_string, strlen(uri_string));
+	PHP_SHA256Final(sha_digest, &sha_ctx);
+	php_hash_bin2hex(sha_hex, sha_digest, sizeof(sha_digest));
+	sha_hex[64] = '\0';
+
 	array_init_size(&args, 4);
 	ADD_ASSOC_LONG_EX(&args, "pid", getpid());
-	ADD_ASSOC_STRING(&args, "uri", uri_string);
+	ADD_ASSOC_STRINGL(&args, "uri", sha_hex, 64);
 
 	if (options) {
 		ADD_ASSOC_ZVAL_EX(&args, "options", options);
