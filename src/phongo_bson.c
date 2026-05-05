@@ -787,6 +787,15 @@ static bool phongo_bson_visit_document(const bson_iter_t* iter ARG_UNUSED, const
 			object_init_ex(&obj, obj_ce);
 
 			zend_call_method_with_1_params(Z_OBJ_P(&obj), NULL, NULL, BSON_UNSERIALIZE_FUNC_NAME, NULL, &state.zchild);
+
+			if (EG(exception)) {
+				zval_ptr_dtor(&obj);
+				zval_ptr_dtor(&state.zchild);
+				phongo_bson_state_dtor(&state);
+				phongo_field_path_pop(parent_state->field_path);
+				return true;
+			}
+
 			zval_ptr_dtor(&state.zchild);
 			ZVAL_COPY_VALUE(&state.zchild, &obj);
 
@@ -863,6 +872,15 @@ static bool phongo_bson_visit_array(const bson_iter_t* iter ARG_UNUSED, const ch
 
 			object_init_ex(&obj, state.field_type.ce);
 			zend_call_method_with_1_params(Z_OBJ_P(&obj), NULL, NULL, BSON_UNSERIALIZE_FUNC_NAME, NULL, &state.zchild);
+
+			if (EG(exception)) {
+				zval_ptr_dtor(&obj);
+				zval_ptr_dtor(&state.zchild);
+				phongo_bson_state_dtor(&state);
+				phongo_field_path_pop(parent_state->field_path);
+				return true;
+			}
+
 			zval_ptr_dtor(&state.zchild);
 			ZVAL_COPY_VALUE(&state.zchild, &obj);
 			break;
