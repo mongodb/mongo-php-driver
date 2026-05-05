@@ -480,6 +480,7 @@ if test "$PHP_MONGODB" != "no"; then
   PHP_SUBST(MONGODB_SHARED_LIBADD)
 
   PHP_ADD_EXTENSION_DEP(mongodb, date)
+  PHP_ADD_EXTENSION_DEP(mongodb, hash)
   PHP_ADD_EXTENSION_DEP(mongodb, json)
   PHP_ADD_EXTENSION_DEP(mongodb, spl)
   PHP_ADD_EXTENSION_DEP(mongodb, standard)

@@ -835,19 +835,16 @@ static char* phongo_manager_make_client_hash(const char* uri_string, zval* optio
 	bool                 free_driver_options         = false;
 	PHP_SHA256_CTX       sha_ctx;
 	unsigned char        sha_digest[32];
-	char                 sha_hex[65];
 
 	zval args;
 
 	PHP_SHA256Init(&sha_ctx);
 	PHP_SHA256Update(&sha_ctx, (const unsigned char*) uri_string, strlen(uri_string));
 	PHP_SHA256Final(sha_digest, &sha_ctx);
-	php_hash_bin2hex(sha_hex, sha_digest, sizeof(sha_digest));
-	sha_hex[64] = '\0';
 
 	array_init_size(&args, 4);
 	ADD_ASSOC_LONG_EX(&args, "pid", getpid());
-	ADD_ASSOC_STRINGL(&args, "uri", sha_hex, 64);
+	ADD_ASSOC_STRINGL(&args, "uri", (char*) sha_digest, sizeof(sha_digest));
 
 	if (options) {
 		ADD_ASSOC_ZVAL_EX(&args, "options", options);
