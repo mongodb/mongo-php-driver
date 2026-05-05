@@ -643,6 +643,11 @@ bool phongo_zval_to_bson_value(zval* data, bson_value_t* value)
 			return true;
 
 		case IS_STRING:
+			if (!bson_utf8_validate(Z_STRVAL_P(data), Z_STRLEN_P(data), true)) {
+				phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Detected invalid UTF-8 in string value");
+				return false;
+			}
+
 			value->value_type       = BSON_TYPE_UTF8;
 			value->value.v_utf8.len = Z_STRLEN_P(data);
 
