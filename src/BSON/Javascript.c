@@ -40,6 +40,14 @@ static bool phongo_javascript_init(phongo_javascript_t* intern, const char* code
 		return false;
 	}
 
+	if (intern->code) {
+		efree(intern->code);
+	}
+	if (intern->scope) {
+		bson_destroy(intern->scope);
+		intern->scope = NULL;
+	}
+
 	intern->code     = estrndup(code, code_len);
 	intern->code_len = code_len;
 
