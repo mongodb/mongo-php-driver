@@ -240,11 +240,20 @@ jobs:
   # --enable-mongodb instead of --enable-mongodb=shared), as done by projects
   # like StaticPHP.  This exercises the PHP in-tree build path where configure
   # is invoked from the PHP source root rather than the extension directory.
-  test-static-php-build:
-    name: "Static PHP Build"
+  # Two modes are tested:
+  #   in-source     — configure and build run from the PHP source directory
+  #                   (PHP source dir = PHP build dir, layout 3)
+  #   out-of-source — configure and build run from a separate build directory
+  #                   (PHP source dir ≠ PHP build dir, layout 4)
+  test-in-tree-build:
+    name: "Static PHP Build (${{ matrix.mode }})"
     runs-on: "ubuntu-latest"
     env:
       PHP_VERSION: "8.5.5"
+
+    strategy:
+      matrix:
+        mode: ['in-source', 'out-of-source']
 
     steps:
       - name: "Checkout"
@@ -276,24 +285,38 @@ jobs:
       - name: "Generate PHP build scripts"
         run: cd "$GITHUB_WORKSPACE/php-src" && ./buildconf --force
 
+      - name: "Set build directory"
+        run: |
+          if [ "${{ matrix.mode }}" = "out-of-source" ]; then
+            mkdir -p /tmp/php-build
+            echo "PHP_BUILD_DIR=/tmp/php-build" >> "$GITHUB_ENV"
+          elif [ "${{ matrix.mode }}" = "in-source" ]; then
+            echo "PHP_BUILD_DIR=$GITHUB_WORKSPACE/php-src" >> "$GITHUB_ENV"
+          else
+            echo "Invalid mode"
+            exit 1
+          fi
+
         # Note: --with-openssl is needed for the bundled libmongoc's TLS support.
       - name: "Configure PHP with MongoDB extension (static)"
         run: |
-          cd "$GITHUB_WORKSPACE/php-src"
-          ./configure \
+          [ -n "$PHP_BUILD_DIR" ] || { echo "PHP_BUILD_DIR is not set"; exit 1; }
+          "$GITHUB_WORKSPACE/php-src/configure" \
             --enable-debug \
             --enable-cli \
             --enable-mongodb \
             --enable-mongodb-developer-flags \
             --with-openssl
+        working-directory: ${{ env.PHP_BUILD_DIR }}
 
       - name: "Build PHP"
-        run: cd "$GITHUB_WORKSPACE/php-src" && make -j$(nproc)
+        run: make -j$(nproc)
+        working-directory: ${{ env.PHP_BUILD_DIR }}
 
       - name: "Verify MongoDB extension is compiled in"
         run: |
-          "$GITHUB_WORKSPACE/php-src/sapi/cli/php" -m | grep -ix mongodb
-          "$GITHUB_WORKSPACE/php-src/sapi/cli/php" --ri mongodb
+          "$PHP_BUILD_DIR/sapi/cli/php" -m | grep -ix mongodb
+          "$PHP_BUILD_DIR/sapi/cli/php" --ri mongodb
 
   test-out-of-source-build:
     name: "Out-of-source Build"
