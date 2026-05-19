@@ -333,8 +333,10 @@ jobs:
       - name: "Install PHP"
         uses: "shivammathur/setup-php@v2"
         with:
-          php-version: "${{ env.PHP_VERSION }}-debug"
+          php-version: "${{ env.PHP_VERSION }}"
           extensions: "none,date,json,spl,standard,xml"
+        env:
+          debug: true
 
       - name: "phpize"
         run: phpize
