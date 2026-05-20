@@ -244,9 +244,9 @@ typedef struct {
 
 typedef struct {
 	char*       pattern;
-	int         pattern_len;
+	size_t      pattern_len;
 	char*       flags;
-	int         flags_len;
+	size_t      flags_len;
 	HashTable*  properties;
 	zend_object std;
 } phongo_regex_t;

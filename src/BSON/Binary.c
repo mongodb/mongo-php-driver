@@ -51,6 +51,10 @@ static bool phongo_binary_init(phongo_binary_t* intern, const char* data, size_t
 		return false;
 	}
 
+	if (intern->data) {
+		efree(intern->data);
+	}
+
 	intern->data     = estrndup(data, data_len);
 	intern->data_len = data_len;
 	intern->type     = (uint8_t) type;

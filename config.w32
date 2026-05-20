@@ -75,6 +75,7 @@ ARG_WITH("mongodb-client-side-encryption", "MongoDB: Enable client-side encrypti
 
 if (PHP_MONGODB != "no") {
   ADD_EXTENSION_DEP("mongodb", "date", false);
+  ADD_EXTENSION_DEP("mongodb", "hash", false);
   ADD_EXTENSION_DEP("mongodb", "standard", false);
   ADD_EXTENSION_DEP("mongodb", "json", false);
   ADD_EXTENSION_DEP("mongodb", "spl", false);

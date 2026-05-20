@@ -42,14 +42,23 @@ static bool phongo_regex_init(phongo_regex_t* intern, const char* pattern, size_
 		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Pattern cannot contain null bytes");
 		return false;
 	}
+
+	if (flags && strlen(flags) != (size_t) flags_len) {
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Flags cannot contain null bytes");
+		return false;
+	}
+
+	if (intern->pattern) {
+		efree(intern->pattern);
+	}
+	if (intern->flags) {
+		efree(intern->flags);
+	}
+
 	intern->pattern     = estrndup(pattern, pattern_len);
 	intern->pattern_len = pattern_len;
 
 	if (flags) {
-		if (strlen(flags) != (size_t) flags_len) {
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Flags cannot contain null bytes");
-			return false;
-		}
 		intern->flags     = estrndup(flags, flags_len);
 		intern->flags_len = flags_len;
 		/* Ensure flags are alphabetized upon initialization */
@@ -296,10 +305,6 @@ void phongo_regex_init_ce(INIT_FUNC_ARGS)
 bool phongo_regex_new(zval* object, const char* pattern, const char* flags)
 {
 	PHONGO_INTERN_INIT_EX(regex, object);
-	intern->pattern_len = strlen(pattern);
-	intern->pattern     = estrndup(pattern, intern->pattern_len);
-	intern->flags_len   = strlen(flags);
-	intern->flags       = estrndup(flags, intern->flags_len);
 
-	return true;
+	return phongo_regex_init(intern, pattern, strlen(pattern), flags, strlen(flags));
 }
