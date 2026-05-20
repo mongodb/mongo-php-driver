@@ -856,7 +856,7 @@ static mongoc_client_encryption_encrypt_range_opts_t* phongo_clientencryption_en
 	if (php_array_existsc(options, "sparsity")) {
 		int64_t sparsity = php_array_fetchc_long(options, "sparsity");
 
-		if (sparsity < 0 || sparsity > INT64_MAX) {
+		if (sparsity < 0) {
 			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"sparsity\" range option to be a positive 64-bit integer, %" PRId64 " given", sparsity);
 			goto cleanup;
 		}

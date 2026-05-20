@@ -443,12 +443,20 @@ static zend_result phongo_int64_do_operation_ex(zend_uchar opcode, zval* result,
 
 		case ZEND_SL:
 			PHONGO_GET_INT64(value2, op2);
-			OPERATION_RESULT_INT64(value1 << value2);
+			if (value2 < 0) {
+				zend_throw_exception(zend_ce_arithmetic_error, "Bit shift by negative number", 0);
+				return FAILURE;
+			}
+			OPERATION_RESULT_INT64(value2 >= 64 ? 0 : (int64_t) ((uint64_t) value1 << value2));
 			return SUCCESS;
 
 		case ZEND_SR:
 			PHONGO_GET_INT64(value2, op2);
-			OPERATION_RESULT_INT64(value1 >> value2);
+			if (value2 < 0) {
+				zend_throw_exception(zend_ce_arithmetic_error, "Bit shift by negative number", 0);
+				return FAILURE;
+			}
+			OPERATION_RESULT_INT64(value2 >= 64 ? (value1 < 0 ? -1 : 0) : value1 >> value2);
 			return SUCCESS;
 
 		case ZEND_POW:

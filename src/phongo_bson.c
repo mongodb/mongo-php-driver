@@ -115,7 +115,11 @@ char* phongo_field_path_as_string(phongo_field_path* field_path)
 		ptr++;
 	}
 
-	ptr[-1] = '\0';
+	if (ptr == path) {
+		path[0] = '\0';
+	} else {
+		ptr[-1] = '\0';
+	}
 
 	return path;
 }
@@ -205,6 +209,10 @@ bool phongo_field_path_push(phongo_field_path* field_path, const char* element, 
 
 bool phongo_field_path_pop(phongo_field_path* field_path)
 {
+	if (field_path->size == 0) {
+		return false;
+	}
+
 	phongo_field_path_ensure_allocation(field_path, field_path->size);
 
 	field_path->elements[field_path->size]      = NULL;
@@ -783,6 +791,15 @@ static bool phongo_bson_visit_document(const bson_iter_t* iter ARG_UNUSED, const
 			object_init_ex(&obj, obj_ce);
 
 			zend_call_method_with_1_params(Z_OBJ_P(&obj), NULL, NULL, BSON_UNSERIALIZE_FUNC_NAME, NULL, &state.zchild);
+
+			if (EG(exception)) {
+				zval_ptr_dtor(&obj);
+				zval_ptr_dtor(&state.zchild);
+				phongo_bson_state_dtor(&state);
+				phongo_field_path_pop(parent_state->field_path);
+				return true;
+			}
+
 			zval_ptr_dtor(&state.zchild);
 			ZVAL_COPY_VALUE(&state.zchild, &obj);
 
@@ -859,6 +876,15 @@ static bool phongo_bson_visit_array(const bson_iter_t* iter ARG_UNUSED, const ch
 
 			object_init_ex(&obj, state.field_type.ce);
 			zend_call_method_with_1_params(Z_OBJ_P(&obj), NULL, NULL, BSON_UNSERIALIZE_FUNC_NAME, NULL, &state.zchild);
+
+			if (EG(exception)) {
+				zval_ptr_dtor(&obj);
+				zval_ptr_dtor(&state.zchild);
+				phongo_bson_state_dtor(&state);
+				phongo_field_path_pop(parent_state->field_path);
+				return true;
+			}
+
 			zval_ptr_dtor(&state.zchild);
 			ZVAL_COPY_VALUE(&state.zchild, &obj);
 			break;
@@ -901,7 +927,7 @@ bool phongo_bson_to_zval(const bson_t* b, zval* zv)
 }
 
 /* Converts BSON data to a PHP value using the default typemap. */
-bool phongo_bson_data_to_zval(const unsigned char* data, int data_len, zval* zv)
+bool phongo_bson_data_to_zval(const unsigned char* data, size_t data_len, zval* zv)
 {
 	bool              retval;
 	phongo_bson_state state;
@@ -1183,7 +1209,7 @@ cleanup:
  * as-is on PHP 7; however, it should have the type undefined if the state
  * was initialized to zero.
  */
-bool phongo_bson_data_to_zval_ex(const unsigned char* data, int data_len, phongo_bson_state* state)
+bool phongo_bson_data_to_zval_ex(const unsigned char* data, size_t data_len, phongo_bson_state* state)
 {
 	bson_reader_t* reader = NULL;
 	const bson_t*  b;

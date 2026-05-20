@@ -30,6 +30,9 @@ zend_class_entry* phongo_javascript_ce;
  * be thrown on error. */
 static bool phongo_javascript_init(phongo_javascript_t* intern, const char* code, size_t code_len, zval* scope)
 {
+	char*   new_code  = NULL;
+	bson_t* new_scope = NULL;
+
 	if (scope && Z_TYPE_P(scope) != IS_OBJECT && Z_TYPE_P(scope) != IS_ARRAY && Z_TYPE_P(scope) != IS_NULL) {
 		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected scope to be array or object, %s given", zend_get_type_by_const(Z_TYPE_P(scope)));
 		return false;
@@ -40,15 +43,31 @@ static bool phongo_javascript_init(phongo_javascript_t* intern, const char* code
 		return false;
 	}
 
-	intern->code     = estrndup(code, code_len);
-	intern->code_len = code_len;
+	new_code = estrndup(code, code_len);
 
 	if (scope && (Z_TYPE_P(scope) == IS_OBJECT || Z_TYPE_P(scope) == IS_ARRAY)) {
-		intern->scope = bson_new();
-		phongo_zval_to_bson(scope, PHONGO_BSON_NONE, intern->scope, NULL);
-	} else {
-		intern->scope = NULL;
+		new_scope = bson_new();
+		phongo_zval_to_bson(scope, PHONGO_BSON_NONE, new_scope, NULL);
+
+		if (EG(exception)) {
+			efree(new_code);
+			bson_destroy(new_scope);
+			return false;
+		}
 	}
+
+	/* Commit the new state only after all fallible steps have succeeded so a
+	 * failure leaves the object's previous contents untouched. */
+	if (intern->code) {
+		efree(intern->code);
+	}
+	if (intern->scope) {
+		bson_destroy(intern->scope);
+	}
+
+	intern->code     = new_code;
+	intern->code_len = code_len;
+	intern->scope    = new_scope;
 
 	return true;
 }
