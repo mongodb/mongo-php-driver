@@ -36,12 +36,14 @@ RHEL/Debian. Testing PECL installation on Alpine catches issues that would not a
 glibc-based systems, such as missing POSIX extensions (e.g. `GLOB_BRACE`) or generated
 config headers that are incorrectly bundled in the package.
 
-```
-docker build -f .github/docker/Dockerfile.pecl-alpine .
-```
+First generate the PECL package, then test installation on Alpine:
 
-This build compiles the extension, generates the PECL package, installs it via
-`pecl install`, and verifies that the extension loads correctly.
+```
+make package.xml RELEASE_NOTES_FILE=/dev/null
+make package
+PACKAGE_FILE=$(ls mongodb-*.tgz)
+docker build --build-arg PACKAGE_FILE="$PACKAGE_FILE" -f .github/docker/Dockerfile.pecl-alpine .
+```
 
 ## Generating arginfo from stub files
 

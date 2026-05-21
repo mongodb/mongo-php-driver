@@ -20,7 +20,6 @@ modules/
 **/*.so
 **/.libs/
 package.xml
-mongodb-*.tgz
 
 # Not needed in the container
 vendor/

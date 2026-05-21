@@ -1,30 +1,16 @@
-FROM alpine:3.21
+FROM php:alpine
 
 RUN apk add --no-cache \
     autoconf \
-    bash \
     build-base \
-    git \
-    openssl-dev \
-    php83 \
-    php83-dev \
-    php83-pear
+    openssl-dev
 
-WORKDIR /src
-COPY . .
-
-# Compile the extension to make MONGODB_VERSION available for packaging
-RUN phpize83 && ./configure && make all
-
-# Build the PECL package
-RUN echo "Testing" > changelog && \
-    make package.xml RELEASE_NOTES_FILE=$(pwd)/changelog && \
-    make package
+ARG PACKAGE_FILE
+COPY ${PACKAGE_FILE} /tmp/package.tgz
 
 # Install from the PECL package (fresh configure+build in a temp directory,
 # same as a real user install, but without zstd available)
-RUN PACKAGE_FILE=$(ls mongodb-*.tgz) && \
-    pecl83 install --nodeps "$PACKAGE_FILE"
+RUN pecl install --nodeps /tmp/package.tgz < /dev/null
 
 # Verify the extension loads correctly
-RUN php83 -n -d extension=mongodb.so --ri mongodb
+RUN php -n -d extension=mongodb.so --ri mongodb
