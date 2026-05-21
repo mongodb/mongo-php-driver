@@ -1,4 +1,9 @@
 <?php
+if (!defined('GLOB_BRACE')) {
+    echo "Error: GLOB_BRACE is not available on this system\n";
+    exit(1);
+}
+
 function verify_stability($stability) {
     $stabilities = array(
         "snapshot",
@@ -28,89 +33,72 @@ function verify_version($version, $stability) {
     }
 }
 
-function scan_dir(string $dir, array $extensions): array {
-    if (!is_dir($dir)) {
-        return [];
-    }
-    $files = [];
-    foreach (new FilesystemIterator($dir) as $entry) {
-        if ($entry->isFile() && in_array($entry->getExtension(), $extensions)) {
-            $files[] = $entry->getPathname();
-        }
-    }
-    return $files;
-}
-
 function get_files() {
+    $dirs = array(
+      'src' => array(
+        "phongo.{c,h}",
+        "phongo_version.h",
+        "config.{m4,w32}",
+        "Makefile.frag",
+        "scripts/autotools/*.{m4}",
+        "scripts/autotools/*/*.{m4}",
+
+        "src/*.{c,h}",
+        "src/LIBMONGOCRYPT_VERSION_CURRENT",
+
+        "src/MongoDB/*.{c,h}",
+        "src/MongoDB/Exception/*.{c,h}",
+        "src/MongoDB/Monitoring/*.{c,h}",
+        "src/BSON/*.{c,h}",
+        "src/contrib/*.{c,h}",
+
+        "src/libmongoc/src/common/src/*.{c,h,h.in}",
+        // Note: src/libmongoc/src/common/src/mlib/ does not contain source files (as of libmongoc 2.0.1)
+        "src/libmongoc/src/common/src/mlib/*.h",
+        "src/libmongoc/src/kms-message/src/*.{c,h}",
+        "src/libmongoc/src/kms-message/src/kms_message/*.{c,h}",
+        "src/libmongoc/src/libbson/src/bson/*.{c,h,h.in}",
+        "src/libmongoc/src/libbson/src/jsonsl/*.{c,h}",
+        "src/libmongoc/src/libbson/VERSION*",
+        "src/libmongoc/src/libmongoc/src/mongoc/*.{c,def,defs,h,h.in}",
+        "src/libmongoc/src/zlib-1.*/*.{c,h,h.in}",
+        "src/libmongoc/src/utf8proc-2.*/*.{c,h}",
+        "src/libmongoc/src/uthash/uthash-2.*/*.h",
+        "src/libmongoc/VERSION*",
+
+        "src/libmongocrypt-compat/*.{c,h}",
+        "src/libmongocrypt-compat/mongocrypt/*.{c,h}",
+        "src/libmongocrypt/src/*.{c,h,h.in}",
+        "src/libmongocrypt/src/crypto/*.{c,h}",
+        // Note: src/libmongocrypt/src/mc-mlib/ does not contain source files (as of libmongocrypt 1.14.0)
+        "src/libmongocrypt/src/mc-mlib/*.h",
+        "src/libmongocrypt/src/os_posix/*.{c,h}",
+        "src/libmongocrypt/src/os_win/*.{c,h}",
+        "src/libmongocrypt/src/unicode/*.{c,h}",
+        "src/libmongocrypt/kms-message/src/*.{c,h}",
+        "src/libmongocrypt/kms-message/src/kms_message/*.{c,h}",
+      ),
+      'test' => array(
+        "scripts/*/*.{sh}",
+        "scripts/*.{json,php,py,sh}",
+        "tests/utils/*.{inc,json.gz,php}",
+        "tests/**/*.{phpt}",
+        ),
+      'doc' => array(
+        "README*",
+        "LICENSE",
+        "CREDITS",
+        "CONTRIBUTING*",
+        "THIRD_PARTY_NOTICES",
+      )
+    );
     $files = array();
-
-    // Root source files (listed explicitly to avoid picking up generated files)
-    foreach (['phongo.c', 'phongo.h', 'phongo_version.h', 'config.m4', 'config.w32', 'Makefile.frag'] as $file) {
-        if (is_file($file)) $files[$file] = 'src';
-    }
-
-    // autotools m4 scripts
-    foreach (['scripts/autotools', ...glob('scripts/autotools/*', GLOB_ONLYDIR) ?: []] as $dir) {
-        foreach (scan_dir($dir, ['m4']) as $file) $files[$file] = 'src';
-    }
-
-    // Extension source directories (.c, .h, .h.in); uses FilesystemIterator to avoid GLOB_BRACE
-    // (unavailable on Alpine/musl). Directories with version-based names are resolved with glob().
-    $src_dirs = [
-        'src',
-        'src/MongoDB',
-        'src/MongoDB/Exception',
-        'src/MongoDB/Monitoring',
-        'src/BSON',
-        'src/contrib',
-        'src/libmongoc/src/common/src',
-        'src/libmongoc/src/common/src/mlib',
-        'src/libmongoc/src/kms-message/src',
-        'src/libmongoc/src/kms-message/src/kms_message',
-        'src/libmongoc/src/libbson/src/bson',
-        'src/libmongoc/src/libbson/src/jsonsl',
-        'src/libmongoc/src/libmongoc/src/mongoc',
-        ...glob('src/libmongoc/src/zlib-1.*', GLOB_ONLYDIR) ?: [],
-        ...glob('src/libmongoc/src/utf8proc-2.*', GLOB_ONLYDIR) ?: [],
-        ...glob('src/libmongoc/src/uthash/uthash-2.*', GLOB_ONLYDIR) ?: [],
-        'src/libmongocrypt-compat',
-        'src/libmongocrypt-compat/mongocrypt',
-        'src/libmongocrypt/src',
-        'src/libmongocrypt/src/crypto',
-        'src/libmongocrypt/src/mc-mlib',
-        'src/libmongocrypt/src/os_posix',
-        'src/libmongocrypt/src/os_win',
-        'src/libmongocrypt/src/unicode',
-        'src/libmongocrypt/kms-message/src',
-        'src/libmongocrypt/kms-message/src/kms_message',
-    ];
-
-    foreach ($src_dirs as $dir) {
-        foreach (scan_dir($dir, ['c', 'def', 'defs', 'h', 'in']) as $file) $files[$file] = 'src';
-    }
-
-    // Source files without a standard extension
-    foreach ([
-        'src/LIBMONGOCRYPT_VERSION_CURRENT',
-        ...glob('src/libmongoc/src/libbson/VERSION*') ?: [],
-        ...glob('src/libmongoc/VERSION*') ?: [],
-    ] as $file) {
-        if (is_file($file)) $files[$file] = 'src';
-    }
-
-    // Test files
-    foreach (scan_dir('scripts', ['json', 'php', 'py', 'sh']) as $file) $files[$file] = 'test';
-    foreach (glob('scripts/*', GLOB_ONLYDIR) ?: [] as $dir) {
-        foreach (scan_dir($dir, ['sh']) as $file) $files[$file] = 'test';
-    }
-    foreach (scan_dir('tests/utils', ['gz', 'inc', 'php']) as $file) $files[$file] = 'test';
-    foreach (glob('tests/*', GLOB_ONLYDIR) ?: [] as $dir) {
-        foreach (scan_dir($dir, ['phpt']) as $file) $files[$file] = 'test';
-    }
-
-    // Documentation files
-    foreach (['README*', 'LICENSE', 'CREDITS', 'CONTRIBUTING*', 'THIRD_PARTY_NOTICES'] as $pattern) {
-        foreach (glob($pattern) ?: [] as $file) $files[$file] = 'doc';
+    foreach($dirs as $role => $patterns) {
+        foreach ($patterns as $pattern) {
+            foreach (glob($pattern, GLOB_BRACE) ?: [] as $file) {
+                $files[$file] = $role;
+            }
+        }
     }
 
     // Exclude headers generated by configure (AC_CONFIG_FILES in config.m4).
@@ -230,4 +218,3 @@ $contents = str_replace(array_keys($REPLACE), array_values($REPLACE), $contents)
 
 file_put_contents(__DIR__ . "/../package.xml", $contents);
 echo "Wrote package.xml\n";
-
