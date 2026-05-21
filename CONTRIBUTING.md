@@ -30,10 +30,10 @@ $ php --ri mongodb
 
 ## Testing the PECL package on Alpine Linux
 
-Alpine Linux uses musl libc instead of glibc and does not provide zstd. It is a popular
-base image for PHP Docker containers and represents a distinct build environment from
-RHEL/Debian. Testing PECL installation on Alpine catches issues that would not appear on
-glibc-based systems, such as missing POSIX extensions (e.g. `GLOB_BRACE`) or generated
+Alpine Linux uses musl libc instead of glibc and does not include zstd by default. It is
+a popular base image for PHP Docker containers and represents a distinct build environment
+from RHEL/Debian. Testing PECL installation on Alpine catches issues that would not appear
+on glibc-based systems, such as missing POSIX extensions (e.g. `GLOB_BRACE`) or generated
 config headers that are incorrectly bundled in the package.
 
 First generate the PECL package, then test installation on Alpine:
