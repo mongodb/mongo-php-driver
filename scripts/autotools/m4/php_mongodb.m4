@@ -47,19 +47,16 @@ dnl Adds an include path relative to the extension build directory (i.e.
 dnl PHP_EXT_BUILDDIR). Use this for directories containing generated files
 dnl (e.g. config headers written by AC_CONFIG_FILES).
 dnl
-dnl PHP_EXT_BUILDDIR returns a path relative to the configure invocation
-dnl directory (e.g. "." for phpize builds, "ext/mongodb" for in-tree builds).
-dnl The subdirectory passed as $1 does not exist at configure time (build dirs
-dnl are created in AC_CONFIG_COMMANDS_PRE), so passing the full relative path
-dnl to PHP_ADD_INCLUDE would cause PHP_EXPAND_PATH to silently discard it when
-dnl the "cd $path && pwd" probe fails.  To avoid this, we resolve only the base
-dnl (PHP_EXT_BUILDDIR, which always exists at configure time) to an absolute
-dnl path first, then append $1.  PHP_ADD_INCLUDE skips the cd-probe for paths
-dnl that already start with "/".
+dnl AC_CONFIG_FILES paths (and therefore generated header locations) are
+dnl resolved relative to $abs_builddir — the absolute path of the directory
+dnl where config.status is run.  In phpize builds this is the pear build
+dnl directory (e.g. /tmp/pear/temp/pear-build-.../mongodb-x.y.z/), which
+dnl differs from the extension source directory resolved by PHP_EXT_BUILDDIR.
+dnl Using $abs_builddir directly ensures the compiler finds the configure-
+dnl generated headers rather than the pre-bundled source-tree copies.
 dnl
 AC_DEFUN([PHP_MONGODB_ADD_BUILD_INCLUDE],[
-  PHP_EXPAND_PATH(PHP_EXT_BUILDDIR(mongodb), php_mongodb_abs_builddir)
-  PHP_ADD_INCLUDE([$php_mongodb_abs_builddir/$1])
+  PHP_ADD_INCLUDE([$abs_builddir/$1])
 ])
 
 dnl
