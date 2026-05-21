@@ -25,7 +25,7 @@ tasks:
             make package
 
             PACKAGE_VERSION=$(./bin/update-release-version.php get-version)
-            PACKAGE_FILE="mongodb-${PACKAGE_VERSION}.tgz"
+            PACKAGE_FILE="mongodb-$PACKAGE_VERSION.tgz"
 
             # Install via PECL (fresh configure + build in a temp directory, same as a real user install)
             pecl install "$PACKAGE_FILE"
