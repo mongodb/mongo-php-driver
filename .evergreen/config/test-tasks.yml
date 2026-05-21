@@ -14,9 +14,11 @@ tasks:
             export PATH="$PHP_PATH:$PATH"
             echo "PHP: $(php --version | head -n 1)"
 
-            # Build step required to generate the Makefile for `make package`
+            # Compile the extension: required to generate the Makefile and to
+            # make MONGODB_VERSION available for `make package.xml`
             phpize
             ./configure --enable-mongodb-developer-flags
+            make all
 
             echo "Testing" > changelog
             make package.xml RELEASE_NOTES_FILE=$(pwd)/changelog
