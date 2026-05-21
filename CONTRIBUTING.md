@@ -41,8 +41,8 @@ First generate the PECL package, then test installation on Alpine:
 ```
 make package.xml RELEASE_NOTES_FILE=/dev/null
 make package
-PACKAGE_FILE=$(ls mongodb-*.tgz)
-docker build --build-arg PACKAGE_FILE="$PACKAGE_FILE" -f .github/docker/Dockerfile.pecl-alpine .
+cp mongodb-*.tgz .github/docker/
+docker build .github/docker/ -f .github/docker/Dockerfile.pecl-alpine
 ```
 
 ## Generating arginfo from stub files

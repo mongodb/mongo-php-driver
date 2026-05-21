@@ -131,7 +131,9 @@ jobs:
         run: sudo pecl install ${{ env.PACKAGE_FILE }}
 
       - name: "Install on Alpine Linux"
-        run: docker build --build-arg PACKAGE_FILE=${{ env.PACKAGE_FILE }} -f .github/docker/Dockerfile.pecl-alpine .
+        run: |
+          cp "${{ env.PACKAGE_FILE }}" .github/docker/
+          docker build .github/docker/ -f .github/docker/Dockerfile.pecl-alpine
 
   windows-test:
     name: "Windows Tests"

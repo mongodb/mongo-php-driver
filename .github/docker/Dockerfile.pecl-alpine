@@ -5,12 +5,11 @@ RUN apk add --no-cache \
     build-base \
     openssl-dev
 
-ARG PACKAGE_FILE
-COPY ${PACKAGE_FILE} /tmp/package.tgz
+COPY mongodb-*.tgz /tmp/mongodb.tgz
 
 # Install from the PECL package (fresh configure+build in a temp directory,
 # same as a real user install, but without zstd available)
-RUN pecl install --nodeps /tmp/package.tgz < /dev/null
+RUN pecl install --nodeps /tmp/mongodb.tgz < /dev/null
 
 # Verify the extension loads correctly
 RUN php -n -d extension=mongodb.so --ri mongodb
