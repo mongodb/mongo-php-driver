@@ -28,7 +28,9 @@ tasks:
             PACKAGE_FILE="mongodb-$PACKAGE_VERSION.tgz"
 
             # Install via PECL (fresh configure + build in a temp directory, same as a real user install)
-            pecl install "$PACKAGE_FILE"
+            # Redirect stdin from /dev/null to prevent PECL from reading the rest of the script when
+            # prompting for configure options (it would use the next script line as the first answer).
+            pecl install "$PACKAGE_FILE" < /dev/null
             php -d extension="$(php-config --extension-dir)/mongodb.so" --ri mongodb
 
   - name: "test-atlas-connectivity"
