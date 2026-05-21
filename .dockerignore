@@ -1,0 +1,28 @@
+# Build artifacts from host that must not contaminate the container build
+Makefile
+configure
+config.h
+config.status
+config.log
+config.guess
+config.sub
+libtool
+acinclude.m4
+aclocal.m4
+autom4te.cache/
+build/
+modules/
+**/.deps/
+**/*.dep
+**/*.lo
+**/*.la
+**/*.o
+**/*.so
+**/.libs/
+package.xml
+mongodb-*.tgz
+
+# Not needed in the container
+vendor/
+.ignored/
+.claude/

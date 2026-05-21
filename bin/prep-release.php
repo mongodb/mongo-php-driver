@@ -28,6 +28,30 @@ function verify_version($version, $stability) {
     }
 }
 
+/**
+ * Equivalent of glob($pattern, GLOB_BRACE) for systems where GLOB_BRACE is not
+ * available (e.g. Alpine Linux using musl libc).
+ */
+function glob_with_braces(string $pattern): array
+{
+    if (defined('GLOB_BRACE')) {
+        return glob($pattern, GLOB_BRACE) ?: [];
+    }
+
+    // Manually expand the first {a,b,c} group found, then recurse for nested groups
+    if (preg_match('/\{([^{}]+)\}/', $pattern, $matches, PREG_OFFSET_CAPTURE)) {
+        $prefix = substr($pattern, 0, $matches[0][1]);
+        $suffix = substr($pattern, $matches[0][1] + strlen($matches[0][0]));
+        $result = [];
+        foreach (explode(',', $matches[1][0]) as $option) {
+            $result = array_merge($result, glob_with_braces($prefix . $option . $suffix));
+        }
+        return array_unique($result);
+    }
+
+    return glob($pattern) ?: [];
+}
+
 function get_files() {
     $dirs = array(
       'src' => array(
@@ -92,7 +116,7 @@ function get_files() {
     $files = array();
     foreach($dirs as $role => $patterns) {
         foreach ($patterns as $pattern) {
-            foreach (glob($pattern, GLOB_BRACE) as $file) {
+            foreach (glob_with_braces($pattern) as $file) {
                 $files[$file] = $role;
             }
         }

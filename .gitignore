@@ -53,6 +53,7 @@ php.ini
 !.github/
 !tests/utils/*.php
 !.evergreen
+!.dockerignore
 
 
 !scripts

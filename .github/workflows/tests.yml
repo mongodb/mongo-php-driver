@@ -130,6 +130,52 @@ jobs:
       - name: "Install release archive to verify correctness"
         run: sudo pecl install ${{ env.PACKAGE_FILE }}
 
+  pecl-test-alpine:
+    name: "Test PECL package (Alpine/musl)"
+    runs-on: "ubuntu-latest"
+    container:
+      image: "alpine:3.21"
+
+    steps:
+      - name: "Install dependencies"
+        run: |
+          apk add --no-cache \
+            autoconf \
+            bash \
+            build-base \
+            git \
+            openssl-dev \
+            php83 \
+            php83-dev \
+            php83-pear
+
+      - name: "Checkout"
+        uses: "actions/checkout@v6"
+        with:
+          submodules: true
+
+      - name: "Write changelog file for packaging"
+        run: echo "Testing" > changelog
+
+      - name: "Generate Makefile and compile extension"
+        run: phpize83 && ./configure && make all
+
+      - name: "Build PECL package"
+        run: |
+          make package.xml RELEASE_NOTES_FILE=$(pwd)/changelog
+          make package
+
+      - name: "Read current package version"
+        run: |
+          PACKAGE_VERSION=$(php83 ./bin/update-release-version.php get-version)
+          echo "PACKAGE_FILE=mongodb-${PACKAGE_VERSION}.tgz" >> "$GITHUB_ENV"
+
+      - name: "Install release archive to verify correctness"
+        run: pecl83 install --nodeps ${{ env.PACKAGE_FILE }}
+
+      - name: "Verify extension"
+        run: php83 -d extension=mongodb.so --ri mongodb
+
   windows-test:
     name: "Windows Tests"
     runs-on: "${{ matrix.os }}"
