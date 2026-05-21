@@ -374,6 +374,13 @@ if test "$PHP_MONGODB" != "no"; then
     PHP_MONGODB_ADD_SOURCES([src/libmongoc/src/libbson/src/jsonsl/], $PHP_MONGODB_JSONSL_SOURCES, $PHP_MONGODB_BUNDLED_CFLAGS)
     PHP_MONGODB_ADD_SOURCES([src/libmongoc/src/libmongoc/src/mongoc/], $PHP_MONGODB_MONGOC_SOURCES, $PHP_MONGODB_BUNDLED_CFLAGS)
 
+    dnl Build-dir includes must come before source-dir includes so that the
+    dnl compiler finds configure-generated headers (e.g. mongoc-config.h with
+    dnl correct MONGOC_HAVE_RES_* values) rather than the pre-bundled copies.
+    PHP_MONGODB_ADD_BUILD_INCLUDE([src/libmongoc/src/common/src/])
+    PHP_MONGODB_ADD_BUILD_INCLUDE([src/libmongoc/src/libbson/src/])
+    PHP_MONGODB_ADD_BUILD_INCLUDE([src/libmongoc/src/libmongoc/src/])
+
     PHP_MONGODB_ADD_INCLUDE([src/libmongoc/src/common/src/])
     PHP_MONGODB_ADD_INCLUDE([src/libmongoc/src/uthash/])
     PHP_MONGODB_ADD_INCLUDE([src/libmongoc/src/libbson/src/])
@@ -403,10 +410,6 @@ if test "$PHP_MONGODB" != "no"; then
     dnl Generated config headers are written into the extension build directory.
     dnl For standalone out-of-source builds they stay in the build tree; for PHP
     dnl in-tree builds they land under ext/mongodb/ rather than the PHP root.
-    PHP_MONGODB_ADD_BUILD_INCLUDE([src/libmongoc/src/common/src/])
-    PHP_MONGODB_ADD_BUILD_INCLUDE([src/libmongoc/src/libbson/src/])
-    PHP_MONGODB_ADD_BUILD_INCLUDE([src/libmongoc/src/libmongoc/src/])
-
     AC_CONFIG_FILES([
       ${mongodb_builddir}/src/libmongoc/src/common/src/common-config.h
       ${mongodb_builddir}/src/libmongoc/src/libbson/src/bson/config.h
