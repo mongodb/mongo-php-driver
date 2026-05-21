@@ -28,30 +28,6 @@ function verify_version($version, $stability) {
     }
 }
 
-/**
- * Equivalent of glob($pattern, GLOB_BRACE) for systems where GLOB_BRACE is not
- * available (e.g. Alpine Linux using musl libc).
- */
-function glob_with_braces(string $pattern): array
-{
-    if (defined('GLOB_BRACE')) {
-        return glob($pattern, GLOB_BRACE) ?: [];
-    }
-
-    // Manually expand the first {a,b,c} group found, then recurse for nested groups
-    if (preg_match('/\{([^{}]+)\}/', $pattern, $matches, PREG_OFFSET_CAPTURE)) {
-        $prefix = substr($pattern, 0, $matches[0][1]);
-        $suffix = substr($pattern, $matches[0][1] + strlen($matches[0][0]));
-        $result = [];
-        foreach (explode(',', $matches[1][0]) as $option) {
-            $result = array_merge($result, glob_with_braces($prefix . $option . $suffix));
-        }
-        return array_unique($result);
-    }
-
-    return glob($pattern) ?: [];
-}
-
 function get_files() {
     $dirs = array(
       'src' => array(
@@ -116,8 +92,31 @@ function get_files() {
     $files = array();
     foreach($dirs as $role => $patterns) {
         foreach ($patterns as $pattern) {
-            foreach (glob_with_braces($pattern) as $file) {
-                $files[$file] = $role;
+            // GLOB_BRACE is unavailable on Alpine/musl. For "dir/*.{ext1,ext2}" patterns,
+            // use FilesystemIterator and filter by extension. For patterns with wildcards in
+            // the directory part (e.g. "zlib-1.*/*.{c,h}"), fall back to one glob() per extension.
+            if (preg_match('/^(.*)\.\{([^}]+)\}$/', $pattern, $m)
+                && basename($m[1]) === '*'
+                && is_dir($dir = dirname($m[1]))
+                && !str_contains($dir, '*')
+            ) {
+                $extensions = explode(',', $m[2]);
+                foreach (new FilesystemIterator($dir) as $entry) {
+                    if ($entry->isFile() && in_array($entry->getExtension(), $extensions)) {
+                        $files[$entry->getPathname()] = $role;
+                    }
+                }
+            } else {
+                // Expand {ext1,ext2} alternatives without GLOB_BRACE, then glob each.
+                // $m is set when the preg_match above succeeded: $m[1]=prefix, $m[2]=extensions.
+                $alternatives = isset($m[2])
+                    ? array_map(fn($ext) => $m[1] . '.' . $ext, explode(',', $m[2]))
+                    : [$pattern];
+                foreach ($alternatives as $p) {
+                    foreach (glob($p) ?: [] as $file) {
+                        $files[$file] = $role;
+                    }
+                }
             }
         }
     }
