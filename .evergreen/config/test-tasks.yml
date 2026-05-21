@@ -10,7 +10,7 @@ tasks:
           script: |
             set -o errexit
 
-            PHP_PATH=$(find /opt/php/ -maxdepth 1 -type d -name "8.3*-64bit" -print | sort -V -r | head -n 1)/bin
+            PHP_PATH=$(find /opt/php/ -maxdepth 1 -type d -name "${PHP_VERSION}*-64bit" -print | sort -V -r | head -n 1)/bin
             export PATH="$PHP_PATH:$PATH"
             echo "PHP: $(php --version | head -n 1)"
 
@@ -27,7 +27,7 @@ tasks:
 
             # Install via PECL (fresh configure + build in a temp directory, same as a real user install)
             pecl install "$PACKAGE_FILE"
-            php --ri mongodb
+            php -d extension="$(php-config --extension-dir)/mongodb.so" --ri mongodb
 
   - name: "test-atlas-connectivity"
     tags: ["atlas", "nodb", "pr", "tag"]
