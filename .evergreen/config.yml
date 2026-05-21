@@ -37,6 +37,9 @@ github_pr_aliases: &github_pr_aliases
   # Run PR tasks for all PR variants (only MongoDB 7.0)
   - variant_tags: ["pr"]
     task_tags: ["pr 7.0"]
+  # Run PECL package test
+  - variant_tags: ["pr pecl"]
+    task_tags: ["pr pecl"]
 
 commit_queue_aliases: *github_pr_aliases
 
