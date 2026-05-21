@@ -97,6 +97,16 @@ function get_files() {
             }
         }
     }
+
+    // Exclude generated config headers - these are produced by configure on the
+    // build machine and must not be shipped in the PECL package. Their .h.in
+    // templates are already included above and configure regenerates them
+    // correctly in the build directory on the target machine.
+    unset($files['src/libmongoc/src/common/src/common-config.h']);
+    unset($files['src/libmongoc/src/libbson/src/bson/bson-config.h']);
+    unset($files['src/libmongoc/src/libmongoc/src/mongoc/mongoc-config.h']);
+    unset($files['src/libmongocrypt/src/mongocrypt-config.h']);
+
     ksort($files);
     return $files;
 }
