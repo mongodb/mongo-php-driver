@@ -1,4 +1,9 @@
 <?php
+if (!defined('GLOB_BRACE')) {
+    echo "Error: GLOB_BRACE is not available on this system\n";
+    exit(1);
+}
+
 function verify_stability($stability) {
     $stabilities = array(
         "snapshot",
@@ -74,8 +79,6 @@ function get_files() {
         "src/libmongocrypt/kms-message/src/kms_message/*.{c,h}",
       ),
       'test' => array(
-        "Vagrantfile",
-
         "scripts/*/*.{sh}",
         "scripts/*.{json,php,py,sh}",
         "tests/utils/*.{inc,json.gz,php}",
@@ -92,7 +95,7 @@ function get_files() {
     $files = array();
     foreach($dirs as $role => $patterns) {
         foreach ($patterns as $pattern) {
-            foreach (glob($pattern, GLOB_BRACE) as $file) {
+            foreach (glob($pattern, GLOB_BRACE) ?: [] as $file) {
                 $files[$file] = $role;
             }
         }
@@ -215,4 +218,3 @@ $contents = str_replace(array_keys($REPLACE), array_values($REPLACE), $contents)
 
 file_put_contents(__DIR__ . "/../package.xml", $contents);
 echo "Wrote package.xml\n";
-
