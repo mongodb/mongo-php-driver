@@ -28,6 +28,23 @@ will report `phpinfo()` output for the extension:
 $ php --ri mongodb
 ```
 
+## Testing the PECL package on Alpine Linux
+
+Alpine Linux uses musl libc instead of glibc and does not include zstd by default. It is
+a popular base image for PHP Docker containers and represents a distinct build environment
+from RHEL/Debian. Testing PECL installation on Alpine catches issues that would not appear
+on glibc-based systems, such as missing POSIX extensions (e.g. `GLOB_BRACE`) or generated
+config headers that are incorrectly bundled in the package.
+
+First generate the PECL package, then test installation on Alpine:
+
+```
+make package.xml RELEASE_NOTES_FILE=/dev/null
+make package
+cp mongodb-*.tgz .github/docker/
+docker build .github/docker/ -f .github/docker/Dockerfile.pecl-alpine
+```
+
 ## Generating arginfo from stub files
 
 Arginfo structures are generated from stub files using the `gen_stub.php`

@@ -130,6 +130,11 @@ jobs:
       - name: "Install release archive to verify correctness"
         run: sudo pecl install ${{ env.PACKAGE_FILE }}
 
+      - name: "Install on Alpine Linux"
+        run: |
+          cp "${{ env.PACKAGE_FILE }}" .github/docker/
+          docker build .github/docker/ -f .github/docker/Dockerfile.pecl-alpine
+
   windows-test:
     name: "Windows Tests"
     runs-on: "${{ matrix.os }}"
