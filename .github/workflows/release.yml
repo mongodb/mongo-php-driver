@@ -67,6 +67,34 @@ jobs:
           submodules: true
           fetch-depth: 0
 
+      - name: "Store version numbers in env variables"
+        run: |
+          echo RELEASE_VERSION=${{ inputs.version }} >> $GITHUB_ENV
+          echo RELEASE_VERSION_WITHOUT_STABILITY=$(echo ${{ inputs.version }} | sed 's/\([0-9]*\.[0-9]*\.[0-9]*\).*/\1/') >> $GITHUB_ENV
+          echo STABLE_BRANCH=v$(echo ${{ inputs.version }} | cut -d '.' -f-2) >> $GITHUB_ENV
+          echo DEV_BRANCH=v$(echo ${{ inputs.version }} | cut -d '.' -f-1).x >> $GITHUB_ENV
+          # Default release branch to the triggered branch; may be overridden when a new stable branch is created
+          echo RELEASE_BRANCH=${{ github.ref_name }} >> $GITHUB_ENV
+
+      - name: "Ensure release tag does not already exist"
+        run: |
+          if [[ $(git tag -l ${{ inputs.version }}) == ${{ inputs.version }} ]]; then
+            echo '❌ Release failed: tag for version ${{ inputs.version }} already exists' >> $GITHUB_STEP_SUMMARY
+            exit 1
+          fi
+
+      - name: "Fail if patch release is created from wrong release branch"
+        if: ${{ !endsWith(env.RELEASE_VERSION_WITHOUT_STABILITY, '.0') && env.STABLE_BRANCH != github.ref_name }}
+        run: |
+          echo '❌ Release failed due to branch mismatch: expected ${{ inputs.version }} to be released from ${{ env.STABLE_BRANCH }}, got ${{ github.ref_name }}' >> $GITHUB_STEP_SUMMARY
+          exit 1
+
+      - name: "Fail if non-patch release is created from wrong release branch"
+        if: ${{ endsWith(env.RELEASE_VERSION_WITHOUT_STABILITY, '.0') && env.STABLE_BRANCH != github.ref_name && env.DEV_BRANCH != github.ref_name }}
+        run: |
+          echo '❌ Release failed due to branch mismatch: expected ${{ inputs.version }} to be released from ${{ env.STABLE_BRANCH }} or ${{ env.DEV_BRANCH }}, got ${{ github.ref_name }}' >> $GITHUB_STEP_SUMMARY
+          exit 1
+
       - name: "Set up drivers-github-tools"
         uses: mongodb-labs/drivers-github-tools/setup@v3
         with:
@@ -78,6 +106,30 @@ jobs:
         uses: "shivammathur/setup-php@v2"
         with:
           php-version: "${{ matrix.php-version }}"
+
+      - name: "Create and push new release branch for non-patch release"
+        if: ${{ endsWith(env.RELEASE_VERSION_WITHOUT_STABILITY, '.0') && env.DEV_BRANCH == github.ref_name }}
+        run: |
+          if git ls-remote --exit-code --heads origin ${STABLE_BRANCH}; then
+            echo "::error::Release branch ${STABLE_BRANCH} already exists on remote. Aborting to prevent overwriting existing work."
+            exit 1
+          fi
+          echo '🆕 Creating new release branch ${{ env.STABLE_BRANCH }} from ${{ github.ref_name }}' >> $GITHUB_STEP_SUMMARY
+          git checkout -b ${STABLE_BRANCH}
+          git push origin ${STABLE_BRANCH}
+          echo RELEASE_BRANCH=${STABLE_BRANCH} >> $GITHUB_ENV
+
+      - name: "Bump default branch to next minor development version"
+        if: ${{ endsWith(env.RELEASE_VERSION_WITHOUT_STABILITY, '.0') && env.DEV_BRANCH == github.ref_name }}
+        run: |
+          git checkout ${DEV_BRANCH}
+          ./bin/update-release-version.php to-next-minor-dev
+          git add phongo_version.h
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Bump to next minor dev version"
+          git push origin ${DEV_BRANCH}
+          git checkout ${RELEASE_BRANCH}
 
       - name: "Create package commit"
         uses: mongodb-labs/drivers-github-tools/bump-version@v3
@@ -110,7 +162,7 @@ jobs:
         id: get-next-branch
         uses: alcaeus/automatic-merge-up-action/get-next-branch@1.0.1
         with:
-          ref: ${{ github.ref_name }}
+          ref: ${{ env.RELEASE_BRANCH }}
           branchNamePattern: 'v<major>.<minor>'
           devBranchNamePattern: 'v<major>.x'
           ignoredBranches: ${{ vars.IGNORED_MERGE_UP_BRANCHES }}
@@ -124,14 +176,11 @@ jobs:
           git checkout ${RELEASE_BRANCH}
         env:
           NEXT_BRANCH: ${{ steps.get-next-branch.outputs.branchName }}
-          RELEASE_BRANCH: ${{ github.ref_name }}
 
       - name: "Push tag and release branch"
         run: |
           git push origin ${RELEASE_BRANCH}
           git push origin tag ${{ inputs.version }}
-        env:
-          RELEASE_BRANCH: ${{ github.ref_name }}
 
       - name: "Prepare release message"
         run: |
@@ -144,7 +193,7 @@ jobs:
           if [[ "${{ inputs.version }}" =~ (alpha|beta|RC) ]]; then
             PRERELEASE="--prerelease --latest=false"
           fi
-          echo "RELEASE_URL=$(gh release create ${{ inputs.version }} ${PRERELEASE} --target ${{ github.ref_name }} --title "${{ inputs.version }}" --notes-file release-message --draft)" >> "$GITHUB_ENV"
+          echo "RELEASE_URL=$(gh release create ${{ inputs.version }} ${PRERELEASE} --target ${{ env.RELEASE_BRANCH }} --title "${{ inputs.version }}" --notes-file release-message --draft)" >> "$GITHUB_ENV"
 
       - name: "Set summary"
         run: |
