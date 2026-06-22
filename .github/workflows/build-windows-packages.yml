@@ -39,7 +39,7 @@ jobs:
         ts: [ ts, nts ]
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           submodules: true
           ref: ${{ inputs.ref }}
