@@ -851,7 +851,7 @@ static mongoc_client_encryption_encrypt_text_opts_t* phongo_clientencryption_enc
 	}
 
 	if (php_array_existsc(options, "prefix")) {
-		zval*                                               prefix_zval;
+		zval*                                                prefix_zval;
 		mongoc_client_encryption_encrypt_text_prefix_opts_t* prefix_opts;
 
 		prefix_opts = mongoc_client_encryption_encrypt_text_prefix_opts_new();
@@ -888,7 +888,7 @@ static mongoc_client_encryption_encrypt_text_opts_t* phongo_clientencryption_enc
 	}
 
 	if (php_array_existsc(options, "suffix")) {
-		zval*                                               suffix_zval;
+		zval*                                                suffix_zval;
 		mongoc_client_encryption_encrypt_text_suffix_opts_t* suffix_opts;
 
 		suffix_opts = mongoc_client_encryption_encrypt_text_suffix_opts_new();
@@ -925,7 +925,7 @@ static mongoc_client_encryption_encrypt_text_opts_t* phongo_clientencryption_enc
 	}
 
 	if (php_array_existsc(options, "substring")) {
-		zval*                                                  substring_zval;
+		zval*                                                   substring_zval;
 		mongoc_client_encryption_encrypt_text_substring_opts_t* substring_opts;
 
 		substring_opts = mongoc_client_encryption_encrypt_text_substring_opts_new();
