@@ -832,6 +832,157 @@ cleanup:
 	bson_value_destroy(&keyid);
 }
 
+static mongoc_client_encryption_encrypt_text_opts_t* phongo_clientencryption_encrypt_text_opts_from_zval(zval* options)
+{
+	mongoc_client_encryption_encrypt_text_opts_t* opts;
+
+	opts = mongoc_client_encryption_encrypt_text_opts_new();
+
+	if (!options || Z_TYPE_P(options) != IS_ARRAY) {
+		return opts;
+	}
+
+	if (php_array_existsc(options, "caseSensitive")) {
+		mongoc_client_encryption_encrypt_text_opts_set_case_sensitive(opts, php_array_fetchc_bool(options, "caseSensitive"));
+	}
+
+	if (php_array_existsc(options, "diacriticSensitive")) {
+		mongoc_client_encryption_encrypt_text_opts_set_diacritic_sensitive(opts, php_array_fetchc_bool(options, "diacriticSensitive"));
+	}
+
+	if (php_array_existsc(options, "prefix")) {
+		zval*                                               prefix_zval;
+		mongoc_client_encryption_encrypt_text_prefix_opts_t* prefix_opts;
+
+		prefix_opts = mongoc_client_encryption_encrypt_text_prefix_opts_new();
+		prefix_zval = php_array_fetchc_deref(options, "prefix");
+
+		if (prefix_zval && Z_TYPE_P(prefix_zval) == IS_ARRAY) {
+			if (php_array_existsc(prefix_zval, "strMaxQueryLength")) {
+				int64_t v = php_array_fetchc_long(prefix_zval, "strMaxQueryLength");
+
+				if (v < 0 || v > INT32_MAX) {
+					phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"strMaxQueryLength\" to be a positive 32-bit integer, %" PRId64 " given", v);
+					mongoc_client_encryption_encrypt_text_prefix_opts_destroy(prefix_opts);
+					goto cleanup;
+				}
+
+				mongoc_client_encryption_encrypt_text_prefix_opts_set_str_max_query_length(prefix_opts, (int32_t) v);
+			}
+
+			if (php_array_existsc(prefix_zval, "strMinQueryLength")) {
+				int64_t v = php_array_fetchc_long(prefix_zval, "strMinQueryLength");
+
+				if (v < 0 || v > INT32_MAX) {
+					phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"strMinQueryLength\" to be a positive 32-bit integer, %" PRId64 " given", v);
+					mongoc_client_encryption_encrypt_text_prefix_opts_destroy(prefix_opts);
+					goto cleanup;
+				}
+
+				mongoc_client_encryption_encrypt_text_prefix_opts_set_str_min_query_length(prefix_opts, (int32_t) v);
+			}
+		}
+
+		mongoc_client_encryption_encrypt_text_opts_set_prefix(opts, prefix_opts);
+		mongoc_client_encryption_encrypt_text_prefix_opts_destroy(prefix_opts);
+	}
+
+	if (php_array_existsc(options, "suffix")) {
+		zval*                                               suffix_zval;
+		mongoc_client_encryption_encrypt_text_suffix_opts_t* suffix_opts;
+
+		suffix_opts = mongoc_client_encryption_encrypt_text_suffix_opts_new();
+		suffix_zval = php_array_fetchc_deref(options, "suffix");
+
+		if (suffix_zval && Z_TYPE_P(suffix_zval) == IS_ARRAY) {
+			if (php_array_existsc(suffix_zval, "strMaxQueryLength")) {
+				int64_t v = php_array_fetchc_long(suffix_zval, "strMaxQueryLength");
+
+				if (v < 0 || v > INT32_MAX) {
+					phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"strMaxQueryLength\" to be a positive 32-bit integer, %" PRId64 " given", v);
+					mongoc_client_encryption_encrypt_text_suffix_opts_destroy(suffix_opts);
+					goto cleanup;
+				}
+
+				mongoc_client_encryption_encrypt_text_suffix_opts_set_str_max_query_length(suffix_opts, (int32_t) v);
+			}
+
+			if (php_array_existsc(suffix_zval, "strMinQueryLength")) {
+				int64_t v = php_array_fetchc_long(suffix_zval, "strMinQueryLength");
+
+				if (v < 0 || v > INT32_MAX) {
+					phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"strMinQueryLength\" to be a positive 32-bit integer, %" PRId64 " given", v);
+					mongoc_client_encryption_encrypt_text_suffix_opts_destroy(suffix_opts);
+					goto cleanup;
+				}
+
+				mongoc_client_encryption_encrypt_text_suffix_opts_set_str_min_query_length(suffix_opts, (int32_t) v);
+			}
+		}
+
+		mongoc_client_encryption_encrypt_text_opts_set_suffix(opts, suffix_opts);
+		mongoc_client_encryption_encrypt_text_suffix_opts_destroy(suffix_opts);
+	}
+
+	if (php_array_existsc(options, "substring")) {
+		zval*                                                  substring_zval;
+		mongoc_client_encryption_encrypt_text_substring_opts_t* substring_opts;
+
+		substring_opts = mongoc_client_encryption_encrypt_text_substring_opts_new();
+		substring_zval = php_array_fetchc_deref(options, "substring");
+
+		if (substring_zval && Z_TYPE_P(substring_zval) == IS_ARRAY) {
+			if (php_array_existsc(substring_zval, "strMaxLength")) {
+				int64_t v = php_array_fetchc_long(substring_zval, "strMaxLength");
+
+				if (v < 0 || v > INT32_MAX) {
+					phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"strMaxLength\" to be a positive 32-bit integer, %" PRId64 " given", v);
+					mongoc_client_encryption_encrypt_text_substring_opts_destroy(substring_opts);
+					goto cleanup;
+				}
+
+				mongoc_client_encryption_encrypt_text_substring_opts_set_str_max_length(substring_opts, (int32_t) v);
+			}
+
+			if (php_array_existsc(substring_zval, "strMaxQueryLength")) {
+				int64_t v = php_array_fetchc_long(substring_zval, "strMaxQueryLength");
+
+				if (v < 0 || v > INT32_MAX) {
+					phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"strMaxQueryLength\" to be a positive 32-bit integer, %" PRId64 " given", v);
+					mongoc_client_encryption_encrypt_text_substring_opts_destroy(substring_opts);
+					goto cleanup;
+				}
+
+				mongoc_client_encryption_encrypt_text_substring_opts_set_str_max_query_length(substring_opts, (int32_t) v);
+			}
+
+			if (php_array_existsc(substring_zval, "strMinQueryLength")) {
+				int64_t v = php_array_fetchc_long(substring_zval, "strMinQueryLength");
+
+				if (v < 0 || v > INT32_MAX) {
+					phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"strMinQueryLength\" to be a positive 32-bit integer, %" PRId64 " given", v);
+					mongoc_client_encryption_encrypt_text_substring_opts_destroy(substring_opts);
+					goto cleanup;
+				}
+
+				mongoc_client_encryption_encrypt_text_substring_opts_set_str_min_query_length(substring_opts, (int32_t) v);
+			}
+		}
+
+		mongoc_client_encryption_encrypt_text_opts_set_substring(opts, substring_opts);
+		mongoc_client_encryption_encrypt_text_substring_opts_destroy(substring_opts);
+	}
+
+	return opts;
+
+cleanup:
+	if (opts) {
+		mongoc_client_encryption_encrypt_text_opts_destroy(opts);
+	}
+
+	return NULL;
+}
+
 static mongoc_client_encryption_encrypt_range_opts_t* phongo_clientencryption_encrypt_range_opts_from_zval(zval* options)
 {
 	mongoc_client_encryption_encrypt_range_opts_t* opts;
@@ -992,6 +1143,20 @@ static mongoc_client_encryption_encrypt_opts_t* phongo_clientencryption_encrypt_
 
 		mongoc_client_encryption_encrypt_opts_set_range_opts(opts, range_opts);
 		mongoc_client_encryption_encrypt_range_opts_destroy(range_opts);
+	}
+
+	if (php_array_existsc(options, "stringOpts")) {
+		mongoc_client_encryption_encrypt_text_opts_t* text_opts;
+
+		text_opts = phongo_clientencryption_encrypt_text_opts_from_zval(php_array_fetchc_deref(options, "stringOpts"));
+
+		if (!text_opts) {
+			/* Exception already thrown */
+			goto cleanup;
+		}
+
+		mongoc_client_encryption_encrypt_opts_set_text_opts(opts, text_opts);
+		mongoc_client_encryption_encrypt_text_opts_destroy(text_opts);
 	}
 
 	return opts;
