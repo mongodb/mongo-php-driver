@@ -3,6 +3,7 @@ MongoDB\Driver\ClientEncryption::encrypt() stringOpts integer validation errors
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_libmongocrypt(); ?>
+<?php if (PHP_INT_SIZE !== 8) { exit('skip Only for 64-bit platform'); } ?>
 --FILE--
 <?php
 
