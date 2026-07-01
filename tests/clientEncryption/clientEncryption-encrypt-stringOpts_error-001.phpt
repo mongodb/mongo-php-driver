@@ -25,49 +25,49 @@ $baseOpts = [
     'contentionFactor' => 0,
 ];
 
-// prefix.strMaxQueryLength out of range
+// prefix.strMaxQueryLength negative (rejected by libmongocrypt)
 echo throws(function() use ($clientEncryption, $baseOpts) {
     $clientEncryption->encrypt('test', $baseOpts + ['stringOpts' => [
         'prefix' => ['strMaxQueryLength' => -1],
     ]]);
-}, MongoDB\Driver\Exception\InvalidArgumentException::class), "\n";
+}, MongoDB\Driver\Exception\EncryptionException::class), "\n";
 
-// prefix.strMinQueryLength out of range
+// prefix.strMinQueryLength out of int32 range (rejected by PHP driver)
 echo throws(function() use ($clientEncryption, $baseOpts) {
     $clientEncryption->encrypt('test', $baseOpts + ['stringOpts' => [
         'prefix' => ['strMinQueryLength' => PHP_INT_MAX],
     ]]);
 }, MongoDB\Driver\Exception\InvalidArgumentException::class), "\n";
 
-// suffix.strMaxQueryLength out of range
+// suffix.strMaxQueryLength negative (rejected by libmongocrypt)
 echo throws(function() use ($clientEncryption, $baseOpts) {
     $clientEncryption->encrypt('test', $baseOpts + ['stringOpts' => [
         'suffix' => ['strMaxQueryLength' => -1],
     ]]);
-}, MongoDB\Driver\Exception\InvalidArgumentException::class), "\n";
+}, MongoDB\Driver\Exception\EncryptionException::class), "\n";
 
-// suffix.strMinQueryLength out of range
+// suffix.strMinQueryLength out of int32 range (rejected by PHP driver)
 echo throws(function() use ($clientEncryption, $baseOpts) {
     $clientEncryption->encrypt('test', $baseOpts + ['stringOpts' => [
         'suffix' => ['strMinQueryLength' => PHP_INT_MAX],
     ]]);
 }, MongoDB\Driver\Exception\InvalidArgumentException::class), "\n";
 
-// substring.strMaxLength out of range
+// substring.strMaxLength negative (rejected by libmongocrypt)
 echo throws(function() use ($clientEncryption, $baseOpts) {
     $clientEncryption->encrypt('test', $baseOpts + ['stringOpts' => [
         'substring' => ['strMaxLength' => -1],
     ]]);
-}, MongoDB\Driver\Exception\InvalidArgumentException::class), "\n";
+}, MongoDB\Driver\Exception\EncryptionException::class), "\n";
 
-// substring.strMaxQueryLength out of range
+// substring.strMaxQueryLength negative (rejected by libmongocrypt)
 echo throws(function() use ($clientEncryption, $baseOpts) {
     $clientEncryption->encrypt('test', $baseOpts + ['stringOpts' => [
         'substring' => ['strMaxQueryLength' => -1],
     ]]);
-}, MongoDB\Driver\Exception\InvalidArgumentException::class), "\n";
+}, MongoDB\Driver\Exception\EncryptionException::class), "\n";
 
-// substring.strMinQueryLength out of range
+// substring.strMinQueryLength out of int32 range (rejected by PHP driver)
 echo throws(function() use ($clientEncryption, $baseOpts) {
     $clientEncryption->encrypt('test', $baseOpts + ['stringOpts' => [
         'substring' => ['strMinQueryLength' => PHP_INT_MAX],
@@ -78,18 +78,18 @@ echo throws(function() use ($clientEncryption, $baseOpts) {
 ===DONE===
 <?php exit(0); ?>
 --EXPECT--
+OK: Got MongoDB\Driver\Exception\EncryptionException
+Error parsing TextOpts: 'strMaxQueryLength' must be greater than zero
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected "strMaxQueryLength" to be a positive 32-bit integer, -1 given
+Expected "strMinQueryLength" to be a 32-bit integer, 9223372036854775807 given
+OK: Got MongoDB\Driver\Exception\EncryptionException
+Error parsing TextOpts: 'strMaxQueryLength' must be greater than zero
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected "strMinQueryLength" to be a positive 32-bit integer, 9223372036854775807 given
+Expected "strMinQueryLength" to be a 32-bit integer, 9223372036854775807 given
+OK: Got MongoDB\Driver\Exception\EncryptionException
+Error parsing TextOpts: 'strMaxLength' must be greater than zero
+OK: Got MongoDB\Driver\Exception\EncryptionException
+Error parsing TextOpts: 'strMaxQueryLength' must be greater than zero
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected "strMaxQueryLength" to be a positive 32-bit integer, -1 given
-OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected "strMinQueryLength" to be a positive 32-bit integer, 9223372036854775807 given
-OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected "strMaxLength" to be a positive 32-bit integer, -1 given
-OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected "strMaxQueryLength" to be a positive 32-bit integer, -1 given
-OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected "strMinQueryLength" to be a positive 32-bit integer, 9223372036854775807 given
+Expected "strMinQueryLength" to be a 32-bit integer, 9223372036854775807 given
 ===DONE===
