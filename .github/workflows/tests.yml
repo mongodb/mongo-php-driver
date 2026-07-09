@@ -184,7 +184,8 @@ jobs:
     runs-on: "ubuntu-latest"
     env:
       PHP_VERSION: "8.3"
-      LIBMONGOCRYPT_VERSION: "1.19"
+      # Note: omit the patch version so apt prefix-matches any 1.x.y patch release
+      LIBMONGOCRYPT_VERSION: "1.20"
       # Note: include the patch version when referring to a libmongoc release tarball
       LIBMONGOC_VERSION: "2.3.0"
       SERVER_VERSION: "8.0"
