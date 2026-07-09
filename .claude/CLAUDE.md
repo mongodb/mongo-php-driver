@@ -93,6 +93,16 @@ Each class is implemented as a pair of `.c` / `.h` files (and a `.stub.php` for 
 
 Build configurations (`config.m4` for Autotools, `config.w32` for Windows) enumerate all bundled source files. When updating a submodule, run `scripts/update-submodule-sources.php` to regenerate these lists and update version checks in both files.
 
+#### Bumping libmongocrypt
+
+When bumping the bundled `src/libmongocrypt` submodule, update all of the following:
+
+- `src/libmongocrypt` — submodule pointer to the target tag
+- `src/LIBMONGOCRYPT_VERSION_CURRENT` — plain-text version string read by `scripts/autotools/libmongocrypt/Version.m4` and `config.w32`
+- `config.m4` — `PHP_MONGODB_MIN_LIBMONGOCRYPT_VERSION` for the system-libs build
+- `.github/workflows/tests.yml` — `LIBMONGOCRYPT_VERSION` env for the System Library Tests job (installs `libmongocrypt-dev` from apt; must match the released minor)
+- `sbom.json` — regenerate via `scripts/update-sbom.sh`
+
 ### Test Format (PHPT)
 
 Tests use [PHP's PHPT format](https://qa.php.net/phpt_details.php). Typical structure:
