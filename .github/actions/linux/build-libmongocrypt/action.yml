@@ -23,6 +23,6 @@ runs:
 
     - name: Install libmongocrypt
       shell: bash
-      run: sudo apt-get install -y "libmongocrypt-dev=${LIBMONGOCRYPT_VERSION}*"
+      run: sudo apt-get install -y "libmongocrypt-dev=${LIBMONGOCRYPT_VERSION}*" "libmongocrypt0=${LIBMONGOCRYPT_VERSION}*"
       env:
         LIBMONGOCRYPT_VERSION: ${{ inputs.version }}
