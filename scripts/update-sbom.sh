@@ -1,8 +1,11 @@
 #!/usr/bin/env bash
 
+set -euo pipefail
+
 SCRIPT_DIR=$(dirname "${BASH_SOURCE[0]}")
 ROOT_DIR=$(realpath "${SCRIPT_DIR}/../")
 PURLS_FILE="${ROOT_DIR}/purls.txt"
+trap 'rm -f "$PURLS_FILE"' EXIT
 
 LIBMONGOC_VERSION=$(cat "${ROOT_DIR}/src/libmongoc/VERSION_CURRENT" | tr -d '[:space:]')
 LIBMONGOCRYPT_VERSION=$(cat "${ROOT_DIR}/src/LIBMONGOCRYPT_VERSION_CURRENT" | tr -d '[:space:]')
@@ -21,5 +24,3 @@ aws ecr get-login-password --region us-east-1 --profile "$profile" | docker logi
 docker run --platform="linux/amd64" -i --rm -v "${ROOT_DIR}:/pwd" \
   901841024863.dkr.ecr.us-east-1.amazonaws.com/release-infrastructure/silkbomb:2.0 \
   update --sbom-in /pwd/sbom.json --purls /pwd/purls.txt --sbom-out /pwd/sbom.json
-
-rm "$PURLS_FILE"
