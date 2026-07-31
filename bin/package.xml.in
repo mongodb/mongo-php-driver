@@ -9,12 +9,6 @@ and PHP, implementing only fundamental and performance-critical components
 necessary to build a fully-functional MongoDB driver.
 </description>
  <lead>
-  <name>Andreas Braun</name>
-  <user>alcaeus</user>
-  <email>alcaeus@php.net</email>
-  <active>yes</active>
- </lead>
- <lead>
   <name>Jérôme Tamarelle</name>
   <user>gromnan</user>
   <email>jerome.tamarelle@mongodb.com</email>
@@ -25,6 +19,18 @@ necessary to build a fully-functional MongoDB driver.
   <user>synon</user>
   <email>info@pauline-vos.nl</email>
   <active>yes</active>
+ </lead>
+ <lead>
+  <name>Kevin Albertson</name>
+  <user>kevinalbs</user>
+  <email>kevin.albertson@mongodb.com</email>
+  <active>yes</active>
+ </lead>
+ <lead>
+  <name>Andreas Braun</name>
+  <user>alcaeus</user>
+  <email>alcaeus@php.net</email>
+  <active>no</active>
  </lead>
  <lead>
   <name>Jeremy Mikola</name>
