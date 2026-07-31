@@ -111,7 +111,7 @@ jobs:
           version: ${{ env.PHP_VERSION }}
 
       - name: "Write changelog file for packaging"
-        run: echo "Testing" > changelog
+        run: echo 'Testing <special> & "chars" to exercise XML escaping' > changelog
 
       - name: "Build package.xml"
         run: "make package.xml RELEASE_NOTES_FILE=$(pwd)/changelog"
