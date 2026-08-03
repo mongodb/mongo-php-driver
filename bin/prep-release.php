@@ -211,7 +211,7 @@ $REPLACE = array(
     "%RELEASE_VERSION%" => $VERSION,
     "%RELEASE_STABILITY%" => $STABILITY,
     "%RELEASE_FILES%" => join("\n", $TREE),
-    "%RELEASE_NOTES%" => is_string($RELEASE_NOTES_FILE) && file_exists($RELEASE_NOTES_FILE) ? file_get_contents($RELEASE_NOTES_FILE) : '',
+    "%RELEASE_NOTES%" => is_string($RELEASE_NOTES_FILE) && file_exists($RELEASE_NOTES_FILE) ? htmlspecialchars(file_get_contents($RELEASE_NOTES_FILE), ENT_XML1 | ENT_QUOTES, 'UTF-8') : '',
 );
 
 $contents = str_replace(array_keys($REPLACE), array_values($REPLACE), $contents);
