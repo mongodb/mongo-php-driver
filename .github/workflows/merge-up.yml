@@ -33,3 +33,9 @@ jobs:
           devBranchNamePattern: 'v<major>.x'
           ignoredBranches: ${{ vars.IGNORED_MERGE_UP_BRANCHES }}
           enableAutoMerge: true
+
+      - name: "Label the merge-up pull request"
+        if: ${{ steps.create-pull-request.outputs.pullRequestUrl != '' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh pr edit ${{ steps.create-pull-request.outputs.pullRequestUrl }} --add-label merge-up

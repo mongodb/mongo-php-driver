@@ -127,7 +127,7 @@ jobs:
           git add phongo_version.h
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git commit -m "Bump to next minor dev version"
+          git commit -m "Bump version to $(./bin/update-release-version.php get-version)"
           git push origin ${DEV_BRANCH}
           git checkout ${RELEASE_BRANCH}
 
@@ -199,3 +199,4 @@ jobs:
         run: |
           echo '🚀 Created tag and drafted release for version [${{ inputs.version }}](${{ env.RELEASE_URL }})' >> $GITHUB_STEP_SUMMARY
           echo '✍️ You may now update the release notes and publish the release when ready' >> $GITHUB_STEP_SUMMARY
+          echo '🏷️ Once published, mark the [JIRA version](https://jira.mongodb.org/projects/PHPC/versions/${{ inputs.jira-version-number }}) as released' >> $GITHUB_STEP_SUMMARY
