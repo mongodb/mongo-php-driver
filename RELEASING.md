@@ -1,6 +1,6 @@
 # Releasing
 
-## Merge-up branches
+## Merge-up pull requests
 
 Make sure all open [merge-up pull requests](https://github.com/mongodb/mongo-php-driver/pulls?q=is%3Apr+is%3Aopen+label%3Amerge-up)
 containing changes from the release branch have been merged. The release bumps
