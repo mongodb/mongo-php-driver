@@ -26,10 +26,12 @@ jobs:
 
       - name: Create pull request
         id: create-pull-request
-        uses: alcaeus/automatic-merge-up-action@1.0.1
+        # Pinned to a commit on main for the `labels` input, pending a release after 1.0.1
+        uses: alcaeus/automatic-merge-up-action@48b5ff50ed307f17a7db57154047fa49ab7c6cff
         with:
           ref: ${{ github.ref_name }}
           branchNamePattern: 'v<major>.<minor>'
           devBranchNamePattern: 'v<major>.x'
           ignoredBranches: ${{ vars.IGNORED_MERGE_UP_BRANCHES }}
           enableAutoMerge: true
+          labels: merge-up
