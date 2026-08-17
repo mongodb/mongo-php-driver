@@ -61,7 +61,7 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_ServerHeartbeatSucceededEvent, getRe
 	php_phongo_serverheartbeatsucceededevent_t* intern = Z_SERVERHEARTBEATSUCCEEDEDEVENT_OBJ_P(getThis());
 	php_phongo_bson_state                       state;
 
-	PHONGO_BSON_INIT_STATE(state);
+	PHONGO_BSON_INIT_INTERNAL_STATE(state);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -115,7 +115,7 @@ static HashTable* php_phongo_serverheartbeatsucceededevent_get_debug_info(zend_o
 	zval                                        retval = ZVAL_STATIC_INIT;
 	php_phongo_bson_state                       reply_state;
 
-	PHONGO_BSON_INIT_STATE(reply_state);
+	PHONGO_BSON_INIT_INTERNAL_STATE(reply_state);
 
 	intern   = Z_OBJ_SERVERHEARTBEATSUCCEEDEDEVENT(object);
 	*is_temp = 1;
