@@ -106,7 +106,7 @@ typedef enum {
 /* Initializes a state for a driver-internal conversion that yields objects. The
  * type map is explicit rather than left as PHONGO_TYPEMAP_NONE, which would be
  * interpreted as a request to infer the class from a "__pclass" field. */
-#define PHONGO_BSON_INIT_INTERNAL_STATE(s)                  \
+#define PHONGO_BSON_INIT_NO_ODM_STATE(s)                    \
 	do {                                                    \
 		memset(&(s), 0, sizeof(php_phongo_bson_state));     \
 		s.skip_odm          = true;                         \

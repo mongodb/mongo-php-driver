@@ -213,7 +213,7 @@ static PHP_METHOD(MongoDB_Driver_Session, getClusterTime)
 	const bson_t*         cluster_time;
 	php_phongo_bson_state state;
 
-	PHONGO_BSON_INIT_STATE(state);
+	PHONGO_BSON_INIT_NO_ODM_STATE(state);
 
 	intern = Z_SESSION_OBJ_P(getThis());
 	SESSION_CHECK_LIVELINESS(intern, "getClusterTime")
@@ -242,7 +242,7 @@ static PHP_METHOD(MongoDB_Driver_Session, getLogicalSessionId)
 	const bson_t*         lsid;
 	php_phongo_bson_state state;
 
-	PHONGO_BSON_INIT_STATE(state);
+	PHONGO_BSON_INIT_NO_ODM_STATE(state);
 
 	intern = Z_SESSION_OBJ_P(getThis());
 	SESSION_CHECK_LIVELINESS(intern, "getLogicalSessionId")

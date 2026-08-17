@@ -919,7 +919,7 @@ bool php_phongo_bson_to_zval_internal(const bson_t* b, zval* zv)
 	bool                  retval;
 	php_phongo_bson_state state;
 
-	PHONGO_BSON_INIT_INTERNAL_STATE(state);
+	PHONGO_BSON_INIT_NO_ODM_STATE(state);
 
 	retval = php_phongo_bson_to_zval_ex(b, &state);
 	ZVAL_ZVAL(zv, &state.zchild, 1, 1);
@@ -948,7 +948,7 @@ bool php_phongo_bson_data_to_zval_internal(const unsigned char* data, int data_l
 	bool                  retval;
 	php_phongo_bson_state state;
 
-	PHONGO_BSON_INIT_INTERNAL_STATE(state);
+	PHONGO_BSON_INIT_NO_ODM_STATE(state);
 
 	retval = php_phongo_bson_data_to_zval_ex(data, data_len, &state);
 	ZVAL_ZVAL(zv, &state.zchild, 1, 1);

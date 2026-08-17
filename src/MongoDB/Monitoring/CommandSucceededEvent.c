@@ -100,7 +100,7 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_CommandSucceededEvent, getReply)
 	php_phongo_commandsucceededevent_t* intern;
 	php_phongo_bson_state               state;
 
-	PHONGO_BSON_INIT_INTERNAL_STATE(state);
+	PHONGO_BSON_INIT_NO_ODM_STATE(state);
 
 	intern = Z_COMMANDSUCCEEDEDEVENT_OBJ_P(getThis());
 
@@ -216,7 +216,7 @@ static HashTable* php_phongo_commandsucceededevent_get_debug_info(zend_object* o
 	char                                operation_id[24], request_id[24];
 	php_phongo_bson_state               reply_state;
 
-	PHONGO_BSON_INIT_INTERNAL_STATE(reply_state);
+	PHONGO_BSON_INIT_NO_ODM_STATE(reply_state);
 
 	intern   = Z_OBJ_COMMANDSUCCEEDEDEVENT(object);
 	*is_temp = 1;
