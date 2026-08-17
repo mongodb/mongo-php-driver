@@ -230,6 +230,9 @@ static void php_phongo_bson_state_ctor(php_phongo_bson_state* state)
 static void php_phongo_bson_state_copy_ctor(php_phongo_bson_state* dst, php_phongo_bson_state* src)
 {
 	dst->map = src->map;
+	/* Must be inherited, or nested documents would infer an ODM class after the
+	 * parent state suppressed it. */
+	dst->skip_odm = src->skip_odm;
 	if (src->field_path) {
 		src->field_path->ref_count++;
 	}
@@ -303,7 +306,9 @@ static bool php_phongo_bson_visit_binary(const bson_iter_t* iter ARG_UNUSED, con
 	zval*                  retval = PHONGO_BSON_STATE_ZCHILD(data);
 	php_phongo_bson_state* state  = (php_phongo_bson_state*) data;
 
-	if (v_subtype == 0x80 && strcmp(key, PHONGO_ODM_FIELD_NAME) == 0) {
+	/* Deliberately checked before fetching the class, as fetching it would run
+	 * autoloaders on a class name taken straight from the BSON. */
+	if (!state->skip_odm && v_subtype == 0x80 && strcmp(key, PHONGO_ODM_FIELD_NAME) == 0) {
 		zend_string*      zs_classname = zend_string_init((const char*) v_binary, v_binary_len, 0);
 		zend_class_entry* found_ce     = zend_fetch_class(zs_classname, ZEND_FETCH_CLASS_AUTO | ZEND_FETCH_CLASS_SILENT);
 		zend_string_release(zs_classname);

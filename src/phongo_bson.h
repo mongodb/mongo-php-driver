@@ -72,10 +72,15 @@ typedef struct {
 } php_phongo_bson_typemap;
 
 typedef struct {
-	zval                            zchild;
-	php_phongo_bson_typemap         map;
-	zend_class_entry*               odm_ce;
-	bool                            is_visiting_array;
+	zval                    zchild;
+	php_phongo_bson_typemap map;
+	zend_class_entry*       odm_ce;
+	bool                    is_visiting_array;
+	/* Suppresses inference of an ODM class from the "__pclass" field. Set for
+	 * driver-internal conversions, where the BSON may originate from a server
+	 * reply or from data the application does not control, and where there is
+	 * no type map through which a caller could opt out. */
+	bool                            skip_odm;
 	php_phongo_field_path*          field_path;
 	php_phongo_bson_typemap_element field_type;
 } php_phongo_bson_state;
@@ -96,6 +101,17 @@ typedef enum {
 		memset(&(s), 0, sizeof(php_phongo_bson_state));    \
 		s.map.root.type     = PHONGO_TYPEMAP_NATIVE_ARRAY; \
 		s.map.document.type = PHONGO_TYPEMAP_NATIVE_ARRAY; \
+	} while (0)
+
+/* Initializes a state for a driver-internal conversion that yields objects. The
+ * type map is explicit rather than left as PHONGO_TYPEMAP_NONE, which would be
+ * interpreted as a request to infer the class from a "__pclass" field. */
+#define PHONGO_BSON_INIT_INTERNAL_STATE(s)                  \
+	do {                                                    \
+		memset(&(s), 0, sizeof(php_phongo_bson_state));     \
+		s.skip_odm          = true;                         \
+		s.map.root.type     = PHONGO_TYPEMAP_NATIVE_OBJECT; \
+		s.map.document.type = PHONGO_TYPEMAP_NATIVE_OBJECT; \
 	} while (0)
 
 char*                  php_phongo_field_path_as_string(php_phongo_field_path* field_path);
