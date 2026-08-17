@@ -124,8 +124,10 @@ bool                   php_phongo_field_path_pop(php_phongo_field_path* field_pa
 
 bool php_phongo_bson_to_json(zval* return_value, const bson_t* bson, php_phongo_json_mode_t mode);
 bool php_phongo_bson_to_zval(const bson_t* b, zval* zv);
+bool php_phongo_bson_to_zval_internal(const bson_t* b, zval* zv);
 bool php_phongo_bson_to_zval_ex(const bson_t* b, php_phongo_bson_state* state);
 bool php_phongo_bson_data_to_zval(const unsigned char* data, int data_len, zval* zv);
+bool php_phongo_bson_data_to_zval_internal(const unsigned char* data, int data_len, zval* zv);
 bool php_phongo_bson_data_to_zval_ex(const unsigned char* data, int data_len, php_phongo_bson_state* state);
 
 bool phongo_bson_value_to_zval(const bson_value_t* value, zval* zv);

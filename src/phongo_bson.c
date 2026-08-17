@@ -912,6 +912,21 @@ bool php_phongo_bson_to_zval(const bson_t* b, zval* zv)
 	return retval;
 }
 
+/* Converts a BSON document originating from the server or the driver itself to
+ * a PHP value, without inferring an ODM class from a "__pclass" field. */
+bool php_phongo_bson_to_zval_internal(const bson_t* b, zval* zv)
+{
+	bool                  retval;
+	php_phongo_bson_state state;
+
+	PHONGO_BSON_INIT_INTERNAL_STATE(state);
+
+	retval = php_phongo_bson_to_zval_ex(b, &state);
+	ZVAL_ZVAL(zv, &state.zchild, 1, 1);
+
+	return retval;
+}
+
 /* Converts BSON data to a PHP value using the default typemap. */
 bool php_phongo_bson_data_to_zval(const unsigned char* data, int data_len, zval* zv)
 {
@@ -919,6 +934,21 @@ bool php_phongo_bson_data_to_zval(const unsigned char* data, int data_len, zval*
 	php_phongo_bson_state state;
 
 	PHONGO_BSON_INIT_STATE(state);
+
+	retval = php_phongo_bson_data_to_zval_ex(data, data_len, &state);
+	ZVAL_ZVAL(zv, &state.zchild, 1, 1);
+
+	return retval;
+}
+
+/* Converts BSON data originating from the server or the driver itself to a PHP
+ * value, without inferring an ODM class from a "__pclass" field. */
+bool php_phongo_bson_data_to_zval_internal(const unsigned char* data, int data_len, zval* zv)
+{
+	bool                  retval;
+	php_phongo_bson_state state;
+
+	PHONGO_BSON_INIT_INTERNAL_STATE(state);
 
 	retval = php_phongo_bson_data_to_zval_ex(data, data_len, &state);
 	ZVAL_ZVAL(zv, &state.zchild, 1, 1);
