@@ -1,0 +1,36 @@
+name: Secure-checkout PR probe (TEMPORARY - delete after use)
+
+# Validates a proposed fix to drivers-github-tools/secure-checkout that adds
+# `permission-pull-requests: write` to the app token it mints.
+# Uses the ambient GH_TOKEN that secure-checkout writes to $GITHUB_ENV, which
+# its README documents as usable with the gh cli.
+
+on:
+  push:
+    branches:
+      - merge-probe-head
+
+jobs:
+  probe:
+    name: Create a draft PR with the patched secure-checkout
+    runs-on: ubuntu-latest
+    permissions: {}
+
+    steps:
+      - name: Checkout via patched secure-checkout (fork branch)
+        uses: kevinAlbs/drivers-github-tools/secure-checkout@secure-checkout-pull-requests-permission
+        with:
+          app_id: ${{ vars.PR_APP_ID }}
+          private_key: ${{ secrets.PR_APP_PRIVATE_KEY }}
+
+      - name: Create draft PR using the ambient GH_TOKEN
+        run: |
+          set -x
+          gh pr create \
+            --repo "$GITHUB_REPOSITORY" \
+            --base merge-probe-base \
+            --head merge-probe-head \
+            --draft \
+            --label merge-up \
+            --title "TEMP probe: secure-checkout pull-requests permission" \
+            --body "Created by a temporary probe workflow validating a drivers-github-tools fix. Safe to close."
