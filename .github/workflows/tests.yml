@@ -80,7 +80,10 @@ jobs:
       - name: "Run Tests"
         run: make test
         env:
-          TEST_PHP_ARGS: "-q -x --show-diff -g FAIL,XFAIL,BORK,WARN,LEAK,SKIP"
+          # Tests cannot run in parallel, as they all share a single MongoDB
+          # deployment where fail points and namespaces are global. PHP 8.6
+          # spawns several test workers by default, so -j1 is required.
+          TEST_PHP_ARGS: "-q -x -j1 --show-diff -g FAIL,XFAIL,BORK,WARN,LEAK,SKIP"
           TEST_PHP_JUNIT: "test-results.xml"
           MONGODB_URI: ${{ steps.setup-mongodb.outputs.cluster-uri }}
 
@@ -230,7 +233,10 @@ jobs:
       - name: "Run Tests"
         run: make test
         env:
-          TEST_PHP_ARGS: "-q -x --show-diff -g FAIL,XFAIL,BORK,WARN,LEAK,SKIP"
+          # Tests cannot run in parallel, as they all share a single MongoDB
+          # deployment where fail points and namespaces are global. PHP 8.6
+          # spawns several test workers by default, so -j1 is required.
+          TEST_PHP_ARGS: "-q -x -j1 --show-diff -g FAIL,XFAIL,BORK,WARN,LEAK,SKIP"
           TEST_PHP_JUNIT: "test-results.xml"
           MONGODB_URI: ${{ steps.setup-mongodb.outputs.cluster-uri }}
 

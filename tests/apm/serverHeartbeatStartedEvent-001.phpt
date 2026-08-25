@@ -28,8 +28,8 @@ class MySubscriber implements MongoDB\Driver\Monitoring\SDAMSubscriber
 
         printf("getHost() returns a string: %s\n", is_string($event->getHost()) ? 'yes' : 'no');
         printf("host returns a string: %s\n", is_string($event->host) ? 'yes' : 'no');
-        printf("getPort() returns an integer: %s\n", is_integer($event->getPort()) ? 'yes' : 'no');
-        printf("port returns an integer: %s\n", is_integer($event->port) ? 'yes' : 'no');
+        printf("getPort() returns an integer: %s\n", is_int($event->getPort()) ? 'yes' : 'no');
+        printf("port returns an integer: %s\n", is_int($event->port) ? 'yes' : 'no');
         printf("isAwaited() returns a bool: %s\n", is_bool($event->isAwaited()) ? 'yes' : 'no');
         printf("awaited returns a bool: %s\n", is_bool($event->awaited) ? 'yes' : 'no');
 
