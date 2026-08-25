@@ -317,7 +317,7 @@ script to automate this process:
 
 This script will generate a temporary purl file with our dependencies, then run
 the internal silkbomb tool to update the SBOM. Note that you need to have docker
-installed in order to run this.
+installed in order to run this. And this requires [logging in to AWS ECR](https://docs.devprod.prod.corp.mongodb.com/devprod-platforms-ecr#from-your-laptop).
 
 #### Test and commit your changes
 
