@@ -5,6 +5,13 @@ PHP_TEST_SHARED_EXTENSIONS := "-d" "extension=$(EXTENSION_DIR)/json.so" $(PHP_TE
 PHP_TEST_SETTINGS := "-d" "extension=$(EXTENSION_DIR)/json.so" $(PHP_TEST_SETTINGS)
 endif
 
+# Tests cannot run in parallel, as they all share a single MongoDB deployment
+# where fail points and namespaces are global. Since PHP 8.6, run-tests.php
+# spawns several test workers by default, so -j1 is required. Environments that
+# set TEST_PHP_ARGS themselves must include -j1 as well.
+TEST_PHP_ARGS ?= -j1
+export TEST_PHP_ARGS
+
 DATE=`date +%Y-%m-%d--%H-%M-%S`
 MONGODB_VERSION=$(shell php -n -dextension=modules/mongodb.so -r 'echo MONGODB_VERSION;')
 MONGODB_MINOR=$(shell echo $(MONGODB_VERSION) | cut -d. -f1,2)
