@@ -101,7 +101,7 @@ When bumping the bundled `src/libmongocrypt` submodule, update all of the follow
 - `src/LIBMONGOCRYPT_VERSION_CURRENT` — plain-text version string read by `scripts/autotools/libmongocrypt/Version.m4` and `config.w32`
 - `config.m4` — `PHP_MONGODB_MIN_LIBMONGOCRYPT_VERSION` for the system-libs build
 - `.github/workflows/tests.yml` — `LIBMONGOCRYPT_VERSION` env for the System Library Tests job (installs `libmongocrypt-dev` from apt; must match the released minor)
-- `sbom.json` — regenerate via `scripts/update-sbom.sh`. This requires [logging in to AWS ECR](https://docs.devprod.prod.corp.mongodb.com/devprod-platforms-ecr#from-your-laptop).
+- `sbom.json` — regenerate via `scripts/update-sbom.sh` (requires [logging in to AWS ECR (MongoDB internal access required)](https://docs.devprod.prod.corp.mongodb.com/devprod-platforms-ecr#from-your-laptop))
 
 ### Test Format (PHPT)
 
