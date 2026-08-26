@@ -5,10 +5,7 @@ PHP_TEST_SHARED_EXTENSIONS := "-d" "extension=$(EXTENSION_DIR)/json.so" $(PHP_TE
 PHP_TEST_SETTINGS := "-d" "extension=$(EXTENSION_DIR)/json.so" $(PHP_TEST_SETTINGS)
 endif
 
-# Tests cannot run in parallel, as they all share a single MongoDB deployment
-# where fail points and namespaces are global. Since PHP 8.6, run-tests.php
-# spawns several test workers by default, so -j1 is required. Environments that
-# set TEST_PHP_ARGS themselves must include -j1 as well.
+# All tests share a single MongoDB deployment, so they cannot run in parallel.
 TEST_PHP_ARGS ?= -j1
 export TEST_PHP_ARGS
 
