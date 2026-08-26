@@ -80,7 +80,7 @@ jobs:
       - name: "Run Tests"
         run: make test
         env:
-          TEST_PHP_ARGS: "-q -x --show-diff -g FAIL,XFAIL,BORK,WARN,LEAK,SKIP"
+          TEST_PHP_ARGS: "-q -x -j1 --show-diff -g FAIL,XFAIL,BORK,WARN,LEAK,SKIP"
           TEST_PHP_JUNIT: "test-results.xml"
           MONGODB_URI: ${{ steps.setup-mongodb.outputs.cluster-uri }}
 
@@ -230,7 +230,7 @@ jobs:
       - name: "Run Tests"
         run: make test
         env:
-          TEST_PHP_ARGS: "-q -x --show-diff -g FAIL,XFAIL,BORK,WARN,LEAK,SKIP"
+          TEST_PHP_ARGS: "-q -x -j1 --show-diff -g FAIL,XFAIL,BORK,WARN,LEAK,SKIP"
           TEST_PHP_JUNIT: "test-results.xml"
           MONGODB_URI: ${{ steps.setup-mongodb.outputs.cluster-uri }}
 

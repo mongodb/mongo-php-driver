@@ -5,6 +5,10 @@ PHP_TEST_SHARED_EXTENSIONS := "-d" "extension=$(EXTENSION_DIR)/json.so" $(PHP_TE
 PHP_TEST_SETTINGS := "-d" "extension=$(EXTENSION_DIR)/json.so" $(PHP_TEST_SETTINGS)
 endif
 
+# All tests share a single MongoDB deployment, so they cannot run in parallel.
+TEST_PHP_ARGS ?= -j1
+export TEST_PHP_ARGS
+
 DATE=`date +%Y-%m-%d--%H-%M-%S`
 MONGODB_VERSION=$(shell php -n -dextension=modules/mongodb.so -r 'echo MONGODB_VERSION;')
 MONGODB_MINOR=$(shell echo $(MONGODB_VERSION) | cut -d. -f1,2)

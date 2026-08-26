@@ -28,12 +28,12 @@ class MySubscriber implements MongoDB\Driver\Monitoring\SDAMSubscriber
 
         $this->isObserved = true;
 
-        printf("getDurationMicros() returns an integer: %s\n", is_integer($event->getDurationMicros()) ? 'yes' : 'no');
-        printf("duration returns an integer: %s\n", is_integer($event->duration) ? 'yes' : 'no');
+        printf("getDurationMicros() returns an integer: %s\n", is_int($event->getDurationMicros()) ? 'yes' : 'no');
+        printf("duration returns an integer: %s\n", is_int($event->duration) ? 'yes' : 'no');
         printf("getHost() returns a string: %s\n", is_string($event->getHost()) ? 'yes' : 'no');
         printf("host returns a string: %s\n", is_string($event->host) ? 'yes' : 'no');
-        printf("getPort() returns an integer: %s\n", is_integer($event->getPort()) ? 'yes' : 'no');
-        printf("port returns an integer: %s\n", is_integer($event->port) ? 'yes' : 'no');
+        printf("getPort() returns an integer: %s\n", is_int($event->getPort()) ? 'yes' : 'no');
+        printf("port returns an integer: %s\n", is_int($event->port) ? 'yes' : 'no');
         printf("getReply() returns an object: %s\n", is_object($event->getReply()) ? 'yes' : 'no');
         printf("reply returns an object: %s\n", is_object($event->reply) ? 'yes' : 'no');
         printf("isAwaited() returns a bool: %s\n", is_bool($event->isAwaited()) ? 'yes' : 'no');
