@@ -228,7 +228,7 @@ static bool phongo_parse_write_concern(zval* options, bson_t* mongoc_opts, zval*
 	return true;
 }
 
-bool phongo_execute_bulk_write(zval* manager, const char* namespace, php_phongo_bulkwrite_t* bulk_write, zval* options, uint32_t server_id, zval* return_value)
+bool phongo_execute_bulk_write(zval* manager, const char* namespace, size_t namespace_len, php_phongo_bulkwrite_t* bulk_write, zval* options, uint32_t server_id, zval* return_value)
 {
 	mongoc_client_t*              client = NULL;
 	bson_error_t                  error  = { 0 };
@@ -244,6 +244,10 @@ bool phongo_execute_bulk_write(zval* manager, const char* namespace, php_phongo_
 
 	if (bulk_write->executed) {
 		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "BulkWrite objects may only be executed once and this instance has already been executed");
+		return false;
+	}
+
+	if (!phongo_validate_namespace(namespace, namespace_len)) {
 		return false;
 	}
 
@@ -333,7 +337,7 @@ cleanup:
 	return success;
 }
 
-bool phongo_execute_command(zval* manager, php_phongo_command_type_t type, const char* db, zval* zcommand, zval* options, uint32_t server_id, zval* return_value)
+bool phongo_execute_command(zval* manager, php_phongo_command_type_t type, const char* db, size_t db_len, zval* zcommand, zval* options, uint32_t server_id, zval* return_value)
 {
 	mongoc_client_t*            client;
 	const php_phongo_command_t* command;
@@ -351,6 +355,10 @@ bool phongo_execute_command(zval* manager, php_phongo_command_type_t type, const
 
 	client  = Z_MANAGER_OBJ_P(manager)->client;
 	command = Z_COMMAND_OBJ_P(zcommand);
+
+	if (!phongo_validate_dbname(db, db_len)) {
+		goto cleanup;
+	}
 
 	if ((type & PHONGO_OPTION_READ_CONCERN) && !phongo_parse_read_concern(options, &opts)) {
 		/* Exception should already have been thrown */
@@ -503,7 +511,7 @@ cleanup:
 	return result;
 }
 
-bool phongo_execute_query(zval* manager, const char* namespace, zval* zquery, zval* options, uint32_t server_id, zval* return_value)
+bool phongo_execute_query(zval* manager, const char* namespace, size_t namespace_len, zval* zquery, zval* options, uint32_t server_id, zval* return_value)
 {
 	mongoc_client_t*          client;
 	const php_phongo_query_t* query;
@@ -516,6 +524,10 @@ bool phongo_execute_query(zval* manager, const char* namespace, zval* zquery, zv
 	zval*                     zsession        = NULL;
 
 	client = Z_MANAGER_OBJ_P(manager)->client;
+
+	if (!phongo_validate_namespace(namespace, namespace_len)) {
+		return false;
+	}
 
 	if (!phongo_split_namespace(namespace, &dbname, &collname)) {
 		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "%s: %s", "Invalid namespace provided", namespace);
