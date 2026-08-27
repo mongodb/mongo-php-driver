@@ -1331,6 +1331,14 @@ static bool phongo_manager_set_auto_encryption_opts(php_phongo_manager_t* manage
 
 		key_vault_ns = php_array_fetchc_string(zAutoEncryptionOpts, "keyVaultNamespace", &plen, &pfree);
 
+		if (!phongo_validate_namespace(key_vault_ns, plen)) {
+			if (pfree) {
+				efree(key_vault_ns);
+			}
+
+			goto cleanup;
+		}
+
 		if (!phongo_split_namespace(key_vault_ns, &db_name, &coll_name)) {
 			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"keyVaultNamespace\" autoEncryption option to contain a full collection namespace");
 
