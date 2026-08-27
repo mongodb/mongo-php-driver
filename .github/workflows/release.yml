@@ -17,7 +17,7 @@ env:
   default-release-message: |
     The PHP team is happy to announce that version {0} of the MongoDB PHP extension is now available.
     - [mongodb/mongodb-extension](https://packagist.org/packages/mongodb/mongodb-extension#{0}) on Packagist.
-    - [mongodb](https://pecl.php.net/package/mongodb) on PECL
+    - [mongodb](https://pecl.php.net/package/mongodb) on PECL.
 
     **Release Highlights**
 
