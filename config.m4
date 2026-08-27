@@ -243,9 +243,9 @@ if test "$PHP_MONGODB" != "no"; then
   PHP_MONGODB_MONGOCRYPT_VERSION_STRING="None"
 
   if test "$PHP_MONGODB_SYSTEM_LIBS" != "no"; then
-    PHP_MONGODB_MIN_LIBBSON_VERSION="2.4.0"
-    PHP_MONGODB_MIN_LIBMONGOC_VERSION="2.4.0"
     PHP_MONGODB_MIN_LIBMONGOCRYPT_VERSION="1.20.2"
+    PHP_MONGODB_MIN_LIBBSON_VERSION="2.5.0"
+    PHP_MONGODB_MIN_LIBMONGOC_VERSION="2.5.0"
 
     PKG_CHECK_MODULES([PHP_MONGODB_BSON], [bson2 >= $PHP_MONGODB_MIN_LIBBSON_VERSION], [
       PHP_MONGODB_BSON_VERSION=`$PKG_CONFIG bson2 --modversion`
@@ -418,9 +418,9 @@ if test "$PHP_MONGODB" != "no"; then
 
     if test "x$bundled_utf8proc" = "xyes"; then
       PHP_MONGODB_UTF8PROC_CFLAGS="$PHP_MONGODB_BUNDLED_CFLAGS $PHP_MONGODB_UTF8PROC_CFLAGS"
-      PHP_MONGODB_ADD_SOURCES([src/libmongoc/src/utf8proc-2.8.0/], $PHP_MONGODB_UTF8PROC_SOURCES, $PHP_MONGODB_UTF8PROC_CFLAGS)
-      PHP_MONGODB_ADD_INCLUDE([src/libmongoc/src/utf8proc-2.8.0/])
-      PHP_MONGODB_ADD_BUILD_DIR([src/libmongoc/src/utf8proc-2.8.0/])
+      PHP_MONGODB_ADD_SOURCES([src/libmongoc/src/utf8proc-2.11.3/], $PHP_MONGODB_UTF8PROC_SOURCES, $PHP_MONGODB_UTF8PROC_CFLAGS)
+      PHP_MONGODB_ADD_INCLUDE([src/libmongoc/src/utf8proc-2.11.3/])
+      PHP_MONGODB_ADD_BUILD_DIR([src/libmongoc/src/utf8proc-2.11.3/])
     fi
 
     if test "x$bundled_zlib" = "xyes"; then

@@ -567,14 +567,6 @@ static mongoc_client_encryption_opts_t* phongo_clientencryption_opts_from_zval(z
 
 		key_vault_namespace = php_array_fetchc_string(options, "keyVaultNamespace", &plen, &pfree);
 
-		if (!phongo_validate_namespace(key_vault_namespace, plen)) {
-			if (pfree) {
-				efree(key_vault_namespace);
-			}
-
-			goto cleanup;
-		}
-
 		if (!phongo_split_namespace(key_vault_namespace, &db_name, &coll_name)) {
 			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"keyVaultNamespace\" option to contain a full collection namespace");
 

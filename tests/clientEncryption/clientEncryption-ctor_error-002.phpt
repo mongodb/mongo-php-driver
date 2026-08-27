@@ -21,10 +21,6 @@ $tests = [
         // keyVaultNamespace requires a valid kmsProviders option
         'kmsProviders' => ['local' => ['key' => new MongoDB\BSON\Binary(CSFLE_LOCAL_KEY, 0)]],
     ] + $baseOptions,
-    [
-        'keyVaultNamespace' => "keyvault.data\0keys",
-        'kmsProviders' => ['local' => ['key' => new MongoDB\BSON\Binary(CSFLE_LOCAL_KEY, 0)]],
-    ] + $baseOptions,
     ['kmsProviders' => 'not_an_array_or_object'] + $baseOptions,
     ['tlsOptions' => 'not_an_array_or_object'] + $baseOptions,
 ];
@@ -59,9 +55,6 @@ Expected "keyVaultClient" option to be MongoDB\Driver\Manager, string given
 
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Expected "keyVaultNamespace" option to contain a full collection namespace
-
-OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Invalid namespace provided: namespaces may not contain a null byte
 
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Expected "kmsProviders" option to be an array or object, string given

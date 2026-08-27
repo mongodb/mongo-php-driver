@@ -25,7 +25,4 @@ bool phongo_parse_int64(int64_t* retval, const char* data, size_t data_len);
 
 bool phongo_split_namespace(const char* namespace, char** dbname, char** cname);
 
-bool phongo_validate_namespace(const char* namespace, size_t namespace_len);
-bool phongo_validate_dbname(const char* db, size_t db_len);
-
 #endif /* PHONGO_UTIL_H */
