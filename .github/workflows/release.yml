@@ -15,7 +15,9 @@ on:
 
 env:
   default-release-message: |
-    The PHP team is happy to announce that version {0} of the [mongodb](https://pecl.php.net/package/mongodb) PHP extension is now available on PECL.
+    The PHP team is happy to announce that version {0} of the MongoDB PHP extension is now available.
+    - [mongodb/mongodb-extension](https://packagist.org/packages/mongodb/mongodb-extension#{0}) on Packagist.
+    - [mongodb](https://pecl.php.net/package/mongodb) on PECL
 
     **Release Highlights**
 
@@ -32,16 +34,10 @@ env:
     You can either download and install the source manually, or you can install the extension with:
 
     ```
-    pecl install mongodb-{0}
+    pie install mongodb/mongodb-extension:{0}
     ```
 
-    or update with:
-
-    ```
-    pecl upgrade mongodb-{0}
-    ```
-
-    Windows binaries are attached to the GitHub release notes.
+    Sources and Windows binaries are attached to the GitHub release notes.
 
 jobs:
   prepare-release:
@@ -64,7 +60,7 @@ jobs:
         run: echo '🎬 Release process for version ${{ inputs.version }} started by @${{ github.triggering_actor }}' >> $GITHUB_STEP_SUMMARY
 
       - name: "Generate token and checkout repository"
-        uses: mongodb-labs/drivers-github-tools/secure-checkout@v2
+        uses: mongodb-labs/drivers-github-tools/secure-checkout@v3
         with:
           app_id: ${{ vars.APP_ID }}
           private_key: ${{ secrets.APP_PRIVATE_KEY }}
@@ -72,7 +68,7 @@ jobs:
           fetch-depth: 0
 
       - name: "Set up drivers-github-tools"
-        uses: mongodb-labs/drivers-github-tools/setup@v2
+        uses: mongodb-labs/drivers-github-tools/setup@v3
         with:
           aws_role_arn: ${{ secrets.AWS_ROLE_ARN }}
           aws_region_name: ${{ vars.AWS_REGION_NAME }}
@@ -84,7 +80,7 @@ jobs:
           php-version: "${{ matrix.php-version }}"
 
       - name: "Create package commit"
-        uses: mongodb-labs/drivers-github-tools/bump-version@v2
+        uses: mongodb-labs/drivers-github-tools/bump-version@v3
         with:
           version: ${{ inputs.version }}
           # Note: this script will fail and abort if the requested version can't be released
@@ -94,7 +90,7 @@ jobs:
           push_commit: false
 
       - name: "Create release tag"
-        uses: mongodb-labs/drivers-github-tools/tag-version@v2
+        uses: mongodb-labs/drivers-github-tools/tag-version@v3
         with:
           version: ${{ inputs.version }}
           tag_message_template: 'Release ${VERSION}'
@@ -102,7 +98,7 @@ jobs:
           push_tag: false
 
       - name: "Bump to next development release and commit"
-        uses: mongodb-labs/drivers-github-tools/bump-version@v2
+        uses: mongodb-labs/drivers-github-tools/bump-version@v3
         with:
           version: ${{ inputs.version }}
           version_bump_script: "./bin/update-release-version.php to-next-dev"
