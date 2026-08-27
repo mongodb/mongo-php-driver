@@ -7,14 +7,10 @@ ROOT_DIR=$(realpath "${SCRIPT_DIR}/../")
 PURLS_FILE="${ROOT_DIR}/purls.txt"
 registry="901841024863.dkr.ecr.us-east-1.amazonaws.com"
 
-LIBMONGOC_VERSION=$(cat "${ROOT_DIR}/src/libmongoc/VERSION_CURRENT" | tr -d '[:space:]')
-LIBMONGOCRYPT_VERSION=$(cat "${ROOT_DIR}/src/LIBMONGOCRYPT_VERSION_CURRENT" | tr -d '[:space:]')
+trap 'rm -f "$PURLS_FILE"' EXIT
 
 # Generate purls file from stored versions
-echo "pkg:github/mongodb/mongo-c-driver@${LIBMONGOC_VERSION}" > "$PURLS_FILE"
-echo "pkg:github/mongodb/libmongocrypt@${LIBMONGOCRYPT_VERSION}" >> "$PURLS_FILE"
-
-trap 'rm -f "$PURLS_FILE"' EXIT
+"${SCRIPT_DIR}/generate-purls.sh" > "$PURLS_FILE"
 
 # Log in to the DevProd Platforms ECR registry that hosts silkbomb. Requires membership in the
 # devprod-platforms-ecr-users Okta group and an AWS SSO profile for the account; see

@@ -101,7 +101,7 @@ if (PHP_MONGODB != "no") {
     /I" + configure_module_dirname + "/src/libmongoc/src/libbson/src/jsonsl \
     /I" + configure_module_dirname + "/src/libmongoc/src/libmongoc/src \
     /I" + configure_module_dirname + "/src/libmongoc/src/libmongoc/src/mongoc \
-    /I" + configure_module_dirname + "/src/libmongoc/src/utf8proc-2.8.0 \
+    /I" + configure_module_dirname + "/src/libmongoc/src/utf8proc-2.11.3 \
   ";
 
   // Condense whitespace in CFLAGS
@@ -125,7 +125,7 @@ if (PHP_MONGODB != "no") {
   MONGODB_ADD_SOURCES("/src/libmongoc/src/libbson/src/bson", PHP_MONGODB_BSON_SOURCES);
   MONGODB_ADD_SOURCES("/src/libmongoc/src/libbson/src/jsonsl", PHP_MONGODB_JSONSL_SOURCES);
   MONGODB_ADD_SOURCES("/src/libmongoc/src/libmongoc/src/mongoc", PHP_MONGODB_MONGOC_SOURCES);
-  MONGODB_ADD_SOURCES("/src/libmongoc/src/utf8proc-2.8.0", PHP_MONGODB_UTF8PROC_SOURCES);
+  MONGODB_ADD_SOURCES("/src/libmongoc/src/utf8proc-2.11.3", PHP_MONGODB_UTF8PROC_SOURCES);
 
   var bson_opts = {
     BSON_BYTE_ORDER: 1234,
