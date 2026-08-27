@@ -64,7 +64,9 @@ jobs:
         with:
           app_id: ${{ vars.APP_ID }}
           private_key: ${{ secrets.APP_PRIVATE_KEY }}
-          submodules: true
+          # This job only modifies phongo_version.h. Checked-out submodules make
+          # the tree look dirty after switching branches for the merge up.
+          submodules: false
           fetch-depth: 0
 
       - name: "Store version numbers in env variables"
@@ -157,6 +159,11 @@ jobs:
           commit_template: 'Back to -dev'
           # Don't push commit, we still need to merge up
           push_commit: false
+
+      # The garasign container used by bump-version and tag-version runs as root
+      # and leaves root-owned objects in .git, which later steps cannot write to
+      - name: "Restore repository ownership"
+        run: sudo chown -R "$(id -u):$(id -g)" .git
 
       - name: "Determine branch to merge up to"
         id: get-next-branch
