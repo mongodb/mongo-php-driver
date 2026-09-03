@@ -32,6 +32,27 @@ will report `phpinfo()` output for the extension:
 $ php --ri mongodb
 ```
 
+### Switching branches
+
+Each branch pins its own libmongoc and libmongocrypt commits, and `git checkout`
+does not move submodules unless `submodule.recurse` is enabled. `.gitmodules`
+also sets `ignore = untracked`, so the drift stays invisible in `git status`.
+Since the source lists in `config.m4` are generated per branch by
+`scripts/update-submodule-sources.php`, a stale submodule leads to missing-file
+errors or links the wrong C driver version. Rebuild from scratch after every
+branch change:
+
+```
+$ git checkout <branch> && git submodule update --init && \
+phpize --clean && phpize && ./configure --enable-mongodb-developer-flags && \
+make clean && make all
+```
+
+Running `git config submodule.recurse true` makes `git checkout` update the
+submodules for you, which removes one step. For a deep clean, run
+`git submodule foreach 'git clean -xdq'`, because `configure` writes generated
+headers inside the submodules and those files survive a checkout.
+
 ## Generating arginfo from stub files
 
 Arginfo structures are generated from stub files using the `gen_stub.php`
