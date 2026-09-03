@@ -1,52 +1,52 @@
 {
   "components": [
     {
-      "bom-ref": "pkg:github/mongodb/libmongocrypt@1.20.3",
+      "bom-ref": "pkg:github/mongodb/libmongocrypt@1.20.4",
       "externalReferences": [
         {
           "type": "distribution",
-          "url": "https://github.com/mongodb/libmongocrypt/archive/1.20.3.tar.gz"
+          "url": "https://github.com/mongodb/libmongocrypt/archive/1.20.4.tar.gz"
         },
         {
           "type": "website",
-          "url": "https://github.com/mongodb/libmongocrypt/tree/1.20.3"
+          "url": "https://github.com/mongodb/libmongocrypt/tree/1.20.4"
         }
       ],
       "group": "mongodb",
       "name": "libmongocrypt",
-      "purl": "pkg:github/mongodb/libmongocrypt@1.20.3",
+      "purl": "pkg:github/mongodb/libmongocrypt@1.20.4",
       "type": "library",
-      "version": "1.20.3"
+      "version": "1.20.4"
     },
     {
-      "bom-ref": "pkg:github/mongodb/mongo-c-driver@2.5.1",
+      "bom-ref": "pkg:github/mongodb/mongo-c-driver@2.5.2",
       "externalReferences": [
         {
           "type": "distribution",
-          "url": "https://github.com/mongodb/mongo-c-driver/archive/2.5.1.tar.gz"
+          "url": "https://github.com/mongodb/mongo-c-driver/archive/2.5.2.tar.gz"
         },
         {
           "type": "website",
-          "url": "https://github.com/mongodb/mongo-c-driver/tree/2.5.1"
+          "url": "https://github.com/mongodb/mongo-c-driver/tree/2.5.2"
         }
       ],
       "group": "mongodb",
       "name": "mongo-c-driver",
-      "purl": "pkg:github/mongodb/mongo-c-driver@2.5.1",
+      "purl": "pkg:github/mongodb/mongo-c-driver@2.5.2",
       "type": "library",
-      "version": "2.5.1"
+      "version": "2.5.2"
     }
   ],
   "dependencies": [
     {
-      "ref": "pkg:github/mongodb/libmongocrypt@1.20.3"
+      "ref": "pkg:github/mongodb/libmongocrypt@1.20.4"
     },
     {
-      "ref": "pkg:github/mongodb/mongo-c-driver@2.5.1"
+      "ref": "pkg:github/mongodb/mongo-c-driver@2.5.2"
     }
   ],
   "metadata": {
-    "timestamp": "2026-08-27T20:14:06.883604+00:00",
+    "timestamp": "2026-09-03T14:03:11.189489+00:00",
     "tools": [
       {
         "externalReferences": [
@@ -90,7 +90,7 @@
     ]
   },
   "serialNumber": "urn:uuid:acb30d08-ee47-4ff0-b301-d66ef1f54082",
-  "version": 26,
+  "version": 27,
   "$schema": "http://cyclonedx.org/schema/bom-1.5.schema.json",
   "bomFormat": "CycloneDX",
   "specVersion": "1.5",
