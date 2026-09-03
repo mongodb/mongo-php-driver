@@ -79,4 +79,4 @@ have one chance to confirm the package information after uploading.
 > [!IMPORTANT]
 > The order of PECL uploads matters. If doing multiple releases (e.g. 1.21.x and
 > 2.5.y) you _must_ upload 1.21 _before_ 2.5. Release in quick succession. After
-> 1.21 is uploaded, `pecl install mongodb` will install 1.21 until 2.5 is released.
+> 1.21 is uploaded, `pecl install mongodb` will install 1.21 until 2.5 is uploaded.
