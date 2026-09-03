@@ -314,7 +314,13 @@ if test "$PHP_MONGODB" != "no"; then
   fi
 
   if test "$PHP_MONGODB_SYSTEM_LIBS" = "no"; then
-    PHP_MONGODB_BUNDLED_CFLAGS="$PHP_MONGODB_STD_CFLAGS -DBSON_COMPILATION -DMONGOC_COMPILATION"
+    dnl Bundled libmongocrypt sources return "false" from pointer-returning
+    dnl functions (see the CHECK_BOUNDS macro in src/mc-range-mincover.c and
+    dnl src/mongocrypt-ctx.c). Clang reports this under the -Wall inherited from
+    dnl PHP_MONGODB_STD_CFLAGS. The behavior is correct, since C treats "false"
+    dnl as a null pointer constant, so the warning is only noise. This flag can
+    dnl be removed once the sources are fixed upstream in libmongocrypt.
+    PHP_MONGODB_BUNDLED_CFLAGS="$PHP_MONGODB_STD_CFLAGS -DBSON_COMPILATION -DMONGOC_COMPILATION -Wno-bool-conversion"
 
     dnl CheckUtf8Proc.m4 will modify this when using bundled utf8proc
     PHP_MONGODB_UTF8PROC_CFLAGS=""
