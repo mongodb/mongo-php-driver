@@ -16,10 +16,14 @@ The following script may be used to build the driver:
 ```
 #!/bin/sh
 
-phpize > /dev/null && \
+phpize --clean > /dev/null && phpize > /dev/null && \
 ./configure --enable-mongodb-developer-flags > /dev/null && \
 make clean > /dev/null && make all > /dev/null && make install
 ```
+
+`phpize --clean` removes the copies of `run-tests.php` and the `build` directory
+made by an earlier run. Some package managers install those files read-only, so
+`phpize` cannot overwrite them and they go stale after a PHP upgrade.
 
 To verify that the installation was successful, run the following command, which
 will report `phpinfo()` output for the extension:
