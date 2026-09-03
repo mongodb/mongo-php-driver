@@ -68,3 +68,8 @@ Once the packaging workflow has finished creating the PECL package, it will be
 published as a release asset in the draft release. This package may be published
 via the [Release Upload](https://pecl.php.net/release-upload.php) form. You will
 have one chance to confirm the package information after uploading.
+
+> [!IMPORTANT]
+> The order of PECL uploads matters. If doing multiple releases (e.g. 1.21.x and
+> 2.5.y), you _must_ upload the 1.21.x release _before_ the 2.5.y release and
+> publish them in quick succession. After 1.21.x is uploaded, `pecl install mongodb` will install the latest 1.21.x release until 2.5.y is uploaded.
