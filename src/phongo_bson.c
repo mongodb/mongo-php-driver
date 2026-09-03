@@ -87,7 +87,12 @@ char* phongo_field_path_as_string(phongo_field_path* field_path)
 		return estrdup("");
 	}
 
-	for (i = 0; i <= field_path->size; i++) {
+	/* Iterate up to and including "size", since the element for the current
+	 * level is stored at that index and is only counted once the level is
+	 * pushed. That index is not always allocated: the array only grows when an
+	 * element is written to it, so stop at "allocated_size" to avoid reading
+	 * past the end of the array. */
+	for (i = 0; i <= field_path->size && i < field_path->allocated_size; i++) {
 		if (!field_path->elements[i]) {
 			continue;
 		}
@@ -97,7 +102,7 @@ char* phongo_field_path_as_string(phongo_field_path* field_path)
 	path = emalloc(length);
 	ptr  = path;
 
-	for (i = 0; i <= field_path->size; i++) {
+	for (i = 0; i <= field_path->size && i < field_path->allocated_size; i++) {
 		size_t element_len;
 
 		if (!field_path->elements[i]) {
