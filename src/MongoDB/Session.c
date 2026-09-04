@@ -22,7 +22,7 @@
 
 #include "php_array_api.h"
 
-#include "php_phongo.h"
+#include "phongo.h"
 #include "phongo_bson_encode.h"
 #include "phongo_client.h"
 #include "phongo_error.h"
@@ -35,7 +35,7 @@
 #include "Session_arginfo.h"
 #include "BSON/Timestamp.h"
 
-zend_class_entry* php_phongo_session_ce;
+zend_class_entry* phongo_session_ce;
 
 #define SESSION_CHECK_LIVELINESS(i, m)                                  \
 	if (!(i)->client_session) {                                         \
@@ -46,7 +46,7 @@ zend_class_entry* php_phongo_session_ce;
 		return;                                                         \
 	}
 
-static bool php_phongo_session_get_timestamp_parts(zval* obj, uint32_t* timestamp, uint32_t* increment)
+static bool phongo_session_get_timestamp_parts(zval* obj, uint32_t* timestamp, uint32_t* increment)
 {
 	bool retval     = false;
 	zval ztimestamp = ZVAL_STATIC_INIT;
@@ -81,7 +81,7 @@ cleanup:
 	return retval;
 }
 
-static const char* php_phongo_get_transaction_state_string(mongoc_transaction_state_t state)
+static const char* phongo_get_transaction_state_string(mongoc_transaction_state_t state)
 {
 	switch (state) {
 		case MONGOC_TRANSACTION_NONE:
@@ -100,7 +100,7 @@ static const char* php_phongo_get_transaction_state_string(mongoc_transaction_st
 	}
 }
 
-static void php_phongo_transaction_options_to_zval(mongoc_client_session_t* cs, zval* retval)
+static void phongo_transaction_options_to_zval(mongoc_client_session_t* cs, zval* retval)
 {
 	mongoc_transaction_opt_t*     opts;
 	int64_t                       max_commit_time_ms;
@@ -160,18 +160,18 @@ PHONGO_DISABLED_CONSTRUCTOR(MongoDB_Driver_Session)
 /* Advances the cluster time for this Session */
 static PHP_METHOD(MongoDB_Driver_Session, advanceClusterTime)
 {
-	php_phongo_session_t* intern;
-	zval*                 zcluster_time;
-	bson_t                cluster_time = BSON_INITIALIZER;
+	PHONGO_INTERN_FROM_THIS(session);
 
-	intern = Z_SESSION_OBJ_P(getThis());
+	zval*  zcluster_time;
+	bson_t cluster_time = BSON_INITIALIZER;
+
 	SESSION_CHECK_LIVELINESS(intern, "advanceClusterTime")
 
 	PHONGO_PARSE_PARAMETERS_START(1, 1)
 	Z_PARAM_ARRAY_OR_OBJECT(zcluster_time)
 	PHONGO_PARSE_PARAMETERS_END();
 
-	php_phongo_zval_to_bson(zcluster_time, PHONGO_BSON_NONE, &cluster_time, NULL);
+	phongo_zval_to_bson(zcluster_time, PHONGO_BSON_NONE, &cluster_time, NULL);
 
 	/* An exception may be thrown during BSON conversion */
 	if (EG(exception)) {
@@ -187,19 +187,19 @@ cleanup:
 /* Advances the operation time for this Session */
 static PHP_METHOD(MongoDB_Driver_Session, advanceOperationTime)
 {
-	php_phongo_session_t* intern;
-	zval*                 ztimestamp;
-	uint32_t              timestamp = 0;
-	uint32_t              increment = 0;
+	PHONGO_INTERN_FROM_THIS(session);
 
-	intern = Z_SESSION_OBJ_P(getThis());
+	zval*    ztimestamp;
+	uint32_t timestamp = 0;
+	uint32_t increment = 0;
+
 	SESSION_CHECK_LIVELINESS(intern, "advanceOperationTime")
 
 	PHONGO_PARSE_PARAMETERS_START(1, 1)
-	Z_PARAM_OBJECT_OF_CLASS(ztimestamp, php_phongo_timestamp_interface_ce)
+	Z_PARAM_OBJECT_OF_CLASS(ztimestamp, phongo_timestamp_interface_ce)
 	PHONGO_PARSE_PARAMETERS_END();
 
-	if (!php_phongo_session_get_timestamp_parts(ztimestamp, &timestamp, &increment)) {
+	if (!phongo_session_get_timestamp_parts(ztimestamp, &timestamp, &increment)) {
 		return;
 	}
 
@@ -209,13 +209,13 @@ static PHP_METHOD(MongoDB_Driver_Session, advanceOperationTime)
 /* Returns the cluster time for this Session */
 static PHP_METHOD(MongoDB_Driver_Session, getClusterTime)
 {
-	php_phongo_session_t* intern;
-	const bson_t*         cluster_time;
-	php_phongo_bson_state state;
+	PHONGO_INTERN_FROM_THIS(session);
+
+	const bson_t*     cluster_time;
+	phongo_bson_state state;
 
 	PHONGO_BSON_INIT_STATE(state);
 
-	intern = Z_SESSION_OBJ_P(getThis());
 	SESSION_CHECK_LIVELINESS(intern, "getClusterTime")
 
 	PHONGO_PARSE_PARAMETERS_NONE();
@@ -226,7 +226,7 @@ static PHP_METHOD(MongoDB_Driver_Session, getClusterTime)
 		RETURN_NULL();
 	}
 
-	if (!php_phongo_bson_to_zval_ex(cluster_time, &state)) {
+	if (!phongo_bson_to_zval_ex(cluster_time, &state)) {
 		/* Exception should already have been thrown */
 		zval_ptr_dtor(&state.zchild);
 		return;
@@ -238,20 +238,20 @@ static PHP_METHOD(MongoDB_Driver_Session, getClusterTime)
 /* Returns the logical session ID for this Session */
 static PHP_METHOD(MongoDB_Driver_Session, getLogicalSessionId)
 {
-	php_phongo_session_t* intern;
-	const bson_t*         lsid;
-	php_phongo_bson_state state;
+	PHONGO_INTERN_FROM_THIS(session);
+
+	const bson_t*     lsid;
+	phongo_bson_state state;
 
 	PHONGO_BSON_INIT_STATE(state);
 
-	intern = Z_SESSION_OBJ_P(getThis());
 	SESSION_CHECK_LIVELINESS(intern, "getLogicalSessionId")
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
 	lsid = mongoc_client_session_get_lsid(intern->client_session);
 
-	if (!php_phongo_bson_to_zval_ex(lsid, &state)) {
+	if (!phongo_bson_to_zval_ex(lsid, &state)) {
 		/* Exception should already have been thrown */
 		zval_ptr_dtor(&state.zchild);
 		return;
@@ -263,10 +263,10 @@ static PHP_METHOD(MongoDB_Driver_Session, getLogicalSessionId)
 /* Returns the operation time for this Session */
 static PHP_METHOD(MongoDB_Driver_Session, getOperationTime)
 {
-	php_phongo_session_t* intern;
-	uint32_t              timestamp, increment;
+	PHONGO_INTERN_FROM_THIS(session);
 
-	intern = Z_SESSION_OBJ_P(getThis());
+	uint32_t timestamp, increment;
+
 	SESSION_CHECK_LIVELINESS(intern, "getOperationTime")
 
 	PHONGO_PARSE_PARAMETERS_NONE();
@@ -286,10 +286,10 @@ static PHP_METHOD(MongoDB_Driver_Session, getOperationTime)
 /* Returns the server this session is pinned to */
 static PHP_METHOD(MongoDB_Driver_Session, getServer)
 {
-	php_phongo_session_t* intern;
-	uint32_t              server_id = 0;
+	PHONGO_INTERN_FROM_THIS(session);
 
-	intern = Z_SESSION_OBJ_P(getThis());
+	uint32_t server_id = 0;
+
 	SESSION_CHECK_LIVELINESS(intern, "getServer")
 
 	PHONGO_PARSE_PARAMETERS_NONE();
@@ -307,28 +307,27 @@ static PHP_METHOD(MongoDB_Driver_Session, getServer)
 /* Returns options for the currently running transaction */
 static PHP_METHOD(MongoDB_Driver_Session, getTransactionOptions)
 {
-	php_phongo_session_t* intern;
+	PHONGO_INTERN_FROM_THIS(session);
 
-	intern = Z_SESSION_OBJ_P(getThis());
 	SESSION_CHECK_LIVELINESS(intern, "getTransactionOptions")
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
-	php_phongo_transaction_options_to_zval(intern->client_session, return_value);
+	phongo_transaction_options_to_zval(intern->client_session, return_value);
 }
 
 /* Returns the current transaction state for this session */
 static PHP_METHOD(MongoDB_Driver_Session, getTransactionState)
 {
-	php_phongo_session_t* intern;
-	const char*           state;
+	PHONGO_INTERN_FROM_THIS(session);
 
-	intern = Z_SESSION_OBJ_P(getThis());
+	const char* state;
+
 	SESSION_CHECK_LIVELINESS(intern, "getTransactionState")
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
-	state = php_phongo_get_transaction_state_string(mongoc_client_session_get_transaction_state(intern->client_session));
+	state = phongo_get_transaction_state_string(mongoc_client_session_get_transaction_state(intern->client_session));
 	if (!state) {
 		/* Exception already thrown */
 		return;
@@ -380,8 +379,8 @@ mongoc_transaction_opt_t* php_mongodb_session_parse_transaction_options(zval* op
 	if (php_array_existsc(options, "readConcern")) {
 		zval* read_concern = php_array_fetchc_deref(options, "readConcern");
 
-		if (Z_TYPE_P(read_concern) != IS_OBJECT || !instanceof_function(Z_OBJCE_P(read_concern), php_phongo_readconcern_ce)) {
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"readConcern\" option to be %s, %s given", ZSTR_VAL(php_phongo_readconcern_ce->name), zend_zval_type_name(read_concern));
+		if (Z_TYPE_P(read_concern) != IS_OBJECT || !instanceof_function(Z_OBJCE_P(read_concern), phongo_readconcern_ce)) {
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"readConcern\" option to be %s, %s given", ZSTR_VAL(phongo_readconcern_ce->name), zend_zval_type_name(read_concern));
 			if (opts) {
 				mongoc_transaction_opts_destroy(opts);
 			}
@@ -398,8 +397,8 @@ mongoc_transaction_opt_t* php_mongodb_session_parse_transaction_options(zval* op
 	if (php_array_existsc(options, "readPreference")) {
 		zval* read_preference = php_array_fetchc_deref(options, "readPreference");
 
-		if (Z_TYPE_P(read_preference) != IS_OBJECT || !instanceof_function(Z_OBJCE_P(read_preference), php_phongo_readpreference_ce)) {
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"readPreference\" option to be %s, %s given", ZSTR_VAL(php_phongo_readpreference_ce->name), zend_zval_type_name(read_preference));
+		if (Z_TYPE_P(read_preference) != IS_OBJECT || !instanceof_function(Z_OBJCE_P(read_preference), phongo_readpreference_ce)) {
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"readPreference\" option to be %s, %s given", ZSTR_VAL(phongo_readpreference_ce->name), zend_zval_type_name(read_preference));
 			if (opts) {
 				mongoc_transaction_opts_destroy(opts);
 			}
@@ -416,8 +415,8 @@ mongoc_transaction_opt_t* php_mongodb_session_parse_transaction_options(zval* op
 	if (php_array_existsc(options, "writeConcern")) {
 		zval* write_concern = php_array_fetchc_deref(options, "writeConcern");
 
-		if (Z_TYPE_P(write_concern) != IS_OBJECT || !instanceof_function(Z_OBJCE_P(write_concern), php_phongo_writeconcern_ce)) {
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"writeConcern\" option to be %s, %s given", ZSTR_VAL(php_phongo_writeconcern_ce->name), zend_zval_type_name(write_concern));
+		if (Z_TYPE_P(write_concern) != IS_OBJECT || !instanceof_function(Z_OBJCE_P(write_concern), phongo_writeconcern_ce)) {
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"writeConcern\" option to be %s, %s given", ZSTR_VAL(phongo_writeconcern_ce->name), zend_zval_type_name(write_concern));
 			if (opts) {
 				mongoc_transaction_opts_destroy(opts);
 			}
@@ -437,12 +436,12 @@ mongoc_transaction_opt_t* php_mongodb_session_parse_transaction_options(zval* op
 /* Starts a new transaction */
 static PHP_METHOD(MongoDB_Driver_Session, startTransaction)
 {
-	php_phongo_session_t*     intern;
+	PHONGO_INTERN_FROM_THIS(session);
+
 	zval*                     options     = NULL;
 	mongoc_transaction_opt_t* txn_options = NULL;
 	bson_error_t              error;
 
-	intern = Z_SESSION_OBJ_P(getThis());
 	SESSION_CHECK_LIVELINESS(intern, "startTransaction")
 
 	PHONGO_PARSE_PARAMETERS_START(0, 1)
@@ -469,11 +468,11 @@ static PHP_METHOD(MongoDB_Driver_Session, startTransaction)
 /* Commits an existing transaction */
 static PHP_METHOD(MongoDB_Driver_Session, commitTransaction)
 {
-	php_phongo_session_t* intern;
-	bson_error_t          error;
-	bson_t                reply;
+	PHONGO_INTERN_FROM_THIS(session);
 
-	intern = Z_SESSION_OBJ_P(getThis());
+	bson_error_t error;
+	bson_t       reply;
+
 	SESSION_CHECK_LIVELINESS(intern, "commitTransaction")
 
 	PHONGO_PARSE_PARAMETERS_NONE();
@@ -488,10 +487,10 @@ static PHP_METHOD(MongoDB_Driver_Session, commitTransaction)
 /* Aborts (rolls back) an existing transaction */
 static PHP_METHOD(MongoDB_Driver_Session, abortTransaction)
 {
-	php_phongo_session_t* intern;
-	bson_error_t          error;
+	PHONGO_INTERN_FROM_THIS(session);
 
-	intern = Z_SESSION_OBJ_P(getThis());
+	bson_error_t error;
+
 	SESSION_CHECK_LIVELINESS(intern, "abortTransaction")
 
 	PHONGO_PARSE_PARAMETERS_NONE();
@@ -504,9 +503,7 @@ static PHP_METHOD(MongoDB_Driver_Session, abortTransaction)
 /* Ends the session, and a running transaction if active */
 static PHP_METHOD(MongoDB_Driver_Session, endSession)
 {
-	php_phongo_session_t* intern;
-
-	intern = Z_SESSION_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(session);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -519,7 +516,7 @@ static PHP_METHOD(MongoDB_Driver_Session, endSession)
    server session pool. */
 static PHP_METHOD(MongoDB_Driver_Session, isDirty)
 {
-	php_phongo_session_t* intern = Z_SESSION_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(session);
 
 	SESSION_CHECK_LIVELINESS(intern, "isDirty")
 
@@ -531,9 +528,8 @@ static PHP_METHOD(MongoDB_Driver_Session, isDirty)
 /* Returns whether a multi-document transaction is in progress */
 static PHP_METHOD(MongoDB_Driver_Session, isInTransaction)
 {
-	php_phongo_session_t* intern;
+	PHONGO_INTERN_FROM_THIS(session);
 
-	intern = Z_SESSION_OBJ_P(getThis());
 	SESSION_CHECK_LIVELINESS(intern, "isInTransaction")
 
 	PHONGO_PARSE_PARAMETERS_NONE();
@@ -542,11 +538,11 @@ static PHP_METHOD(MongoDB_Driver_Session, isInTransaction)
 }
 
 /* MongoDB\Driver\Session object handlers */
-static zend_object_handlers php_phongo_handler_session;
+static zend_object_handlers phongo_handler_session;
 
-static void php_phongo_session_free_object(zend_object* object)
+static void phongo_session_free_object(zend_object* object)
 {
-	php_phongo_session_t* intern = Z_OBJ_SESSION(object);
+	PHONGO_INTERN_FROM_Z_OBJ(session, object);
 
 	zend_object_std_dtor(&intern->std);
 
@@ -566,27 +562,24 @@ static void php_phongo_session_free_object(zend_object* object)
 	}
 }
 
-static zend_object* php_phongo_session_create_object(zend_class_entry* class_type)
+static zend_object* phongo_session_create_object(zend_class_entry* class_type)
 {
-	php_phongo_session_t* intern = zend_object_alloc(sizeof(php_phongo_session_t), class_type);
-
-	zend_object_std_init(&intern->std, class_type);
-	object_properties_init(&intern->std, class_type);
+	PHONGO_INTERN_OBJECT_ALLOC(session, class_type);
 
 	PHONGO_SET_CREATED_BY_PID(intern);
 
-	intern->std.handlers = &php_phongo_handler_session;
+	intern->std.handlers = &phongo_handler_session;
 
 	return &intern->std;
 }
 
-static HashTable* php_phongo_session_get_debug_info(zend_object* object, int* is_temp)
+static HashTable* phongo_session_get_debug_info(zend_object* object, int* is_temp)
 {
-	php_phongo_session_t* intern = NULL;
-	zval                  retval = ZVAL_STATIC_INIT;
+	PHONGO_INTERN_FROM_Z_OBJ(session, object);
+
+	zval retval = ZVAL_STATIC_INIT;
 
 	*is_temp = 1;
-	intern   = Z_OBJ_SESSION(object);
 
 	array_init(&retval);
 
@@ -597,12 +590,12 @@ static HashTable* php_phongo_session_get_debug_info(zend_object* object, int* is
 	}
 
 	{
-		const bson_t*         lsid = mongoc_client_session_get_lsid(intern->client_session);
-		php_phongo_bson_state state;
+		const bson_t*     lsid = mongoc_client_session_get_lsid(intern->client_session);
+		phongo_bson_state state;
 
 		PHONGO_BSON_INIT_DEBUG_STATE(state);
 
-		if (!php_phongo_bson_to_zval_ex(lsid, &state)) {
+		if (!phongo_bson_to_zval_ex(lsid, &state)) {
 			zval_ptr_dtor(&state.zchild);
 			goto done;
 		}
@@ -614,11 +607,11 @@ static HashTable* php_phongo_session_get_debug_info(zend_object* object, int* is
 		const bson_t* cluster_time = mongoc_client_session_get_cluster_time(intern->client_session);
 
 		if (cluster_time) {
-			php_phongo_bson_state state;
+			phongo_bson_state state;
 
 			PHONGO_BSON_INIT_DEBUG_STATE(state);
 
-			if (!php_phongo_bson_to_zval_ex(cluster_time, &state)) {
+			if (!phongo_bson_to_zval_ex(cluster_time, &state)) {
 				zval_ptr_dtor(&state.zchild);
 				goto done;
 			}
@@ -671,7 +664,7 @@ static HashTable* php_phongo_session_get_debug_info(zend_object* object, int* is
 	ADD_ASSOC_BOOL_EX(&retval, "inTransaction", mongoc_client_session_in_transaction(intern->client_session));
 
 	{
-		const char* state = php_phongo_get_transaction_state_string(mongoc_client_session_get_transaction_state(intern->client_session));
+		const char* state = phongo_get_transaction_state_string(mongoc_client_session_get_transaction_state(intern->client_session));
 
 		if (!state) {
 			/* Exception should already have been thrown */
@@ -684,7 +677,7 @@ static HashTable* php_phongo_session_get_debug_info(zend_object* object, int* is
 	{
 		zval txn_opts;
 
-		php_phongo_transaction_options_to_zval(intern->client_session, &txn_opts);
+		phongo_transaction_options_to_zval(intern->client_session, &txn_opts);
 		ADD_ASSOC_ZVAL_EX(&retval, "transactionOptions", &txn_opts);
 	}
 
@@ -692,22 +685,22 @@ done:
 	return Z_ARRVAL(retval);
 }
 
-void php_phongo_session_init_ce(INIT_FUNC_ARGS)
+void phongo_session_init_ce(INIT_FUNC_ARGS)
 {
-	php_phongo_session_ce                = register_class_MongoDB_Driver_Session();
-	php_phongo_session_ce->create_object = php_phongo_session_create_object;
+	phongo_session_ce                = register_class_MongoDB_Driver_Session();
+	phongo_session_ce->create_object = phongo_session_create_object;
 
-	memcpy(&php_phongo_handler_session, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
-	php_phongo_handler_session.get_debug_info = php_phongo_session_get_debug_info;
-	php_phongo_handler_session.free_obj       = php_phongo_session_free_object;
-	php_phongo_handler_session.offset         = XtOffsetOf(php_phongo_session_t, std);
+	memcpy(&phongo_handler_session, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
+	phongo_handler_session.get_debug_info = phongo_session_get_debug_info;
+	phongo_handler_session.free_obj       = phongo_session_free_object;
+	phongo_handler_session.offset         = offsetof(phongo_session_t, std);
 }
 
 void phongo_session_init(zval* return_value, zval* manager, mongoc_client_session_t* client_session)
 {
-	php_phongo_session_t* session;
+	phongo_session_t* session;
 
-	object_init_ex(return_value, php_phongo_session_ce);
+	object_init_ex(return_value, phongo_session_ce);
 
 	session                 = Z_SESSION_OBJ_P(return_value);
 	session->client_session = client_session;

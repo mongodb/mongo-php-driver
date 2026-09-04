@@ -25,33 +25,33 @@
 #include "config.h"
 #endif
 
-#include "php_phongo.h"
+#include "phongo.h"
 #include "phongo_error.h"
 #include "BSON/Iterator.h"
 #include "BSON/Iterator_arginfo.h"
 
-zend_class_entry* php_phongo_iterator_ce;
+zend_class_entry* phongo_iterator_ce;
 
-static const bson_t* php_phongo_iterator_get_bson_from_zval(zval* zbson)
+static const bson_t* phongo_iterator_get_bson_from_zval(zval* zbson)
 {
 	if (Z_TYPE_P(zbson) != IS_OBJECT) {
 		return NULL;
 	}
 
-	if (instanceof_function(Z_OBJCE_P(zbson), php_phongo_document_ce)) {
+	if (instanceof_function(Z_OBJCE_P(zbson), phongo_document_ce)) {
 		return Z_DOCUMENT_OBJ_P(zbson)->bson;
-	} else if (instanceof_function(Z_OBJCE_P(zbson), php_phongo_packedarray_ce)) {
+	} else if (instanceof_function(Z_OBJCE_P(zbson), phongo_packedarray_ce)) {
 		return Z_PACKEDARRAY_OBJ_P(zbson)->bson;
 	} else {
 		return NULL;
 	}
 }
 
-static bool php_phongo_iterator_init_with_zval(php_phongo_iterator_t* iterator, zval* zbson)
+static bool phongo_iterator_init_with_zval(phongo_iterator_t* iterator, zval* zbson)
 {
 	const bson_t* bson;
 
-	bson = php_phongo_iterator_get_bson_from_zval(zbson);
+	bson = phongo_iterator_get_bson_from_zval(zbson);
 	if (!bson) {
 		/* Should never happen, but if it does: exception */
 		phongo_throw_exception(PHONGO_ERROR_LOGIC, "Could not create iterator for %s instance", zend_zval_type_name(zbson));
@@ -66,7 +66,7 @@ static bool php_phongo_iterator_init_with_zval(php_phongo_iterator_t* iterator, 
 	}
 
 	ZVAL_COPY(&iterator->bson, zbson);
-	if (instanceof_function(Z_OBJCE_P(zbson), php_phongo_packedarray_ce)) {
+	if (instanceof_function(Z_OBJCE_P(zbson), phongo_packedarray_ce)) {
 		iterator->is_array = true;
 	}
 
@@ -75,7 +75,7 @@ static bool php_phongo_iterator_init_with_zval(php_phongo_iterator_t* iterator, 
 	return true;
 }
 
-static void php_phongo_iterator_free_current(php_phongo_iterator_t* intern)
+static void phongo_iterator_free_current(phongo_iterator_t* intern)
 {
 	if (Z_ISUNDEF(intern->current)) {
 		return;
@@ -85,14 +85,14 @@ static void php_phongo_iterator_free_current(php_phongo_iterator_t* intern)
 	ZVAL_UNDEF(&intern->current);
 }
 
-static void php_phongo_iterator_build_current(php_phongo_iterator_t* intern)
+static void phongo_iterator_build_current(phongo_iterator_t* intern)
 {
-	php_phongo_iterator_free_current(intern);
+	phongo_iterator_free_current(intern);
 
 	phongo_bson_value_to_zval(bson_iter_value(&intern->iter), &intern->current);
 }
 
-static zval* php_phongo_iterator_get_current(php_phongo_iterator_t* intern)
+static zval* phongo_iterator_get_current(phongo_iterator_t* intern)
 {
 	if (!intern->valid) {
 		phongo_throw_exception(PHONGO_ERROR_LOGIC, "Cannot call current() on an exhausted iterator");
@@ -100,20 +100,20 @@ static zval* php_phongo_iterator_get_current(php_phongo_iterator_t* intern)
 	}
 
 	if (Z_ISUNDEF(intern->current)) {
-		php_phongo_iterator_build_current(intern);
+		phongo_iterator_build_current(intern);
 	}
 
 	return &intern->current;
 }
 
-static void php_phongo_iterator_next(php_phongo_iterator_t* intern)
+static void phongo_iterator_next(phongo_iterator_t* intern)
 {
 	intern->valid = bson_iter_next(&intern->iter);
 	intern->key++;
-	php_phongo_iterator_free_current(intern);
+	phongo_iterator_free_current(intern);
 }
 
-static bool php_phongo_iterator_key(php_phongo_iterator_t* intern, zval* key)
+static bool phongo_iterator_key(phongo_iterator_t* intern, zval* key)
 {
 	const char* ckey;
 
@@ -139,26 +139,25 @@ static bool php_phongo_iterator_key(php_phongo_iterator_t* intern, zval* key)
 	return true;
 }
 
-static void php_phongo_iterator_rewind(php_phongo_iterator_t* intern)
+static void phongo_iterator_rewind(phongo_iterator_t* intern)
 {
 	/* Don't re-initialise iterator if we're still on the first item */
 	if (intern->key == 0) {
 		return;
 	}
 
-	php_phongo_iterator_free_current(intern);
+	phongo_iterator_free_current(intern);
 
-	bson_iter_init(&intern->iter, php_phongo_iterator_get_bson_from_zval(&intern->bson));
+	bson_iter_init(&intern->iter, phongo_iterator_get_bson_from_zval(&intern->bson));
 	intern->key   = 0;
 	intern->valid = bson_iter_next(&intern->iter);
 }
 
-static HashTable* php_phongo_iterator_get_properties_hash(zend_object* object, bool is_temp)
+static HashTable* phongo_iterator_get_properties_hash(zend_object* object, bool is_temp)
 {
-	php_phongo_iterator_t* intern;
-	HashTable*             props;
+	PHONGO_INTERN_FROM_Z_OBJ(iterator, object);
 
-	intern = Z_OBJ_ITERATOR(object);
+	HashTable* props;
 
 	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_temp, intern, props, 1);
 
@@ -172,12 +171,13 @@ PHONGO_DISABLED_CONSTRUCTOR(MongoDB_BSON_Iterator)
 
 static PHP_METHOD(MongoDB_BSON_Iterator, current)
 {
-	php_phongo_iterator_t* intern = Z_ITERATOR_OBJ_P(getThis());
-	zval*                  data;
+	PHONGO_INTERN_FROM_THIS(iterator);
+
+	zval* data;
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
-	data = php_phongo_iterator_get_current(intern);
+	data = phongo_iterator_get_current(intern);
 	if (!data) {
 		// Exception already thrown
 		RETURN_NULL();
@@ -192,11 +192,11 @@ static PHP_METHOD(MongoDB_BSON_Iterator, current)
 
 static PHP_METHOD(MongoDB_BSON_Iterator, key)
 {
-	php_phongo_iterator_t* intern = Z_ITERATOR_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(iterator);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
-	if (!php_phongo_iterator_key(intern, return_value)) {
+	if (!phongo_iterator_key(intern, return_value)) {
 		// Exception already thrown
 		return;
 	}
@@ -204,16 +204,16 @@ static PHP_METHOD(MongoDB_BSON_Iterator, key)
 
 static PHP_METHOD(MongoDB_BSON_Iterator, next)
 {
-	php_phongo_iterator_t* intern = Z_ITERATOR_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(iterator);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
-	php_phongo_iterator_next(intern);
+	phongo_iterator_next(intern);
 }
 
 static PHP_METHOD(MongoDB_BSON_Iterator, valid)
 {
-	php_phongo_iterator_t* intern = Z_ITERATOR_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(iterator);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -222,29 +222,26 @@ static PHP_METHOD(MongoDB_BSON_Iterator, valid)
 
 static PHP_METHOD(MongoDB_BSON_Iterator, rewind)
 {
-	php_phongo_iterator_t* intern = Z_ITERATOR_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(iterator);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
-	php_phongo_iterator_rewind(intern);
+	phongo_iterator_rewind(intern);
 }
 
 void phongo_iterator_init(zval* return_value, zval* document_or_packedarray)
 {
-	php_phongo_iterator_t* intern;
+	PHONGO_INTERN_INIT_EX(iterator, return_value);
 
-	object_init_ex(return_value, php_phongo_iterator_ce);
-	intern = Z_ITERATOR_OBJ_P(return_value);
-
-	php_phongo_iterator_init_with_zval(intern, document_or_packedarray);
+	phongo_iterator_init_with_zval(intern, document_or_packedarray);
 }
 
 /* MongoDB\BSON\Iterator object handlers */
-static zend_object_handlers php_phongo_handler_iterator;
+static zend_object_handlers phongo_handler_iterator;
 
-static void php_phongo_iterator_free_object(zend_object* object)
+static void phongo_iterator_free_object(zend_object* object)
 {
-	php_phongo_iterator_t* intern = Z_OBJ_ITERATOR(object);
+	PHONGO_INTERN_FROM_Z_OBJ(iterator, object);
 
 	zend_object_std_dtor(&intern->std);
 
@@ -253,113 +250,110 @@ static void php_phongo_iterator_free_object(zend_object* object)
 		FREE_HASHTABLE(intern->properties);
 	}
 
-	php_phongo_iterator_free_current(intern);
+	phongo_iterator_free_current(intern);
 
 	zval_ptr_dtor(&intern->bson);
 }
 
-static zend_object* php_phongo_iterator_create_object(zend_class_entry* class_type)
+static zend_object* phongo_iterator_create_object(zend_class_entry* class_type)
 {
-	php_phongo_iterator_t* intern = zend_object_alloc(sizeof(php_phongo_iterator_t), class_type);
+	PHONGO_INTERN_OBJECT_ALLOC(iterator, class_type);
 
-	zend_object_std_init(&intern->std, class_type);
-	object_properties_init(&intern->std, class_type);
-
-	intern->std.handlers = &php_phongo_handler_iterator;
+	intern->std.handlers = &phongo_handler_iterator;
 
 	return &intern->std;
 }
 
-static zend_object* php_phongo_iterator_clone_object(zend_object* object)
+static zend_object* phongo_iterator_clone_object(zend_object* object)
 {
-	php_phongo_iterator_t* intern;
-	php_phongo_iterator_t* new_intern;
-	zend_object*           new_object;
+	PHONGO_INTERN_FROM_Z_OBJ(iterator, object);
 
-	intern     = Z_OBJ_ITERATOR(object);
-	new_object = php_phongo_iterator_create_object(object->ce);
+	phongo_iterator_t* new_intern;
+	zend_object*       new_object;
+
+	new_object = phongo_iterator_create_object(object->ce);
 	new_intern = Z_OBJ_ITERATOR(new_object);
 
-	php_phongo_iterator_init_with_zval(new_intern, &intern->bson);
+	phongo_iterator_init_with_zval(new_intern, &intern->bson);
 	zend_objects_clone_members(&new_intern->std, &intern->std);
 
 	return new_object;
 }
 
-static HashTable* php_phongo_iterator_get_debug_info(zend_object* object, int* is_temp)
+static HashTable* phongo_iterator_get_debug_info(zend_object* object, int* is_temp)
 {
 	*is_temp = 1;
-	return php_phongo_iterator_get_properties_hash(object, true);
+	return phongo_iterator_get_properties_hash(object, true);
 }
 
-static HashTable* php_phongo_iterator_get_properties(zend_object* object)
+static HashTable* phongo_iterator_get_properties(zend_object* object)
 {
-	return php_phongo_iterator_get_properties_hash(object, false);
+	return phongo_iterator_get_properties_hash(object, false);
 }
 
 /* Iterator handlers */
-static void php_phongo_iterator_it_dtor(zend_object_iterator* iter)
+static void phongo_iterator_it_dtor(zend_object_iterator* iter)
 {
 	zval_ptr_dtor(&iter->data);
 }
 
-static int php_phongo_iterator_it_valid(zend_object_iterator* iter)
+static PHONGO_ITERATOR_VALID_RESULT phongo_iterator_it_valid(zend_object_iterator* iter)
 {
-	php_phongo_iterator_t* intern = Z_ITERATOR_OBJ_P(&iter->data);
+	PHONGO_INTERN_FROM_ZVAL(iterator, &iter->data);
 
 	return intern->valid ? SUCCESS : FAILURE;
 }
 
-static zval* php_phongo_iterator_it_get_current_data(zend_object_iterator* iter)
+static zval* phongo_iterator_it_get_current_data(zend_object_iterator* iter)
 {
-	php_phongo_iterator_t* intern = Z_ITERATOR_OBJ_P(&iter->data);
+	PHONGO_INTERN_FROM_ZVAL(iterator, &iter->data);
 
-	return php_phongo_iterator_get_current(intern);
+	return phongo_iterator_get_current(intern);
 }
 
-static void php_phongo_iterator_it_get_current_key(zend_object_iterator* iter, zval* key)
+static void phongo_iterator_it_get_current_key(zend_object_iterator* iter, zval* key)
 {
-	php_phongo_iterator_t* intern = Z_ITERATOR_OBJ_P(&iter->data);
+	PHONGO_INTERN_FROM_ZVAL(iterator, &iter->data);
 
-	if (!php_phongo_iterator_key(intern, key)) {
+	if (!phongo_iterator_key(intern, key)) {
 		// Exception already thrown
 		return;
 	}
 }
 
-static void php_phongo_iterator_it_move_forward(zend_object_iterator* iter)
+static void phongo_iterator_it_move_forward(zend_object_iterator* iter)
 {
-	php_phongo_iterator_t* intern = Z_ITERATOR_OBJ_P(&iter->data);
+	PHONGO_INTERN_FROM_ZVAL(iterator, &iter->data);
 
-	php_phongo_iterator_next(intern);
+	phongo_iterator_next(intern);
 }
 
-static void php_phongo_iterator_it_rewind(zend_object_iterator* iter)
+static void phongo_iterator_it_rewind(zend_object_iterator* iter)
 {
-	php_phongo_iterator_t* intern = Z_ITERATOR_OBJ_P(&iter->data);
+	PHONGO_INTERN_FROM_ZVAL(iterator, &iter->data);
 
-	php_phongo_iterator_rewind(intern);
+	phongo_iterator_rewind(intern);
 }
 
-static HashTable* php_phongo_iterator_it_get_gc(zend_object_iterator* iter, zval** table, int* n)
+static HashTable* phongo_iterator_it_get_gc(zend_object_iterator* iter, zval** table, int* n)
 {
 	*n     = 1;
 	*table = &iter->data;
 	return NULL;
 }
 
-static const zend_object_iterator_funcs php_phongo_iterator_it_funcs = {
-	php_phongo_iterator_it_dtor,
-	php_phongo_iterator_it_valid,
-	php_phongo_iterator_it_get_current_data,
-	php_phongo_iterator_it_get_current_key,
-	php_phongo_iterator_it_move_forward,
-	php_phongo_iterator_it_rewind,
+static const zend_object_iterator_funcs phongo_iterator_it_funcs = {
+	phongo_iterator_it_dtor,
+	phongo_iterator_it_valid,
+	phongo_iterator_it_get_current_data,
+	phongo_iterator_it_get_current_key,
+	phongo_iterator_it_move_forward,
+	phongo_iterator_it_rewind,
 	NULL, /* invalidate_current */
-	php_phongo_iterator_it_get_gc
+	phongo_iterator_it_get_gc
 };
 
-static zend_object_iterator* php_phongo_iterator_get_iterator(zend_class_entry* ce, zval* object, int by_ref)
+static zend_object_iterator* phongo_iterator_get_iterator(zend_class_entry* ce, zval* object, int by_ref)
 {
 	zend_object_iterator* iterator;
 
@@ -373,21 +367,21 @@ static zend_object_iterator* php_phongo_iterator_get_iterator(zend_class_entry* 
 
 	ZVAL_OBJ_COPY(&iterator->data, Z_OBJ_P(object));
 
-	iterator->funcs = &php_phongo_iterator_it_funcs;
+	iterator->funcs = &phongo_iterator_it_funcs;
 
 	return iterator;
 }
 
-void php_phongo_iterator_init_ce(INIT_FUNC_ARGS)
+void phongo_iterator_init_ce(INIT_FUNC_ARGS)
 {
-	php_phongo_iterator_ce                = register_class_MongoDB_BSON_Iterator(zend_ce_iterator);
-	php_phongo_iterator_ce->create_object = php_phongo_iterator_create_object;
-	php_phongo_iterator_ce->get_iterator  = php_phongo_iterator_get_iterator;
+	phongo_iterator_ce                = register_class_MongoDB_BSON_Iterator(zend_ce_iterator);
+	phongo_iterator_ce->create_object = phongo_iterator_create_object;
+	phongo_iterator_ce->get_iterator  = phongo_iterator_get_iterator;
 
-	memcpy(&php_phongo_handler_iterator, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
-	php_phongo_handler_iterator.clone_obj      = php_phongo_iterator_clone_object;
-	php_phongo_handler_iterator.get_debug_info = php_phongo_iterator_get_debug_info;
-	php_phongo_handler_iterator.get_properties = php_phongo_iterator_get_properties;
-	php_phongo_handler_iterator.free_obj       = php_phongo_iterator_free_object;
-	php_phongo_handler_iterator.offset         = XtOffsetOf(php_phongo_iterator_t, std);
+	memcpy(&phongo_handler_iterator, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
+	phongo_handler_iterator.clone_obj      = phongo_iterator_clone_object;
+	phongo_handler_iterator.get_debug_info = phongo_iterator_get_debug_info;
+	phongo_handler_iterator.get_properties = phongo_iterator_get_properties;
+	phongo_handler_iterator.free_obj       = phongo_iterator_free_object;
+	phongo_handler_iterator.offset         = offsetof(phongo_iterator_t, std);
 }

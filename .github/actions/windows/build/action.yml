@@ -4,9 +4,6 @@ inputs:
   php-version:
     description: "PHP version to build for"
     required: true
-  arch:
-    description: "The architecture to build for (x64 or x86)"
-    required: true
   ts:
     description: "Thread-safety (nts or ts)"
     required: true
@@ -21,7 +18,7 @@ runs:
       uses: php/php-windows-builder/extension@1.6.0
       with:
         php-version: ${{ inputs.php-version }}
-        arch: ${{ inputs.arch }}
+        arch: x64
         ts: ${{ inputs.ts }}
         run-tests: ${{ inputs.run-tests == 'true' && true || false }}
         test-runner-args: "--show-diff"

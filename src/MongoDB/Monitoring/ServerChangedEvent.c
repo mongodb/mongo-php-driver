@@ -19,7 +19,7 @@
 #include <php.h>
 #include <Zend/zend_interfaces.h>
 
-#include "php_phongo.h"
+#include "phongo.h"
 #include "phongo_error.h"
 
 #include "BSON/ObjectId.h"
@@ -27,14 +27,14 @@
 #include "MongoDB/ServerDescription.h"
 #include "ServerChangedEvent_arginfo.h"
 
-zend_class_entry* php_phongo_serverchangedevent_ce;
+zend_class_entry* phongo_serverchangedevent_ce;
 
 PHONGO_DISABLED_CONSTRUCTOR(MongoDB_Driver_Monitoring_ServerChangedEvent)
 
 /* Returns this event's host */
 static PHP_METHOD(MongoDB_Driver_Monitoring_ServerChangedEvent, getHost)
 {
-	php_phongo_serverchangedevent_t* intern = Z_SERVERCHANGEDEVENT_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(serverchangedevent);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -44,7 +44,7 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_ServerChangedEvent, getHost)
 /* Returns this event's port */
 static PHP_METHOD(MongoDB_Driver_Monitoring_ServerChangedEvent, getPort)
 {
-	php_phongo_serverchangedevent_t* intern = Z_SERVERCHANGEDEVENT_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(serverchangedevent);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -54,7 +54,7 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_ServerChangedEvent, getPort)
 /* Returns this event's new description */
 static PHP_METHOD(MongoDB_Driver_Monitoring_ServerChangedEvent, getNewDescription)
 {
-	php_phongo_serverchangedevent_t* intern = Z_SERVERCHANGEDEVENT_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(serverchangedevent);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -64,7 +64,7 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_ServerChangedEvent, getNewDescriptio
 /* Returns this event's previous description */
 static PHP_METHOD(MongoDB_Driver_Monitoring_ServerChangedEvent, getPreviousDescription)
 {
-	php_phongo_serverchangedevent_t* intern = Z_SERVERCHANGEDEVENT_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(serverchangedevent);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -74,19 +74,40 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_ServerChangedEvent, getPreviousDescr
 /* Returns this event's topology id */
 static PHP_METHOD(MongoDB_Driver_Monitoring_ServerChangedEvent, getTopologyId)
 {
-	php_phongo_serverchangedevent_t* intern = Z_SERVERCHANGEDEVENT_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(serverchangedevent);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
 	phongo_objectid_new(return_value, &intern->topology_id);
 }
 
-/* MongoDB\Driver\Monitoring\ServerChangedEvent object handlers */
-static zend_object_handlers php_phongo_handler_serverchangedevent;
-
-static void php_phongo_serverchangedevent_free_object(zend_object* object)
+static void phongo_serverchangedevent_update_properties(phongo_serverchangedevent_t* intern)
 {
-	php_phongo_serverchangedevent_t* intern = Z_OBJ_SERVERCHANGEDEVENT(object);
+	zval topology_id, new_sd, old_sd;
+
+	zend_update_property_string(phongo_serverchangedevent_ce, &intern->std, ZEND_STRL("host"), intern->host.host);
+	zend_update_property_long(phongo_serverchangedevent_ce, &intern->std, ZEND_STRL("port"), intern->host.port);
+
+	if (phongo_objectid_new(&topology_id, &intern->topology_id)) {
+		zend_update_property(phongo_serverchangedevent_ce, &intern->std, ZEND_STRL("topologyId"), &topology_id);
+		zval_ptr_dtor(&topology_id);
+	}
+
+	phongo_serverdescription_init(&new_sd, intern->new_server_description);
+	zend_update_property(phongo_serverchangedevent_ce, &intern->std, ZEND_STRL("newDescription"), &new_sd);
+	zval_ptr_dtor(&new_sd);
+
+	phongo_serverdescription_init(&old_sd, intern->old_server_description);
+	zend_update_property(phongo_serverchangedevent_ce, &intern->std, ZEND_STRL("previousDescription"), &old_sd);
+	zval_ptr_dtor(&old_sd);
+}
+
+/* MongoDB\Driver\Monitoring\ServerChangedEvent object handlers */
+static zend_object_handlers phongo_handler_serverchangedevent;
+
+static void phongo_serverchangedevent_free_object(zend_object* object)
+{
+	PHONGO_INTERN_FROM_Z_OBJ(serverchangedevent, object);
 
 	zend_object_std_dtor(&intern->std);
 
@@ -99,64 +120,33 @@ static void php_phongo_serverchangedevent_free_object(zend_object* object)
 	}
 }
 
-static zend_object* php_phongo_serverchangedevent_create_object(zend_class_entry* class_type)
+static zend_object* phongo_serverchangedevent_create_object(zend_class_entry* class_type)
 {
-	php_phongo_serverchangedevent_t* intern = zend_object_alloc(sizeof(php_phongo_serverchangedevent_t), class_type);
+	PHONGO_INTERN_OBJECT_ALLOC(serverchangedevent, class_type);
 
-	zend_object_std_init(&intern->std, class_type);
-	object_properties_init(&intern->std, class_type);
-
-	intern->std.handlers = &php_phongo_handler_serverchangedevent;
+	intern->std.handlers = &phongo_handler_serverchangedevent;
 
 	return &intern->std;
 }
 
-static HashTable* php_phongo_serverchangedevent_get_debug_info(zend_object* object, int* is_temp)
+void phongo_serverchangedevent_init_ce(INIT_FUNC_ARGS)
 {
-	php_phongo_serverchangedevent_t* intern;
-	zval                             retval = ZVAL_STATIC_INIT;
+	phongo_serverchangedevent_ce                = register_class_MongoDB_Driver_Monitoring_ServerChangedEvent();
+	phongo_serverchangedevent_ce->create_object = phongo_serverchangedevent_create_object;
 
-	intern   = Z_OBJ_SERVERCHANGEDEVENT(object);
-	*is_temp = 1;
-	array_init_size(&retval, 4);
-
-	ADD_ASSOC_STRING(&retval, "host", intern->host.host);
-	ADD_ASSOC_LONG_EX(&retval, "port", intern->host.port);
-
-	{
-		zval topology_id;
-
-		if (!phongo_objectid_new(&topology_id, &intern->topology_id)) {
-			/* Exception should already have been thrown */
-			goto done;
-		}
-
-		ADD_ASSOC_ZVAL_EX(&retval, "topologyId", &topology_id);
-	}
-
-	{
-		zval new_sd;
-		phongo_serverdescription_init(&new_sd, intern->new_server_description);
-		ADD_ASSOC_ZVAL_EX(&retval, "newDescription", &new_sd);
-	}
-
-	{
-		zval old_sd;
-		phongo_serverdescription_init(&old_sd, intern->old_server_description);
-		ADD_ASSOC_ZVAL_EX(&retval, "oldDescription", &old_sd);
-	}
-
-done:
-	return Z_ARRVAL(retval);
+	memcpy(&phongo_handler_serverchangedevent, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
+	phongo_handler_serverchangedevent.free_obj = phongo_serverchangedevent_free_object;
+	phongo_handler_serverchangedevent.offset   = offsetof(phongo_serverchangedevent_t, std);
 }
 
-void php_phongo_serverchangedevent_init_ce(INIT_FUNC_ARGS)
+void phongo_serverchangedevent_init(zval* return_value, const mongoc_apm_server_changed_t* event)
 {
-	php_phongo_serverchangedevent_ce                = register_class_MongoDB_Driver_Monitoring_ServerChangedEvent();
-	php_phongo_serverchangedevent_ce->create_object = php_phongo_serverchangedevent_create_object;
+	PHONGO_INTERN_INIT_EX(serverchangedevent, return_value);
 
-	memcpy(&php_phongo_handler_serverchangedevent, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
-	php_phongo_handler_serverchangedevent.get_debug_info = php_phongo_serverchangedevent_get_debug_info;
-	php_phongo_handler_serverchangedevent.free_obj       = php_phongo_serverchangedevent_free_object;
-	php_phongo_handler_serverchangedevent.offset         = XtOffsetOf(php_phongo_serverchangedevent_t, std);
+	memcpy(&intern->host, mongoc_apm_server_changed_get_host(event), sizeof(mongoc_host_list_t));
+	mongoc_apm_server_changed_get_topology_id(event, &intern->topology_id);
+	intern->new_server_description = mongoc_server_description_new_copy(mongoc_apm_server_changed_get_new_description(event));
+	intern->old_server_description = mongoc_server_description_new_copy(mongoc_apm_server_changed_get_previous_description(event));
+
+	phongo_serverchangedevent_update_properties(intern);
 }

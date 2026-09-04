@@ -13,14 +13,16 @@ $vars = [
     'PHP_MONGODB_BSON_SOURCES' => 'src/libmongoc/src/libbson/src/bson',
     'PHP_MONGODB_JSONSL_SOURCES' => 'src/libmongoc/src/libbson/src/jsonsl',
     'PHP_MONGODB_MONGOC_SOURCES' => 'src/libmongoc/src/libmongoc/src/mongoc',
-    'PHP_MONGODB_UTF8PROC_SOURCES' => 'src/libmongoc/src/utf8proc-2.8.0',
+    'PHP_MONGODB_UTF8PROC_SOURCES' => 'src/libmongoc/src/utf8proc-2.11.3',
     'PHP_MONGODB_ZLIB_SOURCES' => 'src/libmongoc/src/zlib-1.3.1',
+    // Note: src/libmongoc/src/common/src/mlib does not contain source files (as of libmongoc 2.0.1)
     'PHP_MONGODB_MONGOCRYPT_SOURCES' => 'src/libmongocrypt/src',
     'PHP_MONGODB_MONGOCRYPT_CRYPTO_SOURCES' => 'src/libmongocrypt/src/crypto',
     'PHP_MONGODB_MONGOCRYPT_OS_POSIX_SOURCES' => 'src/libmongocrypt/src/os_posix',
     'PHP_MONGODB_MONGOCRYPT_OS_WIN_SOURCES' => 'src/libmongocrypt/src/os_win',
+    'PHP_MONGODB_MONGOCRYPT_UNICODE_SOURCES' => 'src/libmongocrypt/src/unicode',
     'PHP_MONGODB_MONGOCRYPT_KMS_MESSAGE_SOURCES' => 'src/libmongocrypt/kms-message/src',
-    // Note: src/libmongocrypt/src/mlib does not contain source files (as of libmongocrypt 1.3.2)
+    // Note: src/libmongocrypt/src/mlib does not contain source files (as of libmongocrypt 1.14.0)
 ];
 
 $patterns = [];

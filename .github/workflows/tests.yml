@@ -14,6 +14,7 @@ jobs:
   linux-test:
     name: "Linux Tests"
     runs-on: "${{ matrix.os }}"
+    continue-on-error: ${{ matrix.allow_failures || false }}
 
     strategy:
       fail-fast: true
@@ -33,11 +34,11 @@ jobs:
         include:
           - os: "ubuntu-24.04"
             php-version: "8.1"
-            mongodb-version: "8.0"
+            mongodb-version: "8.2"
             topology: "replica_set"
           - os: "ubuntu-24.04"
             php-version: "8.1"
-            mongodb-version: "8.0"
+            mongodb-version: "8.2"
             topology: "sharded_cluster"
           - os: "ubuntu-22.04"
             php-version: "8.1"
@@ -47,14 +48,19 @@ jobs:
             php-version: "8.1"
             mongodb-version: "6.0"
             topology: "sharded_cluster"
+          - os: "ubuntu-24.04"
+            php-version: "8.6"
+            mongodb-version: "8.2"
+            topology: "replica_set"
+            allow_failures: true
 
     steps:
       - name: "Checkout"
-        uses: "actions/checkout@v4"
+        uses: "actions/checkout@v7"
         with:
           submodules: true
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v7
         with:
           python-version: '3.13'
 
@@ -72,9 +78,19 @@ jobs:
           version: ${{ matrix.php-version }}
 
       - name: "Run Tests"
-        run: TEST_PHP_ARGS="-q -x --show-diff -g FAIL,XFAIL,BORK,WARN,LEAK,SKIP" make test
+        run: make test
         env:
+          TEST_PHP_ARGS: "-q -x -j1 --show-diff -g FAIL,XFAIL,BORK,WARN,LEAK,SKIP"
+          TEST_PHP_JUNIT: "test-results.xml"
           MONGODB_URI: ${{ steps.setup-mongodb.outputs.cluster-uri }}
+
+      - name: Upload test results to Codecov
+        uses: codecov/test-results-action@v1
+        with:
+          disable_search: true
+          files: test-results.xml
+          flags: "${{ matrix.mongodb-version }}-${{ matrix.topology }}"
+          token: ${{ secrets.CODECOV_TOKEN }}
 
   pecl-test:
     name: "Test PECL package"
@@ -84,7 +100,7 @@ jobs:
 
     steps:
       - name: "Checkout"
-        uses: "actions/checkout@v4"
+        uses: "actions/checkout@v7"
         with:
           submodules: true
 
@@ -95,7 +111,7 @@ jobs:
           version: ${{ env.PHP_VERSION }}
 
       - name: "Write changelog file for packaging"
-        run: echo "Testing" > changelog
+        run: echo 'Testing <special> & "chars" to exercise XML escaping' > changelog
 
       - name: "Build package.xml"
         run: "make package.xml RELEASE_NOTES_FILE=$(pwd)/changelog"
@@ -113,6 +129,11 @@ jobs:
 
       - name: "Install release archive to verify correctness"
         run: sudo pecl install ${{ env.PACKAGE_FILE }}
+
+      - name: "Install on Alpine Linux"
+        run: |
+          cp "${{ env.PACKAGE_FILE }}" .github/docker/
+          docker build .github/docker/ -f .github/docker/Dockerfile.pecl-alpine
 
   windows-test:
     name: "Windows Tests"
@@ -132,11 +153,10 @@ jobs:
           - "8.3"
           - "8.4"
           - "8.5"
-        arch: [ x64, x86 ]
         ts: [ ts, nts ]
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           submodules: true
 
@@ -151,7 +171,6 @@ jobs:
         uses: ./.github/actions/windows/build
         with:
           php-version: ${{ matrix.php-version }}
-          arch: ${{ matrix.arch }}
           ts: ${{ matrix.ts }}
           run-tests: true
         env:
@@ -159,3 +178,178 @@ jobs:
           REPORT_EXIT_STATUS: 1
           MONGODB_URI: ${{ steps.setup-mongodb.outputs.cluster-uri }}
           CRYPT_SHARED_LIB_PATH: ${{ steps.setup-mongodb.outputs.crypt-shared-lib-path }}
+
+  test-system-libs:
+    name: "System Library Tests"
+    runs-on: "ubuntu-latest"
+    env:
+      PHP_VERSION: "8.3"
+      # Note: omit the patch version so apt prefix-matches any 1.x.y patch release
+      LIBMONGOCRYPT_VERSION: "1.20"
+      # Note: include the patch version when referring to a libmongoc release tarball
+      LIBMONGOC_VERSION: "2.5.2"
+      SERVER_VERSION: "8.0"
+
+    steps:
+      - name: "Checkout"
+        uses: "actions/checkout@v7"
+        with:
+          submodules: true
+
+      - name: "Install libmongocrypt"
+        uses: ./.github/actions/linux/build-libmongocrypt
+        with:
+          version: ${{ env.LIBMONGOCRYPT_VERSION }}
+
+      - name: "Build libmongoc"
+        uses: ./.github/actions/linux/build-libmongoc
+        with:
+          version: ${{ env.LIBMONGOC_VERSION }}
+
+      - name: "Build Driver"
+        uses: ./.github/actions/linux/build
+        with:
+          version: ${{ env.PHP_VERSION }}
+          configureOpts: "--with-mongodb-system-libs=yes"
+
+      - name: "Check driver version"
+        shell: bash
+        run: make show-config
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.13"
+
+      - name: Setup MongoDB
+        id: setup-mongodb
+        uses: ./tests/drivers-evergreen-tools
+        with:
+          version: ${{ env.SERVER_VERSION }}
+          topology: "server"
+
+      - name: "Run Tests"
+        run: make test
+        env:
+          TEST_PHP_ARGS: "-q -x -j1 --show-diff -g FAIL,XFAIL,BORK,WARN,LEAK,SKIP"
+          TEST_PHP_JUNIT: "test-results.xml"
+          MONGODB_URI: ${{ steps.setup-mongodb.outputs.cluster-uri }}
+
+      - name: Upload test results to Codecov
+        uses: codecov/test-results-action@v1
+        with:
+          disable_search: true
+          files: test-results.xml
+          flags: "${{ env.SERVER_VERSION }}-server"
+          token: ${{ secrets.CODECOV_TOKEN }}
+
+  # Verifies that the extension can be compiled statically into PHP (i.e. with
+  # --enable-mongodb instead of --enable-mongodb=shared), as done by projects
+  # like StaticPHP.  This exercises the PHP in-tree build path where configure
+  # is invoked from the PHP source root rather than the extension directory.
+  # Two modes are tested:
+  #   in-source     — configure and build run from the PHP source directory
+  #                   (PHP source dir = PHP build dir, layout 3)
+  #   out-of-source — configure and build run from a separate build directory
+  #                   (PHP source dir ≠ PHP build dir, layout 4)
+  test-in-tree-build:
+    name: "Static PHP Build (${{ matrix.mode }})"
+    runs-on: "ubuntu-latest"
+    env:
+      PHP_VERSION: "8.5.5"
+
+    strategy:
+      matrix:
+        mode: ['in-source', 'out-of-source']
+
+    steps:
+      - name: "Checkout"
+        uses: "actions/checkout@v7"
+        with:
+          submodules: true
+          path: "mongo-php-driver"
+
+      - name: "Install build dependencies"
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y \
+            autoconf \
+            bison \
+            libsqlite3-dev \
+            libssl-dev \
+            libxml2-dev \
+            pkg-config \
+            re2c
+
+      - name: "Download PHP ${{ env.PHP_VERSION }} source"
+        run: |
+          curl -fsSL "https://www.php.net/distributions/php-${{ env.PHP_VERSION }}.tar.gz" | tar -xz
+          mv "php-${{ env.PHP_VERSION }}" php-src
+
+      - name: "Link extension into PHP source tree"
+        run: ln -s "$GITHUB_WORKSPACE/mongo-php-driver" "$GITHUB_WORKSPACE/php-src/ext/mongodb"
+
+      - name: "Generate PHP build scripts"
+        run: cd "$GITHUB_WORKSPACE/php-src" && ./buildconf --force
+
+      - name: "Set build directory"
+        run: |
+          if [ "${{ matrix.mode }}" = "out-of-source" ]; then
+            mkdir -p /tmp/php-build
+            echo "PHP_BUILD_DIR=/tmp/php-build" >> "$GITHUB_ENV"
+          elif [ "${{ matrix.mode }}" = "in-source" ]; then
+            echo "PHP_BUILD_DIR=$GITHUB_WORKSPACE/php-src" >> "$GITHUB_ENV"
+          else
+            echo "Invalid mode"
+            exit 1
+          fi
+
+        # Note: --with-openssl is needed for the bundled libmongoc's TLS support.
+      - name: "Configure PHP with MongoDB extension (static)"
+        run: |
+          [ -n "$PHP_BUILD_DIR" ] || { echo "PHP_BUILD_DIR is not set"; exit 1; }
+          "$GITHUB_WORKSPACE/php-src/configure" \
+            --enable-debug \
+            --enable-cli \
+            --enable-mongodb \
+            --enable-mongodb-developer-flags \
+            --with-openssl
+        working-directory: ${{ env.PHP_BUILD_DIR }}
+
+      - name: "Build PHP"
+        run: make -j$(nproc)
+        working-directory: ${{ env.PHP_BUILD_DIR }}
+
+      - name: "Verify MongoDB extension is compiled in"
+        run: |
+          "$PHP_BUILD_DIR/sapi/cli/php" -m | grep -ix mongodb
+          "$PHP_BUILD_DIR/sapi/cli/php" --ri mongodb
+
+  test-out-of-source-build:
+    name: "Out-of-source Build"
+    runs-on: "ubuntu-latest"
+    env:
+      PHP_VERSION: "8.5"
+
+    steps:
+      - name: "Checkout"
+        uses: "actions/checkout@v7"
+        with:
+          submodules: true
+
+      - name: "Install PHP"
+        uses: "shivammathur/setup-php@v2"
+        with:
+          php-version: "${{ env.PHP_VERSION }}"
+          extensions: "none,date,json,spl,standard,xml"
+        env:
+          debug: true
+
+      - name: "phpize"
+        run: phpize
+
+      - name: "Build driver (out-of-source)"
+        run: |
+          mkdir -p /tmp/mongodb-build
+          cd /tmp/mongodb-build
+          ${GITHUB_WORKSPACE}/configure --enable-mongodb-developer-flags
+          make all

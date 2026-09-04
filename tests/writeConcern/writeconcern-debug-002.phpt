@@ -11,11 +11,15 @@ var_dump(new MongoDB\Driver\WriteConcern(MongoDB\Driver\WriteConcern::MAJORITY, 
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-object(MongoDB\Driver\WriteConcern)#%d (%d) {
+object(MongoDB\Driver\WriteConcern)#%d (3) {
   ["w"]=>
   int(1)
+  ["j"]=>
+  NULL
+  ["wtimeout"]=>
+  int(0)
 }
-object(MongoDB\Driver\WriteConcern)#%d (%d) {
+object(MongoDB\Driver\WriteConcern)#%d (3) {
   ["w"]=>
   string(3) "tag"
   ["j"]=>
@@ -23,7 +27,7 @@ object(MongoDB\Driver\WriteConcern)#%d (%d) {
   ["wtimeout"]=>
   int(1000)
 }
-object(MongoDB\Driver\WriteConcern)#%d (%d) {
+object(MongoDB\Driver\WriteConcern)#%d (3) {
   ["w"]=>
   string(8) "majority"
   ["j"]=>

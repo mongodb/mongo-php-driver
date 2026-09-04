@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 27261ceb122b2783b1fba08be5c17b4f48ab8523 */
+ * Stub hash: c96f44c362fe158f620b96b7ce44be7a048daf1d */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_Driver_ReadPreference___construct, 0, 0, 1)
 	ZEND_ARG_TYPE_INFO(0, mode, IS_STRING, 0)
@@ -30,9 +30,6 @@ ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_Driver_ReadPrefere
 	ZEND_ARG_TYPE_INFO(0, data, IS_ARRAY, 0)
 ZEND_END_ARG_INFO()
 
-#define arginfo_class_MongoDB_Driver_ReadPreference___serialize arginfo_class_MongoDB_Driver_ReadPreference_getTagSets
-
-
 static ZEND_METHOD(MongoDB_Driver_ReadPreference, __construct);
 static ZEND_METHOD(MongoDB_Driver_ReadPreference, getHedge);
 static ZEND_METHOD(MongoDB_Driver_ReadPreference, getMaxStalenessSeconds);
@@ -41,19 +38,16 @@ static ZEND_METHOD(MongoDB_Driver_ReadPreference, getTagSets);
 static ZEND_METHOD(MongoDB_Driver_ReadPreference, __set_state);
 static ZEND_METHOD(MongoDB_Driver_ReadPreference, bsonSerialize);
 static ZEND_METHOD(MongoDB_Driver_ReadPreference, __unserialize);
-static ZEND_METHOD(MongoDB_Driver_ReadPreference, __serialize);
-
 
 static const zend_function_entry class_MongoDB_Driver_ReadPreference_methods[] = {
 	ZEND_ME(MongoDB_Driver_ReadPreference, __construct, arginfo_class_MongoDB_Driver_ReadPreference___construct, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	ZEND_ME(MongoDB_Driver_ReadPreference, getHedge, arginfo_class_MongoDB_Driver_ReadPreference_getHedge, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	ZEND_ME(MongoDB_Driver_ReadPreference, getHedge, arginfo_class_MongoDB_Driver_ReadPreference_getHedge, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL|ZEND_ACC_DEPRECATED)
 	ZEND_ME(MongoDB_Driver_ReadPreference, getMaxStalenessSeconds, arginfo_class_MongoDB_Driver_ReadPreference_getMaxStalenessSeconds, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_Driver_ReadPreference, getModeString, arginfo_class_MongoDB_Driver_ReadPreference_getModeString, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_Driver_ReadPreference, getTagSets, arginfo_class_MongoDB_Driver_ReadPreference_getTagSets, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_Driver_ReadPreference, __set_state, arginfo_class_MongoDB_Driver_ReadPreference___set_state, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_Driver_ReadPreference, bsonSerialize, arginfo_class_MongoDB_Driver_ReadPreference_bsonSerialize, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_Driver_ReadPreference, __unserialize, arginfo_class_MongoDB_Driver_ReadPreference___unserialize, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	ZEND_ME(MongoDB_Driver_ReadPreference, __serialize, arginfo_class_MongoDB_Driver_ReadPreference___serialize, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_FE_END
 };
 
@@ -62,8 +56,12 @@ static zend_class_entry *register_class_MongoDB_Driver_ReadPreference(zend_class
 	zend_class_entry ce, *class_entry;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver", "ReadPreference", class_MongoDB_Driver_ReadPreference_methods);
+#if (PHP_VERSION_ID >= 80400)
+	class_entry = zend_register_internal_class_with_flags(&ce, NULL, ZEND_ACC_FINAL);
+#else
 	class_entry = zend_register_internal_class_ex(&ce, NULL);
 	class_entry->ce_flags |= ZEND_ACC_FINAL;
+#endif
 	zend_class_implements(class_entry, 1, class_entry_MongoDB_BSON_Serializable);
 
 	zval const_PRIMARY_value;
@@ -112,6 +110,30 @@ static zend_class_entry *register_class_MongoDB_Driver_ReadPreference(zend_class
 	zend_string *const_SMALLEST_MAX_STALENESS_SECONDS_name = zend_string_init_interned("SMALLEST_MAX_STALENESS_SECONDS", sizeof("SMALLEST_MAX_STALENESS_SECONDS") - 1, 1);
 	zend_declare_class_constant_ex(class_entry, const_SMALLEST_MAX_STALENESS_SECONDS_name, &const_SMALLEST_MAX_STALENESS_SECONDS_value, ZEND_ACC_PUBLIC, NULL);
 	zend_string_release(const_SMALLEST_MAX_STALENESS_SECONDS_name);
+
+	zval property_mode_default_value;
+	ZVAL_UNDEF(&property_mode_default_value);
+	zend_string *property_mode_name = zend_string_init("mode", sizeof("mode") - 1, 1);
+	zend_declare_typed_property(class_entry, property_mode_name, &property_mode_default_value, ZEND_ACC_PUBLIC|ZEND_ACC_READONLY, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_STRING));
+	zend_string_release(property_mode_name);
+
+	zval property_tags_default_value;
+	ZVAL_UNDEF(&property_tags_default_value);
+	zend_string *property_tags_name = zend_string_init("tags", sizeof("tags") - 1, 1);
+	zend_declare_typed_property(class_entry, property_tags_name, &property_tags_default_value, ZEND_ACC_PUBLIC|ZEND_ACC_READONLY, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_ARRAY|MAY_BE_NULL));
+	zend_string_release(property_tags_name);
+
+	zval property_maxStalenessSeconds_default_value;
+	ZVAL_UNDEF(&property_maxStalenessSeconds_default_value);
+	zend_string *property_maxStalenessSeconds_name = zend_string_init("maxStalenessSeconds", sizeof("maxStalenessSeconds") - 1, 1);
+	zend_declare_typed_property(class_entry, property_maxStalenessSeconds_name, &property_maxStalenessSeconds_default_value, ZEND_ACC_PUBLIC|ZEND_ACC_READONLY, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
+	zend_string_release(property_maxStalenessSeconds_name);
+
+	zval property_hedge_default_value;
+	ZVAL_UNDEF(&property_hedge_default_value);
+	zend_string *property_hedge_name = zend_string_init("hedge", sizeof("hedge") - 1, 1);
+	zend_declare_typed_property(class_entry, property_hedge_name, &property_hedge_default_value, ZEND_ACC_PUBLIC|ZEND_ACC_READONLY, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_OBJECT|MAY_BE_NULL));
+	zend_string_release(property_hedge_name);
 
 	return class_entry;
 }

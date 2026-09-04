@@ -42,7 +42,7 @@ object(MongoDB\Driver\Query)#%d (%d) {
     }
   }
   ["readConcern"]=>
-  array(1) {
+  object(MongoDB\Driver\ReadConcern)#%d (%d) {
     ["level"]=>
     string(5) "local"
   }

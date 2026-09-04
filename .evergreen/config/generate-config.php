@@ -1,8 +1,9 @@
-#!/bin/env php
+#!/usr/bin/env php
 <?php
 
 // Supported PHP versions. Add new versions to the beginning of the list
 $phpVersions = [
+    '8.5',
     '8.4',
     '8.3',
     '8.2',
@@ -21,9 +22,7 @@ $supportedMongoDBVersions = [
     '4.2',
 ];
 
-// TODO: Change when PHP 8.4 is stable
-// $latestPhpVersion = max($phpVersions);
-$latestPhpVersion = '8.3';
+$latestPhpVersion = max($phpVersions);
 
 // Only test the latest PHP version for libmongoc
 $libmongocBuildPhpVersions = [ $latestPhpVersion ];

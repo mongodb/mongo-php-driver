@@ -21,10 +21,15 @@ class MySubscriber implements MongoDB\Driver\Monitoring\SDAMSubscriber
         $this->isObserved = true;
 
         printf("getHost() returns a string: %s\n", is_string($event->getHost()) ? 'yes' : 'no');
-        printf("getPort() returns an integer: %s\n", is_integer($event->getPort()) ? 'yes' : 'no');
+        printf("host returns a string: %s\n", is_string($event->host) ? 'yes' : 'no');
+        printf("getPort() returns an integer: %s\n", is_int($event->getPort()) ? 'yes' : 'no');
+        printf("port returns an integer: %s\n", is_int($event->port) ? 'yes' : 'no');
         printf("getTopologyId() returns an ObjectId: %s\n", ($event->getTopologyId() instanceof MongoDB\BSON\ObjectId) ? 'yes' : 'no');
+        printf("topologyId returns an ObjectId: %s\n", ($event->topologyId instanceof MongoDB\BSON\ObjectId) ? 'yes' : 'no');
         printf("getNewDescription() returns a ServerDescription: %s\n", ($event->getNewDescription() instanceof MongoDB\Driver\ServerDescription) ? 'yes' : 'no');
+        printf("newDescription returns a ServerDescription: %s\n", ($event->newDescription instanceof MongoDB\Driver\ServerDescription) ? 'yes' : 'no');
         printf("getPreviousDescription() returns a ServerDescription: %s\n", ($event->getPreviousDescription() instanceof MongoDB\Driver\ServerDescription) ? 'yes' : 'no');
+        printf("previousDescription returns a ServerDescription: %s\n", ($event->previousDescription instanceof MongoDB\Driver\ServerDescription) ? 'yes' : 'no');
 
         var_dump($event);
     }
@@ -57,10 +62,15 @@ $m->executeCommand(DATABASE_NAME, $command);
 <?php exit(0); ?>
 --EXPECTF--
 getHost() returns a string: yes
+host returns a string: yes
 getPort() returns an integer: yes
+port returns an integer: yes
 getTopologyId() returns an ObjectId: yes
+topologyId returns an ObjectId: yes
 getNewDescription() returns a ServerDescription: yes
+newDescription returns a ServerDescription: yes
 getPreviousDescription() returns a ServerDescription: yes
+previousDescription returns a ServerDescription: yes
 object(MongoDB\Driver\Monitoring\ServerChangedEvent)#%d (%d) {
   ["host"]=>
   string(%d) "%s"
@@ -74,7 +84,7 @@ object(MongoDB\Driver\Monitoring\ServerChangedEvent)#%d (%d) {
   ["newDescription"]=>
   object(MongoDB\Driver\ServerDescription)#%d (%d) {%A
   }
-  ["oldDescription"]=>
+  ["previousDescription"]=>
   object(MongoDB\Driver\ServerDescription)#%d (%d) {%A
   }
 }

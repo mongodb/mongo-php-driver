@@ -2,7 +2,7 @@
 
 /**
  * @generate-class-entries static
- * @generate-function-entries static
+ * @generate-legacy-arginfo 80100
  */
 
 namespace MongoDB\Driver\Monitoring;
@@ -10,9 +10,15 @@ namespace MongoDB\Driver\Monitoring;
 /** @not-serializable */
 final class ServerHeartbeatSucceededEvent
 {
+    public readonly string $host;
+    public readonly int $port;
+    public readonly bool $awaited;
+    public readonly int $duration;
+    public readonly object $reply;
+
     final private function __construct() {}
 
-    final public function getDurationMicros() : int{}
+    final public function getDurationMicros(): int {}
 
     final public function getReply(): object {}
 

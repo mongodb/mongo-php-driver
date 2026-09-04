@@ -16,12 +16,12 @@
 
 #include <php.h>
 
-#include "php_phongo.h"
+#include "phongo.h"
 #include "RegexInterface_arginfo.h"
 
-zend_class_entry* php_phongo_regex_interface_ce;
+zend_class_entry* phongo_regex_interface_ce;
 
-void php_phongo_regex_interface_init_ce(INIT_FUNC_ARGS)
+void phongo_regex_interface_init_ce(INIT_FUNC_ARGS)
 {
-	php_phongo_regex_interface_ce = register_class_MongoDB_BSON_RegexInterface();
+	phongo_regex_interface_ce = register_class_MongoDB_BSON_RegexInterface();
 }

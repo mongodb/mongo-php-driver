@@ -58,7 +58,7 @@ object(MyDocument)#%d (%d) {
     ["__pclass"]=>
     object(MongoDB\BSON\Binary)#%d (%d) {
       ["data"]=>
-      string(10) "MyDocument"
+      string(16) "TXlEb2N1bWVudA=="
       ["type"]=>
       int(128)
     }
@@ -73,7 +73,7 @@ object(MyDocument)#%d (%d) {
     ["__pclass"]=>
     object(MongoDB\BSON\Binary)#%d (%d) {
       ["data"]=>
-      string(10) "MyDocument"
+      string(16) "TXlEb2N1bWVudA=="
       ["type"]=>
       int(128)
     }

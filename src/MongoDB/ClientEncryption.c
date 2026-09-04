@@ -22,7 +22,7 @@
 
 #include "php_array_api.h"
 
-#include "php_phongo.h"
+#include "phongo.h"
 #include "phongo_bson_encode.h"
 #include "phongo_error.h"
 #include "phongo_util.h"
@@ -33,23 +33,23 @@
 #include "MongoDB/Cursor.h"
 #include "MongoDB/Query.h"
 
-zend_class_entry* php_phongo_clientencryption_ce;
+zend_class_entry* phongo_clientencryption_ce;
 
 /* Forward declarations */
-static void phongo_clientencryption_create_datakey(php_phongo_clientencryption_t* clientencryption, zval* return_value, char* kms_provider, zval* options);
-static void phongo_clientencryption_encrypt(php_phongo_clientencryption_t* clientencryption, zval* zvalue, zval* zciphertext, zval* options);
-static void phongo_clientencryption_encrypt_expression(php_phongo_clientencryption_t* clientencryption, zval* zexpr, zval* return_value, zval* options);
-static void phongo_clientencryption_decrypt(php_phongo_clientencryption_t* clientencryption, zval* zciphertext, zval* zvalue);
+static void phongo_clientencryption_create_datakey(phongo_clientencryption_t* clientencryption, zval* return_value, char* kms_provider, zval* options);
+static void phongo_clientencryption_encrypt(phongo_clientencryption_t* clientencryption, zval* zvalue, zval* zciphertext, zval* options);
+static void phongo_clientencryption_encrypt_expression(phongo_clientencryption_t* clientencryption, zval* zexpr, zval* return_value, zval* options);
+static void phongo_clientencryption_decrypt(phongo_clientencryption_t* clientencryption, zval* zciphertext, zval* zvalue);
 
-#define RETVAL_BSON_T(reply)                                 \
-	do {                                                     \
-		php_phongo_bson_state state;                         \
-		PHONGO_BSON_INIT_STATE(state);                       \
-		if (!php_phongo_bson_to_zval_ex(&(reply), &state)) { \
-			zval_ptr_dtor(&state.zchild);                    \
-			goto cleanup;                                    \
-		}                                                    \
-		RETVAL_ZVAL(&state.zchild, 0, 1);                    \
+#define RETVAL_BSON_T(reply)                             \
+	do {                                                 \
+		phongo_bson_state state;                         \
+		PHONGO_BSON_INIT_STATE(state);                   \
+		if (!phongo_bson_to_zval_ex(&(reply), &state)) { \
+			zval_ptr_dtor(&state.zchild);                \
+			goto cleanup;                                \
+		}                                                \
+		RETVAL_ZVAL(&state.zchild, 0, 1);                \
 	} while (0)
 
 #define RETVAL_OPTIONAL_BSON_T(reply) \
@@ -65,7 +65,7 @@ static void phongo_clientencryption_decrypt(php_phongo_clientencryption_t* clien
 static bool validate_keyid(bson_value_t* keyid)
 {
 	if (keyid->value_type != BSON_TYPE_BINARY) {
-		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected keyid to have Binary BSON type, %s given", php_phongo_bson_type_to_string(keyid->value_type));
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected keyid to have Binary BSON type, %s given", phongo_bson_type_to_string(keyid->value_type));
 		return false;
 	}
 
@@ -74,7 +74,7 @@ static bool validate_keyid(bson_value_t* keyid)
 		return false;
 	}
 
-	/* php_phongo_binary_init already enforces the data length for Binary objects
+	/* phongo_binary_init already enforces the data length for Binary objects
 	 * with UUID subtypes so we throw a different exception here. */
 	if (keyid->value.v_binary.data_len != PHONGO_BINARY_UUID_SIZE) {
 		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Expected keyid to have data length of %d bytes, %d given", PHONGO_BINARY_UUID_SIZE, keyid->value.v_binary.data_len);
@@ -110,7 +110,7 @@ static PHP_METHOD(MongoDB_Driver_ClientEncryption, addKeyAltName)
 	bson_error_t error          = { 0 };
 
 	PHONGO_PARSE_PARAMETERS_START(2, 2)
-	Z_PARAM_OBJECT_OF_CLASS(zkeyid, php_phongo_binary_ce)
+	Z_PARAM_OBJECT_OF_CLASS(zkeyid, phongo_binary_ce)
 	Z_PARAM_STRING(keyaltname, keyaltname_len);
 	PHONGO_PARSE_PARAMETERS_END();
 
@@ -141,12 +141,11 @@ cleanup:
    returns its identifier (UUID as a BSON binary with subtype 0x04). */
 static PHP_METHOD(MongoDB_Driver_ClientEncryption, createDataKey)
 {
-	char*                          kms_provider     = NULL;
-	size_t                         kms_provider_len = 0;
-	zval*                          options          = NULL;
-	php_phongo_clientencryption_t* intern;
+	PHONGO_INTERN_FROM_THIS(clientencryption);
 
-	intern = Z_CLIENTENCRYPTION_OBJ_P(getThis());
+	char*  kms_provider     = NULL;
+	size_t kms_provider_len = 0;
+	zval*  options          = NULL;
 
 	PHONGO_PARSE_PARAMETERS_START(1, 2)
 	Z_PARAM_STRING(kms_provider, kms_provider_len)
@@ -168,7 +167,7 @@ static PHP_METHOD(MongoDB_Driver_ClientEncryption, deleteKey)
 	bson_error_t error  = { 0 };
 
 	PHONGO_PARSE_PARAMETERS_START(1, 1)
-	Z_PARAM_OBJECT_OF_CLASS(zkeyid, php_phongo_binary_ce)
+	Z_PARAM_OBJECT_OF_CLASS(zkeyid, phongo_binary_ce)
 	PHONGO_PARSE_PARAMETERS_END();
 
 	phongo_zval_to_bson_value(zkeyid, &keyid);
@@ -202,11 +201,10 @@ cleanup:
 /* Encrypts a value with a given key and algorithm */
 static PHP_METHOD(MongoDB_Driver_ClientEncryption, encrypt)
 {
-	zval*                          value   = NULL;
-	zval*                          options = NULL;
-	php_phongo_clientencryption_t* intern;
+	PHONGO_INTERN_FROM_THIS(clientencryption);
 
-	intern = Z_CLIENTENCRYPTION_OBJ_P(getThis());
+	zval* value   = NULL;
+	zval* options = NULL;
 
 	PHONGO_PARSE_PARAMETERS_START(1, 2)
 	Z_PARAM_ZVAL(value)
@@ -220,11 +218,10 @@ static PHP_METHOD(MongoDB_Driver_ClientEncryption, encrypt)
 /* Encrypts a value with a given key and algorithm */
 static PHP_METHOD(MongoDB_Driver_ClientEncryption, encryptExpression)
 {
-	zval*                          expr    = NULL;
-	zval*                          options = NULL;
-	php_phongo_clientencryption_t* intern;
+	PHONGO_INTERN_FROM_THIS(clientencryption);
 
-	intern = Z_CLIENTENCRYPTION_OBJ_P(getThis());
+	zval* expr    = NULL;
+	zval* options = NULL;
 
 	PHONGO_PARSE_PARAMETERS_START(1, 2)
 	Z_PARAM_ZVAL(expr)
@@ -238,13 +235,12 @@ static PHP_METHOD(MongoDB_Driver_ClientEncryption, encryptExpression)
 /* Decrypts an encrypted value (BSON binary of subtype 6). Returns the original BSON value */
 static PHP_METHOD(MongoDB_Driver_ClientEncryption, decrypt)
 {
-	zval*                          ciphertext;
-	php_phongo_clientencryption_t* intern;
+	PHONGO_INTERN_FROM_THIS(clientencryption);
 
-	intern = Z_CLIENTENCRYPTION_OBJ_P(getThis());
+	zval* ciphertext;
 
 	PHONGO_PARSE_PARAMETERS_START(1, 1)
-	Z_PARAM_OBJECT_OF_CLASS(ciphertext, php_phongo_binary_interface_ce)
+	Z_PARAM_OBJECT_OF_CLASS(ciphertext, phongo_binary_interface_ce)
 	PHONGO_PARSE_PARAMETERS_END();
 
 	phongo_clientencryption_decrypt(intern, ciphertext, return_value);
@@ -261,7 +257,7 @@ static PHP_METHOD(MongoDB_Driver_ClientEncryption, getKey)
 	bson_error_t error   = { 0 };
 
 	PHONGO_PARSE_PARAMETERS_START(1, 1)
-	Z_PARAM_OBJECT_OF_CLASS(zkeyid, php_phongo_binary_ce)
+	Z_PARAM_OBJECT_OF_CLASS(zkeyid, phongo_binary_ce)
 	PHONGO_PARSE_PARAMETERS_END();
 
 	phongo_zval_to_bson_value(zkeyid, &keyid);
@@ -315,12 +311,11 @@ cleanup:
    internal find() operation on the key vault collection as a cursor. */
 static PHP_METHOD(MongoDB_Driver_ClientEncryption, getKeys)
 {
-	mongoc_cursor_t*               cursor;
-	bson_error_t                   error = { 0 };
-	php_phongo_clientencryption_t* intern;
-	zval                           query = ZVAL_STATIC_INIT;
+	PHONGO_INTERN_FROM_THIS(clientencryption);
 
-	intern = Z_CLIENTENCRYPTION_OBJ_P(getThis());
+	mongoc_cursor_t* cursor;
+	bson_error_t     error = { 0 };
+	zval             query = ZVAL_STATIC_INIT;
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -363,7 +358,7 @@ static PHP_METHOD(MongoDB_Driver_ClientEncryption, removeKeyAltName)
 	bson_error_t error          = { 0 };
 
 	PHONGO_PARSE_PARAMETERS_START(2, 2)
-	Z_PARAM_OBJECT_OF_CLASS(zkeyid, php_phongo_binary_ce)
+	Z_PARAM_OBJECT_OF_CLASS(zkeyid, phongo_binary_ce)
 	Z_PARAM_STRING(keyaltname, keyaltname_len);
 	PHONGO_PARSE_PARAMETERS_END();
 
@@ -413,7 +408,7 @@ static PHP_METHOD(MongoDB_Driver_ClientEncryption, rewrapManyDataKey)
 	Z_PARAM_ARRAY_OR_NULL(options)
 	PHONGO_PARSE_PARAMETERS_END();
 
-	php_phongo_zval_to_bson(zfilter, PHONGO_BSON_NONE, &filter, NULL);
+	phongo_zval_to_bson(zfilter, PHONGO_BSON_NONE, &filter, NULL);
 
 	if (EG(exception)) {
 		goto cleanup;
@@ -439,7 +434,7 @@ static PHP_METHOD(MongoDB_Driver_ClientEncryption, rewrapManyDataKey)
 		}
 
 		masterkey = bson_new();
-		php_phongo_zval_to_bson(zmasterkey, PHONGO_BSON_NONE, masterkey, NULL);
+		phongo_zval_to_bson(zmasterkey, PHONGO_BSON_NONE, masterkey, NULL);
 
 		if (EG(exception)) {
 			goto cleanup;
@@ -469,16 +464,17 @@ cleanup:
 	}
 
 	bson_destroy(&filter);
+	bson_destroy(&reply);
 	bson_destroy(masterkey);
 	mongoc_client_encryption_rewrap_many_datakey_result_destroy(result);
 }
 
 /* MongoDB\Driver\ClientEncryption object handlers */
-static zend_object_handlers php_phongo_handler_clientencryption;
+static zend_object_handlers phongo_handler_clientencryption;
 
-static void php_phongo_clientencryption_free_object(zend_object* object)
+static void phongo_clientencryption_free_object(zend_object* object)
 {
-	php_phongo_clientencryption_t* intern = Z_OBJ_CLIENTENCRYPTION(object);
+	PHONGO_INTERN_FROM_Z_OBJ(clientencryption, object);
 
 	zend_object_std_dtor(&intern->std);
 
@@ -497,40 +493,34 @@ static void php_phongo_clientencryption_free_object(zend_object* object)
 	}
 }
 
-static zend_object* php_phongo_clientencryption_create_object(zend_class_entry* class_type)
+static zend_object* phongo_clientencryption_create_object(zend_class_entry* class_type)
 {
-	php_phongo_clientencryption_t* intern = zend_object_alloc(sizeof(php_phongo_clientencryption_t), class_type);
+	PHONGO_INTERN_OBJECT_ALLOC(clientencryption, class_type);
 
-	zend_object_std_init(&intern->std, class_type);
-	object_properties_init(&intern->std, class_type);
-
-	intern->std.handlers = &php_phongo_handler_clientencryption;
+	intern->std.handlers = &phongo_handler_clientencryption;
 
 	return &intern->std;
 }
 
-static HashTable* php_phongo_clientencryption_get_debug_info(zend_object* object, int* is_temp)
+static HashTable* phongo_clientencryption_get_debug_info(zend_object* object, int* is_temp)
 {
-	php_phongo_clientencryption_t* intern = NULL;
-	zval                           retval = ZVAL_STATIC_INIT;
-
-	*is_temp = 1;
-	intern   = Z_OBJ_CLIENTENCRYPTION(object);
+	zval retval = ZVAL_STATIC_INIT;
+	*is_temp    = 1;
 
 	array_init(&retval);
 
 	return Z_ARRVAL(retval);
 }
 
-void php_phongo_clientencryption_init_ce(INIT_FUNC_ARGS)
+void phongo_clientencryption_init_ce(INIT_FUNC_ARGS)
 {
-	php_phongo_clientencryption_ce                = register_class_MongoDB_Driver_ClientEncryption();
-	php_phongo_clientencryption_ce->create_object = php_phongo_clientencryption_create_object;
+	phongo_clientencryption_ce                = register_class_MongoDB_Driver_ClientEncryption();
+	phongo_clientencryption_ce->create_object = phongo_clientencryption_create_object;
 
-	memcpy(&php_phongo_handler_clientencryption, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
-	php_phongo_handler_clientencryption.get_debug_info = php_phongo_clientencryption_get_debug_info;
-	php_phongo_handler_clientencryption.free_obj       = php_phongo_clientencryption_free_object;
-	php_phongo_handler_clientencryption.offset         = XtOffsetOf(php_phongo_clientencryption_t, std);
+	memcpy(&phongo_handler_clientencryption, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
+	phongo_handler_clientencryption.get_debug_info = phongo_clientencryption_get_debug_info;
+	phongo_handler_clientencryption.free_obj       = phongo_clientencryption_free_object;
+	phongo_handler_clientencryption.offset         = offsetof(phongo_clientencryption_t, std);
 }
 
 #ifdef MONGOC_ENABLE_CLIENT_SIDE_ENCRYPTION
@@ -551,8 +541,8 @@ static mongoc_client_encryption_opts_t* phongo_clientencryption_opts_from_zval(z
 	if (php_array_existsc(options, "keyVaultClient")) {
 		zval* key_vault_client = php_array_fetchc_deref(options, "keyVaultClient");
 
-		if (Z_TYPE_P(key_vault_client) != IS_OBJECT || !instanceof_function(Z_OBJCE_P(key_vault_client), php_phongo_manager_ce)) {
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"keyVaultClient\" option to be %s, %s given", ZSTR_VAL(php_phongo_manager_ce->name), zend_zval_type_name(key_vault_client));
+		if (Z_TYPE_P(key_vault_client) != IS_OBJECT || !instanceof_function(Z_OBJCE_P(key_vault_client), phongo_manager_ce)) {
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"keyVaultClient\" option to be %s, %s given", ZSTR_VAL(phongo_manager_ce->name), zend_zval_type_name(key_vault_client));
 			goto cleanup;
 		}
 
@@ -613,7 +603,7 @@ static mongoc_client_encryption_opts_t* phongo_clientencryption_opts_from_zval(z
 			goto cleanup;
 		}
 
-		php_phongo_zval_to_bson(kms_providers, PHONGO_BSON_NONE, &bson_providers, NULL);
+		phongo_zval_to_bson(kms_providers, PHONGO_BSON_NONE, &bson_providers, NULL);
 		if (EG(exception)) {
 			goto cleanup;
 		}
@@ -631,8 +621,9 @@ static mongoc_client_encryption_opts_t* phongo_clientencryption_opts_from_zval(z
 			goto cleanup;
 		}
 
-		php_phongo_zval_to_bson(tls_options, PHONGO_BSON_NONE, &bson_options, NULL);
+		phongo_zval_to_bson(tls_options, PHONGO_BSON_NONE, &bson_options, NULL);
 		if (EG(exception)) {
+			bson_destroy(&bson_options);
 			goto cleanup;
 		}
 
@@ -650,7 +641,7 @@ cleanup:
 	return NULL;
 }
 
-void phongo_clientencryption_init(php_phongo_clientencryption_t* intern, zval* options, zval* default_key_vault_client_manager)
+void phongo_clientencryption_init(phongo_clientencryption_t* intern, zval* options, zval* default_key_vault_client_manager)
 {
 	mongoc_client_encryption_t*      client_encryption;
 	mongoc_client_encryption_opts_t* opts;
@@ -766,7 +757,9 @@ static mongoc_client_encryption_datakey_opts_t* phongo_clientencryption_datakey_
 		}
 
 		for (j = 0; j < i; j++) {
-			efree(keyaltnames[j]);
+			if (keyaltnames[j]) {
+				efree(keyaltnames[j]);
+			}
 		}
 		efree(keyaltnames);
 
@@ -778,8 +771,8 @@ static mongoc_client_encryption_datakey_opts_t* phongo_clientencryption_datakey_
 	if (php_array_existsc(options, "keyMaterial")) {
 		zval* keyMaterial = php_array_fetchc_deref(options, "keyMaterial");
 
-		if (Z_TYPE_P(keyMaterial) != IS_OBJECT || !instanceof_function(Z_OBJCE_P(keyMaterial), php_phongo_binary_ce)) {
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"keyMaterial\" option to be %s, %s given", ZSTR_VAL(php_phongo_binary_ce->name), zend_zval_type_name(keyMaterial));
+		if (Z_TYPE_P(keyMaterial) != IS_OBJECT || !instanceof_function(Z_OBJCE_P(keyMaterial), phongo_binary_ce)) {
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"keyMaterial\" option to be %s, %s given", ZSTR_VAL(phongo_binary_ce->name), zend_zval_type_name(keyMaterial));
 			goto cleanup;
 		}
 
@@ -795,7 +788,7 @@ static mongoc_client_encryption_datakey_opts_t* phongo_clientencryption_datakey_
 			goto cleanup;
 		}
 
-		php_phongo_zval_to_bson(zmasterkey, PHONGO_BSON_NONE, &masterkey, NULL);
+		phongo_zval_to_bson(zmasterkey, PHONGO_BSON_NONE, &masterkey, NULL);
 
 		if (EG(exception)) {
 			bson_destroy(&masterkey);
@@ -816,7 +809,7 @@ cleanup:
 	return NULL;
 }
 
-static void phongo_clientencryption_create_datakey(php_phongo_clientencryption_t* clientencryption, zval* return_value, char* kms_provider, zval* options)
+static void phongo_clientencryption_create_datakey(phongo_clientencryption_t* clientencryption, zval* return_value, char* kms_provider, zval* options)
 {
 	mongoc_client_encryption_datakey_opts_t* opts;
 	bson_value_t                             keyid = { 0 };
@@ -847,6 +840,157 @@ cleanup:
 	bson_value_destroy(&keyid);
 }
 
+static mongoc_client_encryption_encrypt_string_opts_t* phongo_clientencryption_encrypt_string_opts_from_zval(zval* options)
+{
+	mongoc_client_encryption_encrypt_string_opts_t* opts;
+
+	opts = mongoc_client_encryption_encrypt_string_opts_new();
+
+	if (!options || Z_TYPE_P(options) != IS_ARRAY) {
+		return opts;
+	}
+
+	if (php_array_existsc(options, "caseSensitive")) {
+		mongoc_client_encryption_encrypt_string_opts_set_case_sensitive(opts, php_array_fetchc_bool(options, "caseSensitive"));
+	}
+
+	if (php_array_existsc(options, "diacriticSensitive")) {
+		mongoc_client_encryption_encrypt_string_opts_set_diacritic_sensitive(opts, php_array_fetchc_bool(options, "diacriticSensitive"));
+	}
+
+	if (php_array_existsc(options, "prefix")) {
+		zval*                                                  prefix_zval;
+		mongoc_client_encryption_encrypt_string_prefix_opts_t* prefix_opts;
+
+		prefix_opts = mongoc_client_encryption_encrypt_string_prefix_opts_new();
+		prefix_zval = php_array_fetchc_deref(options, "prefix");
+
+		if (prefix_zval && Z_TYPE_P(prefix_zval) == IS_ARRAY) {
+			if (php_array_existsc(prefix_zval, "strMaxQueryLength")) {
+				int64_t v = php_array_fetchc_long(prefix_zval, "strMaxQueryLength");
+
+				if (v < INT32_MIN || v > INT32_MAX) {
+					phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"strMaxQueryLength\" to be a 32-bit integer, %" PRId64 " given", v);
+					mongoc_client_encryption_encrypt_string_prefix_opts_destroy(prefix_opts);
+					goto cleanup;
+				}
+
+				mongoc_client_encryption_encrypt_string_prefix_opts_set_str_max_query_length(prefix_opts, (int32_t) v);
+			}
+
+			if (php_array_existsc(prefix_zval, "strMinQueryLength")) {
+				int64_t v = php_array_fetchc_long(prefix_zval, "strMinQueryLength");
+
+				if (v < INT32_MIN || v > INT32_MAX) {
+					phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"strMinQueryLength\" to be a 32-bit integer, %" PRId64 " given", v);
+					mongoc_client_encryption_encrypt_string_prefix_opts_destroy(prefix_opts);
+					goto cleanup;
+				}
+
+				mongoc_client_encryption_encrypt_string_prefix_opts_set_str_min_query_length(prefix_opts, (int32_t) v);
+			}
+		}
+
+		mongoc_client_encryption_encrypt_string_opts_set_prefix(opts, prefix_opts);
+		mongoc_client_encryption_encrypt_string_prefix_opts_destroy(prefix_opts);
+	}
+
+	if (php_array_existsc(options, "suffix")) {
+		zval*                                                  suffix_zval;
+		mongoc_client_encryption_encrypt_string_suffix_opts_t* suffix_opts;
+
+		suffix_opts = mongoc_client_encryption_encrypt_string_suffix_opts_new();
+		suffix_zval = php_array_fetchc_deref(options, "suffix");
+
+		if (suffix_zval && Z_TYPE_P(suffix_zval) == IS_ARRAY) {
+			if (php_array_existsc(suffix_zval, "strMaxQueryLength")) {
+				int64_t v = php_array_fetchc_long(suffix_zval, "strMaxQueryLength");
+
+				if (v < INT32_MIN || v > INT32_MAX) {
+					phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"strMaxQueryLength\" to be a 32-bit integer, %" PRId64 " given", v);
+					mongoc_client_encryption_encrypt_string_suffix_opts_destroy(suffix_opts);
+					goto cleanup;
+				}
+
+				mongoc_client_encryption_encrypt_string_suffix_opts_set_str_max_query_length(suffix_opts, (int32_t) v);
+			}
+
+			if (php_array_existsc(suffix_zval, "strMinQueryLength")) {
+				int64_t v = php_array_fetchc_long(suffix_zval, "strMinQueryLength");
+
+				if (v < INT32_MIN || v > INT32_MAX) {
+					phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"strMinQueryLength\" to be a 32-bit integer, %" PRId64 " given", v);
+					mongoc_client_encryption_encrypt_string_suffix_opts_destroy(suffix_opts);
+					goto cleanup;
+				}
+
+				mongoc_client_encryption_encrypt_string_suffix_opts_set_str_min_query_length(suffix_opts, (int32_t) v);
+			}
+		}
+
+		mongoc_client_encryption_encrypt_string_opts_set_suffix(opts, suffix_opts);
+		mongoc_client_encryption_encrypt_string_suffix_opts_destroy(suffix_opts);
+	}
+
+	if (php_array_existsc(options, "substring")) {
+		zval*                                                     substring_zval;
+		mongoc_client_encryption_encrypt_string_substring_opts_t* substring_opts;
+
+		substring_opts = mongoc_client_encryption_encrypt_string_substring_opts_new();
+		substring_zval = php_array_fetchc_deref(options, "substring");
+
+		if (substring_zval && Z_TYPE_P(substring_zval) == IS_ARRAY) {
+			if (php_array_existsc(substring_zval, "strMaxLength")) {
+				int64_t v = php_array_fetchc_long(substring_zval, "strMaxLength");
+
+				if (v < INT32_MIN || v > INT32_MAX) {
+					phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"strMaxLength\" to be a 32-bit integer, %" PRId64 " given", v);
+					mongoc_client_encryption_encrypt_string_substring_opts_destroy(substring_opts);
+					goto cleanup;
+				}
+
+				mongoc_client_encryption_encrypt_string_substring_opts_set_str_max_length(substring_opts, (int32_t) v);
+			}
+
+			if (php_array_existsc(substring_zval, "strMaxQueryLength")) {
+				int64_t v = php_array_fetchc_long(substring_zval, "strMaxQueryLength");
+
+				if (v < INT32_MIN || v > INT32_MAX) {
+					phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"strMaxQueryLength\" to be a 32-bit integer, %" PRId64 " given", v);
+					mongoc_client_encryption_encrypt_string_substring_opts_destroy(substring_opts);
+					goto cleanup;
+				}
+
+				mongoc_client_encryption_encrypt_string_substring_opts_set_str_max_query_length(substring_opts, (int32_t) v);
+			}
+
+			if (php_array_existsc(substring_zval, "strMinQueryLength")) {
+				int64_t v = php_array_fetchc_long(substring_zval, "strMinQueryLength");
+
+				if (v < INT32_MIN || v > INT32_MAX) {
+					phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"strMinQueryLength\" to be a 32-bit integer, %" PRId64 " given", v);
+					mongoc_client_encryption_encrypt_string_substring_opts_destroy(substring_opts);
+					goto cleanup;
+				}
+
+				mongoc_client_encryption_encrypt_string_substring_opts_set_str_min_query_length(substring_opts, (int32_t) v);
+			}
+		}
+
+		mongoc_client_encryption_encrypt_string_opts_set_substring(opts, substring_opts);
+		mongoc_client_encryption_encrypt_string_substring_opts_destroy(substring_opts);
+	}
+
+	return opts;
+
+cleanup:
+	if (opts) {
+		mongoc_client_encryption_encrypt_string_opts_destroy(opts);
+	}
+
+	return NULL;
+}
+
 static mongoc_client_encryption_encrypt_range_opts_t* phongo_clientencryption_encrypt_range_opts_from_zval(zval* options)
 {
 	mongoc_client_encryption_encrypt_range_opts_t* opts;
@@ -871,7 +1015,7 @@ static mongoc_client_encryption_encrypt_range_opts_t* phongo_clientencryption_en
 	if (php_array_existsc(options, "sparsity")) {
 		int64_t sparsity = php_array_fetchc_long(options, "sparsity");
 
-		if (sparsity < 0 || sparsity > INT64_MAX) {
+		if (sparsity < 0) {
 			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"sparsity\" range option to be a positive 64-bit integer, %" PRId64 " given", sparsity);
 			goto cleanup;
 		}
@@ -1009,6 +1153,20 @@ static mongoc_client_encryption_encrypt_opts_t* phongo_clientencryption_encrypt_
 		mongoc_client_encryption_encrypt_range_opts_destroy(range_opts);
 	}
 
+	if (php_array_existsc(options, "stringOpts")) {
+		mongoc_client_encryption_encrypt_string_opts_t* string_opts;
+
+		string_opts = phongo_clientencryption_encrypt_string_opts_from_zval(php_array_fetchc_deref(options, "stringOpts"));
+
+		if (!string_opts) {
+			/* Exception already thrown */
+			goto cleanup;
+		}
+
+		mongoc_client_encryption_encrypt_opts_set_string_opts(opts, string_opts);
+		mongoc_client_encryption_encrypt_string_opts_destroy(string_opts);
+	}
+
 	return opts;
 
 cleanup:
@@ -1019,7 +1177,7 @@ cleanup:
 	return NULL;
 }
 
-static void phongo_clientencryption_encrypt(php_phongo_clientencryption_t* clientencryption, zval* zvalue, zval* zciphertext, zval* options)
+static void phongo_clientencryption_encrypt(phongo_clientencryption_t* clientencryption, zval* zvalue, zval* zciphertext, zval* options)
 {
 	mongoc_client_encryption_encrypt_opts_t* opts       = NULL;
 	bson_value_t                             ciphertext = { 0 };
@@ -1058,14 +1216,14 @@ cleanup:
 	bson_value_destroy(&value);
 }
 
-static void phongo_clientencryption_encrypt_expression(php_phongo_clientencryption_t* clientencryption, zval* zexpr, zval* return_value, zval* options)
+static void phongo_clientencryption_encrypt_expression(phongo_clientencryption_t* clientencryption, zval* zexpr, zval* return_value, zval* options)
 {
 	mongoc_client_encryption_encrypt_opts_t* opts           = NULL;
 	bson_t                                   expr           = BSON_INITIALIZER;
 	bson_t                                   expr_encrypted = BSON_INITIALIZER;
 	bson_error_t                             error          = { 0 };
 
-	php_phongo_zval_to_bson(zexpr, PHONGO_BSON_NONE, &expr, NULL);
+	phongo_zval_to_bson(zexpr, PHONGO_BSON_NONE, &expr, NULL);
 
 	if (EG(exception)) {
 		goto cleanup;
@@ -1083,7 +1241,7 @@ static void phongo_clientencryption_encrypt_expression(php_phongo_clientencrypti
 		goto cleanup;
 	}
 
-	if (!php_phongo_bson_to_zval(&expr_encrypted, return_value)) {
+	if (!phongo_bson_to_zval(&expr_encrypted, return_value)) {
 		/* Exception already thrown */
 		goto cleanup;
 	}
@@ -1097,7 +1255,7 @@ cleanup:
 	bson_destroy(&expr_encrypted);
 }
 
-static void phongo_clientencryption_decrypt(php_phongo_clientencryption_t* clientencryption, zval* zciphertext, zval* zvalue)
+static void phongo_clientencryption_decrypt(phongo_clientencryption_t* clientencryption, zval* zciphertext, zval* zvalue)
 {
 	bson_value_t ciphertext = { 0 };
 	bson_value_t value      = { 0 };
@@ -1125,27 +1283,27 @@ cleanup:
 	bson_value_destroy(&value);
 }
 #else  /* MONGOC_ENABLE_CLIENT_SIDE_ENCRYPTION */
-void phongo_clientencryption_init(php_phongo_clientencryption_t* intern, zval* options, zval* default_key_vault_client_manager)
+void phongo_clientencryption_init(phongo_clientencryption_t* intern, zval* options, zval* default_key_vault_client_manager)
 {
 	phongo_throw_exception_no_cse(PHONGO_ERROR_RUNTIME, "Cannot configure clientEncryption object.");
 }
 
-static void phongo_clientencryption_create_datakey(php_phongo_clientencryption_t* clientencryption, zval* return_value, char* kms_provider, zval* options)
+static void phongo_clientencryption_create_datakey(phongo_clientencryption_t* clientencryption, zval* return_value, char* kms_provider, zval* options)
 {
 	phongo_throw_exception_no_cse(PHONGO_ERROR_RUNTIME, "Cannot create encryption key.");
 }
 
-static void phongo_clientencryption_encrypt(php_phongo_clientencryption_t* clientencryption, zval* zvalue, zval* zciphertext, zval* options)
+static void phongo_clientencryption_encrypt(phongo_clientencryption_t* clientencryption, zval* zvalue, zval* zciphertext, zval* options)
 {
 	phongo_throw_exception_no_cse(PHONGO_ERROR_RUNTIME, "Cannot encrypt value.");
 }
 
-static void phongo_clientencryption_encrypt_expression(php_phongo_clientencryption_t* clientencryption, zval* zexpr, zval* return_value, zval* options)
+static void phongo_clientencryption_encrypt_expression(phongo_clientencryption_t* clientencryption, zval* zexpr, zval* return_value, zval* options)
 {
 	phongo_throw_exception_no_cse(PHONGO_ERROR_RUNTIME, "Cannot encrypt expression.");
 }
 
-static void phongo_clientencryption_decrypt(php_phongo_clientencryption_t* clientencryption, zval* zciphertext, zval* zvalue)
+static void phongo_clientencryption_decrypt(phongo_clientencryption_t* clientencryption, zval* zciphertext, zval* zvalue)
 {
 	phongo_throw_exception_no_cse(PHONGO_ERROR_RUNTIME, "Cannot decrypt value.");
 }

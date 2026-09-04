@@ -5,29 +5,33 @@ on:
     branches:
       - "v[0-9]+.[0-9x]+"
 
-env:
-  GH_TOKEN: ${{ secrets.MERGE_UP_TOKEN }}
-
 jobs:
   merge-up:
     name: Create merge up pull request
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: write
+      pull-requests: write
 
     steps:
       - name: Checkout
         id: checkout
-        uses: actions/checkout@v4
+        uses: mongodb-labs/drivers-github-tools/secure-checkout@v3
         with:
-          # fetch-depth 0 is required to fetch all branches, not just the branch being built
+          app_id: ${{ vars.PR_APP_ID }}
+          private_key: ${{ secrets.PR_APP_PRIVATE_KEY }}
+          submodules: true
           fetch-depth: 0
-          token: ${{ secrets.MERGE_UP_TOKEN }}
 
       - name: Create pull request
         id: create-pull-request
-        uses: alcaeus/automatic-merge-up-action@1.0.0
+        # Pinned to a commit on main for the `labels` input, pending a release after 1.0.1
+        uses: alcaeus/automatic-merge-up-action@48b5ff50ed307f17a7db57154047fa49ab7c6cff
         with:
           ref: ${{ github.ref_name }}
           branchNamePattern: 'v<major>.<minor>'
           devBranchNamePattern: 'v<major>.x'
           ignoredBranches: ${{ vars.IGNORED_MERGE_UP_BRANCHES }}
           enableAutoMerge: true
+          labels: merge-up

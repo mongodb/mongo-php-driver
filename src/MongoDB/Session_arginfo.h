@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 22e0a387ed21d232c61f805ba258c4781a08a68e */
+ * Stub hash: f42d4c319eca5db335af6effdc192cab17d225e9 */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_Driver_Session___construct, 0, 0, 0)
 ZEND_END_ARG_INFO()
@@ -46,7 +46,6 @@ ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_Driver_Session_sta
 	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, options, IS_ARRAY, 1, "null")
 ZEND_END_ARG_INFO()
 
-
 static ZEND_METHOD(MongoDB_Driver_Session, __construct);
 static ZEND_METHOD(MongoDB_Driver_Session, abortTransaction);
 static ZEND_METHOD(MongoDB_Driver_Session, advanceClusterTime);
@@ -62,7 +61,6 @@ static ZEND_METHOD(MongoDB_Driver_Session, getTransactionState);
 static ZEND_METHOD(MongoDB_Driver_Session, isDirty);
 static ZEND_METHOD(MongoDB_Driver_Session, isInTransaction);
 static ZEND_METHOD(MongoDB_Driver_Session, startTransaction);
-
 
 static const zend_function_entry class_MongoDB_Driver_Session_methods[] = {
 	ZEND_ME(MongoDB_Driver_Session, __construct, arginfo_class_MongoDB_Driver_Session___construct, ZEND_ACC_PRIVATE|ZEND_ACC_FINAL)
@@ -88,8 +86,12 @@ static zend_class_entry *register_class_MongoDB_Driver_Session(void)
 	zend_class_entry ce, *class_entry;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver", "Session", class_MongoDB_Driver_Session_methods);
+#if (PHP_VERSION_ID >= 80400)
+	class_entry = zend_register_internal_class_with_flags(&ce, NULL, ZEND_ACC_FINAL|ZEND_ACC_NOT_SERIALIZABLE);
+#else
 	class_entry = zend_register_internal_class_ex(&ce, NULL);
 	class_entry->ce_flags |= ZEND_ACC_FINAL|ZEND_ACC_NOT_SERIALIZABLE;
+#endif
 
 	zval const_TRANSACTION_NONE_value;
 	zend_string *const_TRANSACTION_NONE_value_str = zend_string_init(PHONGO_TRANSACTION_NONE, strlen(PHONGO_TRANSACTION_NONE), 1);

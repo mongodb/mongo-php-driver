@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 3e304bb86abaff66e9714a02e3a20ec994b444ed */
+ * Stub hash: a679a82c3245e125935b03359a1d8007dbd22b24 */
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_MASK_EX(arginfo_class_MongoDB_Driver_CursorInterface_current, 0, 0, MAY_BE_ARRAY|MAY_BE_OBJECT|MAY_BE_NULL)
 ZEND_END_ARG_INFO()
@@ -24,16 +24,42 @@ ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_Driver_CursorInter
 ZEND_END_ARG_INFO()
 
 
-
-
 static const zend_function_entry class_MongoDB_Driver_CursorInterface_methods[] = {
-	ZEND_ABSTRACT_ME_WITH_FLAGS(MongoDB_Driver_CursorInterface, current, arginfo_class_MongoDB_Driver_CursorInterface_current, ZEND_ACC_PUBLIC|ZEND_ACC_ABSTRACT)
-	ZEND_ABSTRACT_ME_WITH_FLAGS(MongoDB_Driver_CursorInterface, getId, arginfo_class_MongoDB_Driver_CursorInterface_getId, ZEND_ACC_PUBLIC|ZEND_ACC_ABSTRACT)
-	ZEND_ABSTRACT_ME_WITH_FLAGS(MongoDB_Driver_CursorInterface, getServer, arginfo_class_MongoDB_Driver_CursorInterface_getServer, ZEND_ACC_PUBLIC|ZEND_ACC_ABSTRACT)
-	ZEND_ABSTRACT_ME_WITH_FLAGS(MongoDB_Driver_CursorInterface, isDead, arginfo_class_MongoDB_Driver_CursorInterface_isDead, ZEND_ACC_PUBLIC|ZEND_ACC_ABSTRACT)
-	ZEND_ABSTRACT_ME_WITH_FLAGS(MongoDB_Driver_CursorInterface, key, arginfo_class_MongoDB_Driver_CursorInterface_key, ZEND_ACC_PUBLIC|ZEND_ACC_ABSTRACT)
-	ZEND_ABSTRACT_ME_WITH_FLAGS(MongoDB_Driver_CursorInterface, setTypeMap, arginfo_class_MongoDB_Driver_CursorInterface_setTypeMap, ZEND_ACC_PUBLIC|ZEND_ACC_ABSTRACT)
-	ZEND_ABSTRACT_ME_WITH_FLAGS(MongoDB_Driver_CursorInterface, toArray, arginfo_class_MongoDB_Driver_CursorInterface_toArray, ZEND_ACC_PUBLIC|ZEND_ACC_ABSTRACT)
+#if (PHP_VERSION_ID >= 80400)
+	ZEND_RAW_FENTRY("current", NULL, arginfo_class_MongoDB_Driver_CursorInterface_current, ZEND_ACC_PUBLIC|ZEND_ACC_ABSTRACT, NULL, NULL)
+#else
+	ZEND_RAW_FENTRY("current", NULL, arginfo_class_MongoDB_Driver_CursorInterface_current, ZEND_ACC_PUBLIC|ZEND_ACC_ABSTRACT)
+#endif
+#if (PHP_VERSION_ID >= 80400)
+	ZEND_RAW_FENTRY("getId", NULL, arginfo_class_MongoDB_Driver_CursorInterface_getId, ZEND_ACC_PUBLIC|ZEND_ACC_ABSTRACT, NULL, NULL)
+#else
+	ZEND_RAW_FENTRY("getId", NULL, arginfo_class_MongoDB_Driver_CursorInterface_getId, ZEND_ACC_PUBLIC|ZEND_ACC_ABSTRACT)
+#endif
+#if (PHP_VERSION_ID >= 80400)
+	ZEND_RAW_FENTRY("getServer", NULL, arginfo_class_MongoDB_Driver_CursorInterface_getServer, ZEND_ACC_PUBLIC|ZEND_ACC_ABSTRACT, NULL, NULL)
+#else
+	ZEND_RAW_FENTRY("getServer", NULL, arginfo_class_MongoDB_Driver_CursorInterface_getServer, ZEND_ACC_PUBLIC|ZEND_ACC_ABSTRACT)
+#endif
+#if (PHP_VERSION_ID >= 80400)
+	ZEND_RAW_FENTRY("isDead", NULL, arginfo_class_MongoDB_Driver_CursorInterface_isDead, ZEND_ACC_PUBLIC|ZEND_ACC_ABSTRACT, NULL, NULL)
+#else
+	ZEND_RAW_FENTRY("isDead", NULL, arginfo_class_MongoDB_Driver_CursorInterface_isDead, ZEND_ACC_PUBLIC|ZEND_ACC_ABSTRACT)
+#endif
+#if (PHP_VERSION_ID >= 80400)
+	ZEND_RAW_FENTRY("key", NULL, arginfo_class_MongoDB_Driver_CursorInterface_key, ZEND_ACC_PUBLIC|ZEND_ACC_ABSTRACT, NULL, NULL)
+#else
+	ZEND_RAW_FENTRY("key", NULL, arginfo_class_MongoDB_Driver_CursorInterface_key, ZEND_ACC_PUBLIC|ZEND_ACC_ABSTRACT)
+#endif
+#if (PHP_VERSION_ID >= 80400)
+	ZEND_RAW_FENTRY("setTypeMap", NULL, arginfo_class_MongoDB_Driver_CursorInterface_setTypeMap, ZEND_ACC_PUBLIC|ZEND_ACC_ABSTRACT, NULL, NULL)
+#else
+	ZEND_RAW_FENTRY("setTypeMap", NULL, arginfo_class_MongoDB_Driver_CursorInterface_setTypeMap, ZEND_ACC_PUBLIC|ZEND_ACC_ABSTRACT)
+#endif
+#if (PHP_VERSION_ID >= 80400)
+	ZEND_RAW_FENTRY("toArray", NULL, arginfo_class_MongoDB_Driver_CursorInterface_toArray, ZEND_ACC_PUBLIC|ZEND_ACC_ABSTRACT, NULL, NULL)
+#else
+	ZEND_RAW_FENTRY("toArray", NULL, arginfo_class_MongoDB_Driver_CursorInterface_toArray, ZEND_ACC_PUBLIC|ZEND_ACC_ABSTRACT)
+#endif
 	ZEND_FE_END
 };
 

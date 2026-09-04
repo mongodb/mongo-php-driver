@@ -41,6 +41,28 @@ AC_DEFUN([PHP_MONGODB_ADD_INCLUDE],[
 ])
 
 dnl
+dnl PHP_MONGODB_ADD_BUILD_INCLUDE(path)
+dnl
+dnl Adds an include path relative to the extension build directory (i.e.
+dnl PHP_EXT_BUILDDIR). Use this for directories containing generated files
+dnl (e.g. config headers written by AC_CONFIG_FILES).
+dnl
+dnl PHP_EXT_BUILDDIR returns a path relative to the configure invocation
+dnl directory (e.g. "." for phpize builds, "ext/mongodb" for in-tree builds).
+dnl The subdirectory passed as $1 does not exist at configure time (build dirs
+dnl are created in AC_CONFIG_COMMANDS_PRE), so passing the full relative path
+dnl to PHP_ADD_INCLUDE would cause PHP_EXPAND_PATH to silently discard it when
+dnl the "cd $path && pwd" probe fails.  To avoid this, we resolve only the base
+dnl (PHP_EXT_BUILDDIR, which always exists at configure time) to an absolute
+dnl path first, then append $1.  PHP_ADD_INCLUDE skips the cd-probe for paths
+dnl that already start with "/".
+dnl
+AC_DEFUN([PHP_MONGODB_ADD_BUILD_INCLUDE],[
+  PHP_EXPAND_PATH(PHP_EXT_BUILDDIR(mongodb), php_mongodb_abs_builddir)
+  PHP_ADD_INCLUDE([$php_mongodb_abs_builddir/$1])
+])
+
+dnl
 dnl PHP_MONGODB_ADD_BUILD_DIR(path)
 dnl
 dnl Adds a build directory relative to the extension build directory (i.e.
