@@ -58,7 +58,7 @@ static PHP_METHOD(MongoDB_Driver_Server, executeCommand)
 	 * session pool is cleared. */
 	PHONGO_RESET_CLIENT_IF_PID_DIFFERS(intern, Z_MANAGER_OBJ_P(&intern->manager));
 
-	phongo_execute_command(&intern->manager, PHONGO_COMMAND_RAW, db, command, options, intern->server_id, return_value);
+	phongo_execute_command(&intern->manager, PHONGO_COMMAND_RAW, db, db_len, command, options, intern->server_id, return_value);
 }
 
 /* Executes a ReadCommand on this Server */
@@ -84,7 +84,7 @@ static PHP_METHOD(MongoDB_Driver_Server, executeReadCommand)
 	 * session pool is cleared. */
 	PHONGO_RESET_CLIENT_IF_PID_DIFFERS(intern, Z_MANAGER_OBJ_P(&intern->manager));
 
-	phongo_execute_command(&intern->manager, PHONGO_COMMAND_READ, db, command, options, intern->server_id, return_value);
+	phongo_execute_command(&intern->manager, PHONGO_COMMAND_READ, db, db_len, command, options, intern->server_id, return_value);
 }
 
 /* Executes a WriteCommand on this Server */
@@ -110,7 +110,7 @@ static PHP_METHOD(MongoDB_Driver_Server, executeWriteCommand)
 	 * session pool is cleared. */
 	PHONGO_RESET_CLIENT_IF_PID_DIFFERS(intern, Z_MANAGER_OBJ_P(&intern->manager));
 
-	phongo_execute_command(&intern->manager, PHONGO_COMMAND_WRITE, db, command, options, intern->server_id, return_value);
+	phongo_execute_command(&intern->manager, PHONGO_COMMAND_WRITE, db, db_len, command, options, intern->server_id, return_value);
 }
 
 /* Executes a ReadWriteCommand on this Server */
@@ -136,7 +136,7 @@ static PHP_METHOD(MongoDB_Driver_Server, executeReadWriteCommand)
 	 * session pool is cleared. */
 	PHONGO_RESET_CLIENT_IF_PID_DIFFERS(intern, Z_MANAGER_OBJ_P(&intern->manager));
 
-	phongo_execute_command(&intern->manager, PHONGO_COMMAND_READ_WRITE, db, command, options, intern->server_id, return_value);
+	phongo_execute_command(&intern->manager, PHONGO_COMMAND_READ_WRITE, db, db_len, command, options, intern->server_id, return_value);
 }
 
 /* Executes a Query on this Server */
@@ -162,7 +162,7 @@ static PHP_METHOD(MongoDB_Driver_Server, executeQuery)
 	 * session pool is cleared. */
 	PHONGO_RESET_CLIENT_IF_PID_DIFFERS(intern, Z_MANAGER_OBJ_P(&intern->manager));
 
-	phongo_execute_query(&intern->manager, namespace, query, options, intern->server_id, return_value);
+	phongo_execute_query(&intern->manager, namespace, namespace_len, query, options, intern->server_id, return_value);
 }
 
 /* Executes a BulkWrite (i.e. any number of insert, update, and delete ops) on
@@ -191,7 +191,7 @@ static PHP_METHOD(MongoDB_Driver_Server, executeBulkWrite)
 	 * that its session pool is cleared. */
 	PHONGO_RESET_CLIENT_IF_PID_DIFFERS(intern, Z_MANAGER_OBJ_P(&intern->manager));
 
-	phongo_execute_bulk_write(&intern->manager, namespace, bulk, options, intern->server_id, return_value);
+	phongo_execute_bulk_write(&intern->manager, namespace, namespace_len, bulk, options, intern->server_id, return_value);
 }
 
 /* Executes a BulkWriteCommand (i.e. bulkWrite command for MongoDB 8.0+) */

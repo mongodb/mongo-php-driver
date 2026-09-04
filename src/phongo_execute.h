@@ -38,10 +38,10 @@ typedef enum {
 	PHONGO_COMMAND_READ_WRITE     = 0x05,
 } php_phongo_command_type_t;
 
-bool phongo_execute_bulk_write(zval* manager, const char* namespace, php_phongo_bulkwrite_t* bulk_write, zval* zwriteConcern, uint32_t server_id, zval* return_value);
+bool phongo_execute_bulk_write(zval* manager, const char* namespace, size_t namespace_len, php_phongo_bulkwrite_t* bulk_write, zval* zwriteConcern, uint32_t server_id, zval* return_value);
 bool phongo_execute_bulkwritecommand(zval* manager, php_phongo_bulkwritecommand_t* bwc, zval* zoptions, uint32_t server_id, zval* return_value);
-bool phongo_execute_command(zval* manager, php_phongo_command_type_t type, const char* db, zval* zcommand, zval* zreadPreference, uint32_t server_id, zval* return_value);
-bool phongo_execute_query(zval* manager, const char* namespace, zval* zquery, zval* zreadPreference, uint32_t server_id, zval* return_value);
+bool phongo_execute_command(zval* manager, php_phongo_command_type_t type, const char* db, size_t db_len, zval* zcommand, zval* zreadPreference, uint32_t server_id, zval* return_value);
+bool phongo_execute_query(zval* manager, const char* namespace, size_t namespace_len, zval* zquery, zval* zreadPreference, uint32_t server_id, zval* return_value);
 
 bool phongo_parse_read_preference(zval* options, zval** zreadPreference);
 bool phongo_parse_session(zval* options, mongoc_client_t* client, bson_t* mongoc_opts, zval** zsession);
