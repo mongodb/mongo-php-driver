@@ -23,6 +23,10 @@ env:
 
     TODO: one or more paragraphs describing important changes in this release
 
+    > [!WARNING]
+    > Do _NOT_ publish release until after artifacts are attached from the "Create Release Artifacts" workflow.
+    > After publishing, the release is immutable. Remove this reminder before publishing.
+
     A complete list of resolved issues in this release may be found in [JIRA](https://jira.mongodb.org/secure/ReleaseNote.jspa?version={1}&projectId=12484).
 
     **Documentation**
