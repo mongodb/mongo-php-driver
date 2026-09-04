@@ -245,16 +245,6 @@ functions:
           ${PREPARE_SHELL}
           echo '{"results": [{ "status": "FAIL", "test_file": "Build", "log_raw": "No test-results.json found was created"  } ]}' > ${PROJECT_DIRECTORY}/test-results.json
 
-  "install dependencies":
-    - command: shell.exec
-      params:
-        working_dir: "src"
-        script: |
-          ${PREPARE_SHELL}
-          file="${DRIVERS_TOOLS}/.evergreen/install-dependencies.sh"
-          # Don't use ${file} syntax here because evergreen treats it as an empty expansion.
-          [ -f "$file" ] && bash $file || echo "$file not available, skipping"
-
   "start load balancer":
     - command: shell.exec
       params:
