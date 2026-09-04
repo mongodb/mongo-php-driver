@@ -19,6 +19,7 @@
 
 #include <php.h>
 
+#include "phongo_error.h"
 #include "phongo_util.h"
 
 const char* php_phongo_bson_type_to_string(bson_type_t type)
@@ -105,6 +106,48 @@ bool phongo_split_namespace(const char* namespace, char** dbname, char** cname)
 	}
 	if (dbname) {
 		*dbname = estrndup(namespace, dot - namespace);
+	}
+
+	return true;
+}
+
+/* Rejects a namespace that contains a NUL byte. A NUL byte would truncate the
+ * database or collection name at the C-string layer before it reaches the
+ * server, silently retargeting the operation. A period is not rejected here: it
+ * separates the database and collection names, and a period is valid in a
+ * collection name. */
+bool phongo_validate_namespace(const char* namespace, size_t namespace_len)
+{
+	if (namespace == NULL) {
+		return true;
+	}
+
+	if (memchr(namespace, '\0', namespace_len) != NULL) {
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "%s", "Invalid namespace provided: namespaces may not contain a null byte");
+		return false;
+	}
+
+	return true;
+}
+
+/* Rejects a database name that contains a NUL byte or a period. A NUL byte
+ * would truncate the name at the C-string layer; a period would be interpreted
+ * by the server as a namespace separator and retarget the command to a
+ * different database. */
+bool phongo_validate_dbname(const char* db, size_t db_len)
+{
+	if (db == NULL) {
+		return true;
+	}
+
+	if (memchr(db, '\0', db_len) != NULL) {
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "%s", "Invalid database name provided: database names may not contain a null byte");
+		return false;
+	}
+
+	if (memchr(db, '.', db_len) != NULL) {
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "%s: %s", "Invalid database name provided: database names may not contain a '.' character", db);
+		return false;
 	}
 
 	return true;
