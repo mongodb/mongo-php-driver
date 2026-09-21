@@ -17,7 +17,6 @@ pre:
   - func: "prepare resources"
   - func: "fix absolute paths"
   - func: "init test-results"
-  - func: "install dependencies"
   - func: "fetch build"
 post:
   - func: "upload test results"

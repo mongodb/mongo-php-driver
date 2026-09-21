@@ -3,7 +3,6 @@ variables:
     - func: "fetch source"
     - func: "prepare resources"
     - func: "fix absolute paths"
-    - func: "install dependencies"
   build_teardown: &build_teardown
     - func: "cleanup"
 
