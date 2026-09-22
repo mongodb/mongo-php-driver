@@ -202,7 +202,7 @@ reflect the new sources and/or package version.
 
 ### Resolving Submodule Conflicts When Merging Maintenance Branches
 
-When merging a maintenance branch up to master, it is quite possible for there
+When merging a maintenance branch up to 2.x, it is quite possible for there
 to be a submodule conflict (and in related files). Resolving a merge conflict
 should never result in downgrading a submodule to an older version. Rather, the
 submodule should be conservatively advanced and satisfy any requirements for
