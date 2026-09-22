@@ -1,12 +1,5 @@
 <?php
 
-$cmd = "find %s -maxdepth 1 -name '*.c' -print0 | cut -sz -d / -f %d- | sort -dz | tr '\\000' ' '";
-
-// On macOS, use gcut from the coreutils brew package instead of cut
-if (PHP_OS_FAMILY === 'Darwin') {
-    $cmd = str_replace('cut', 'gcut', $cmd);
-}
-
 $vars = [
     'PHP_MONGODB_COMMON_SOURCES' => 'src/libmongoc/src/common/src',
     'PHP_MONGODB_KMS_MESSAGE_SOURCES' => 'src/libmongoc/src/kms-message/src',
@@ -32,9 +25,21 @@ $replacements = [];
 chdir(__DIR__ . '/..');
 
 foreach ($vars as $var => $path) {
-    $cutNth = 2 + substr_count($path, '/');
+    $files = glob($path . '/*.c');
 
-    $files = trim(shell_exec(sprintf($cmd, $path, $cutNth)));
+    if ($files === false) {
+        $files = [];
+    }
+
+    // Keep only the file names (drop the directory prefix) and sort them.
+    // Compare only alphanumeric characters to match "LC_ALL=C sort -d" so the
+    // generated lists keep the same order without relying on GNU coreutils.
+    $basenames = array_map('basename', $files);
+    usort($basenames, static function (string $a, string $b): int {
+        return preg_replace('/[^A-Za-z0-9]/', '', $a) <=> preg_replace('/[^A-Za-z0-9]/', '', $b) ?: $a <=> $b;
+    });
+
+    $files = implode(' ', $basenames);
 
     // Note: utf8proc_data.c is included from utf8proc.c and should not be compiled directly
     if ($var === 'PHP_MONGODB_UTF8PROC_SOURCES') {
