@@ -47,7 +47,7 @@ static void phongo_commandstartedevent_update_properties(zend_object* object, co
 	phongo_bson_state command_state;
 	int64_t           server_connection_id = mongoc_apm_command_started_get_server_connection_id_int64(event);
 
-	PHONGO_BSON_INIT_STATE(command_state);
+	PHONGO_BSON_INIT_NO_ODM_STATE(command_state);
 
 	zend_update_property_string(phongo_commandstartedevent_ce, object, ZEND_STRL("host"), mongoc_apm_command_started_get_host(event)->host);
 	zend_update_property_long(phongo_commandstartedevent_ce, object, ZEND_STRL("port"), mongoc_apm_command_started_get_host(event)->port);

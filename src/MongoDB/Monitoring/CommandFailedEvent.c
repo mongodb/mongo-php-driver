@@ -50,7 +50,7 @@ static void phongo_commandfailedevent_update_properties(zend_object* object, con
 	phongo_bson_state reply_state;
 	int64_t           server_connection_id = mongoc_apm_command_failed_get_server_connection_id_int64(event);
 
-	PHONGO_BSON_INIT_STATE(reply_state);
+	PHONGO_BSON_INIT_NO_ODM_STATE(reply_state);
 
 	zend_update_property_string(phongo_commandfailedevent_ce, object, ZEND_STRL("host"), mongoc_apm_command_failed_get_host(event)->host);
 	zend_update_property_long(phongo_commandfailedevent_ce, object, ZEND_STRL("port"), mongoc_apm_command_failed_get_host(event)->port);
