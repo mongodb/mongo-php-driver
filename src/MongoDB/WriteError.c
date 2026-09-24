@@ -187,7 +187,7 @@ bool phongo_writeerror_init_ex(zval* return_value, const bson_t* bson, int32_t i
 
 		bson_iter_document(&iter, &len, &data);
 
-		if (!php_phongo_bson_data_to_zval(data, len, &intern->info)) {
+		if (!php_phongo_bson_data_to_zval_internal(data, len, &intern->info)) {
 			/* Exception already thrown */
 			zval_ptr_dtor(&intern->info);
 			ZVAL_UNDEF(&intern->info);
