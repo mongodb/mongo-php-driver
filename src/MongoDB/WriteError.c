@@ -64,7 +64,7 @@ static bool phongo_writeerror_update_properties(zend_object* object, const bson_
 
 		bson_iter_document(&iter, &len, &data);
 
-		if (!phongo_bson_data_to_zval(data, len, &zinfo)) {
+		if (!phongo_bson_data_to_zval_internal(data, len, &zinfo)) {
 			/* Exception already thrown */
 			zval_ptr_dtor(&zinfo);
 

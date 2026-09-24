@@ -199,7 +199,7 @@ void phongo_throw_exception_from_bson_error_t_and_reply(bson_error_t* error, con
 		zval zv;
 
 		zend_throw_exception(phongo_commandexception_ce, error->message, error->code);
-		if (phongo_bson_to_zval(reply, &zv)) {
+		if (phongo_bson_to_zval_internal(reply, &zv)) {
 			phongo_add_exception_prop(ZEND_STRL("resultDocument"), &zv);
 		}
 
