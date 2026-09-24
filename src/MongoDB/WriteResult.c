@@ -147,7 +147,7 @@ static bool phongo_writeresult_get_error_replies(phongo_writeresult_t* intern, z
 			}
 
 			bson_iter_document(&child, &len, &data);
-			phongo_bson_data_to_zval(data, len, &error_reply);
+			phongo_bson_data_to_zval_internal(data, len, &error_reply);
 
 			add_next_index_zval(return_value, &error_reply);
 		}
@@ -169,9 +169,12 @@ static void phongo_writeresult_get_upserted_ids(phongo_writeresult_t* intern, zv
 			phongo_bson_state state;
 
 			/* Use PHONGO_TYPEMAP_NATIVE_ARRAY for the root type so we can
-			 * easily access the "index" and "_id" fields. */
+			 * easily access the "index" and "_id" fields. Only the root type is
+			 * overridden, so suppress ODM inference for the "_id" document
+			 * rather than also forcing a document type. */
 			PHONGO_BSON_INIT_STATE(state);
 			state.map.root.type = PHONGO_TYPEMAP_NATIVE_ARRAY;
+			state.skip_odm      = true;
 
 			if (!BSON_ITER_HOLDS_DOCUMENT(&child)) {
 				continue;

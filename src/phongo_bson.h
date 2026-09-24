@@ -72,10 +72,15 @@ typedef struct {
 } phongo_bson_typemap;
 
 typedef struct {
-	zval                        zchild;
-	phongo_bson_typemap         map;
-	zend_class_entry*           odm_ce;
-	bool                        is_visiting_array;
+	zval                zchild;
+	phongo_bson_typemap map;
+	zend_class_entry*   odm_ce;
+	bool                is_visiting_array;
+	/* Suppresses inference of an ODM class from the "__pclass" field. Set for
+	 * driver-internal conversions, where the BSON may originate from a server
+	 * reply or from data the application does not control, and where there is
+	 * no type map through which a caller could opt out. */
+	bool                        skip_odm;
 	phongo_field_path*          field_path;
 	phongo_bson_typemap_element field_type;
 } phongo_bson_state;
@@ -98,6 +103,17 @@ typedef enum {
 		s.map.document.type = PHONGO_TYPEMAP_NATIVE_ARRAY; \
 	} while (0)
 
+/* Initializes a state for a driver-internal conversion that yields objects. The
+ * type map is explicit rather than left as PHONGO_TYPEMAP_NONE, which would be
+ * interpreted as a request to infer the class from a "__pclass" field. */
+#define PHONGO_BSON_INIT_NO_ODM_STATE(s)                    \
+	do {                                                    \
+		memset(&(s), 0, sizeof(phongo_bson_state));         \
+		s.skip_odm          = true;                         \
+		s.map.root.type     = PHONGO_TYPEMAP_NATIVE_OBJECT; \
+		s.map.document.type = PHONGO_TYPEMAP_NATIVE_OBJECT; \
+	} while (0)
+
 char*              phongo_field_path_as_string(phongo_field_path* field_path);
 phongo_field_path* phongo_field_path_alloc(bool owns_elements);
 void               phongo_field_path_free(phongo_field_path* field_path);
@@ -108,8 +124,10 @@ bool               phongo_field_path_pop(phongo_field_path* field_path);
 
 bool phongo_bson_to_json(zval* return_value, const bson_t* bson, phongo_json_mode_t mode);
 bool phongo_bson_to_zval(const bson_t* b, zval* zv);
+bool phongo_bson_to_zval_internal(const bson_t* b, zval* zv);
 bool phongo_bson_to_zval_ex(const bson_t* b, phongo_bson_state* state);
 bool phongo_bson_data_to_zval(const unsigned char* data, size_t data_len, zval* zv);
+bool phongo_bson_data_to_zval_internal(const unsigned char* data, size_t data_len, zval* zv);
 bool phongo_bson_data_to_zval_ex(const unsigned char* data, size_t data_len, phongo_bson_state* state);
 
 bool phongo_bson_value_to_zval(const bson_value_t* value, zval* zv);
