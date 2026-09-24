@@ -14,10 +14,6 @@ $tests = [
     [[], ['min' => ['' => 1]]],
     [[], ['projection' => ['' => 1]]],
     [[], ['sort' => ['' => 1]]],
-    [[], ['modifiers' => ['$hint' => ['' => 1]]]],
-    [[], ['modifiers' => ['$max' => ['' => 1]]]],
-    [[], ['modifiers' => ['$min' => ['' => 1]]]],
-    [[], ['modifiers' => ['$orderby' => ['' => 1]]]],
 ];
 
 foreach ($tests as $test) {
@@ -48,20 +44,4 @@ OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Cannot use empty keys in "projection" option
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Cannot use empty keys in "sort" option
-
-Deprecated: MongoDB\Driver\Query::__construct(): The "modifiers" option is deprecated and will be removed in a future release in %s on line %d
-OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Cannot use empty keys in "$hint" modifier
-
-Deprecated: MongoDB\Driver\Query::__construct(): The "modifiers" option is deprecated and will be removed in a future release in %s on line %d
-OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Cannot use empty keys in "$max" modifier
-
-Deprecated: MongoDB\Driver\Query::__construct(): The "modifiers" option is deprecated and will be removed in a future release in %s on line %d
-OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Cannot use empty keys in "$min" modifier
-
-Deprecated: MongoDB\Driver\Query::__construct(): The "modifiers" option is deprecated and will be removed in a future release in %s on line %d
-OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Cannot use empty keys in "$orderby" modifier
 ===DONE===

@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\Driver\Server::executeQuery() with negative limit returns a single batch
+MongoDB\Driver\Server::executeQuery() with limit and single batch
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_live(); ?>
@@ -18,7 +18,7 @@ $bulk->insert(['_id' => 2, 'x' => 3, 'y' => 4]);
 $bulk->insert(['_id' => 3, 'x' => 4, 'y' => 5]);
 $server->executeBulkWrite(NS, $bulk);
 
-$query = new MongoDB\Driver\Query([], ['limit' => -2]);
+$query = new MongoDB\Driver\Query([], ['limit' => 2, 'singleBatch' => true]);
 $cursor = $server->executeQuery(NS, $query);
 
 var_dump($cursor instanceof MongoDB\Driver\Cursor);
@@ -29,7 +29,6 @@ var_dump(iterator_to_array($cursor));
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-Deprecated: MongoDB\Driver\Query::__construct(): Support for negative "limit" values is deprecated and will be removed in ext-mongodb 2.0 in %s on line %d
 bool(true)
 bool(true)
 array(2) {

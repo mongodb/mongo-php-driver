@@ -147,11 +147,6 @@ static inline bool phongo_check_bson_serialize_return_type(zval* retval, zend_cl
  */
 static void php_phongo_bson_append_object(bson_t* bson, php_phongo_field_path* field_path, php_phongo_bson_flags_t flags, const char* key, long key_len, zval* object)
 {
-	if (Z_TYPE_P(object) == IS_OBJECT && instanceof_function(Z_OBJCE_P(object), php_phongo_cursorid_ce)) {
-		bson_append_int64(bson, key, key_len, Z_CURSORID_OBJ_P(object)->id);
-		return;
-	}
-
 	if (Z_TYPE_P(object) == IS_OBJECT && instanceof_function(Z_OBJCE_P(object), php_phongo_type_ce)) {
 		if (instanceof_function(Z_OBJCE_P(object), php_phongo_document_ce)) {
 			php_phongo_document_t* intern = Z_DOCUMENT_OBJ_P(object);

@@ -1,11 +1,10 @@
   - name: "ocsp-test_1-rsa-delegate-%mongodbVersion%"
     tags: ["ocsp", "%mongodbVersion%"]
     commands:
-      - func: "run OCSP responder"
+      - func: "start OCSP responder"
         vars:
-          TEST_COLUMN: "TEST_1"
-          CERT_TYPE: "rsa"
-          USE_DELEGATE: "on"
+          SERVER_TYPE: "valid-delegate"
+          OCSP_ALGORITHM: "rsa"
       - func: "bootstrap mongo-orchestration"
         vars:
           MONGODB_VERSION: "%mongodbVersion%"
@@ -19,11 +18,10 @@
   - name: "ocsp-test_1-ecdsa-delegate-%mongodbVersion%"
     tags: ["ocsp", "%mongodbVersion%"]
     commands:
-      - func: "run OCSP responder"
+      - func: "start OCSP responder"
         vars:
-          TEST_COLUMN: "TEST_1"
-          CERT_TYPE: "ecdsa"
-          USE_DELEGATE: "on"
+          SERVER_TYPE: "valid-delegate"
+          OCSP_ALGORITHM: "ecdsa"
       - func: "bootstrap mongo-orchestration"
         vars:
           MONGODB_VERSION: "%mongodbVersion%"
@@ -37,11 +35,10 @@
   - name: "ocsp-test_1-rsa-nodelegate-%mongodbVersion%"
     tags: ["ocsp", "%mongodbVersion%"]
     commands:
-      - func: "run OCSP responder"
+      - func: "start OCSP responder"
         vars:
-          TEST_COLUMN: "TEST_1"
-          CERT_TYPE: "rsa"
-          USE_DELEGATE: "off"
+          SERVER_TYPE: "valid"
+          OCSP_ALGORITHM: "rsa"
       - func: "bootstrap mongo-orchestration"
         vars:
           MONGODB_VERSION: "%mongodbVersion%"
@@ -55,11 +52,10 @@
   - name: "ocsp-test_1-ecdsa-nodelegate-%mongodbVersion%"
     tags: ["ocsp", "%mongodbVersion%"]
     commands:
-      - func: "run OCSP responder"
+      - func: "start OCSP responder"
         vars:
-          TEST_COLUMN: "TEST_1"
-          CERT_TYPE: "ecdsa"
-          USE_DELEGATE: "off"
+          SERVER_TYPE: "valid"
+          OCSP_ALGORITHM: "ecdsa"
       - func: "bootstrap mongo-orchestration"
         vars:
           MONGODB_VERSION: "%mongodbVersion%"
@@ -73,11 +69,10 @@
   - name: "ocsp-test_2-rsa-delegate-%mongodbVersion%"
     tags: ["ocsp", "%mongodbVersion%"]
     commands:
-      - func: "run OCSP responder"
+      - func: "start OCSP responder"
         vars:
-          TEST_COLUMN: "TEST_2"
-          CERT_TYPE: "rsa"
-          USE_DELEGATE: "on"
+          SERVER_TYPE: "revoked-delegate"
+          OCSP_ALGORITHM: "rsa"
       - func: "bootstrap mongo-orchestration"
         vars:
           MONGODB_VERSION: "%mongodbVersion%"
@@ -91,11 +86,10 @@
   - name: "ocsp-test_2-ecdsa-delegate-%mongodbVersion%"
     tags: ["ocsp", "%mongodbVersion%"]
     commands:
-      - func: "run OCSP responder"
+      - func: "start OCSP responder"
         vars:
-          TEST_COLUMN: "TEST_2"
-          CERT_TYPE: "ecdsa"
-          USE_DELEGATE: "on"
+          SERVER_TYPE: "revoked-delegate"
+          OCSP_ALGORITHM: "ecdsa"
       - func: "bootstrap mongo-orchestration"
         vars:
           MONGODB_VERSION: "%mongodbVersion%"
@@ -109,11 +103,10 @@
   - name: "ocsp-test_2-rsa-nodelegate-%mongodbVersion%"
     tags: ["ocsp", "%mongodbVersion%"]
     commands:
-      - func: "run OCSP responder"
+      - func: "start OCSP responder"
         vars:
-          TEST_COLUMN: "TEST_2"
-          CERT_TYPE: "rsa"
-          USE_DELEGATE: "off"
+          SERVER_TYPE: "revoked"
+          OCSP_ALGORITHM: "rsa"
       - func: "bootstrap mongo-orchestration"
         vars:
           MONGODB_VERSION: "%mongodbVersion%"
@@ -127,11 +120,10 @@
   - name: "ocsp-test_2-ecdsa-nodelegate-%mongodbVersion%"
     tags: ["ocsp", "%mongodbVersion%"]
     commands:
-      - func: "run OCSP responder"
+      - func: "start OCSP responder"
         vars:
-          TEST_COLUMN: "TEST_2"
-          CERT_TYPE: "ecdsa"
-          USE_DELEGATE: "off"
+          SERVER_TYPE: "revoked"
+          OCSP_ALGORITHM: "ecdsa"
       - func: "bootstrap mongo-orchestration"
         vars:
           MONGODB_VERSION: "%mongodbVersion%"
@@ -145,11 +137,10 @@
   - name: "ocsp-test_3-rsa-delegate-%mongodbVersion%"
     tags: ["ocsp", "%mongodbVersion%"]
     commands:
-      - func: "run OCSP responder"
+      - func: "start OCSP responder"
         vars:
-          TEST_COLUMN: "TEST_3"
-          CERT_TYPE: "rsa"
-          USE_DELEGATE: "on"
+          SERVER_TYPE: "valid-delegate"
+          OCSP_ALGORITHM: "rsa"
       - func: "bootstrap mongo-orchestration"
         vars:
           MONGODB_VERSION: "%mongodbVersion%"
@@ -163,11 +154,10 @@
   - name: "ocsp-test_3-ecdsa-delegate-%mongodbVersion%"
     tags: ["ocsp", "%mongodbVersion%"]
     commands:
-      - func: "run OCSP responder"
+      - func: "start OCSP responder"
         vars:
-          TEST_COLUMN: "TEST_3"
-          CERT_TYPE: "ecdsa"
-          USE_DELEGATE: "on"
+          SERVER_TYPE: "valid-delegate"
+          OCSP_ALGORITHM: "ecdsa"
       - func: "bootstrap mongo-orchestration"
         vars:
           MONGODB_VERSION: "%mongodbVersion%"
@@ -181,11 +171,10 @@
   - name: "ocsp-test_3-rsa-nodelegate-%mongodbVersion%"
     tags: ["ocsp", "%mongodbVersion%"]
     commands:
-      - func: "run OCSP responder"
+      - func: "start OCSP responder"
         vars:
-          TEST_COLUMN: "TEST_3"
-          CERT_TYPE: "rsa"
-          USE_DELEGATE: "off"
+          SERVER_TYPE: "valid"
+          OCSP_ALGORITHM: "rsa"
       - func: "bootstrap mongo-orchestration"
         vars:
           MONGODB_VERSION: "%mongodbVersion%"
@@ -199,11 +188,10 @@
   - name: "ocsp-test_3-ecdsa-nodelegate-%mongodbVersion%"
     tags: ["ocsp", "%mongodbVersion%"]
     commands:
-      - func: "run OCSP responder"
+      - func: "start OCSP responder"
         vars:
-          TEST_COLUMN: "TEST_3"
-          CERT_TYPE: "ecdsa"
-          USE_DELEGATE: "off"
+          SERVER_TYPE: "valid"
+          OCSP_ALGORITHM: "ecdsa"
       - func: "bootstrap mongo-orchestration"
         vars:
           MONGODB_VERSION: "%mongodbVersion%"
@@ -217,11 +205,10 @@
   - name: "ocsp-test_4-rsa-delegate-%mongodbVersion%"
     tags: ["ocsp", "%mongodbVersion%"]
     commands:
-      - func: "run OCSP responder"
+      - func: "start OCSP responder"
         vars:
-          TEST_COLUMN: "TEST_4"
-          CERT_TYPE: "rsa"
-          USE_DELEGATE: "on"
+          SERVER_TYPE: "revoked-delegate"
+          OCSP_ALGORITHM: "rsa"
       - func: "bootstrap mongo-orchestration"
         vars:
           MONGODB_VERSION: "%mongodbVersion%"
@@ -235,11 +222,10 @@
   - name: "ocsp-test_4-ecdsa-delegate-%mongodbVersion%"
     tags: ["ocsp", "%mongodbVersion%"]
     commands:
-      - func: "run OCSP responder"
+      - func: "start OCSP responder"
         vars:
-          TEST_COLUMN: "TEST_4"
-          CERT_TYPE: "ecdsa"
-          USE_DELEGATE: "on"
+          SERVER_TYPE: "revoked-delegate"
+          OCSP_ALGORITHM: "ecdsa"
       - func: "bootstrap mongo-orchestration"
         vars:
           MONGODB_VERSION: "%mongodbVersion%"
@@ -253,11 +239,10 @@
   - name: "ocsp-test_4-rsa-nodelegate-%mongodbVersion%"
     tags: ["ocsp", "%mongodbVersion%"]
     commands:
-      - func: "run OCSP responder"
+      - func: "start OCSP responder"
         vars:
-          TEST_COLUMN: "TEST_4"
-          CERT_TYPE: "rsa"
-          USE_DELEGATE: "off"
+          SERVER_TYPE: "revoked"
+          OCSP_ALGORITHM: "rsa"
       - func: "bootstrap mongo-orchestration"
         vars:
           MONGODB_VERSION: "%mongodbVersion%"
@@ -271,11 +256,10 @@
   - name: "ocsp-test_4-ecdsa-nodelegate-%mongodbVersion%"
     tags: ["ocsp", "%mongodbVersion%"]
     commands:
-      - func: "run OCSP responder"
+      - func: "start OCSP responder"
         vars:
-          TEST_COLUMN: "TEST_4"
-          CERT_TYPE: "ecdsa"
-          USE_DELEGATE: "off"
+          SERVER_TYPE: "revoked"
+          OCSP_ALGORITHM: "ecdsa"
       - func: "bootstrap mongo-orchestration"
         vars:
           MONGODB_VERSION: "%mongodbVersion%"
@@ -315,11 +299,10 @@
   - name: "ocsp-malicious_server_test_1-rsa-delegate-%mongodbVersion%"
     tags: ["ocsp", "%mongodbVersion%"]
     commands:
-      - func: "run OCSP responder"
+      - func: "start OCSP responder"
         vars:
-          TEST_COLUMN: "MALICIOUS_SERVER_TEST_1"
-          CERT_TYPE: "rsa"
-          USE_DELEGATE: "on"
+          SERVER_TYPE: "revoked-delegate"
+          OCSP_ALGORITHM: "rsa"
       - func: "bootstrap mongo-orchestration"
         vars:
           MONGODB_VERSION: "%mongodbVersion%"
@@ -333,11 +316,10 @@
   - name: "ocsp-malicious_server_test_1-ecdsa-delegate-%mongodbVersion%"
     tags: ["ocsp", "%mongodbVersion%"]
     commands:
-      - func: "run OCSP responder"
+      - func: "start OCSP responder"
         vars:
-          TEST_COLUMN: "MALICIOUS_SERVER_TEST_1"
-          CERT_TYPE: "ecdsa"
-          USE_DELEGATE: "on"
+          SERVER_TYPE: "revoked-delegate"
+          OCSP_ALGORITHM: "ecdsa"
       - func: "bootstrap mongo-orchestration"
         vars:
           MONGODB_VERSION: "%mongodbVersion%"
@@ -351,11 +333,10 @@
   - name: "ocsp-malicious_server_test_1-rsa-nodelegate-%mongodbVersion%"
     tags: ["ocsp", "%mongodbVersion%"]
     commands:
-      - func: "run OCSP responder"
+      - func: "start OCSP responder"
         vars:
-          TEST_COLUMN: "MALICIOUS_SERVER_TEST_1"
-          CERT_TYPE: "rsa"
-          USE_DELEGATE: "off"
+          SERVER_TYPE: "revoked"
+          OCSP_ALGORITHM: "rsa"
       - func: "bootstrap mongo-orchestration"
         vars:
           MONGODB_VERSION: "%mongodbVersion%"
@@ -369,11 +350,10 @@
   - name: "ocsp-malicious_server_test_1-ecdsa-nodelegate-%mongodbVersion%"
     tags: ["ocsp", "%mongodbVersion%"]
     commands:
-      - func: "run OCSP responder"
+      - func: "start OCSP responder"
         vars:
-          TEST_COLUMN: "MALICIOUS_SERVER_TEST_1"
-          CERT_TYPE: "ecdsa"
-          USE_DELEGATE: "off"
+          SERVER_TYPE: "revoked"
+          OCSP_ALGORITHM: "ecdsa"
       - func: "bootstrap mongo-orchestration"
         vars:
           MONGODB_VERSION: "%mongodbVersion%"

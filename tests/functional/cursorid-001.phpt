@@ -20,7 +20,7 @@ $query = new MongoDB\Driver\Query(array(), array(
 
 $cursor = $manager->executeQuery(NS, $query);
 
-$cursorid = $cursor->getId(true);
+$cursorid = $cursor->getId();
 var_dump($cursorid);
 var_dump($cursorid != 0);
 

@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 29a1460703051cab24abd6b42228c90928e18049 */
+ * Stub hash: ea16be50be5151fdd45b9e1bc37856d94990725e */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_Driver_ClientEncryption___construct, 0, 0, 1)
 	ZEND_ARG_TYPE_INFO(0, options, IS_ARRAY, 0)
@@ -125,13 +125,6 @@ static zend_class_entry *register_class_MongoDB_Driver_ClientEncryption(void)
 	zend_declare_class_constant_ex(class_entry, const_ALGORITHM_RANGE_name, &const_ALGORITHM_RANGE_value, ZEND_ACC_PUBLIC, NULL);
 	zend_string_release(const_ALGORITHM_RANGE_name);
 
-	zval const_ALGORITHM_RANGE_PREVIEW_value;
-	zend_string *const_ALGORITHM_RANGE_PREVIEW_value_str = zend_string_init(MONGOC_ENCRYPT_ALGORITHM_RANGEPREVIEW, strlen(MONGOC_ENCRYPT_ALGORITHM_RANGEPREVIEW), 1);
-	ZVAL_STR(&const_ALGORITHM_RANGE_PREVIEW_value, const_ALGORITHM_RANGE_PREVIEW_value_str);
-	zend_string *const_ALGORITHM_RANGE_PREVIEW_name = zend_string_init_interned("ALGORITHM_RANGE_PREVIEW", sizeof("ALGORITHM_RANGE_PREVIEW") - 1, 1);
-	zend_declare_class_constant_ex(class_entry, const_ALGORITHM_RANGE_PREVIEW_name, &const_ALGORITHM_RANGE_PREVIEW_value, ZEND_ACC_PUBLIC|ZEND_ACC_DEPRECATED, NULL);
-	zend_string_release(const_ALGORITHM_RANGE_PREVIEW_name);
-
 	zval const_QUERY_TYPE_EQUALITY_value;
 	zend_string *const_QUERY_TYPE_EQUALITY_value_str = zend_string_init(MONGOC_ENCRYPT_QUERY_TYPE_EQUALITY, strlen(MONGOC_ENCRYPT_QUERY_TYPE_EQUALITY), 1);
 	ZVAL_STR(&const_QUERY_TYPE_EQUALITY_value, const_QUERY_TYPE_EQUALITY_value_str);
@@ -145,13 +138,6 @@ static zend_class_entry *register_class_MongoDB_Driver_ClientEncryption(void)
 	zend_string *const_QUERY_TYPE_RANGE_name = zend_string_init_interned("QUERY_TYPE_RANGE", sizeof("QUERY_TYPE_RANGE") - 1, 1);
 	zend_declare_class_constant_ex(class_entry, const_QUERY_TYPE_RANGE_name, &const_QUERY_TYPE_RANGE_value, ZEND_ACC_PUBLIC, NULL);
 	zend_string_release(const_QUERY_TYPE_RANGE_name);
-
-	zval const_QUERY_TYPE_RANGE_PREVIEW_value;
-	zend_string *const_QUERY_TYPE_RANGE_PREVIEW_value_str = zend_string_init(MONGOC_ENCRYPT_QUERY_TYPE_RANGEPREVIEW, strlen(MONGOC_ENCRYPT_QUERY_TYPE_RANGEPREVIEW), 1);
-	ZVAL_STR(&const_QUERY_TYPE_RANGE_PREVIEW_value, const_QUERY_TYPE_RANGE_PREVIEW_value_str);
-	zend_string *const_QUERY_TYPE_RANGE_PREVIEW_name = zend_string_init_interned("QUERY_TYPE_RANGE_PREVIEW", sizeof("QUERY_TYPE_RANGE_PREVIEW") - 1, 1);
-	zend_declare_class_constant_ex(class_entry, const_QUERY_TYPE_RANGE_PREVIEW_name, &const_QUERY_TYPE_RANGE_PREVIEW_value, ZEND_ACC_PUBLIC|ZEND_ACC_DEPRECATED, NULL);
-	zend_string_release(const_QUERY_TYPE_RANGE_PREVIEW_name);
 
 	return class_entry;
 }

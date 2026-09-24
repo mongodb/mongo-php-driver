@@ -24,5 +24,5 @@ zend_class_entry* php_phongo_cursor_interface_ce;
 
 void php_phongo_cursor_interface_init_ce(INIT_FUNC_ARGS)
 {
-	php_phongo_cursor_interface_ce = register_class_MongoDB_Driver_CursorInterface(zend_ce_traversable);
+	php_phongo_cursor_interface_ce = register_class_MongoDB_Driver_CursorInterface(zend_ce_iterator);
 }

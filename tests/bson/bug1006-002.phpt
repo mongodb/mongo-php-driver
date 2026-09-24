@@ -7,8 +7,7 @@ require_once __DIR__ . '/../utils/basic.inc';
 
 class MyClass implements MongoDB\BSON\Serializable
 {
-    #[\ReturnTypeWillChange]
-    public function bsonSerialize()
+    public function bsonSerialize(): array
     {
         return [
             '__pclass' => 'baz',

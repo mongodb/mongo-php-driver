@@ -3,7 +3,6 @@ MongoDB\Driver\BulkWrite::update() with hint option
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_live(); ?>
-<?php skip_if_server_version('<', '4.2'); ?>
 <?php skip_if_not_clean(); ?>
 --FILE--
 <?php

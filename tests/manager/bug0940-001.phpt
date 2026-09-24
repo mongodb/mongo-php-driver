@@ -6,13 +6,14 @@ PHPC-940: php_phongo_free_ssl_opt() attempts to free interned strings
 --FILE--
 <?php
 
-var_dump(new MongoDB\Driver\Manager(null, [], ['ca_file' => false]));
+/* Note: an empty string is interned, but php_phongo_fetch_string() calls
+ * estrndup() for pfree=false so php_phongo_free_ssl_opt() will still efree() */
+var_dump(new MongoDB\Driver\Manager(null, [], ['ca_dir' => '']));
 
 ?>
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-Deprecated: MongoDB\Driver\Manager::__construct(): The "ca_file" driver option is deprecated. Please use the "tlsCAFile" URI option instead.%s
 object(MongoDB\Driver\Manager)#%d (%d) {
   ["uri"]=>
   string(20) "mongodb://127.0.0.1/"

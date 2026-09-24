@@ -17,11 +17,25 @@
 #include <php.h>
 
 #include "php_phongo.h"
+#include "phongo_error.h"
 #include "BulkWriteException_arginfo.h"
 
 zend_class_entry* php_phongo_bulkwriteexception_ce;
 
+/* Returns the WriteResult from the failed write operation. */
+static PHP_METHOD(MongoDB_Driver_Exception_BulkWriteException, getWriteResult)
+{
+	zval* writeresult;
+	zval  rv;
+
+	PHONGO_PARSE_PARAMETERS_NONE();
+
+	writeresult = zend_read_property(php_phongo_bulkwriteexception_ce, Z_OBJ_P(getThis()), ZEND_STRL("writeResult"), 0, &rv);
+
+	RETURN_ZVAL(writeresult, 1, 0);
+}
+
 void php_phongo_bulkwriteexception_init_ce(INIT_FUNC_ARGS)
 {
-	php_phongo_bulkwriteexception_ce = register_class_MongoDB_Driver_Exception_BulkWriteException(php_phongo_writeexception_ce);
+	php_phongo_bulkwriteexception_ce = register_class_MongoDB_Driver_Exception_BulkWriteException(php_phongo_serverexception_ce);
 }

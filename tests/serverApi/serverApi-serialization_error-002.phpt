@@ -6,15 +6,15 @@ MongoDB\Driver\ServerApi unserialization errors (__serialize and __unserialize)
 require_once __DIR__ . '/../utils/basic.inc';
 
 echo throws(function() {
-    unserialize('C:24:"MongoDB\Driver\ServerApi":24:{a:1:{s:7:"version";i:0;}}');
+    unserialize('O:24:"MongoDB\Driver\ServerApi":1:{s:7:"version";i:0;}');
 }, 'MongoDB\Driver\Exception\InvalidArgumentException'), "\n";
 
 echo throws(function() {
-    unserialize('C:24:"MongoDB\Driver\ServerApi":45:{a:2:{s:7:"version";s:1:"1";s:6:"strict";i:0;}}');
+    unserialize('O:24:"MongoDB\Driver\ServerApi":2:{s:7:"version";s:1:"1";s:6:"strict";i:0;}');
 }, 'MongoDB\Driver\Exception\InvalidArgumentException'), "\n";
 
 echo throws(function() {
-    unserialize('C:24:"MongoDB\Driver\ServerApi":57:{a:2:{s:7:"version";s:1:"1";s:17:"deprecationErrors";i:0;}}');
+    unserialize('O:24:"MongoDB\Driver\ServerApi":2:{s:7:"version";s:1:"1";s:17:"deprecationErrors";i:0;}');
 }, 'MongoDB\Driver\Exception\InvalidArgumentException'), "\n";
 
 ?>

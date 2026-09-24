@@ -15,18 +15,15 @@ var_dump(new MongoDB\Driver\Query(
         'exhaust' => false,
         'limit' => 20,
         'max' => ['y' => 100],
-        'maxScan' => 50,
         'maxTimeMS' => 1000,
         'min' => ['y' => 1],
         'noCursorTimeout' => false,
-        'oplogReplay' => false,
         'projection' => ['x' => 1, 'y' => 1],
         'returnKey' => false,
         'showRecordId' => false,
         'singleBatch' => false,
         'skip' => 5,
         'sort' => ['y' => -1],
-        'snapshot' => false,
         'tailable' => false,
     ]
 ));
@@ -50,11 +47,6 @@ var_dump(new MongoDB\Driver\Query(
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-Deprecated: MongoDB\Driver\Query::__construct(): The "maxScan" option is deprecated and will be removed in a future release in %s on line %d
-
-Deprecated: MongoDB\Driver\Query::__construct(): The "oplogReplay" option is deprecated and will be removed in a future release in %s on line %d
-
-Deprecated: MongoDB\Driver\Query::__construct(): The "snapshot" option is deprecated and will be removed in a future release in %s on line %d
 object(MongoDB\Driver\Query)#%d (%d) {
   ["filter"]=>
   object(stdClass)#%d (%d) {
@@ -80,13 +72,13 @@ object(MongoDB\Driver\Query)#%d (%d) {
     string(3) "foo"
     ["exhaust"]=>
     bool(false)
+    ["limit"]=>
+    int(20)
     ["max"]=>
     object(stdClass)#%d (%d) {
       ["y"]=>
       int(100)
     }
-    ["maxScan"]=>
-    int(50)
     ["maxTimeMS"]=>
     int(1000)
     ["min"]=>
@@ -95,8 +87,6 @@ object(MongoDB\Driver\Query)#%d (%d) {
       int(1)
     }
     ["noCursorTimeout"]=>
-    bool(false)
-    ["oplogReplay"]=>
     bool(false)
     ["projection"]=>
     object(stdClass)#%d (%d) {
@@ -109,6 +99,8 @@ object(MongoDB\Driver\Query)#%d (%d) {
     bool(false)
     ["showRecordId"]=>
     bool(false)
+    ["singleBatch"]=>
+    bool(false)
     ["skip"]=>
     int(5)
     ["sort"]=>
@@ -116,13 +108,7 @@ object(MongoDB\Driver\Query)#%d (%d) {
       ["y"]=>
       int(-1)
     }
-    ["snapshot"]=>
-    bool(false)
     ["tailable"]=>
-    bool(false)
-    ["limit"]=>
-    int(20)
-    ["singleBatch"]=>
     bool(false)
   }
   ["readConcern"]=>

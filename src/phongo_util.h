@@ -21,9 +21,6 @@
 
 const char* php_phongo_bson_type_to_string(bson_type_t type);
 
-zval* php_phongo_prep_legacy_option(zval* options, const char* key, bool* allocated);
-void  php_phongo_prep_legacy_option_free(zval* options);
-
 bool php_phongo_parse_int64(int64_t* retval, const char* data, size_t data_len);
 
 bool phongo_split_namespace(const char* namespace, char** dbname, char** cname);

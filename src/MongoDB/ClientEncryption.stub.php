@@ -41,13 +41,6 @@ final class ClientEncryption
     public const ALGORITHM_RANGE = UNKNOWN;
 
     /**
-     * @deprecated
-     * @var string
-     * @cvalue MONGOC_ENCRYPT_ALGORITHM_RANGEPREVIEW
-     */
-    public const ALGORITHM_RANGE_PREVIEW = UNKNOWN;
-
-    /**
      * @var string
      * @cvalue MONGOC_ENCRYPT_QUERY_TYPE_EQUALITY
      */
@@ -58,13 +51,6 @@ final class ClientEncryption
      * @cvalue MONGOC_ENCRYPT_QUERY_TYPE_RANGE
      */
     public const QUERY_TYPE_RANGE = UNKNOWN;
-
-    /**
-     * @deprecated
-     * @var string
-     * @cvalue MONGOC_ENCRYPT_QUERY_TYPE_RANGEPREVIEW
-     */
-    public const QUERY_TYPE_RANGE_PREVIEW = UNKNOWN;
 
     final public function __construct(array $options) {}
 

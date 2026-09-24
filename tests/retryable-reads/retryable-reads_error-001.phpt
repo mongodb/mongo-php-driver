@@ -3,7 +3,7 @@ Retryable reads: executeReadCommand is not retried when retryable reads are disa
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_libmongoc_crypto(); ?>
-<?php skip_if_no_failcommand_failpoint(); ?>
+<?php skip_if_test_commands_disabled(); ?>
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";

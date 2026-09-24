@@ -10,10 +10,6 @@ echo throws(function() {
 }, Exception::class), "\n";
  
 echo throws(function() {
-    unserialize('C:22:"MongoDB\Driver\Manager":0:{}');
-}, Exception::class), "\n";
- 
-echo throws(function() {
     unserialize('O:22:"MongoDB\Driver\Manager":0:{}');
 }, Exception::class), "\n";
  
@@ -23,8 +19,6 @@ echo throws(function() {
 --EXPECT--
 OK: Got Exception
 Serialization of 'MongoDB\Driver\Manager' is not allowed
-OK: Got Exception
-Unserialization of 'MongoDB\Driver\Manager' is not allowed
 OK: Got Exception
 Unserialization of 'MongoDB\Driver\Manager' is not allowed
 ===DONE===

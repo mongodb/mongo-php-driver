@@ -17,6 +17,7 @@ Commands:
     to-stable:          Mark the current version as stable
     to-next-patch-dev:  Update to the next patch development version
     to-next-minor-dev:  Update to the next minor development version
+    to-next-major-dev:  Update to the next major development version
     get-version:        Print the current version number
 
 EOT;
@@ -167,6 +168,23 @@ function get_next_minor_version(array $versions): array
     ];
 }
 
+function get_next_major_version(array $versions): array
+{
+    $versionComponents = $versions['versionComponents'];
+
+    // Increase major version, set other components to 0
+    $versionComponents[0] += 1;
+    $versionComponents[1] = 0;
+    $versionComponents[2] = 0;
+    $versionComponents[3] = 0;
+
+    return [
+        'version' => get_version_string_from_components($versionComponents) . 'dev',
+        'stability' => 'devel',
+        'versionComponents' => $versionComponents,
+    ];
+}
+
 function get_next_release_version(array $versions, string $releaseVersion): array
 {
     $releaseVersion = parse_release_version($releaseVersion);
@@ -242,6 +260,10 @@ switch ($argv[1] ?? null) {
 
     case 'to-next-minor-dev':
         $newVersion = get_next_minor_version($currentVersion);
+        break;
+
+    case 'to-next-major-dev':
+        $newVersion = get_next_major_version($currentVersion);
         break;
 
     default:
