@@ -20,7 +20,7 @@
 #include <php.h>
 #include <main/php_open_temporary_file.h>
 
-#include "php_phongo.h"
+#include "phongo.h"
 #include "phongo_ini.h"
 #include "phongo_log.h"
 

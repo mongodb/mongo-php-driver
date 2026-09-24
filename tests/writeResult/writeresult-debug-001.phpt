@@ -26,37 +26,31 @@ var_dump($result);
 <?php exit(0); ?>
 --EXPECTF--
 object(MongoDB\Driver\WriteResult)#%d (%d) {
-  ["nInserted"]=>
+  ["insertedCount"]=>
   int(1)
-  ["nMatched"]=>
+  ["matchedCount"]=>
   int(1)
-  ["nModified"]=>
+  ["modifiedCount"]=>
   int(1)
-  ["nRemoved"]=>
+  ["deletedCount"]=>
   int(1)
-  ["nUpserted"]=>
+  ["upsertedCount"]=>
   int(2)
+  ["server"]=>
+  object(MongoDB\Driver\Server)#%d (%d) {
+    %a
+  }
   ["upsertedIds"]=>
   array(2) {
-    [0]=>
-    array(2) {
-      ["index"]=>
-      int(2)
-      ["_id"]=>
-      object(MongoDB\BSON\ObjectId)#%d (%d) {
-        ["oid"]=>
-        string(24) "%x"
-      }
+    [2]=>
+    object(MongoDB\BSON\ObjectId)#%d (%d) {
+      ["oid"]=>
+      string(24) "%x"
     }
-    [1]=>
-    array(2) {
-      ["index"]=>
-      int(3)
-      ["_id"]=>
-      object(MongoDB\BSON\ObjectId)#%d (%d) {
-        ["oid"]=>
-        string(24) "%x"
-      }
+    [3]=>
+    object(MongoDB\BSON\ObjectId)#%d (%d) {
+      ["oid"]=>
+      string(24) "%x"
     }
   }
   ["writeErrors"]=>
@@ -65,7 +59,13 @@ object(MongoDB\Driver\WriteResult)#%d (%d) {
   ["writeConcernError"]=>
   NULL
   ["writeConcern"]=>
-  object(MongoDB\Driver\WriteConcern)#%d (%d) {
+  object(MongoDB\Driver\WriteConcern)#%d (3) {
+    ["w"]=>
+    NULL
+    ["j"]=>
+    NULL
+    ["wtimeout"]=>
+    int(0)
   }
   ["errorReplies"]=>
   array(0) {

@@ -375,8 +375,8 @@ function skip_if_not_libmongoc_crypto(array $libs = [])
  * Skips the test if libmongoc does not support SSL.
  *
  * If one or more libaries are provided, additionally check that the reported
- * library is in that array. Possible values are "OpenSSL", "LibreSSL",
- * "Secure Transport", and "Secure Channel".
+ * library is in that array. Possible values are "OpenSSL", "Secure Transport",
+ * and "Secure Channel".
  *
  * @param array $libs Optional list of SSL libraries to require
  */
@@ -459,6 +459,10 @@ function skip_if_crypt_shared()
 
 function skip_if_no_crypt_shared()
 {
+    if (PHP_INT_SIZE !== 8) {
+        exit('skip crypt_shared is only available on 64-bit systems');
+    }
+
     // Intentionally consider empty values for CRYPT_SHARED_LIB_PATH
     if ( ! getenv('CRYPT_SHARED_LIB_PATH')) {
         exit('skip crypt_shared is not available');

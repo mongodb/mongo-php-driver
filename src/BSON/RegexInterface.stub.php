@@ -1,8 +1,8 @@
 <?php
 
 /**
- * @generate-class-entries static
- * @generate-function-entries
+ * @generate-class-entries
+ * @generate-legacy-arginfo 80100
  */
 
 namespace MongoDB\BSON;

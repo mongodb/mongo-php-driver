@@ -18,12 +18,21 @@ try {
     $result = $manager->executeBulkWrite(NS, $bulk, ['writeConcern' => new MongoDB\Driver\WriteConcern(12)]);
 } catch (MongoDB\Driver\Exception\BulkWriteException $e) {
     var_dump($e->getWriteResult()->getWriteConcernError());
+    var_dump($e->getWriteResult()->writeConcernError);
 }
 
 ?>
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
+object(MongoDB\Driver\WriteConcernError)#%d (%d) {
+  ["message"]=>
+  string(29) "Not enough data-bearing nodes"
+  ["code"]=>
+  int(100)
+  ["info"]=>
+  %a
+}
 object(MongoDB\Driver\WriteConcernError)#%d (%d) {
   ["message"]=>
   string(29) "Not enough data-bearing nodes"

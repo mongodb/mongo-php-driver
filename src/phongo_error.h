@@ -27,18 +27,18 @@ typedef enum {
 	PHONGO_ERROR_MONGOC_FAILED     = 3,
 	PHONGO_ERROR_CONNECTION_FAILED = 7,
 	PHONGO_ERROR_LOGIC             = 9
-} php_phongo_error_domain_t;
+} phongo_error_domain_t;
 
-void              phongo_add_exception_prop(const char* prop, int prop_len, zval* value);
+void              phongo_add_exception_prop(const char* prop, size_t prop_len, zval* value);
 zend_class_entry* phongo_exception_from_mongoc_domain(mongoc_error_domain_t domain, mongoc_error_code_t code);
-zend_class_entry* phongo_exception_from_phongo_domain(php_phongo_error_domain_t domain);
+zend_class_entry* phongo_exception_from_phongo_domain(phongo_error_domain_t domain);
 void              phongo_exception_add_error_labels(const bson_t* reply);
-void              phongo_throw_exception(php_phongo_error_domain_t domain, const char* format, ...);
+void              phongo_throw_exception(phongo_error_domain_t domain, const char* format, ...);
 void              phongo_throw_exception_from_bson_error_t(bson_error_t* error);
 void              phongo_throw_exception_from_bson_error_t_and_reply(bson_error_t* error, const bson_t* reply);
 
 #ifndef MONGOC_ENABLE_CLIENT_SIDE_ENCRYPTION
-void phongo_throw_exception_no_cse(php_phongo_error_domain_t domain, const char* message);
+void phongo_throw_exception_no_cse(phongo_error_domain_t domain, const char* message);
 #endif /* MONGOC_ENABLE_CLIENT_SIDE_ENCRYPTION */
 
 #endif /* PHONGO_ERROR_H */

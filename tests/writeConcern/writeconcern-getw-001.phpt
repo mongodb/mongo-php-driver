@@ -18,6 +18,7 @@ $tests = array(
 foreach ($tests as $test) {
     $wc = new MongoDB\Driver\WriteConcern($test);
     var_dump($wc->getW());
+    var_dump($wc->w);
 }
 
 ?>
@@ -26,11 +27,20 @@ foreach ($tests as $test) {
 --EXPECT--
 string(8) "majority"
 string(8) "majority"
+string(8) "majority"
+string(8) "majority"
+NULL
 NULL
 int(-1)
+int(-1)
+int(0)
 int(0)
 int(1)
+int(1)
+int(2)
 int(2)
 string(3) "tag"
+string(3) "tag"
+string(1) "2"
 string(1) "2"
 ===DONE===

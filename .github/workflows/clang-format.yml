@@ -20,7 +20,7 @@ jobs:
 
     steps:
       - name: "Checkout"
-        uses: "actions/checkout@v4"
+        uses: "actions/checkout@v7"
         with:
           submodules: true
 
@@ -28,6 +28,8 @@ jobs:
         uses: "shivammathur/setup-php@v2"
         with:
           php-version: "${{ env.PHP_VERSION }}"
+        env:
+          debug: true
 
       - name: "Configure driver"
         run: .github/workflows/configure.sh

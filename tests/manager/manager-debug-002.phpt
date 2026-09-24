@@ -12,5 +12,5 @@ $manager = new MongoDB\Driver\Manager;
 <?php exit(0); ?>
 --EXPECTF--
 %A[%s]     PHONGO: DEBUG   > Connection string: '%s'
-[%s]     PHONGO: DEBUG   > Creating Manager, phongo-%d.%d.%d%S[%s] - mongoc-1.%s(%s), libbson-1.%s(%s), php-%s
+[%s]     PHONGO: DEBUG   > Creating Manager, phongo-%d.%d.%d%S[%s] - mongoc-2.%s(%s), libbson-2.%s(%s), php-%s
 %A===DONE===%A

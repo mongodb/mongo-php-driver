@@ -2,15 +2,14 @@
 
 /**
  * @generate-class-entries static
- * @generate-function-entries static
+ * @generate-legacy-arginfo 80100
  */
 
 namespace MongoDB\Driver\Exception;
 
 class BulkWriteException extends ServerException
 {
-    /** @var \MongoDB\Driver\WriteResult */
-    protected $writeResult;
+    public readonly \MongoDB\Driver\WriteResult $writeResult;
 
     final public function getWriteResult(): \MongoDB\Driver\WriteResult {}
 }
