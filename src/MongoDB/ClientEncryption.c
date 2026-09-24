@@ -44,7 +44,7 @@ static void phongo_clientencryption_decrypt(php_phongo_clientencryption_t* clien
 #define RETVAL_BSON_T(reply)                                 \
 	do {                                                     \
 		php_phongo_bson_state state;                         \
-		PHONGO_BSON_INIT_STATE(state);                       \
+		PHONGO_BSON_INIT_NO_ODM_STATE(state);                \
 		if (!php_phongo_bson_to_zval_ex(&(reply), &state)) { \
 			zval_ptr_dtor(&state.zchild);                    \
 			goto cleanup;                                    \
@@ -1083,7 +1083,7 @@ static void phongo_clientencryption_encrypt_expression(php_phongo_clientencrypti
 		goto cleanup;
 	}
 
-	if (!php_phongo_bson_to_zval(&expr_encrypted, return_value)) {
+	if (!php_phongo_bson_to_zval_internal(&expr_encrypted, return_value)) {
 		/* Exception already thrown */
 		goto cleanup;
 	}

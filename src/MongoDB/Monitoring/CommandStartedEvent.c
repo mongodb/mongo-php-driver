@@ -36,7 +36,7 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_CommandStartedEvent, getCommand)
 	php_phongo_commandstartedevent_t* intern;
 	php_phongo_bson_state             state;
 
-	PHONGO_BSON_INIT_STATE(state);
+	PHONGO_BSON_INIT_NO_ODM_STATE(state);
 
 	intern = Z_COMMANDSTARTEDEVENT_OBJ_P(getThis());
 
@@ -205,7 +205,7 @@ static HashTable* php_phongo_commandstartedevent_get_debug_info(zend_object* obj
 	char                              operation_id[24], request_id[24];
 	php_phongo_bson_state             command_state;
 
-	PHONGO_BSON_INIT_STATE(command_state);
+	PHONGO_BSON_INIT_NO_ODM_STATE(command_state);
 
 	intern   = Z_OBJ_COMMANDSTARTEDEVENT(object);
 	*is_temp = 1;
