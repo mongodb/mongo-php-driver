@@ -18,7 +18,7 @@ runs:
   using: composite
   steps:
     - name: Build extension
-      uses: php/php-windows-builder/extension@1.6.0
+      uses: php/php-windows-builder/extension@5ffdefcbaa65b890130c4a3a0ad666d07f26635b  # 1.6.0
       with:
         php-version: ${{ inputs.php-version }}
         arch: ${{ inputs.arch }}
