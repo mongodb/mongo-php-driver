@@ -19,7 +19,7 @@ $manager->executeBulkWrite(NS, $bulk);
 $cursor = $manager->executeQuery(NS, new MongoDB\Driver\Query([], ['batchSize' => 2]));
 
 /* Exiting during iteration on a live cursor will result in
- * php_phongo_command_started() being invoked for the killCursor command after
+ * phongo_command_started() being invoked for the killCursor command after
  * RSHUTDOWN has already destroyed the subscriber HashTable */
 foreach ($cursor as $data) {
     echo "Exiting during first iteration on cursor\n";

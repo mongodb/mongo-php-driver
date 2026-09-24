@@ -1,0 +1,55 @@
+name: "Build libmongoc"
+description: "Builds and install libmongoc"
+inputs:
+  prefix:
+    description: "Prefix to install libmongoc to"
+    default: "/usr/local"
+  version:
+    description: "Libmongoc version to build (major.minor)"
+    required: true
+runs:
+  using: composite
+
+  steps:
+    - name: Download libmongoc
+      shell: bash
+      working-directory: /tmp
+      run: wget "https://github.com/mongodb/mongo-c-driver/archive/refs/tags/${LIBMONGOC_VERSION}.tar.gz" --output-document="mongo-c-driver.tar.gz"
+      env:
+        LIBMONGOC_VERSION: ${{ inputs.version }}
+
+    - name: Extract libmongoc
+      shell: bash
+      working-directory: /tmp
+      run: tar xf "mongo-c-driver.tar.gz"
+
+    - name: Configure cmake
+      shell: bash
+      working-directory: /tmp
+      run: |
+        cmake \
+          -S "mongo-c-driver-${LIBMONGOC_VERSION}" \
+          -B _build \
+          -D CMAKE_BUILD_TYPE=RelWithDebInfo \
+          -D BUILD_VERSION="${LIBMONGOC_VERSION}" \
+          -D ENABLE_MONGOC=ON \
+          -D ENABLE_TRACING=ON \
+          -D ENABLE_CLIENT_SIDE_ENCRYPTION=ON
+      env:
+        LIBMONGOC_VERSION: ${{ inputs.version }}
+
+    - name: Build libmongoc
+      shell: bash
+      working-directory: /tmp
+      run: cmake --build _build --config RelWithDebInfo --parallel
+
+    - name: Install libmongoc
+      shell: bash
+      working-directory: /tmp
+      run: sudo cmake --install _build --prefix "${PREFIX}" --config RelWithDebInfo
+      env:
+        PREFIX: ${{ inputs.prefix }}
+
+    - name: Check pkg-config availability
+      shell: bash
+      run: pkg-config --modversion mongoc2

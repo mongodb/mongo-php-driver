@@ -20,14 +20,14 @@
 #include <php.h>
 #include <Zend/zend_exceptions.h>
 
-#include "php_phongo.h"
+#include "phongo.h"
 #include "phongo_error.h"
 
 /* This constant is used for determining if a server error for an exceeded query
  * or command should select ExecutionTimeoutException. */
 #define PHONGO_SERVER_ERROR_EXCEEDED_TIME_LIMIT 50
 
-void phongo_add_exception_prop(const char* prop, int prop_len, zval* value)
+void phongo_add_exception_prop(const char* prop, size_t prop_len, zval* value)
 {
 	if (EG(exception)) {
 		zval ex;
@@ -36,79 +36,79 @@ void phongo_add_exception_prop(const char* prop, int prop_len, zval* value)
 	}
 }
 
-zend_class_entry* phongo_exception_from_phongo_domain(php_phongo_error_domain_t domain)
+zend_class_entry* phongo_exception_from_phongo_domain(phongo_error_domain_t domain)
 {
 	switch (domain) {
 		case PHONGO_ERROR_INVALID_ARGUMENT:
-			return php_phongo_invalidargumentexception_ce;
+			return phongo_invalidargumentexception_ce;
 		case PHONGO_ERROR_LOGIC:
-			return php_phongo_logicexception_ce;
+			return phongo_logicexception_ce;
 		case PHONGO_ERROR_RUNTIME:
-			return php_phongo_runtimeexception_ce;
+			return phongo_runtimeexception_ce;
 		case PHONGO_ERROR_UNEXPECTED_VALUE:
-			return php_phongo_unexpectedvalueexception_ce;
+			return phongo_unexpectedvalueexception_ce;
 		case PHONGO_ERROR_MONGOC_FAILED:
-			return php_phongo_runtimeexception_ce;
+			return phongo_runtimeexception_ce;
 		case PHONGO_ERROR_CONNECTION_FAILED:
-			return php_phongo_connectionexception_ce;
+			return phongo_connectionexception_ce;
 	}
 
 	MONGOC_ERROR("Resolving unknown phongo error domain: %d", domain);
-	return php_phongo_runtimeexception_ce;
+	return phongo_runtimeexception_ce;
 }
 
 zend_class_entry* phongo_exception_from_mongoc_domain(mongoc_error_domain_t domain, mongoc_error_code_t code)
 {
 	if (domain == MONGOC_ERROR_CLIENT) {
 		if (code == MONGOC_ERROR_CLIENT_AUTHENTICATE) {
-			return php_phongo_authenticationexception_ce;
+			return phongo_authenticationexception_ce;
 		}
 
 		if (code == MONGOC_ERROR_CLIENT_INVALID_ENCRYPTION_ARG) {
-			return php_phongo_invalidargumentexception_ce;
+			return phongo_invalidargumentexception_ce;
 		}
 	}
 
 	if (domain == MONGOC_ERROR_COMMAND && code == MONGOC_ERROR_COMMAND_INVALID_ARG) {
-		return php_phongo_invalidargumentexception_ce;
+		return phongo_invalidargumentexception_ce;
 	}
 
 	if (domain == MONGOC_ERROR_SERVER) {
 		if (code == PHONGO_SERVER_ERROR_EXCEEDED_TIME_LIMIT) {
-			return php_phongo_executiontimeoutexception_ce;
+			return phongo_executiontimeoutexception_ce;
 		}
 
-		return php_phongo_serverexception_ce;
+		return phongo_serverexception_ce;
 	}
 
 	if (domain == MONGOC_ERROR_SERVER_SELECTION && code == MONGOC_ERROR_SERVER_SELECTION_FAILURE) {
-		return php_phongo_connectiontimeoutexception_ce;
+		return phongo_connectiontimeoutexception_ce;
 	}
 
 	if (domain == MONGOC_ERROR_STREAM) {
 		if (code == MONGOC_ERROR_STREAM_SOCKET) {
-			return php_phongo_connectiontimeoutexception_ce;
+			return phongo_connectiontimeoutexception_ce;
 		}
 
-		return php_phongo_connectionexception_ce;
+		return phongo_connectionexception_ce;
 	}
 
 	if (domain == MONGOC_ERROR_WRITE_CONCERN) {
-		return php_phongo_serverexception_ce;
+		return phongo_serverexception_ce;
 	}
 
 	if (domain == MONGOC_ERROR_PROTOCOL && code == MONGOC_ERROR_PROTOCOL_BAD_WIRE_VERSION) {
-		return php_phongo_connectionexception_ce;
+		return phongo_connectionexception_ce;
 	}
 
 	if (domain == MONGOC_ERROR_CLIENT_SIDE_ENCRYPTION) {
-		return php_phongo_encryptionexception_ce;
+		return phongo_encryptionexception_ce;
 	}
 
-	return php_phongo_runtimeexception_ce;
+	return phongo_runtimeexception_ce;
 }
 
-void phongo_throw_exception(php_phongo_error_domain_t domain, const char* format, ...)
+void phongo_throw_exception(phongo_error_domain_t domain, const char* format, ...)
 {
 	va_list args;
 	char*   message;
@@ -150,7 +150,12 @@ void phongo_exception_add_error_labels(const bson_t* reply)
 	zval        labels;
 	uint32_t    label_count = 0;
 
-	if (!reply) {
+	if (!reply || !EG(exception)) {
+		return;
+	}
+
+	/* errorLabels is only declared on RuntimeException and its subclasses. */
+	if (!instanceof_function(EG(exception)->ce, phongo_runtimeexception_ce)) {
 		return;
 	}
 
@@ -193,8 +198,8 @@ void phongo_throw_exception_from_bson_error_t_and_reply(bson_error_t* error, con
 	if (reply && ((error->domain == MONGOC_ERROR_SERVER && error->code != PHONGO_SERVER_ERROR_EXCEEDED_TIME_LIMIT) || error->domain == MONGOC_ERROR_WRITE_CONCERN)) {
 		zval zv;
 
-		zend_throw_exception(php_phongo_commandexception_ce, error->message, error->code);
-		if (php_phongo_bson_to_zval(reply, &zv)) {
+		zend_throw_exception(phongo_commandexception_ce, error->message, error->code);
+		if (phongo_bson_to_zval(reply, &zv)) {
 			phongo_add_exception_prop(ZEND_STRL("resultDocument"), &zv);
 		}
 
@@ -211,7 +216,7 @@ void phongo_throw_exception_from_bson_error_t(bson_error_t* error)
 }
 
 #ifndef MONGOC_ENABLE_CLIENT_SIDE_ENCRYPTION
-void phongo_throw_exception_no_cse(php_phongo_error_domain_t domain, const char* message)
+void phongo_throw_exception_no_cse(phongo_error_domain_t domain, const char* message)
 {
 	phongo_throw_exception(domain, "%s Please recompile with support for libmongocrypt using the with-mongodb-client-side-encryption configure switch.", message);
 }

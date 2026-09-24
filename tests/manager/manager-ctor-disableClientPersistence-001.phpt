@@ -24,18 +24,18 @@ ini_set('mongodb.debug', '');
 <?php exit(0); ?>
 --EXPECTF--
 %A
-[%s]     PHONGO: DEBUG   > Created client with hash: %s
-[%s]     PHONGO: DEBUG   > Stored persistent client with hash: %s
+[%s]     PHONGO: DEBUG   > Created client with hash: %a
+[%s]     PHONGO: DEBUG   > Stored persistent client with hash: %a
 [%s]     PHONGO: DEBUG   > Not destroying persistent client for Manager%A
-[%s]     PHONGO: DEBUG   > Created client with hash: %s
-[%s]     PHONGO: DEBUG   > Stored persistent client with hash: %s
+[%s]     PHONGO: DEBUG   > Created client with hash: %a
+[%s]     PHONGO: DEBUG   > Stored persistent client with hash: %a
 [%s]     PHONGO: DEBUG   > Not destroying persistent client for Manager%A
-[%s]     PHONGO: DEBUG   > Found client for hash: %s
+[%s]     PHONGO: DEBUG   > Found client for hash: %a
 [%s]     PHONGO: DEBUG   > Not destroying persistent client for Manager%A
-[%s]     PHONGO: DEBUG   > Created client with hash: %s
+[%s]     PHONGO: DEBUG   > Created client with hash: %a
 [%s]     PHONGO: DEBUG   > Stored non-persistent client
 [%s]     PHONGO: DEBUG   > Destroying non-persistent client for Manager%A
-[%s]     PHONGO: DEBUG   > Created client with hash: %s
+[%s]     PHONGO: DEBUG   > Created client with hash: %a
 [%s]     PHONGO: DEBUG   > Stored non-persistent client
 [%s]     PHONGO: DEBUG   > Destroying non-persistent client for Manager%A
 ===DONE===

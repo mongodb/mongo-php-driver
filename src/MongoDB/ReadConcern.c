@@ -19,15 +19,26 @@
 #include <php.h>
 #include <Zend/zend_interfaces.h>
 
-#include "php_phongo.h"
+#include "phongo.h"
 #include "phongo_error.h"
 #include "ReadConcern_arginfo.h"
 
-zend_class_entry* php_phongo_readconcern_ce;
+zend_class_entry* phongo_readconcern_ce;
+
+static void phongo_readconcern_update_properties(phongo_readconcern_t* intern)
+{
+	const char* level = mongoc_read_concern_get_level(intern->read_concern);
+
+	if (level) {
+		zend_update_property_string(phongo_readconcern_ce, &intern->std, ZEND_STRL("level"), level);
+	} else {
+		zend_update_property_null(phongo_readconcern_ce, &intern->std, ZEND_STRL("level"));
+	}
+}
 
 /* Initialize the object from a HashTable and return whether it was successful.
  * An exception will be thrown on error. */
-static bool php_phongo_readconcern_init_from_hash(php_phongo_readconcern_t* intern, HashTable* props)
+static bool phongo_readconcern_init_from_hash(phongo_readconcern_t* intern, HashTable* props)
 {
 	zval* level;
 
@@ -36,12 +47,13 @@ static bool php_phongo_readconcern_init_from_hash(php_phongo_readconcern_t* inte
 	if ((level = zend_hash_str_find(props, "level", sizeof("level") - 1))) {
 		if (Z_TYPE_P(level) == IS_STRING) {
 			mongoc_read_concern_set_level(intern->read_concern, Z_STRVAL_P(level));
-			return true;
+		} else if (Z_TYPE_P(level) != IS_NULL) {
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "%s initialization requires \"level\" string field", ZSTR_VAL(phongo_readconcern_ce->name));
+			goto failure;
 		}
-
-		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "%s initialization requires \"level\" string field", ZSTR_VAL(php_phongo_readconcern_ce->name));
-		goto failure;
 	}
+
+	phongo_readconcern_update_properties(intern);
 
 	return true;
 
@@ -54,11 +66,10 @@ failure:
 /* Constructs a new ReadConcern */
 static PHP_METHOD(MongoDB_Driver_ReadConcern, __construct)
 {
-	php_phongo_readconcern_t* intern;
-	char*                     level     = NULL;
-	size_t                    level_len = 0;
+	PHONGO_INTERN_FROM_THIS(readconcern);
 
-	intern = Z_READCONCERN_OBJ_P(getThis());
+	char*  level     = NULL;
+	size_t level_len = 0;
 
 	PHONGO_PARSE_PARAMETERS_START(0, 1)
 	Z_PARAM_OPTIONAL
@@ -70,33 +81,31 @@ static PHP_METHOD(MongoDB_Driver_ReadConcern, __construct)
 	if (level) {
 		mongoc_read_concern_set_level(intern->read_concern, level);
 	}
+
+	phongo_readconcern_update_properties(intern);
 }
 
 static PHP_METHOD(MongoDB_Driver_ReadConcern, __set_state)
 {
-	php_phongo_readconcern_t* intern;
-	HashTable*                props;
-	zval*                     array;
+	HashTable* props;
+	zval*      array;
 
 	PHONGO_PARSE_PARAMETERS_START(1, 1)
 	Z_PARAM_ARRAY(array)
 	PHONGO_PARSE_PARAMETERS_END();
 
-	object_init_ex(return_value, php_phongo_readconcern_ce);
+	PHONGO_INTERN_INIT_EX(readconcern, return_value);
+	props = Z_ARRVAL_P(array);
 
-	intern = Z_READCONCERN_OBJ_P(return_value);
-	props  = Z_ARRVAL_P(array);
-
-	php_phongo_readconcern_init_from_hash(intern, props);
+	phongo_readconcern_init_from_hash(intern, props);
 }
 
 /* Returns the ReadConcern "level" option */
 static PHP_METHOD(MongoDB_Driver_ReadConcern, getLevel)
 {
-	php_phongo_readconcern_t* intern;
-	const char*               level;
+	PHONGO_INTERN_FROM_THIS(readconcern);
 
-	intern = Z_READCONCERN_OBJ_P(getThis());
+	const char* level;
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -113,54 +122,36 @@ static PHP_METHOD(MongoDB_Driver_ReadConcern, getLevel)
    without a level or from a Manager with no read concern URI options). */
 static PHP_METHOD(MongoDB_Driver_ReadConcern, isDefault)
 {
-	php_phongo_readconcern_t* intern;
-
-	intern = Z_READCONCERN_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(readconcern);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
 	RETURN_BOOL(mongoc_read_concern_is_default(intern->read_concern));
 }
 
-static HashTable* php_phongo_readconcern_get_properties_hash(zend_object* object, bool is_temp)
-{
-	php_phongo_readconcern_t* intern;
-	HashTable*                props;
-	const char*               level;
-
-	intern = Z_OBJ_READCONCERN(object);
-
-	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_temp, intern, props, 1);
-
-	if (!intern->read_concern) {
-		return props;
-	}
-
-	level = mongoc_read_concern_get_level(intern->read_concern);
-
-	if (level) {
-		zval z_level;
-
-		ZVAL_STRING(&z_level, level);
-		zend_hash_str_update(props, "level", sizeof("level") - 1, &z_level);
-	}
-
-	return props;
-}
-
 static PHP_METHOD(MongoDB_Driver_ReadConcern, bsonSerialize)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
 
-	ZVAL_ARR(return_value, php_phongo_readconcern_get_properties_hash(Z_OBJ_P(getThis()), true));
+	array_init_size(return_value, 1);
+
+	{
+		zend_string* string_key;
+		zval*        val;
+
+		ZEND_HASH_FOREACH_STR_KEY_VAL_IND(HASH_OF(getThis()), string_key, val)
+		{
+			if (Z_TYPE_P(val) == IS_NULL) {
+				continue;
+			}
+
+			Z_TRY_ADDREF_P(val);
+			add_assoc_zval(return_value, ZSTR_VAL(string_key), val);
+		}
+		ZEND_HASH_FOREACH_END();
+	}
+
 	convert_to_object(return_value);
-}
-
-static PHP_METHOD(MongoDB_Driver_ReadConcern, __serialize)
-{
-	PHONGO_PARSE_PARAMETERS_NONE();
-
-	RETURN_ARR(php_phongo_readconcern_get_properties_hash(Z_OBJ_P(getThis()), true));
 }
 
 static PHP_METHOD(MongoDB_Driver_ReadConcern, __unserialize)
@@ -171,77 +162,72 @@ static PHP_METHOD(MongoDB_Driver_ReadConcern, __unserialize)
 	Z_PARAM_ARRAY(data)
 	PHONGO_PARSE_PARAMETERS_END();
 
-	php_phongo_readconcern_init_from_hash(Z_READCONCERN_OBJ_P(getThis()), Z_ARRVAL_P(data));
+	phongo_readconcern_init_from_hash(Z_READCONCERN_OBJ_P(getThis()), Z_ARRVAL_P(data));
 }
 
 /* MongoDB\Driver\ReadConcern object handlers */
-static zend_object_handlers php_phongo_handler_readconcern;
+static zend_object_handlers phongo_handler_readconcern;
 
-static void php_phongo_readconcern_free_object(zend_object* object)
+static void phongo_readconcern_free_object(zend_object* object)
 {
-	php_phongo_readconcern_t* intern = Z_OBJ_READCONCERN(object);
+	PHONGO_INTERN_FROM_Z_OBJ(readconcern, object);
 
 	zend_object_std_dtor(&intern->std);
-
-	if (intern->properties) {
-		zend_hash_destroy(intern->properties);
-		FREE_HASHTABLE(intern->properties);
-	}
 
 	if (intern->read_concern) {
 		mongoc_read_concern_destroy(intern->read_concern);
 	}
 }
 
-static zend_object* php_phongo_readconcern_create_object(zend_class_entry* class_type)
+static zend_object* phongo_readconcern_create_object(zend_class_entry* class_type)
 {
-	php_phongo_readconcern_t* intern = zend_object_alloc(sizeof(php_phongo_readconcern_t), class_type);
+	PHONGO_INTERN_OBJECT_ALLOC(readconcern, class_type);
 
-	zend_object_std_init(&intern->std, class_type);
-	object_properties_init(&intern->std, class_type);
-
-	intern->std.handlers = &php_phongo_handler_readconcern;
+	intern->std.handlers = &phongo_handler_readconcern;
 
 	return &intern->std;
 }
 
-static HashTable* php_phongo_readconcern_get_debug_info(zend_object* object, int* is_temp)
+static zend_object* phongo_readconcern_clone_object(zend_object* object)
 {
-	*is_temp = 1;
-	return php_phongo_readconcern_get_properties_hash(object, true);
+	PHONGO_INTERN_FROM_Z_OBJ(readconcern, object);
+
+	phongo_readconcern_t* new_intern;
+	zend_object*          new_object;
+
+	new_object = phongo_readconcern_create_object(object->ce);
+
+	new_intern = Z_OBJ_READCONCERN(new_object);
+	zend_objects_clone_members(&new_intern->std, &intern->std);
+
+	new_intern->read_concern = mongoc_read_concern_copy(intern->read_concern);
+
+	return new_object;
 }
 
-static HashTable* php_phongo_readconcern_get_properties(zend_object* object)
+void phongo_readconcern_init_ce(INIT_FUNC_ARGS)
 {
-	return php_phongo_readconcern_get_properties_hash(object, false);
-}
+	phongo_readconcern_ce                = register_class_MongoDB_Driver_ReadConcern(phongo_serializable_ce);
+	phongo_readconcern_ce->create_object = phongo_readconcern_create_object;
 
-void php_phongo_readconcern_init_ce(INIT_FUNC_ARGS)
-{
-	php_phongo_readconcern_ce                = register_class_MongoDB_Driver_ReadConcern(php_phongo_serializable_ce);
-	php_phongo_readconcern_ce->create_object = php_phongo_readconcern_create_object;
-
-	memcpy(&php_phongo_handler_readconcern, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
-	php_phongo_handler_readconcern.get_debug_info = php_phongo_readconcern_get_debug_info;
-	php_phongo_handler_readconcern.get_properties = php_phongo_readconcern_get_properties;
-	php_phongo_handler_readconcern.free_obj       = php_phongo_readconcern_free_object;
-	php_phongo_handler_readconcern.offset         = XtOffsetOf(php_phongo_readconcern_t, std);
+	memcpy(&phongo_handler_readconcern, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
+	phongo_handler_readconcern.clone_obj = phongo_readconcern_clone_object;
+	phongo_handler_readconcern.free_obj  = phongo_readconcern_free_object;
+	phongo_handler_readconcern.offset    = offsetof(phongo_readconcern_t, std);
 }
 
 void phongo_readconcern_init(zval* return_value, const mongoc_read_concern_t* read_concern)
 {
-	php_phongo_readconcern_t* intern;
-
-	object_init_ex(return_value, php_phongo_readconcern_ce);
-
-	intern               = Z_READCONCERN_OBJ_P(return_value);
+	PHONGO_INTERN_INIT_EX(readconcern, return_value);
 	intern->read_concern = mongoc_read_concern_copy(read_concern);
+
+	phongo_readconcern_update_properties(intern);
 }
 
 const mongoc_read_concern_t* phongo_read_concern_from_zval(zval* zread_concern)
 {
 	if (zread_concern) {
-		php_phongo_readconcern_t* intern = Z_READCONCERN_OBJ_P(zread_concern);
+		PHONGO_INTERN_FROM_ZVAL(readconcern, zread_concern);
 
 		if (intern) {
 			return intern->read_concern;
@@ -249,15 +235,4 @@ const mongoc_read_concern_t* phongo_read_concern_from_zval(zval* zread_concern)
 	}
 
 	return NULL;
-}
-
-void php_phongo_read_concern_to_zval(zval* retval, const mongoc_read_concern_t* read_concern)
-{
-	const char* level = mongoc_read_concern_get_level(read_concern);
-
-	array_init_size(retval, 1);
-
-	if (level) {
-		ADD_ASSOC_STRING(retval, "level", level);
-	}
 }

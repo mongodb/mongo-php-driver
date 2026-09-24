@@ -21,6 +21,6 @@
 
 #include "phongo_structs.h"
 
-mongoc_bulkwriteopts_t* phongo_bwc_assemble_opts(php_phongo_bulkwritecommand_t* intern);
+mongoc_bulkwriteopts_t* phongo_bwc_assemble_opts(phongo_bulkwritecommand_t* intern);
 
 #endif /* PHONGO_BULKWRITECOMMAND_H */

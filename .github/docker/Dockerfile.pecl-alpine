@@ -1,0 +1,15 @@
+FROM php:alpine
+
+RUN apk add --no-cache \
+    autoconf \
+    build-base \
+    openssl-dev
+
+COPY mongodb-*.tgz /tmp/mongodb.tgz
+
+# Install from the PECL package (fresh configure+build in a temp directory,
+# same as a real user install, but without zstd available)
+RUN pecl install --nodeps /tmp/mongodb.tgz < /dev/null
+
+# Verify the extension loads correctly
+RUN php -n -d extension=mongodb.so --ri mongodb

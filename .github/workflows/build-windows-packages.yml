@@ -36,11 +36,10 @@ jobs:
           - "8.3"
           - "8.4"
           - "8.5"
-        arch: [ x64, x86 ]
         ts: [ ts, nts ]
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           submodules: true
           ref: ${{ inputs.ref }}
@@ -50,7 +49,6 @@ jobs:
         uses: ./.github/actions/windows/build
         with:
           php-version: ${{ matrix.php-version }}
-          arch: ${{ matrix.arch }}
           ts: ${{ matrix.ts }}
           run-tests: false
 
@@ -78,7 +76,7 @@ jobs:
           aws_secret_id: ${{ secrets.AWS_SECRET_ID }}
 
       - name: Get artifacts
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v8
         with:
           path: artifacts
           pattern: php_mongodb-*.zip

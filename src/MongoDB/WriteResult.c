@@ -22,7 +22,7 @@
 
 #include "php_array_api.h"
 
-#include "php_phongo.h"
+#include "phongo.h"
 #include "phongo_error.h"
 
 #include "MongoDB/Server.h"
@@ -42,12 +42,19 @@
 	}                                                                                  \
 	RETURN_LONG(0);
 
-zend_class_entry* php_phongo_writeresult_ce;
+#define PHONGO_WRITERESULT_UPDATE_PROP(prop, field)                                                                                                          \
+	if (mongoc_write_concern_is_acknowledged(intern->write_concern) && bson_iter_init_find(&iter, intern->reply, (field)) && BSON_ITER_HOLDS_INT32(&iter)) { \
+		zend_update_property_long(phongo_writeresult_ce, &intern->std, ZEND_STRL(prop), bson_iter_int32(&iter));                                             \
+	} else {                                                                                                                                                 \
+		zend_update_property_null(phongo_writeresult_ce, &intern->std, ZEND_STRL(prop));                                                                     \
+	}
+
+zend_class_entry* phongo_writeresult_ce;
 
 /* Populates return_value with a WriteConcernError object (if available).
  * Returns true on success; otherwise, false is returned and an exception is
  * thrown. */
-static bool phongo_writeresult_get_writeconcernerror(php_phongo_writeresult_t* intern, zval* return_value)
+static bool phongo_writeresult_get_writeconcernerror(phongo_writeresult_t* intern, zval* return_value)
 {
 	bson_iter_t iter, child;
 	zval        writeconcernerror;
@@ -87,7 +94,7 @@ static bool phongo_writeresult_get_writeconcernerror(php_phongo_writeresult_t* i
 
 /* Populates return_value with a list of WriteError objects. Returns true on
  * success; otherwise, false is returned and an exception is thrown. */
-static bool phongo_writeresult_get_writeerrors(php_phongo_writeresult_t* intern, zval* return_value)
+static bool phongo_writeresult_get_writeerrors(phongo_writeresult_t* intern, zval* return_value)
 {
 	bson_iter_t iter, child;
 
@@ -123,7 +130,7 @@ static bool phongo_writeresult_get_writeerrors(php_phongo_writeresult_t* intern,
 	return true;
 }
 
-static bool php_phongo_writeresult_get_error_replies(php_phongo_writeresult_t* intern, zval* return_value)
+static bool phongo_writeresult_get_error_replies(phongo_writeresult_t* intern, zval* return_value)
 {
 	bson_iter_t iter, child;
 
@@ -140,7 +147,7 @@ static bool php_phongo_writeresult_get_error_replies(php_phongo_writeresult_t* i
 			}
 
 			bson_iter_document(&child, &len, &data);
-			php_phongo_bson_data_to_zval(data, len, &error_reply);
+			phongo_bson_data_to_zval(data, len, &error_reply);
 
 			add_next_index_zval(return_value, &error_reply);
 		}
@@ -149,114 +156,17 @@ static bool php_phongo_writeresult_get_error_replies(php_phongo_writeresult_t* i
 	return true;
 }
 
-PHONGO_DISABLED_CONSTRUCTOR(MongoDB_Driver_WriteResult)
-
-/* Returns the number of documents that were inserted */
-static PHP_METHOD(MongoDB_Driver_WriteResult, getInsertedCount)
+static void phongo_writeresult_get_upserted_ids(phongo_writeresult_t* intern, zval* return_value)
 {
-	bson_iter_t               iter;
-	php_phongo_writeresult_t* intern;
-
-	intern = Z_WRITERESULT_OBJ_P(getThis());
-
-	PHONGO_PARSE_PARAMETERS_NONE();
-
-	PHONGO_WRITERESULT_CHECK_ACKNOWLEDGED("getInsertedCount");
-
-	PHONGO_WRITERESULT_RETURN_LONG_FROM_BSON_INT32(&iter, intern->reply, "nInserted");
-}
-
-/* Returns the number of documents that matched the update criteria */
-static PHP_METHOD(MongoDB_Driver_WriteResult, getMatchedCount)
-{
-	bson_iter_t               iter;
-	php_phongo_writeresult_t* intern;
-
-	intern = Z_WRITERESULT_OBJ_P(getThis());
-
-	PHONGO_PARSE_PARAMETERS_NONE();
-
-	PHONGO_WRITERESULT_CHECK_ACKNOWLEDGED("getMatchedCount");
-
-	PHONGO_WRITERESULT_RETURN_LONG_FROM_BSON_INT32(&iter, intern->reply, "nMatched");
-}
-
-/* Returns the number of documents that were actually modified by an update */
-static PHP_METHOD(MongoDB_Driver_WriteResult, getModifiedCount)
-{
-	bson_iter_t               iter;
-	php_phongo_writeresult_t* intern;
-
-	intern = Z_WRITERESULT_OBJ_P(getThis());
-
-	PHONGO_PARSE_PARAMETERS_NONE();
-
-	PHONGO_WRITERESULT_CHECK_ACKNOWLEDGED("getModifiedCount");
-
-	PHONGO_WRITERESULT_RETURN_LONG_FROM_BSON_INT32(&iter, intern->reply, "nModified");
-}
-
-/* Returns the number of documents that were deleted */
-static PHP_METHOD(MongoDB_Driver_WriteResult, getDeletedCount)
-{
-	bson_iter_t               iter;
-	php_phongo_writeresult_t* intern;
-
-	intern = Z_WRITERESULT_OBJ_P(getThis());
-
-	PHONGO_PARSE_PARAMETERS_NONE();
-
-	PHONGO_WRITERESULT_CHECK_ACKNOWLEDGED("getDeletedCount");
-
-	PHONGO_WRITERESULT_RETURN_LONG_FROM_BSON_INT32(&iter, intern->reply, "nRemoved");
-}
-
-/* Returns the number of documents that were upserted */
-static PHP_METHOD(MongoDB_Driver_WriteResult, getUpsertedCount)
-{
-	bson_iter_t               iter;
-	php_phongo_writeresult_t* intern;
-
-	intern = Z_WRITERESULT_OBJ_P(getThis());
-
-	PHONGO_PARSE_PARAMETERS_NONE();
-
-	PHONGO_WRITERESULT_CHECK_ACKNOWLEDGED("getUpsertedCount");
-
-	PHONGO_WRITERESULT_RETURN_LONG_FROM_BSON_INT32(&iter, intern->reply, "nUpserted");
-}
-
-/* Returns the Server from which the result originated */
-static PHP_METHOD(MongoDB_Driver_WriteResult, getServer)
-{
-	php_phongo_writeresult_t* intern;
-
-	intern = Z_WRITERESULT_OBJ_P(getThis());
-
-	PHONGO_PARSE_PARAMETERS_NONE();
-
-	phongo_server_init(return_value, &intern->manager, intern->server_id);
-}
-
-/* Returns the identifiers generated by the server for upsert operations. */
-static PHP_METHOD(MongoDB_Driver_WriteResult, getUpsertedIds)
-{
-	bson_iter_t               iter, child;
-	php_phongo_writeresult_t* intern;
-
-	intern = Z_WRITERESULT_OBJ_P(getThis());
-
-	PHONGO_PARSE_PARAMETERS_NONE();
-
-	PHONGO_WRITERESULT_CHECK_ACKNOWLEDGED("getUpsertedIds");
+	bson_iter_t iter, child;
 
 	array_init(return_value);
 
 	if (bson_iter_init_find(&iter, intern->reply, "upserted") && BSON_ITER_HOLDS_ARRAY(&iter) && bson_iter_recurse(&iter, &child)) {
 		while (bson_iter_next(&child)) {
-			uint32_t              data_len;
-			const uint8_t*        data = NULL;
-			php_phongo_bson_state state;
+			uint32_t          data_len;
+			const uint8_t*    data = NULL;
+			phongo_bson_state state;
 
 			/* Use PHONGO_TYPEMAP_NATIVE_ARRAY for the root type so we can
 			 * easily access the "index" and "_id" fields. */
@@ -269,7 +179,7 @@ static PHP_METHOD(MongoDB_Driver_WriteResult, getUpsertedIds)
 
 			bson_iter_document(&child, &data_len, &data);
 
-			if (php_phongo_bson_data_to_zval_ex(data, data_len, &state)) {
+			if (phongo_bson_data_to_zval_ex(data, data_len, &state)) {
 				zval* zid = php_array_fetchc(&state.zchild, "_id");
 				add_index_zval(return_value, php_array_fetchc_long(&state.zchild, "index"), zid);
 				zval_add_ref(zid);
@@ -280,12 +190,104 @@ static PHP_METHOD(MongoDB_Driver_WriteResult, getUpsertedIds)
 	}
 }
 
+PHONGO_DISABLED_CONSTRUCTOR(MongoDB_Driver_WriteResult)
+
+/* Returns the number of documents that were inserted */
+static PHP_METHOD(MongoDB_Driver_WriteResult, getInsertedCount)
+{
+	PHONGO_INTERN_FROM_THIS(writeresult);
+
+	bson_iter_t iter;
+
+	PHONGO_PARSE_PARAMETERS_NONE();
+
+	PHONGO_WRITERESULT_CHECK_ACKNOWLEDGED("getInsertedCount");
+
+	PHONGO_WRITERESULT_RETURN_LONG_FROM_BSON_INT32(&iter, intern->reply, "nInserted");
+}
+
+/* Returns the number of documents that matched the update criteria */
+static PHP_METHOD(MongoDB_Driver_WriteResult, getMatchedCount)
+{
+	PHONGO_INTERN_FROM_THIS(writeresult);
+
+	bson_iter_t iter;
+
+	PHONGO_PARSE_PARAMETERS_NONE();
+
+	PHONGO_WRITERESULT_CHECK_ACKNOWLEDGED("getMatchedCount");
+
+	PHONGO_WRITERESULT_RETURN_LONG_FROM_BSON_INT32(&iter, intern->reply, "nMatched");
+}
+
+/* Returns the number of documents that were actually modified by an update */
+static PHP_METHOD(MongoDB_Driver_WriteResult, getModifiedCount)
+{
+	PHONGO_INTERN_FROM_THIS(writeresult);
+
+	bson_iter_t iter;
+
+	PHONGO_PARSE_PARAMETERS_NONE();
+
+	PHONGO_WRITERESULT_CHECK_ACKNOWLEDGED("getModifiedCount");
+
+	PHONGO_WRITERESULT_RETURN_LONG_FROM_BSON_INT32(&iter, intern->reply, "nModified");
+}
+
+/* Returns the number of documents that were deleted */
+static PHP_METHOD(MongoDB_Driver_WriteResult, getDeletedCount)
+{
+	PHONGO_INTERN_FROM_THIS(writeresult);
+
+	bson_iter_t iter;
+
+	PHONGO_PARSE_PARAMETERS_NONE();
+
+	PHONGO_WRITERESULT_CHECK_ACKNOWLEDGED("getDeletedCount");
+
+	PHONGO_WRITERESULT_RETURN_LONG_FROM_BSON_INT32(&iter, intern->reply, "nRemoved");
+}
+
+/* Returns the number of documents that were upserted */
+static PHP_METHOD(MongoDB_Driver_WriteResult, getUpsertedCount)
+{
+	PHONGO_INTERN_FROM_THIS(writeresult);
+
+	bson_iter_t iter;
+
+	PHONGO_PARSE_PARAMETERS_NONE();
+
+	PHONGO_WRITERESULT_CHECK_ACKNOWLEDGED("getUpsertedCount");
+
+	PHONGO_WRITERESULT_RETURN_LONG_FROM_BSON_INT32(&iter, intern->reply, "nUpserted");
+}
+
+/* Returns the Server from which the result originated */
+static PHP_METHOD(MongoDB_Driver_WriteResult, getServer)
+{
+	PHONGO_INTERN_FROM_THIS(writeresult);
+
+	PHONGO_PARSE_PARAMETERS_NONE();
+
+	phongo_server_init(return_value, &intern->manager, intern->server_id);
+}
+
+/* Returns the identifiers generated by the server for upsert operations. */
+static PHP_METHOD(MongoDB_Driver_WriteResult, getUpsertedIds)
+{
+	PHONGO_INTERN_FROM_THIS(writeresult);
+
+	PHONGO_PARSE_PARAMETERS_NONE();
+
+	PHONGO_WRITERESULT_CHECK_ACKNOWLEDGED("getUpsertedIds");
+
+	phongo_writeresult_get_upserted_ids(intern, return_value);
+}
+
 /* Return any write concern error that occurred */
 static PHP_METHOD(MongoDB_Driver_WriteResult, getWriteConcernError)
 {
-	php_phongo_writeresult_t* intern;
-
-	intern = Z_WRITERESULT_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(writeresult);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -295,9 +297,7 @@ static PHP_METHOD(MongoDB_Driver_WriteResult, getWriteConcernError)
 /* Returns any write errors that occurred */
 static PHP_METHOD(MongoDB_Driver_WriteResult, getWriteErrors)
 {
-	php_phongo_writeresult_t* intern;
-
-	intern = Z_WRITERESULT_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(writeresult);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -306,22 +306,18 @@ static PHP_METHOD(MongoDB_Driver_WriteResult, getWriteErrors)
 
 static PHP_METHOD(MongoDB_Driver_WriteResult, getErrorReplies)
 {
-	php_phongo_writeresult_t* intern;
-
-	intern = Z_WRITERESULT_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(writeresult);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
-	php_phongo_writeresult_get_error_replies(intern, return_value);
+	phongo_writeresult_get_error_replies(intern, return_value);
 }
 
 /* Returns whether the write operation was acknowledged (based on the write
    concern). */
 static PHP_METHOD(MongoDB_Driver_WriteResult, isAcknowledged)
 {
-	php_phongo_writeresult_t* intern;
-
-	intern = Z_WRITERESULT_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(writeresult);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -329,11 +325,11 @@ static PHP_METHOD(MongoDB_Driver_WriteResult, isAcknowledged)
 }
 
 /* MongoDB\Driver\WriteResult object handlers */
-static zend_object_handlers php_phongo_handler_writeresult;
+static zend_object_handlers phongo_handler_writeresult;
 
-static void php_phongo_writeresult_free_object(zend_object* object)
+static void phongo_writeresult_free_object(zend_object* object)
 {
-	php_phongo_writeresult_t* intern = Z_OBJ_WRITERESULT(object);
+	PHONGO_INTERN_FROM_Z_OBJ(writeresult, object);
 
 	zend_object_std_dtor(&intern->std);
 
@@ -350,117 +346,97 @@ static void php_phongo_writeresult_free_object(zend_object* object)
 	}
 }
 
-static zend_object* php_phongo_writeresult_create_object(zend_class_entry* class_type)
+static zend_object* phongo_writeresult_create_object(zend_class_entry* class_type)
 {
-	php_phongo_writeresult_t* intern = zend_object_alloc(sizeof(php_phongo_writeresult_t), class_type);
+	PHONGO_INTERN_OBJECT_ALLOC(writeresult, class_type);
 
-	zend_object_std_init(&intern->std, class_type);
-	object_properties_init(&intern->std, class_type);
-
-	intern->std.handlers = &php_phongo_handler_writeresult;
+	intern->std.handlers = &phongo_handler_writeresult;
 
 	return &intern->std;
 }
 
-static HashTable* php_phongo_writeresult_get_debug_info(zend_object* object, int* is_temp)
+static void phongo_writeresult_update_properties(phongo_writeresult_t* intern)
 {
-	php_phongo_writeresult_t* intern;
-	zval                      retval = ZVAL_STATIC_INIT;
-	bson_iter_t               iter;
+	bson_iter_t iter;
 
-	intern   = Z_OBJ_WRITERESULT(object);
-	*is_temp = 1;
-	array_init_size(&retval, 10);
+	PHONGO_WRITERESULT_UPDATE_PROP("insertedCount", "nInserted");
+	PHONGO_WRITERESULT_UPDATE_PROP("matchedCount", "nMatched");
+	PHONGO_WRITERESULT_UPDATE_PROP("modifiedCount", "nModified");
+	PHONGO_WRITERESULT_UPDATE_PROP("deletedCount", "nRemoved");
+	PHONGO_WRITERESULT_UPDATE_PROP("upsertedCount", "nUpserted");
 
-#define PHONGO_WRITERESULT_SCP(field)                                                         \
-	if (bson_iter_init_find(&iter, intern->reply, (field)) && BSON_ITER_HOLDS_INT32(&iter)) { \
-		ADD_ASSOC_LONG_EX(&retval, (field), bson_iter_int32(&iter));                          \
-	} else {                                                                                  \
-		ADD_ASSOC_NULL_EX(&retval, (field));                                                  \
-	}
-
-	PHONGO_WRITERESULT_SCP("nInserted");
-	PHONGO_WRITERESULT_SCP("nMatched");
-	PHONGO_WRITERESULT_SCP("nModified");
-	PHONGO_WRITERESULT_SCP("nRemoved");
-	PHONGO_WRITERESULT_SCP("nUpserted");
-#undef PHONGO_WRITERESULT_SCP
-
-	if (bson_iter_init_find(&iter, intern->reply, "upserted") && BSON_ITER_HOLDS_ARRAY(&iter)) {
-		uint32_t              len;
-		const uint8_t*        data;
-		php_phongo_bson_state state;
-
-		PHONGO_BSON_INIT_DEBUG_STATE(state);
-		bson_iter_array(&iter, &len, &data);
-		if (!php_phongo_bson_data_to_zval_ex(data, len, &state)) {
-			zval_ptr_dtor(&state.zchild);
-			goto done;
-		}
-
-		ADD_ASSOC_ZVAL_EX(&retval, "upsertedIds", &state.zchild);
-	} else {
+	{
 		zval upsertedIds;
-		array_init(&upsertedIds);
-		ADD_ASSOC_ZVAL_EX(&retval, "upsertedIds", &upsertedIds);
+
+		phongo_writeresult_get_upserted_ids(intern, &upsertedIds);
+		zend_update_property(phongo_writeresult_ce, &intern->std, ZEND_STRL("upsertedIds"), &upsertedIds);
+		zval_ptr_dtor(&upsertedIds);
 	}
 
 	{
 		zval writeerrors;
-
 		phongo_writeresult_get_writeerrors(intern, &writeerrors);
-		ADD_ASSOC_ZVAL_EX(&retval, "writeErrors", &writeerrors);
+		zend_update_property(phongo_writeresult_ce, &intern->std, ZEND_STRL("writeErrors"), &writeerrors);
+		zval_ptr_dtor(&writeerrors);
 	}
 
 	{
 		zval writeconcernerror;
-
 		phongo_writeresult_get_writeconcernerror(intern, &writeconcernerror);
-		ADD_ASSOC_ZVAL_EX(&retval, "writeConcernError", &writeconcernerror);
+		zend_update_property(phongo_writeresult_ce, &intern->std, ZEND_STRL("writeConcernError"), &writeconcernerror);
+		zval_ptr_dtor(&writeconcernerror);
 	}
 
 	if (intern->write_concern) {
 		zval write_concern;
-
 		phongo_writeconcern_init(&write_concern, intern->write_concern);
-		ADD_ASSOC_ZVAL_EX(&retval, "writeConcern", &write_concern);
+		zend_update_property(phongo_writeresult_ce, &intern->std, ZEND_STRL("writeConcern"), &write_concern);
+		zval_ptr_dtor(&write_concern);
 	} else {
-		ADD_ASSOC_NULL_EX(&retval, "writeConcern");
+		zend_update_property_null(phongo_writeresult_ce, &intern->std, ZEND_STRL("writeConcern"));
 	}
 
 	{
 		zval error_replies;
-
-		php_phongo_writeresult_get_error_replies(intern, &error_replies);
-		ADD_ASSOC_ZVAL_EX(&retval, "errorReplies", &error_replies);
+		phongo_writeresult_get_error_replies(intern, &error_replies);
+		zend_update_property(phongo_writeresult_ce, &intern->std, ZEND_STRL("errorReplies"), &error_replies);
+		zval_ptr_dtor(&error_replies);
 	}
 
-done:
-	return Z_ARRVAL(retval);
+	{
+		zval server;
+		phongo_server_init(&server, &intern->manager, intern->server_id);
+		zend_update_property(phongo_writeresult_ce, &intern->std, ZEND_STRL("server"), &server);
+		zval_ptr_dtor(&server);
+	}
 }
 
-void php_phongo_writeresult_init_ce(INIT_FUNC_ARGS)
+void phongo_writeresult_init_ce(INIT_FUNC_ARGS)
 {
-	php_phongo_writeresult_ce                = register_class_MongoDB_Driver_WriteResult();
-	php_phongo_writeresult_ce->create_object = php_phongo_writeresult_create_object;
+	phongo_writeresult_ce                = register_class_MongoDB_Driver_WriteResult();
+	phongo_writeresult_ce->create_object = phongo_writeresult_create_object;
 
-	memcpy(&php_phongo_handler_writeresult, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
-	php_phongo_handler_writeresult.get_debug_info = php_phongo_writeresult_get_debug_info;
-	php_phongo_handler_writeresult.free_obj       = php_phongo_writeresult_free_object;
-	php_phongo_handler_writeresult.offset         = XtOffsetOf(php_phongo_writeresult_t, std);
+	memcpy(&phongo_handler_writeresult, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
+	phongo_handler_writeresult.free_obj = phongo_writeresult_free_object;
+	phongo_handler_writeresult.offset   = offsetof(phongo_writeresult_t, std);
 }
 
-php_phongo_writeresult_t* phongo_writeresult_init(zval* return_value, bson_t* reply, zval* manager, uint32_t server_id)
+void phongo_writeresult_init(zval* return_value, bson_t* reply, zval* manager, uint32_t server_id, const mongoc_write_concern_t* write_concern)
 {
-	php_phongo_writeresult_t* writeresult;
+	phongo_writeresult_t* writeresult;
 
-	object_init_ex(return_value, php_phongo_writeresult_ce);
+	object_init_ex(return_value, phongo_writeresult_ce);
 
-	writeresult            = Z_WRITERESULT_OBJ_P(return_value);
-	writeresult->reply     = bson_copy(reply);
-	writeresult->server_id = server_id;
+	writeresult                = Z_WRITERESULT_OBJ_P(return_value);
+	writeresult->reply         = bson_copy(reply);
+	writeresult->server_id     = server_id;
+	writeresult->write_concern = mongoc_write_concern_copy(write_concern);
 
 	ZVAL_ZVAL(&writeresult->manager, manager, 1, 0);
 
-	return writeresult;
+	phongo_writeresult_update_properties(writeresult);
 }
+
+#undef PHONGO_WRITERESULT_CHECK_ACKNOWLEDGED
+#undef PHONGO_WRITERESULT_RETURN_LONG_FROM_BSON_INT32
+#undef PHONGO_WRITERESULT_UPDATE_PROP

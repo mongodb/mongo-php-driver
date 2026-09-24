@@ -12,7 +12,7 @@ class MySubscriber implements MongoDB\Driver\Monitoring\CommandSubscriber
 { 
     public function commandStarted(MongoDB\Driver\Monitoring\CommandStartedEvent $event): void
     {
-        printf("Observed commandStarted for %s\n", $event->getCommandName());
+        printf("Observed commandStarted for %s\n", $event->commandName);
     }
  
     public function commandSucceeded(MongoDB\Driver\Monitoring\CommandSucceededEvent $event): void {}

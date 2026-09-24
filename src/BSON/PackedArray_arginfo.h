@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 497915f5aa3a10fc5e4bf222c82cdcb5c891a1bd */
+ * Stub hash: b104bf91975f87a360e8ee756f948bf83bffae50 */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_BSON_PackedArray___construct, 0, 0, 0)
 ZEND_END_ARG_INFO()
@@ -62,7 +62,6 @@ ZEND_END_ARG_INFO()
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_BSON_PackedArray___serialize, 0, 0, IS_ARRAY, 0)
 ZEND_END_ARG_INFO()
 
-
 static ZEND_METHOD(MongoDB_BSON_PackedArray, __construct);
 static ZEND_METHOD(MongoDB_BSON_PackedArray, fromJSON);
 static ZEND_METHOD(MongoDB_BSON_PackedArray, fromPHP);
@@ -80,7 +79,6 @@ static ZEND_METHOD(MongoDB_BSON_PackedArray, __toString);
 static ZEND_METHOD(MongoDB_BSON_PackedArray, __set_state);
 static ZEND_METHOD(MongoDB_BSON_PackedArray, __unserialize);
 static ZEND_METHOD(MongoDB_BSON_PackedArray, __serialize);
-
 
 static const zend_function_entry class_MongoDB_BSON_PackedArray_methods[] = {
 	ZEND_ME(MongoDB_BSON_PackedArray, __construct, arginfo_class_MongoDB_BSON_PackedArray___construct, ZEND_ACC_PRIVATE)
@@ -108,8 +106,12 @@ static zend_class_entry *register_class_MongoDB_BSON_PackedArray(zend_class_entr
 	zend_class_entry ce, *class_entry;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\BSON", "PackedArray", class_MongoDB_BSON_PackedArray_methods);
+#if (PHP_VERSION_ID >= 80400)
+	class_entry = zend_register_internal_class_with_flags(&ce, NULL, ZEND_ACC_FINAL);
+#else
 	class_entry = zend_register_internal_class_ex(&ce, NULL);
 	class_entry->ce_flags |= ZEND_ACC_FINAL;
+#endif
 	zend_class_implements(class_entry, 4, class_entry_IteratorAggregate, class_entry_ArrayAccess, class_entry_MongoDB_BSON_Type, class_entry_Stringable);
 
 	return class_entry;

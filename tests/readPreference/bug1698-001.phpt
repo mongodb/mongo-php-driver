@@ -1,5 +1,5 @@
 --TEST--
-PHPC-1698: php_phongo_read_preference_prep_tagsets may leak in convert_to_object
+PHPC-1698: phongo_read_preference_prep_tagsets may leak in convert_to_object
 --FILE--
 <?php
 
@@ -21,7 +21,7 @@ var_dump($uriTagSets);
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-object(MongoDB\Driver\ReadPreference)#%d (2) {
+object(MongoDB\Driver\ReadPreference)#%d (4) {
   ["mode"]=>
   string(9) "secondary"
   ["tags"]=>
@@ -32,6 +32,10 @@ object(MongoDB\Driver\ReadPreference)#%d (2) {
       string(2) "ny"
     }
   }
+  ["maxStalenessSeconds"]=>
+  int(-1)
+  ["hedge"]=>
+  NULL
 }
 array(2) {
   ["mode"]=>
@@ -45,7 +49,7 @@ array(2) {
     }
   }
 }
-object(MongoDB\Driver\ReadPreference)#%d (2) {
+object(MongoDB\Driver\ReadPreference)#%d (4) {
   ["mode"]=>
   string(9) "secondary"
   ["tags"]=>
@@ -56,6 +60,10 @@ object(MongoDB\Driver\ReadPreference)#%d (2) {
       string(2) "ny"
     }
   }
+  ["maxStalenessSeconds"]=>
+  int(-1)
+  ["hedge"]=>
+  NULL
 }
 array(1) {
   [0]=>
@@ -64,7 +72,7 @@ array(1) {
     string(2) "ny"
   }
 }
-object(MongoDB\Driver\ReadPreference)#%d (2) {
+object(MongoDB\Driver\ReadPreference)#%d (4) {
   ["mode"]=>
   string(9) "secondary"
   ["tags"]=>
@@ -75,6 +83,10 @@ object(MongoDB\Driver\ReadPreference)#%d (2) {
       string(2) "ny"
     }
   }
+  ["maxStalenessSeconds"]=>
+  int(-1)
+  ["hedge"]=>
+  NULL
 }
 array(1) {
   [0]=>

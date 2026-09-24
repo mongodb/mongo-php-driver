@@ -20,10 +20,12 @@ $bulk->delete(['x' => 1]);
 $result = $manager->executeBulkWrite(NS, $bulk);
 
 var_dump($result->getDeletedCount());
+var_dump($result->deletedCount);
 
 ?>
 ===DONE===
 <?php exit(0); ?>
 --EXPECT--
+int(1)
 int(1)
 ===DONE===

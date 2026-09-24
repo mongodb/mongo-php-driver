@@ -1,0 +1,28 @@
+name: "Build libmongocrypt"
+description: "Installs libmongocrypt"
+inputs:
+  version:
+    description: "Libmongocrypt version to install (major.minor.patch)"
+    required: true
+runs:
+  using: composite
+
+  steps:
+    - name: Add repository key
+      shell: bash
+      run: sudo sh -c 'curl -s --location https://pgp.mongodb.com/libmongocrypt.asc | gpg --dearmor >/etc/apt/trusted.gpg.d/libmongocrypt.gpg'
+
+    - name: Add repository
+      shell: bash
+      working-directory: /tmp
+      run: echo "deb https://libmongocrypt.s3.amazonaws.com/apt/ubuntu noble/libmongocrypt/release universe" | sudo tee /etc/apt/sources.list.d/libmongocrypt.list
+
+    - name: Update apt sources
+      shell: bash
+      run: sudo apt-get update
+
+    - name: Install libmongocrypt
+      shell: bash
+      run: sudo apt-get install -y "libmongocrypt-dev=${LIBMONGOCRYPT_VERSION}*" "libmongocrypt0=${LIBMONGOCRYPT_VERSION}*"
+      env:
+        LIBMONGOCRYPT_VERSION: ${{ inputs.version }}

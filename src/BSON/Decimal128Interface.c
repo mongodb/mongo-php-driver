@@ -16,12 +16,12 @@
 
 #include <php.h>
 
-#include "php_phongo.h"
+#include "phongo.h"
 #include "Decimal128Interface_arginfo.h"
 
-zend_class_entry* php_phongo_decimal128_interface_ce;
+zend_class_entry* phongo_decimal128_interface_ce;
 
-void php_phongo_decimal128_interface_init_ce(INIT_FUNC_ARGS)
+void phongo_decimal128_interface_init_ce(INIT_FUNC_ARGS)
 {
-	php_phongo_decimal128_interface_ce = register_class_MongoDB_BSON_Decimal128Interface();
+	phongo_decimal128_interface_ce = register_class_MongoDB_BSON_Decimal128Interface();
 }

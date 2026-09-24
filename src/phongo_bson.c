@@ -23,7 +23,7 @@
 
 #include "php_array_api.h"
 
-#include "php_phongo.h"
+#include "phongo.h"
 #include "phongo_bson.h"
 #include "phongo_error.h"
 #include "BSON/Binary.h"
@@ -42,7 +42,7 @@
 #undef MONGOC_LOG_DOMAIN
 #define MONGOC_LOG_DOMAIN "PHONGO-BSON"
 
-#define PHONGO_BSON_STATE_ZCHILD(state) (&((php_phongo_bson_state*) (state))->zchild)
+#define PHONGO_BSON_STATE_ZCHILD(state) (&((phongo_bson_state*) (state))->zchild)
 
 #define PHONGO_FIELD_PATH_EXPANSION 8
 
@@ -56,8 +56,8 @@
 #define PHONGO_TYPEMAP_TYPE_STR_STDCLASS "stdclass"
 
 /* Forward declarations */
-static bool php_phongo_bson_visit_document(const bson_iter_t* iter ARG_UNUSED, const char* key, const bson_t* v_document, void* data);
-static bool php_phongo_bson_visit_array(const bson_iter_t* iter ARG_UNUSED, const char* key, const bson_t* v_array, void* data);
+static bool phongo_bson_visit_document(const bson_iter_t* iter ARG_UNUSED, const char* key, const bson_t* v_document, void* data);
+static bool phongo_bson_visit_array(const bson_iter_t* iter ARG_UNUSED, const char* key, const bson_t* v_array, void* data);
 
 static inline bool phongo_is_class_instantiatable(const zend_class_entry* ce)
 {
@@ -73,7 +73,7 @@ static inline bool phongo_is_class_instantiatable(const zend_class_entry* ce)
 }
 
 /* Path builder */
-char* php_phongo_field_path_as_string(php_phongo_field_path* field_path)
+char* phongo_field_path_as_string(phongo_field_path* field_path)
 {
 	size_t length = 1; /* NULL character */
 	size_t i;
@@ -103,11 +103,19 @@ char* php_phongo_field_path_as_string(php_phongo_field_path* field_path)
 	ptr  = path;
 
 	for (i = 0; i <= field_path->size && i < field_path->allocated_size; i++) {
+		size_t element_len;
+
 		if (!field_path->elements[i]) {
 			continue;
 		}
+
+		element_len = strlen(field_path->elements[i]);
+
+		/* Assert that we have enough space in the buffer for this element plus separator */
+		BSON_ASSERT((size_t) (ptr - path) + element_len + 1 < length);
+
 		strcpy(ptr, field_path->elements[i]);
-		ptr += strlen(field_path->elements[i]);
+		ptr += element_len;
 		ptr[0] = '.';
 		ptr++;
 	}
@@ -121,22 +129,24 @@ char* php_phongo_field_path_as_string(php_phongo_field_path* field_path)
 	return path;
 }
 
-php_phongo_field_path* php_phongo_field_path_alloc(bool owns_elements)
+phongo_field_path* phongo_field_path_alloc(bool owns_elements)
 {
-	php_phongo_field_path* tmp = ecalloc(1, sizeof(php_phongo_field_path));
-	tmp->ref_count             = 1;
-	tmp->owns_elements         = owns_elements;
+	phongo_field_path* tmp = ecalloc(1, sizeof(phongo_field_path));
+	tmp->ref_count         = 1;
+	tmp->owns_elements     = owns_elements;
 
 	return tmp;
 }
 
-void php_phongo_field_path_free(php_phongo_field_path* field_path)
+void phongo_field_path_free(phongo_field_path* field_path)
 {
-	if (field_path->owns_elements) {
+	if (field_path->owns_elements && field_path->elements) {
 		size_t i;
 
 		for (i = 0; i < field_path->size; i++) {
-			efree(field_path->elements[i]);
+			if (field_path->elements[i]) {
+				efree(field_path->elements[i]);
+			}
 		}
 	}
 	if (field_path->elements) {
@@ -148,14 +158,14 @@ void php_phongo_field_path_free(php_phongo_field_path* field_path)
 	efree(field_path);
 }
 
-static void php_phongo_field_path_ensure_allocation(php_phongo_field_path* field_path, size_t level)
+static void phongo_field_path_ensure_allocation(phongo_field_path* field_path, size_t level)
 {
 	if (level >= field_path->allocated_size) {
 		size_t i;
 
 		field_path->allocated_size = field_path->size + PHONGO_FIELD_PATH_EXPANSION;
 		field_path->elements       = erealloc(field_path->elements, sizeof(char*) * field_path->allocated_size);
-		field_path->element_types  = erealloc(field_path->element_types, sizeof(php_phongo_bson_field_path_item_types) * field_path->allocated_size);
+		field_path->element_types  = erealloc(field_path->element_types, sizeof(phongo_bson_field_path_item_types) * field_path->allocated_size);
 
 		for (i = level; i < field_path->allocated_size; i++) {
 			field_path->elements[i]      = NULL;
@@ -164,9 +174,9 @@ static void php_phongo_field_path_ensure_allocation(php_phongo_field_path* field
 	}
 }
 
-void php_phongo_field_path_write_item_at_current_level(php_phongo_field_path* field_path, const char* element)
+void phongo_field_path_write_item_at_current_level(phongo_field_path* field_path, const char* element)
 {
-	php_phongo_field_path_ensure_allocation(field_path, field_path->size);
+	phongo_field_path_ensure_allocation(field_path, field_path->size);
 
 	if (field_path->owns_elements) {
 		/* Note: owns_elements is only used for field paths parsed from a type
@@ -182,29 +192,33 @@ void php_phongo_field_path_write_item_at_current_level(php_phongo_field_path* fi
 	}
 }
 
-void php_phongo_field_path_write_type_at_current_level(php_phongo_field_path* field_path, php_phongo_bson_field_path_item_types element_type)
+void phongo_field_path_write_type_at_current_level(phongo_field_path* field_path, phongo_bson_field_path_item_types element_type)
 {
-	php_phongo_field_path_ensure_allocation(field_path, field_path->size);
+	phongo_field_path_ensure_allocation(field_path, field_path->size);
 
 	field_path->element_types[field_path->size] = element_type;
 }
 
-bool php_phongo_field_path_push(php_phongo_field_path* field_path, const char* element, php_phongo_bson_field_path_item_types element_type)
+bool phongo_field_path_push(phongo_field_path* field_path, const char* element, phongo_bson_field_path_item_types element_type)
 {
 	if (element) {
-		php_phongo_field_path_write_item_at_current_level(field_path, element);
+		phongo_field_path_write_item_at_current_level(field_path, element);
 	}
 
-	php_phongo_field_path_write_type_at_current_level(field_path, element_type);
+	phongo_field_path_write_type_at_current_level(field_path, element_type);
 
 	field_path->size++;
 
 	return field_path->size <= BSON_MAX_NESTING_LEVEL;
 }
 
-bool php_phongo_field_path_pop(php_phongo_field_path* field_path)
+bool phongo_field_path_pop(phongo_field_path* field_path)
 {
-	php_phongo_field_path_ensure_allocation(field_path, field_path->size);
+	if (field_path->size == 0) {
+		return false;
+	}
+
+	phongo_field_path_ensure_allocation(field_path, field_path->size);
 
 	field_path->elements[field_path->size]      = NULL;
 	field_path->element_types[field_path->size] = PHONGO_FIELD_PATH_ITEM_NONE;
@@ -217,17 +231,17 @@ bool php_phongo_field_path_pop(php_phongo_field_path* field_path)
 	return true;
 }
 
-inline static bool php_phongo_bson_state_is_initialized(php_phongo_bson_state* state)
+inline static bool phongo_bson_state_is_initialized(phongo_bson_state* state)
 {
 	return state->field_path != NULL;
 }
 
-static void php_phongo_bson_state_ctor(php_phongo_bson_state* state)
+static void phongo_bson_state_ctor(phongo_bson_state* state)
 {
-	state->field_path = php_phongo_field_path_alloc(false);
+	state->field_path = phongo_field_path_alloc(false);
 }
 
-static void php_phongo_bson_state_copy_ctor(php_phongo_bson_state* dst, php_phongo_bson_state* src)
+static void phongo_bson_state_copy_ctor(phongo_bson_state* dst, phongo_bson_state* src)
 {
 	dst->map = src->map;
 	if (src->field_path) {
@@ -236,40 +250,40 @@ static void php_phongo_bson_state_copy_ctor(php_phongo_bson_state* dst, php_phon
 	dst->field_path = src->field_path;
 }
 
-static void php_phongo_bson_state_dtor(php_phongo_bson_state* state)
+static void phongo_bson_state_dtor(phongo_bson_state* state)
 {
 	if (state->field_path) {
 		state->field_path->ref_count--;
 
 		if (state->field_path->ref_count < 1) {
-			php_phongo_field_path_free(state->field_path);
+			phongo_field_path_free(state->field_path);
 		}
 		state->field_path = NULL;
 	}
 }
 
-static void php_phongo_bson_visit_corrupt(const bson_iter_t* iter ARG_UNUSED, void* data ARG_UNUSED)
+static void phongo_bson_visit_corrupt(const bson_iter_t* iter ARG_UNUSED, void* data ARG_UNUSED)
 {
 	mongoc_log(MONGOC_LOG_LEVEL_WARNING, MONGOC_LOG_DOMAIN, "Corrupt BSON data detected!");
 }
 
-static void php_phongo_bson_visit_unsupported_type(const bson_iter_t* iter ARG_UNUSED, const char* key, uint32_t v_type_code, void* data ARG_UNUSED)
+static void phongo_bson_visit_unsupported_type(const bson_iter_t* iter ARG_UNUSED, const char* key, uint32_t v_type_code, void* data ARG_UNUSED)
 {
-	php_phongo_bson_state* state = (php_phongo_bson_state*) data;
-	char*                  path_string;
+	phongo_bson_state* state = (phongo_bson_state*) data;
+	char*              path_string;
 
-	php_phongo_field_path_write_item_at_current_level(state->field_path, key);
-	path_string = php_phongo_field_path_as_string(state->field_path);
+	phongo_field_path_write_item_at_current_level(state->field_path, key);
+	path_string = phongo_field_path_as_string(state->field_path);
 
 	phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Detected unknown BSON type 0x%02hhx for field path \"%s\". Are you using the latest driver?", (unsigned char) v_type_code, path_string);
 
 	efree(path_string);
 }
 
-static bool php_phongo_bson_visit_double(const bson_iter_t* iter ARG_UNUSED, const char* key, double v_double, void* data)
+static bool phongo_bson_visit_double(const bson_iter_t* iter ARG_UNUSED, const char* key, double v_double, void* data)
 {
-	zval*                  retval = PHONGO_BSON_STATE_ZCHILD(data);
-	php_phongo_bson_state* state  = (php_phongo_bson_state*) data;
+	zval*              retval = PHONGO_BSON_STATE_ZCHILD(data);
+	phongo_bson_state* state  = (phongo_bson_state*) data;
 
 	if (state->is_visiting_array) {
 		add_next_index_double(retval, v_double);
@@ -277,15 +291,15 @@ static bool php_phongo_bson_visit_double(const bson_iter_t* iter ARG_UNUSED, con
 		add_assoc_double(retval, key, v_double);
 	}
 
-	php_phongo_field_path_write_item_at_current_level(state->field_path, key);
+	phongo_field_path_write_item_at_current_level(state->field_path, key);
 
 	return false;
 }
 
-static bool php_phongo_bson_visit_utf8(const bson_iter_t* iter ARG_UNUSED, const char* key, size_t v_utf8_len, const char* v_utf8, void* data)
+static bool phongo_bson_visit_utf8(const bson_iter_t* iter ARG_UNUSED, const char* key, size_t v_utf8_len, const char* v_utf8, void* data)
 {
-	zval*                  retval = PHONGO_BSON_STATE_ZCHILD(data);
-	php_phongo_bson_state* state  = (php_phongo_bson_state*) data;
+	zval*              retval = PHONGO_BSON_STATE_ZCHILD(data);
+	phongo_bson_state* state  = (phongo_bson_state*) data;
 
 	if (state->is_visiting_array) {
 		ADD_NEXT_INDEX_STRINGL(retval, v_utf8, v_utf8_len);
@@ -293,23 +307,23 @@ static bool php_phongo_bson_visit_utf8(const bson_iter_t* iter ARG_UNUSED, const
 		ADD_ASSOC_STRING_EX(retval, key, strlen(key), v_utf8, v_utf8_len);
 	}
 
-	php_phongo_field_path_write_item_at_current_level(state->field_path, key);
+	phongo_field_path_write_item_at_current_level(state->field_path, key);
 
 	return false;
 }
 
-static bool php_phongo_bson_visit_binary(const bson_iter_t* iter ARG_UNUSED, const char* key, bson_subtype_t v_subtype, size_t v_binary_len, const uint8_t* v_binary, void* data)
+static bool phongo_bson_visit_binary(const bson_iter_t* iter ARG_UNUSED, const char* key, bson_subtype_t v_subtype, size_t v_binary_len, const uint8_t* v_binary, void* data)
 {
-	zval*                  retval = PHONGO_BSON_STATE_ZCHILD(data);
-	php_phongo_bson_state* state  = (php_phongo_bson_state*) data;
+	zval*              retval = PHONGO_BSON_STATE_ZCHILD(data);
+	phongo_bson_state* state  = (phongo_bson_state*) data;
 
 	if (v_subtype == 0x80 && strcmp(key, PHONGO_ODM_FIELD_NAME) == 0) {
 		zend_string*      zs_classname = zend_string_init((const char*) v_binary, v_binary_len, 0);
 		zend_class_entry* found_ce     = zend_fetch_class(zs_classname, ZEND_FETCH_CLASS_AUTO | ZEND_FETCH_CLASS_SILENT);
 		zend_string_release(zs_classname);
 
-		if (found_ce && phongo_is_class_instantiatable(found_ce) && instanceof_function(found_ce, php_phongo_persistable_ce)) {
-			((php_phongo_bson_state*) data)->odm_ce = found_ce;
+		if (found_ce && phongo_is_class_instantiatable(found_ce) && instanceof_function(found_ce, phongo_persistable_ce)) {
+			((phongo_bson_state*) data)->odm_ce = found_ce;
 		}
 	}
 
@@ -327,18 +341,18 @@ static bool php_phongo_bson_visit_binary(const bson_iter_t* iter ARG_UNUSED, con
 		}
 	}
 
-	php_phongo_field_path_write_item_at_current_level(state->field_path, key);
+	phongo_field_path_write_item_at_current_level(state->field_path, key);
 
 	return false;
 }
 
-static bool php_phongo_bson_visit_undefined(const bson_iter_t* iter, const char* key, void* data)
+static bool phongo_bson_visit_undefined(const bson_iter_t* iter, const char* key, void* data)
 {
-	zval*                  retval = PHONGO_BSON_STATE_ZCHILD(data);
-	php_phongo_bson_state* state  = (php_phongo_bson_state*) data;
-	zval                   zchild;
+	zval*              retval = PHONGO_BSON_STATE_ZCHILD(data);
+	phongo_bson_state* state  = (phongo_bson_state*) data;
+	zval               zchild;
 
-	object_init_ex(&zchild, php_phongo_undefined_ce);
+	object_init_ex(&zchild, phongo_undefined_ce);
 
 	if (state->is_visiting_array) {
 		add_next_index_zval(retval, &zchild);
@@ -346,16 +360,16 @@ static bool php_phongo_bson_visit_undefined(const bson_iter_t* iter, const char*
 		ADD_ASSOC_ZVAL(retval, key, &zchild);
 	}
 
-	php_phongo_field_path_write_item_at_current_level(state->field_path, key);
+	phongo_field_path_write_item_at_current_level(state->field_path, key);
 
 	return false;
 }
 
-static bool php_phongo_bson_visit_oid(const bson_iter_t* iter ARG_UNUSED, const char* key, const bson_oid_t* v_oid, void* data)
+static bool phongo_bson_visit_oid(const bson_iter_t* iter ARG_UNUSED, const char* key, const bson_oid_t* v_oid, void* data)
 {
-	zval*                  retval = PHONGO_BSON_STATE_ZCHILD(data);
-	php_phongo_bson_state* state  = (php_phongo_bson_state*) data;
-	zval                   zchild;
+	zval*              retval = PHONGO_BSON_STATE_ZCHILD(data);
+	phongo_bson_state* state  = (phongo_bson_state*) data;
+	zval               zchild;
 
 	if (!phongo_objectid_new(&zchild, v_oid)) {
 		return true;
@@ -367,15 +381,15 @@ static bool php_phongo_bson_visit_oid(const bson_iter_t* iter ARG_UNUSED, const 
 		ADD_ASSOC_ZVAL(retval, key, &zchild);
 	}
 
-	php_phongo_field_path_write_item_at_current_level(state->field_path, key);
+	phongo_field_path_write_item_at_current_level(state->field_path, key);
 
 	return false;
 }
 
-static bool php_phongo_bson_visit_bool(const bson_iter_t* iter ARG_UNUSED, const char* key, bool v_bool, void* data)
+static bool phongo_bson_visit_bool(const bson_iter_t* iter ARG_UNUSED, const char* key, bool v_bool, void* data)
 {
-	zval*                  retval = PHONGO_BSON_STATE_ZCHILD(data);
-	php_phongo_bson_state* state  = (php_phongo_bson_state*) data;
+	zval*              retval = PHONGO_BSON_STATE_ZCHILD(data);
+	phongo_bson_state* state  = (phongo_bson_state*) data;
 
 	if (state->is_visiting_array) {
 		add_next_index_bool(retval, v_bool);
@@ -383,16 +397,16 @@ static bool php_phongo_bson_visit_bool(const bson_iter_t* iter ARG_UNUSED, const
 		add_assoc_bool(retval, key, v_bool);
 	}
 
-	php_phongo_field_path_write_item_at_current_level(state->field_path, key);
+	phongo_field_path_write_item_at_current_level(state->field_path, key);
 
 	return false;
 }
 
-static bool php_phongo_bson_visit_date_time(const bson_iter_t* iter ARG_UNUSED, const char* key, int64_t msec_since_epoch, void* data)
+static bool phongo_bson_visit_date_time(const bson_iter_t* iter ARG_UNUSED, const char* key, int64_t msec_since_epoch, void* data)
 {
-	zval*                  retval = PHONGO_BSON_STATE_ZCHILD(data);
-	php_phongo_bson_state* state  = (php_phongo_bson_state*) data;
-	zval                   zchild;
+	zval*              retval = PHONGO_BSON_STATE_ZCHILD(data);
+	phongo_bson_state* state  = (phongo_bson_state*) data;
+	zval               zchild;
 
 	if (!phongo_utcdatetime_new(&zchild, msec_since_epoch)) {
 		return true;
@@ -404,16 +418,16 @@ static bool php_phongo_bson_visit_date_time(const bson_iter_t* iter ARG_UNUSED, 
 		ADD_ASSOC_ZVAL(retval, key, &zchild);
 	}
 
-	php_phongo_field_path_write_item_at_current_level(state->field_path, key);
+	phongo_field_path_write_item_at_current_level(state->field_path, key);
 
 	return false;
 }
 
-static bool php_phongo_bson_visit_decimal128(const bson_iter_t* iter ARG_UNUSED, const char* key, const bson_decimal128_t* decimal, void* data)
+static bool phongo_bson_visit_decimal128(const bson_iter_t* iter ARG_UNUSED, const char* key, const bson_decimal128_t* decimal, void* data)
 {
-	zval*                  retval = PHONGO_BSON_STATE_ZCHILD(data);
-	php_phongo_bson_state* state  = (php_phongo_bson_state*) data;
-	zval                   zchild;
+	zval*              retval = PHONGO_BSON_STATE_ZCHILD(data);
+	phongo_bson_state* state  = (phongo_bson_state*) data;
+	zval               zchild;
 
 	if (!phongo_decimal128_new(&zchild, decimal)) {
 		return true;
@@ -425,15 +439,15 @@ static bool php_phongo_bson_visit_decimal128(const bson_iter_t* iter ARG_UNUSED,
 		ADD_ASSOC_ZVAL(retval, key, &zchild);
 	}
 
-	php_phongo_field_path_write_item_at_current_level(state->field_path, key);
+	phongo_field_path_write_item_at_current_level(state->field_path, key);
 
 	return false;
 }
 
-static bool php_phongo_bson_visit_null(const bson_iter_t* iter ARG_UNUSED, const char* key, void* data)
+static bool phongo_bson_visit_null(const bson_iter_t* iter ARG_UNUSED, const char* key, void* data)
 {
-	zval*                  retval = PHONGO_BSON_STATE_ZCHILD(data);
-	php_phongo_bson_state* state  = (php_phongo_bson_state*) data;
+	zval*              retval = PHONGO_BSON_STATE_ZCHILD(data);
+	phongo_bson_state* state  = (phongo_bson_state*) data;
 
 	if (state->is_visiting_array) {
 		add_next_index_null(retval);
@@ -441,16 +455,16 @@ static bool php_phongo_bson_visit_null(const bson_iter_t* iter ARG_UNUSED, const
 		add_assoc_null(retval, key);
 	}
 
-	php_phongo_field_path_write_item_at_current_level(state->field_path, key);
+	phongo_field_path_write_item_at_current_level(state->field_path, key);
 
 	return false;
 }
 
-static bool php_phongo_bson_visit_regex(const bson_iter_t* iter ARG_UNUSED, const char* key, const char* v_regex, const char* v_options, void* data)
+static bool phongo_bson_visit_regex(const bson_iter_t* iter ARG_UNUSED, const char* key, const char* v_regex, const char* v_options, void* data)
 {
-	zval*                  retval = PHONGO_BSON_STATE_ZCHILD(data);
-	php_phongo_bson_state* state  = (php_phongo_bson_state*) data;
-	zval                   zchild;
+	zval*              retval = PHONGO_BSON_STATE_ZCHILD(data);
+	phongo_bson_state* state  = (phongo_bson_state*) data;
+	zval               zchild;
 
 	if (!phongo_regex_new(&zchild, v_regex, v_options)) {
 		return true;
@@ -462,16 +476,16 @@ static bool php_phongo_bson_visit_regex(const bson_iter_t* iter ARG_UNUSED, cons
 		ADD_ASSOC_ZVAL(retval, key, &zchild);
 	}
 
-	php_phongo_field_path_write_item_at_current_level(state->field_path, key);
+	phongo_field_path_write_item_at_current_level(state->field_path, key);
 
 	return false;
 }
 
-static bool php_phongo_bson_visit_symbol(const bson_iter_t* iter, const char* key, size_t v_symbol_len, const char* v_symbol, void* data)
+static bool phongo_bson_visit_symbol(const bson_iter_t* iter, const char* key, size_t v_symbol_len, const char* v_symbol, void* data)
 {
-	zval*                  retval = PHONGO_BSON_STATE_ZCHILD(data);
-	php_phongo_bson_state* state  = (php_phongo_bson_state*) data;
-	zval                   zchild;
+	zval*              retval = PHONGO_BSON_STATE_ZCHILD(data);
+	phongo_bson_state* state  = (phongo_bson_state*) data;
+	zval               zchild;
 
 	if (!phongo_symbol_new(&zchild, v_symbol, v_symbol_len)) {
 		return true;
@@ -483,16 +497,16 @@ static bool php_phongo_bson_visit_symbol(const bson_iter_t* iter, const char* ke
 		ADD_ASSOC_ZVAL(retval, key, &zchild);
 	}
 
-	php_phongo_field_path_write_item_at_current_level(state->field_path, key);
+	phongo_field_path_write_item_at_current_level(state->field_path, key);
 
 	return false;
 }
 
-static bool php_phongo_bson_visit_code(const bson_iter_t* iter ARG_UNUSED, const char* key, size_t v_code_len, const char* v_code, void* data)
+static bool phongo_bson_visit_code(const bson_iter_t* iter ARG_UNUSED, const char* key, size_t v_code_len, const char* v_code, void* data)
 {
-	zval*                  retval = PHONGO_BSON_STATE_ZCHILD(data);
-	php_phongo_bson_state* state  = (php_phongo_bson_state*) data;
-	zval                   zchild;
+	zval*              retval = PHONGO_BSON_STATE_ZCHILD(data);
+	phongo_bson_state* state  = (phongo_bson_state*) data;
+	zval               zchild;
 
 	if (!phongo_javascript_new(&zchild, v_code, v_code_len, NULL)) {
 		return true;
@@ -504,16 +518,16 @@ static bool php_phongo_bson_visit_code(const bson_iter_t* iter ARG_UNUSED, const
 		ADD_ASSOC_ZVAL(retval, key, &zchild);
 	}
 
-	php_phongo_field_path_write_item_at_current_level(state->field_path, key);
+	phongo_field_path_write_item_at_current_level(state->field_path, key);
 
 	return false;
 }
 
-static bool php_phongo_bson_visit_dbpointer(const bson_iter_t* iter, const char* key, size_t namespace_len, const char* namespace, const bson_oid_t* oid, void* data)
+static bool phongo_bson_visit_dbpointer(const bson_iter_t* iter, const char* key, size_t namespace_len, const char* namespace, const bson_oid_t* oid, void* data)
 {
-	zval*                  retval = PHONGO_BSON_STATE_ZCHILD(data);
-	php_phongo_bson_state* state  = (php_phongo_bson_state*) data;
-	zval                   zchild;
+	zval*              retval = PHONGO_BSON_STATE_ZCHILD(data);
+	phongo_bson_state* state  = (phongo_bson_state*) data;
+	zval               zchild;
 
 	if (!phongo_dbpointer_new(&zchild, namespace, namespace_len, oid)) {
 		return true;
@@ -525,16 +539,16 @@ static bool php_phongo_bson_visit_dbpointer(const bson_iter_t* iter, const char*
 		ADD_ASSOC_ZVAL(retval, key, &zchild);
 	}
 
-	php_phongo_field_path_write_item_at_current_level(state->field_path, key);
+	phongo_field_path_write_item_at_current_level(state->field_path, key);
 
 	return false;
 }
 
-static bool php_phongo_bson_visit_codewscope(const bson_iter_t* iter ARG_UNUSED, const char* key, size_t v_code_len, const char* v_code, const bson_t* v_scope, void* data)
+static bool phongo_bson_visit_codewscope(const bson_iter_t* iter ARG_UNUSED, const char* key, size_t v_code_len, const char* v_code, const bson_t* v_scope, void* data)
 {
-	zval*                  retval = PHONGO_BSON_STATE_ZCHILD(data);
-	php_phongo_bson_state* state  = (php_phongo_bson_state*) data;
-	zval                   zchild;
+	zval*              retval = PHONGO_BSON_STATE_ZCHILD(data);
+	phongo_bson_state* state  = (phongo_bson_state*) data;
+	zval               zchild;
 
 	if (!phongo_javascript_new(&zchild, v_code, v_code_len, v_scope)) {
 		return true;
@@ -546,15 +560,15 @@ static bool php_phongo_bson_visit_codewscope(const bson_iter_t* iter ARG_UNUSED,
 		ADD_ASSOC_ZVAL(retval, key, &zchild);
 	}
 
-	php_phongo_field_path_write_item_at_current_level(state->field_path, key);
+	phongo_field_path_write_item_at_current_level(state->field_path, key);
 
 	return false;
 }
 
-static bool php_phongo_bson_visit_int32(const bson_iter_t* iter ARG_UNUSED, const char* key, int32_t v_int32, void* data)
+static bool phongo_bson_visit_int32(const bson_iter_t* iter ARG_UNUSED, const char* key, int32_t v_int32, void* data)
 {
-	zval*                  retval = PHONGO_BSON_STATE_ZCHILD(data);
-	php_phongo_bson_state* state  = (php_phongo_bson_state*) data;
+	zval*              retval = PHONGO_BSON_STATE_ZCHILD(data);
+	phongo_bson_state* state  = (phongo_bson_state*) data;
 
 	if (state->is_visiting_array) {
 		add_next_index_long(retval, v_int32);
@@ -562,16 +576,16 @@ static bool php_phongo_bson_visit_int32(const bson_iter_t* iter ARG_UNUSED, cons
 		add_assoc_long(retval, key, v_int32);
 	}
 
-	php_phongo_field_path_write_item_at_current_level(state->field_path, key);
+	phongo_field_path_write_item_at_current_level(state->field_path, key);
 
 	return false;
 }
 
-static bool php_phongo_bson_visit_timestamp(const bson_iter_t* iter ARG_UNUSED, const char* key, uint32_t v_timestamp, uint32_t v_increment, void* data)
+static bool phongo_bson_visit_timestamp(const bson_iter_t* iter ARG_UNUSED, const char* key, uint32_t v_timestamp, uint32_t v_increment, void* data)
 {
-	zval*                  retval = PHONGO_BSON_STATE_ZCHILD(data);
-	php_phongo_bson_state* state  = (php_phongo_bson_state*) data;
-	zval                   zchild;
+	zval*              retval = PHONGO_BSON_STATE_ZCHILD(data);
+	phongo_bson_state* state  = (phongo_bson_state*) data;
+	zval               zchild;
 
 	if (!phongo_timestamp_new(&zchild, v_increment, v_timestamp)) {
 		return true;
@@ -583,17 +597,17 @@ static bool php_phongo_bson_visit_timestamp(const bson_iter_t* iter ARG_UNUSED, 
 		ADD_ASSOC_ZVAL(retval, key, &zchild);
 	}
 
-	php_phongo_field_path_write_item_at_current_level(state->field_path, key);
+	phongo_field_path_write_item_at_current_level(state->field_path, key);
 
 	return false;
 }
 
-static bool php_phongo_bson_visit_int64(const bson_iter_t* iter ARG_UNUSED, const char* key, int64_t v_int64, void* data)
+static bool phongo_bson_visit_int64(const bson_iter_t* iter ARG_UNUSED, const char* key, int64_t v_int64, void* data)
 {
-	zval*                  retval = PHONGO_BSON_STATE_ZCHILD(data);
-	php_phongo_bson_state* state  = (php_phongo_bson_state*) data;
+	zval*              retval = PHONGO_BSON_STATE_ZCHILD(data);
+	phongo_bson_state* state  = (phongo_bson_state*) data;
 
-	php_phongo_field_path_write_item_at_current_level(state->field_path, key);
+	phongo_field_path_write_item_at_current_level(state->field_path, key);
 
 	if (state->is_visiting_array) {
 		if (state->map.int64_as_object) {
@@ -612,13 +626,13 @@ static bool php_phongo_bson_visit_int64(const bson_iter_t* iter ARG_UNUSED, cons
 	return false;
 }
 
-static bool php_phongo_bson_visit_maxkey(const bson_iter_t* iter ARG_UNUSED, const char* key, void* data)
+static bool phongo_bson_visit_maxkey(const bson_iter_t* iter ARG_UNUSED, const char* key, void* data)
 {
-	zval*                  retval = PHONGO_BSON_STATE_ZCHILD(data);
-	php_phongo_bson_state* state  = (php_phongo_bson_state*) data;
-	zval                   zchild;
+	zval*              retval = PHONGO_BSON_STATE_ZCHILD(data);
+	phongo_bson_state* state  = (phongo_bson_state*) data;
+	zval               zchild;
 
-	object_init_ex(&zchild, php_phongo_maxkey_ce);
+	object_init_ex(&zchild, phongo_maxkey_ce);
 
 	if (state->is_visiting_array) {
 		add_next_index_zval(retval, &zchild);
@@ -626,18 +640,18 @@ static bool php_phongo_bson_visit_maxkey(const bson_iter_t* iter ARG_UNUSED, con
 		ADD_ASSOC_ZVAL(retval, key, &zchild);
 	}
 
-	php_phongo_field_path_write_item_at_current_level(state->field_path, key);
+	phongo_field_path_write_item_at_current_level(state->field_path, key);
 
 	return false;
 }
 
-static bool php_phongo_bson_visit_minkey(const bson_iter_t* iter ARG_UNUSED, const char* key, void* data)
+static bool phongo_bson_visit_minkey(const bson_iter_t* iter ARG_UNUSED, const char* key, void* data)
 {
-	zval*                  retval = PHONGO_BSON_STATE_ZCHILD(data);
-	php_phongo_bson_state* state  = (php_phongo_bson_state*) data;
-	zval                   zchild;
+	zval*              retval = PHONGO_BSON_STATE_ZCHILD(data);
+	phongo_bson_state* state  = (phongo_bson_state*) data;
+	zval               zchild;
 
-	object_init_ex(&zchild, php_phongo_minkey_ce);
+	object_init_ex(&zchild, phongo_minkey_ce);
 
 	if (state->is_visiting_array) {
 		add_next_index_zval(retval, &zchild);
@@ -645,41 +659,41 @@ static bool php_phongo_bson_visit_minkey(const bson_iter_t* iter ARG_UNUSED, con
 		ADD_ASSOC_ZVAL(retval, key, &zchild);
 	}
 
-	php_phongo_field_path_write_item_at_current_level(state->field_path, key);
+	phongo_field_path_write_item_at_current_level(state->field_path, key);
 
 	return false;
 }
 
 static const bson_visitor_t php_bson_visitors = {
-	NULL /* php_phongo_bson_visit_before*/,
-	NULL /*php_phongo_bson_visit_after*/,
-	php_phongo_bson_visit_corrupt,
-	php_phongo_bson_visit_double,
-	php_phongo_bson_visit_utf8,
-	php_phongo_bson_visit_document,
-	php_phongo_bson_visit_array,
-	php_phongo_bson_visit_binary,
-	php_phongo_bson_visit_undefined,
-	php_phongo_bson_visit_oid,
-	php_phongo_bson_visit_bool,
-	php_phongo_bson_visit_date_time,
-	php_phongo_bson_visit_null,
-	php_phongo_bson_visit_regex,
-	php_phongo_bson_visit_dbpointer,
-	php_phongo_bson_visit_code,
-	php_phongo_bson_visit_symbol,
-	php_phongo_bson_visit_codewscope,
-	php_phongo_bson_visit_int32,
-	php_phongo_bson_visit_timestamp,
-	php_phongo_bson_visit_int64,
-	php_phongo_bson_visit_maxkey,
-	php_phongo_bson_visit_minkey,
-	php_phongo_bson_visit_unsupported_type,
-	php_phongo_bson_visit_decimal128,
+	NULL /* phongo_bson_visit_before*/,
+	NULL /*phongo_bson_visit_after*/,
+	phongo_bson_visit_corrupt,
+	phongo_bson_visit_double,
+	phongo_bson_visit_utf8,
+	phongo_bson_visit_document,
+	phongo_bson_visit_array,
+	phongo_bson_visit_binary,
+	phongo_bson_visit_undefined,
+	phongo_bson_visit_oid,
+	phongo_bson_visit_bool,
+	phongo_bson_visit_date_time,
+	phongo_bson_visit_null,
+	phongo_bson_visit_regex,
+	phongo_bson_visit_dbpointer,
+	phongo_bson_visit_code,
+	phongo_bson_visit_symbol,
+	phongo_bson_visit_codewscope,
+	phongo_bson_visit_int32,
+	phongo_bson_visit_timestamp,
+	phongo_bson_visit_int64,
+	phongo_bson_visit_maxkey,
+	phongo_bson_visit_minkey,
+	phongo_bson_visit_unsupported_type,
+	phongo_bson_visit_decimal128,
 	{ NULL }
 };
 
-static inline bool map_element_matches_field_path(php_phongo_field_path_map_element* map_element, php_phongo_field_path* current)
+static inline bool map_element_matches_field_path(phongo_field_path_map_element* map_element, phongo_field_path* current)
 {
 	size_t i;
 
@@ -697,7 +711,7 @@ static inline bool map_element_matches_field_path(php_phongo_field_path_map_elem
 	return true;
 }
 
-static php_phongo_field_path_map_element* map_find_field_path_entry(php_phongo_bson_state* state)
+static phongo_field_path_map_element* map_find_field_path_entry(phongo_bson_state* state)
 {
 	size_t i;
 
@@ -710,9 +724,9 @@ static php_phongo_field_path_map_element* map_find_field_path_entry(php_phongo_b
 	return NULL;
 }
 
-static void php_phongo_handle_field_path_entry_for_compound_type(php_phongo_bson_state* state, php_phongo_bson_typemap_element* element)
+static void phongo_handle_field_path_entry_for_compound_type(phongo_bson_state* state, phongo_bson_typemap_element* element)
 {
-	php_phongo_field_path_map_element* entry = map_find_field_path_entry(state);
+	phongo_field_path_map_element* entry = map_find_field_path_entry(state);
 
 	if (entry) {
 		state->field_type.type = entry->node.type;
@@ -723,26 +737,26 @@ static void php_phongo_handle_field_path_entry_for_compound_type(php_phongo_bson
 	}
 }
 
-static bool php_phongo_bson_visit_document(const bson_iter_t* iter ARG_UNUSED, const char* key, const bson_t* v_document, void* data)
+static bool phongo_bson_visit_document(const bson_iter_t* iter ARG_UNUSED, const char* key, const bson_t* v_document, void* data)
 {
-	zval*                  retval = PHONGO_BSON_STATE_ZCHILD(data);
-	bson_iter_t            child;
-	php_phongo_bson_state* parent_state = (php_phongo_bson_state*) data;
-	php_phongo_bson_state  state;
+	zval*              retval = PHONGO_BSON_STATE_ZCHILD(data);
+	bson_iter_t        child;
+	phongo_bson_state* parent_state = (phongo_bson_state*) data;
+	phongo_bson_state  state;
 
-	php_phongo_field_path_push(parent_state->field_path, key, PHONGO_FIELD_PATH_ITEM_DOCUMENT);
+	phongo_field_path_push(parent_state->field_path, key, PHONGO_FIELD_PATH_ITEM_DOCUMENT);
 
 	PHONGO_BSON_INIT_STATE(state);
-	php_phongo_bson_state_copy_ctor(&state, parent_state);
+	phongo_bson_state_copy_ctor(&state, parent_state);
 
 	/* Check for entries in the fieldPath type map key, and use them to
 	 * override the default ones for this type */
-	php_phongo_handle_field_path_entry_for_compound_type(&state, &state.map.document);
+	phongo_handle_field_path_entry_for_compound_type(&state, &state.map.document);
 
 	/* Only traverse BSON document if we're not returning a raw BSON structure */
 	if (state.field_type.type != PHONGO_TYPEMAP_BSON) {
 		if (!bson_iter_init(&child, v_document)) {
-			php_phongo_bson_state_dtor(&state);
+			phongo_bson_state_dtor(&state);
 			return false;
 		}
 
@@ -753,12 +767,12 @@ static bool php_phongo_bson_visit_document(const bson_iter_t* iter ARG_UNUSED, c
 			 * visitor. Free state.zchild, which we just initialized, and return
 			 * true to stop iteration for our parent context. */
 			zval_ptr_dtor(&state.zchild);
-			php_phongo_bson_state_dtor(&state);
+			phongo_bson_state_dtor(&state);
 			return true;
 		}
 	}
 
-	/* If php_phongo_bson_visit_binary() finds an ODM class, it should
+	/* If phongo_bson_visit_binary() finds an ODM class, it should
 	 * supersede a default type map and named document class. */
 	if (state.odm_ce && state.field_type.type == PHONGO_TYPEMAP_NONE) {
 		state.field_type.type = PHONGO_TYPEMAP_CLASS;
@@ -766,11 +780,7 @@ static bool php_phongo_bson_visit_document(const bson_iter_t* iter ARG_UNUSED, c
 
 	switch (state.field_type.type) {
 		case PHONGO_TYPEMAP_BSON: {
-			php_phongo_document_t* intern;
-
-			object_init_ex(&state.zchild, php_phongo_document_ce);
-
-			intern       = Z_DOCUMENT_OBJ_P(&state.zchild);
+			PHONGO_INTERN_INIT_EX(document, &state.zchild);
 			intern->bson = bson_copy(v_document);
 			break;
 		}
@@ -786,6 +796,15 @@ static bool php_phongo_bson_visit_document(const bson_iter_t* iter ARG_UNUSED, c
 			object_init_ex(&obj, obj_ce);
 
 			zend_call_method_with_1_params(Z_OBJ_P(&obj), NULL, NULL, BSON_UNSERIALIZE_FUNC_NAME, NULL, &state.zchild);
+
+			if (EG(exception)) {
+				zval_ptr_dtor(&obj);
+				zval_ptr_dtor(&state.zchild);
+				phongo_bson_state_dtor(&state);
+				phongo_field_path_pop(parent_state->field_path);
+				return true;
+			}
+
 			zval_ptr_dtor(&state.zchild);
 			ZVAL_COPY_VALUE(&state.zchild, &obj);
 
@@ -803,32 +822,32 @@ static bool php_phongo_bson_visit_document(const bson_iter_t* iter ARG_UNUSED, c
 		ADD_ASSOC_ZVAL(retval, key, &state.zchild);
 	}
 
-	php_phongo_bson_state_dtor(&state);
-	php_phongo_field_path_pop(parent_state->field_path);
+	phongo_bson_state_dtor(&state);
+	phongo_field_path_pop(parent_state->field_path);
 
 	return false;
 }
 
-static bool php_phongo_bson_visit_array(const bson_iter_t* iter ARG_UNUSED, const char* key, const bson_t* v_array, void* data)
+static bool phongo_bson_visit_array(const bson_iter_t* iter ARG_UNUSED, const char* key, const bson_t* v_array, void* data)
 {
-	zval*                  retval = PHONGO_BSON_STATE_ZCHILD(data);
-	bson_iter_t            child;
-	php_phongo_bson_state* parent_state = (php_phongo_bson_state*) data;
-	php_phongo_bson_state  state;
+	zval*              retval = PHONGO_BSON_STATE_ZCHILD(data);
+	bson_iter_t        child;
+	phongo_bson_state* parent_state = (phongo_bson_state*) data;
+	phongo_bson_state  state;
 
-	php_phongo_field_path_push(parent_state->field_path, key, PHONGO_FIELD_PATH_ITEM_ARRAY);
+	phongo_field_path_push(parent_state->field_path, key, PHONGO_FIELD_PATH_ITEM_ARRAY);
 
 	PHONGO_BSON_INIT_STATE(state);
-	php_phongo_bson_state_copy_ctor(&state, parent_state);
+	phongo_bson_state_copy_ctor(&state, parent_state);
 
 	/* Check for entries in the fieldPath type map key, and use them to
 	 * override the default ones for this type */
-	php_phongo_handle_field_path_entry_for_compound_type(&state, &state.map.array);
+	phongo_handle_field_path_entry_for_compound_type(&state, &state.map.array);
 
 	/* Only traverse BSON array if we're not returning a raw BSON structure */
 	if (state.field_type.type != PHONGO_TYPEMAP_BSON) {
 		if (!bson_iter_init(&child, v_array)) {
-			php_phongo_bson_state_dtor(&state);
+			phongo_bson_state_dtor(&state);
 			return false;
 		}
 
@@ -845,18 +864,14 @@ static bool php_phongo_bson_visit_array(const bson_iter_t* iter ARG_UNUSED, cons
 			 * visitor. Free state.zchild, which we just initialized, and return
 			 * true to stop iteration for our parent context. */
 			zval_ptr_dtor(&state.zchild);
-			php_phongo_bson_state_dtor(&state);
+			phongo_bson_state_dtor(&state);
 			return true;
 		}
 	}
 
 	switch (state.field_type.type) {
 		case PHONGO_TYPEMAP_BSON: {
-			php_phongo_packedarray_t* intern;
-
-			object_init_ex(&state.zchild, php_phongo_packedarray_ce);
-
-			intern       = Z_PACKEDARRAY_OBJ_P(&state.zchild);
+			PHONGO_INTERN_INIT_EX(packedarray, &state.zchild);
 			intern->bson = bson_copy(v_array);
 			break;
 		}
@@ -866,6 +881,15 @@ static bool php_phongo_bson_visit_array(const bson_iter_t* iter ARG_UNUSED, cons
 
 			object_init_ex(&obj, state.field_type.ce);
 			zend_call_method_with_1_params(Z_OBJ_P(&obj), NULL, NULL, BSON_UNSERIALIZE_FUNC_NAME, NULL, &state.zchild);
+
+			if (EG(exception)) {
+				zval_ptr_dtor(&obj);
+				zval_ptr_dtor(&state.zchild);
+				phongo_bson_state_dtor(&state);
+				phongo_field_path_pop(parent_state->field_path);
+				return true;
+			}
+
 			zval_ptr_dtor(&state.zchild);
 			ZVAL_COPY_VALUE(&state.zchild, &obj);
 			break;
@@ -887,35 +911,35 @@ static bool php_phongo_bson_visit_array(const bson_iter_t* iter ARG_UNUSED, cons
 		ADD_ASSOC_ZVAL(retval, key, &state.zchild);
 	}
 
-	php_phongo_bson_state_dtor(&state);
-	php_phongo_field_path_pop(parent_state->field_path);
+	phongo_bson_state_dtor(&state);
+	phongo_field_path_pop(parent_state->field_path);
 
 	return false;
 }
 
 /* Converts a BSON document to a PHP value using the default typemap. */
-bool php_phongo_bson_to_zval(const bson_t* b, zval* zv)
+bool phongo_bson_to_zval(const bson_t* b, zval* zv)
 {
-	bool                  retval;
-	php_phongo_bson_state state;
+	bool              retval;
+	phongo_bson_state state;
 
 	PHONGO_BSON_INIT_STATE(state);
 
-	retval = php_phongo_bson_to_zval_ex(b, &state);
+	retval = phongo_bson_to_zval_ex(b, &state);
 	ZVAL_ZVAL(zv, &state.zchild, 1, 1);
 
 	return retval;
 }
 
 /* Converts BSON data to a PHP value using the default typemap. */
-bool php_phongo_bson_data_to_zval(const unsigned char* data, int data_len, zval* zv)
+bool phongo_bson_data_to_zval(const unsigned char* data, size_t data_len, zval* zv)
 {
-	bool                  retval;
-	php_phongo_bson_state state;
+	bool              retval;
+	phongo_bson_state state;
 
 	PHONGO_BSON_INIT_STATE(state);
 
-	retval = php_phongo_bson_data_to_zval_ex(data, data_len, &state);
+	retval = phongo_bson_data_to_zval_ex(data, data_len, &state);
 	ZVAL_ZVAL(zv, &state.zchild, 1, 1);
 
 	return retval;
@@ -929,17 +953,17 @@ bool php_phongo_bson_data_to_zval(const unsigned char* data, int data_len, zval*
 bool phongo_bson_value_to_zval_legacy(const bson_value_t* value, zval* zv)
 {
 	if (value->value_type == BSON_TYPE_ARRAY || value->value_type == BSON_TYPE_DOCUMENT) {
-		bson_t                bson = BSON_INITIALIZER;
-		php_phongo_bson_state state;
-		zval*                 return_value;
-		bool                  retval = false;
+		bson_t            bson = BSON_INITIALIZER;
+		phongo_bson_state state;
+		zval*             return_value;
+		bool              retval = false;
 
-		/* Use php_phongo_bson_to_zval_ex internally to convert arrays and documents */
+		/* Use phongo_bson_to_zval_ex internally to convert arrays and documents */
 		PHONGO_BSON_INIT_STATE(state);
 		state.map.root.type = PHONGO_TYPEMAP_NATIVE_ARRAY;
 
-		bson_append_value(&bson, "data", 4, value);
-		if (!php_phongo_bson_to_zval_ex(&bson, &state)) {
+		bson_append_value(&bson, ZEND_STRL("data"), value);
+		if (!phongo_bson_to_zval_ex(&bson, &state)) {
 			/* Exception already thrown */
 			goto cleanup;
 		}
@@ -1029,17 +1053,17 @@ bool phongo_bson_value_to_zval(const bson_value_t* value, zval* zv)
 			return phongo_decimal128_new(zv, &value->value.v_decimal128);
 
 		case BSON_TYPE_MAXKEY:
-			return object_init_ex(zv, php_phongo_maxkey_ce) == SUCCESS;
+			return object_init_ex(zv, phongo_maxkey_ce) == SUCCESS;
 
 		case BSON_TYPE_MINKEY:
-			return object_init_ex(zv, php_phongo_minkey_ce) == SUCCESS;
+			return object_init_ex(zv, phongo_minkey_ce) == SUCCESS;
 
 		case BSON_TYPE_EOD:
 			ZVAL_NULL(zv);
 			return true;
 
 		case BSON_TYPE_UNDEFINED:
-			return object_init_ex(zv, php_phongo_undefined_ce) == SUCCESS;
+			return object_init_ex(zv, phongo_undefined_ce) == SUCCESS;
 
 		case BSON_TYPE_ARRAY:
 			if (!bson_init_static(&bson, value->value.v_doc.data, value->value.v_doc.data_len)) {
@@ -1076,14 +1100,14 @@ bool phongo_bson_value_to_zval(const bson_value_t* value, zval* zv)
  * as-is on PHP 7; however, it should have the type undefined if the state
  * was initialized to zero.
  */
-bool php_phongo_bson_to_zval_ex(const bson_t* b, php_phongo_bson_state* state)
+bool phongo_bson_to_zval_ex(const bson_t* b, phongo_bson_state* state)
 {
 	bson_iter_t iter;
 	bool        retval          = false;
 	bool        must_dtor_state = false;
 
-	if (!php_phongo_bson_state_is_initialized(state)) {
-		php_phongo_bson_state_ctor(state);
+	if (!phongo_bson_state_is_initialized(state)) {
+		phongo_bson_state_ctor(state);
 		must_dtor_state = true;
 	}
 
@@ -1093,10 +1117,10 @@ bool php_phongo_bson_to_zval_ex(const bson_t* b, php_phongo_bson_state* state)
 		bson_t** bson;
 
 		if (state->is_visiting_array) {
-			object_init_ex(&obj, php_phongo_packedarray_ce);
+			object_init_ex(&obj, phongo_packedarray_ce);
 			bson = &Z_PACKEDARRAY_OBJ_P(&obj)->bson;
 		} else {
-			object_init_ex(&obj, php_phongo_document_ce);
+			object_init_ex(&obj, phongo_document_ce);
 			bson = &Z_DOCUMENT_OBJ_P(&obj)->bson;
 		}
 
@@ -1126,7 +1150,7 @@ bool php_phongo_bson_to_zval_ex(const bson_t* b, php_phongo_bson_state* state)
 		 * been thrown already (due to an unsupported BSON type for example,
 		 * don't overwrite with a generic exception message. */
 		if (!EG(exception)) {
-			char* path = php_phongo_field_path_as_string(state->field_path);
+			char* path = phongo_field_path_as_string(state->field_path);
 			phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Detected corrupt BSON data for field path '%s' at offset %d", path, iter.err_off);
 			efree(path);
 		}
@@ -1135,7 +1159,7 @@ bool php_phongo_bson_to_zval_ex(const bson_t* b, php_phongo_bson_state* state)
 	}
 
 	/* If the root document is an array, default to a native array type.
-	 * If php_phongo_bson_visit_binary() found an ODM class, it should supersede
+	 * If phongo_bson_visit_binary() found an ODM class, it should supersede
 	 * a default type map and named root class. */
 	if (state->map.root.type == PHONGO_TYPEMAP_NONE) {
 		if (state->is_visiting_array) {
@@ -1172,7 +1196,7 @@ bool php_phongo_bson_to_zval_ex(const bson_t* b, php_phongo_bson_state* state)
 
 cleanup:
 	if (must_dtor_state) {
-		php_phongo_bson_state_dtor(state);
+		phongo_bson_state_dtor(state);
 	}
 
 	return retval;
@@ -1190,7 +1214,7 @@ cleanup:
  * as-is on PHP 7; however, it should have the type undefined if the state
  * was initialized to zero.
  */
-bool php_phongo_bson_data_to_zval_ex(const unsigned char* data, int data_len, php_phongo_bson_state* state)
+bool phongo_bson_data_to_zval_ex(const unsigned char* data, size_t data_len, phongo_bson_state* state)
 {
 	bson_reader_t* reader = NULL;
 	const bson_t*  b;
@@ -1205,7 +1229,7 @@ bool php_phongo_bson_data_to_zval_ex(const unsigned char* data, int data_len, ph
 		goto cleanup;
 	}
 
-	retval = php_phongo_bson_to_zval_ex(b, state);
+	retval = phongo_bson_to_zval_ex(b, state);
 
 	if (bson_reader_read(reader, &eof) || !eof) {
 		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Reading document did not exhaust input buffer");
@@ -1225,7 +1249,7 @@ cleanup:
 /* Fetches a zend_class_entry for the given class name and checks that it is
  * also instantiatable and implements a specified interface. Returns the class
  * on success; otherwise, NULL is returned and an exception is thrown. */
-static zend_class_entry* php_phongo_bson_state_fetch_class(const char* classname, int classname_len, zend_class_entry* interface_ce)
+static zend_class_entry* phongo_bson_state_fetch_class(const char* classname, int classname_len, zend_class_entry* interface_ce)
 {
 	zend_string*      zs_classname = zend_string_init(classname, classname_len, 0);
 	zend_class_entry* found_ce     = zend_fetch_class(zs_classname, ZEND_FETCH_CLASS_AUTO | ZEND_FETCH_CLASS_SILENT);
@@ -1247,7 +1271,7 @@ static zend_class_entry* php_phongo_bson_state_fetch_class(const char* classname
 /* Parses a BSON type (i.e. array, document, or root). On success, the type and
  * type_ce output arguments will be assigned and true will be returned;
  * otherwise, false is returned and an exception is thrown. */
-static bool php_phongo_bson_state_parse_type(zval* options, const char* name, php_phongo_bson_typemap_element* element)
+static bool phongo_bson_state_parse_type(zval* options, const char* name, phongo_bson_typemap_element* element)
 {
 	char*     type;
 	int       type_len;
@@ -1270,7 +1294,7 @@ static bool php_phongo_bson_state_parse_type(zval* options, const char* name, ph
 		element->type = PHONGO_TYPEMAP_NATIVE_OBJECT;
 		element->ce   = NULL;
 	} else {
-		if ((element->ce = php_phongo_bson_state_fetch_class(type, type_len, php_phongo_unserializable_ce))) {
+		if ((element->ce = phongo_bson_state_fetch_class(type, type_len, phongo_unserializable_ce))) {
 			element->type = PHONGO_TYPEMAP_CLASS;
 		} else {
 			/* Exception already thrown */
@@ -1286,44 +1310,44 @@ cleanup:
 	return retval;
 }
 
-static void field_path_map_element_set_info(php_phongo_field_path_map_element* element, php_phongo_bson_typemap_element* typemap_element)
+static void field_path_map_element_set_info(phongo_field_path_map_element* element, phongo_bson_typemap_element* typemap_element)
 {
 	element->node.type = typemap_element->type;
 	element->node.ce   = typemap_element->ce;
 }
 
-static void map_add_field_path_element(php_phongo_bson_typemap* map, php_phongo_field_path_map_element* element)
+static void map_add_field_path_element(phongo_bson_typemap* map, phongo_field_path_map_element* element)
 {
 	/* Make sure we have allocated enough */
 	if (map->field_paths.allocated_size < map->field_paths.size + 1) {
 		map->field_paths.allocated_size += PHONGO_FIELD_PATH_EXPANSION;
-		map->field_paths.map = erealloc(map->field_paths.map, sizeof(php_phongo_field_path_map_element) * map->field_paths.allocated_size);
+		map->field_paths.map = erealloc(map->field_paths.map, sizeof(phongo_field_path_map_element*) * map->field_paths.allocated_size);
 	}
 
 	map->field_paths.map[map->field_paths.size] = element;
 	map->field_paths.size++;
 }
 
-static php_phongo_field_path_map_element* field_path_map_element_alloc(void)
+static phongo_field_path_map_element* field_path_map_element_alloc(void)
 {
-	php_phongo_field_path_map_element* tmp = ecalloc(1, sizeof(php_phongo_field_path_map_element));
+	phongo_field_path_map_element* tmp = ecalloc(1, sizeof(phongo_field_path_map_element));
 
-	tmp->entry = php_phongo_field_path_alloc(true);
+	tmp->entry = phongo_field_path_alloc(true);
 
 	return tmp;
 }
 
-static void field_path_map_element_dtor(php_phongo_field_path_map_element* element)
+static void field_path_map_element_dtor(phongo_field_path_map_element* element)
 {
-	php_phongo_field_path_free(element->entry);
+	phongo_field_path_free(element->entry);
 	efree(element);
 }
 
-static bool php_phongo_bson_state_add_field_path(php_phongo_bson_typemap* map, char* field_path_original, php_phongo_bson_typemap_element* typemap_element)
+static bool phongo_bson_state_add_field_path(phongo_bson_typemap* map, char* field_path_original, phongo_bson_typemap_element* typemap_element)
 {
-	char*                              ptr         = NULL;
-	char*                              segment_end = NULL;
-	php_phongo_field_path_map_element* field_path_map_element;
+	char*                          ptr         = NULL;
+	char*                          segment_end = NULL;
+	phongo_field_path_map_element* field_path_map_element;
 
 	if (field_path_original[0] == '.') {
 		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "A 'fieldPaths' key may not start with a '.'");
@@ -1349,16 +1373,16 @@ static bool php_phongo_bson_state_add_field_path(php_phongo_bson_typemap* map, c
 			return false;
 		}
 
-		tmp = calloc(1, segment_end - ptr + 1);
+		tmp = ecalloc(1, segment_end - ptr + 1);
 		memcpy(tmp, ptr, segment_end - ptr);
-		php_phongo_field_path_push(field_path_map_element->entry, tmp, PHONGO_FIELD_PATH_ITEM_NONE);
-		free(tmp);
+		phongo_field_path_push(field_path_map_element->entry, tmp, PHONGO_FIELD_PATH_ITEM_NONE);
+		efree(tmp);
 
 		ptr = segment_end + 1;
 	}
 
 	/* Add the last (or single) element */
-	php_phongo_field_path_push(field_path_map_element->entry, ptr, PHONGO_FIELD_PATH_ITEM_NONE);
+	phongo_field_path_push(field_path_map_element->entry, ptr, PHONGO_FIELD_PATH_ITEM_NONE);
 
 	field_path_map_element_set_info(field_path_map_element, typemap_element);
 	map_add_field_path_element(map, field_path_map_element);
@@ -1366,7 +1390,7 @@ static bool php_phongo_bson_state_add_field_path(php_phongo_bson_typemap* map, c
 	return true;
 }
 
-void php_phongo_bson_typemap_dtor(php_phongo_bson_typemap* map)
+void phongo_bson_typemap_dtor(phongo_bson_typemap* map)
 {
 	size_t i;
 
@@ -1382,7 +1406,7 @@ void php_phongo_bson_typemap_dtor(php_phongo_bson_typemap* map)
 
 /* Loops over each element in the fieldPaths array (if exists, and is an
  * array), and then checks whether each element is a valid type mapping */
-static bool php_phongo_bson_state_parse_fieldpaths(zval* typemap, php_phongo_bson_typemap* map)
+static bool phongo_bson_state_parse_fieldpaths(zval* typemap, phongo_bson_typemap* map)
 {
 	zval*      fieldpaths = NULL;
 	HashTable* ht_data;
@@ -1407,7 +1431,7 @@ static bool php_phongo_bson_state_parse_fieldpaths(zval* typemap, php_phongo_bso
 
 		ZEND_HASH_FOREACH_KEY_VAL(ht_data, num_key, string_key, property)
 		{
-			php_phongo_bson_typemap_element element;
+			phongo_bson_typemap_element element;
 
 			if (!string_key) {
 				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "The 'fieldPaths' element is not an associative array");
@@ -1419,11 +1443,11 @@ static bool php_phongo_bson_state_parse_fieldpaths(zval* typemap, php_phongo_bso
 				return false;
 			}
 
-			if (!php_phongo_bson_state_parse_type(fieldpaths, ZSTR_VAL(string_key), &element)) {
+			if (!phongo_bson_state_parse_type(fieldpaths, ZSTR_VAL(string_key), &element)) {
 				return false;
 			}
 
-			if (!php_phongo_bson_state_add_field_path(map, ZSTR_VAL(string_key), &element)) {
+			if (!phongo_bson_state_add_field_path(map, ZSTR_VAL(string_key), &element)) {
 				return false;
 			}
 		}
@@ -1435,16 +1459,16 @@ static bool php_phongo_bson_state_parse_fieldpaths(zval* typemap, php_phongo_bso
 
 /* Applies the array argument to a typemap struct. Returns true on success;
  * otherwise, false is returned an an exception is thrown. */
-bool php_phongo_bson_typemap_to_state(zval* typemap, php_phongo_bson_typemap* map)
+bool phongo_bson_typemap_to_state(zval* typemap, phongo_bson_typemap* map)
 {
 	if (!typemap) {
 		return true;
 	}
 
-	if (!php_phongo_bson_state_parse_type(typemap, PHONGO_TYPEMAP_FIELD_STR_ARRAY, &map->array) ||
-		!php_phongo_bson_state_parse_type(typemap, PHONGO_TYPEMAP_FIELD_STR_DOCUMENT, &map->document) ||
-		!php_phongo_bson_state_parse_type(typemap, PHONGO_TYPEMAP_FIELD_STR_ROOT, &map->root) ||
-		!php_phongo_bson_state_parse_fieldpaths(typemap, map)) {
+	if (!phongo_bson_state_parse_type(typemap, PHONGO_TYPEMAP_FIELD_STR_ARRAY, &map->array) ||
+		!phongo_bson_state_parse_type(typemap, PHONGO_TYPEMAP_FIELD_STR_DOCUMENT, &map->document) ||
+		!phongo_bson_state_parse_type(typemap, PHONGO_TYPEMAP_FIELD_STR_ROOT, &map->root) ||
+		!phongo_bson_state_parse_fieldpaths(typemap, map)) {
 
 		/* Exception should already have been thrown */
 		return false;
@@ -1453,7 +1477,7 @@ bool php_phongo_bson_typemap_to_state(zval* typemap, php_phongo_bson_typemap* ma
 	return true;
 }
 
-bool php_phongo_bson_to_json(zval* return_value, const bson_t* bson, php_phongo_json_mode_t mode)
+bool phongo_bson_to_json(zval* return_value, const bson_t* bson, phongo_json_mode_t mode)
 {
 	char*  json = NULL;
 	size_t json_len;

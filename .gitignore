@@ -41,6 +41,7 @@ mongocryptd.pid
 *.out
 *.mem
 *.php
+!scripts/*php
 !*.stub.php
 tests/*/*.sh
 tests/*/*/*/*.sh
@@ -73,3 +74,8 @@ secrets-export.sh
 
 # temporary purls file
 /purls.txt
+
+# Claude local config
+!.claude/
+.claude/settings.local.json
+.claude/agent-memory-local

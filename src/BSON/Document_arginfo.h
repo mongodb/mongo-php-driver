@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 13d114590a7c0bc86da4dbb1383d17c296edcb40 */
+ * Stub hash: 0855bcff12d1a521f0a433754675b7e1e316523c */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_BSON_Document___construct, 0, 0, 0)
 ZEND_END_ARG_INFO()
@@ -66,7 +66,6 @@ ZEND_END_ARG_INFO()
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_BSON_Document___serialize, 0, 0, IS_ARRAY, 0)
 ZEND_END_ARG_INFO()
 
-
 static ZEND_METHOD(MongoDB_BSON_Document, __construct);
 static ZEND_METHOD(MongoDB_BSON_Document, fromBSON);
 static ZEND_METHOD(MongoDB_BSON_Document, fromJSON);
@@ -85,7 +84,6 @@ static ZEND_METHOD(MongoDB_BSON_Document, __toString);
 static ZEND_METHOD(MongoDB_BSON_Document, __set_state);
 static ZEND_METHOD(MongoDB_BSON_Document, __unserialize);
 static ZEND_METHOD(MongoDB_BSON_Document, __serialize);
-
 
 static const zend_function_entry class_MongoDB_BSON_Document_methods[] = {
 	ZEND_ME(MongoDB_BSON_Document, __construct, arginfo_class_MongoDB_BSON_Document___construct, ZEND_ACC_PRIVATE)
@@ -114,8 +112,12 @@ static zend_class_entry *register_class_MongoDB_BSON_Document(zend_class_entry *
 	zend_class_entry ce, *class_entry;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\BSON", "Document", class_MongoDB_BSON_Document_methods);
+#if (PHP_VERSION_ID >= 80400)
+	class_entry = zend_register_internal_class_with_flags(&ce, NULL, ZEND_ACC_FINAL);
+#else
 	class_entry = zend_register_internal_class_ex(&ce, NULL);
 	class_entry->ce_flags |= ZEND_ACC_FINAL;
+#endif
 	zend_class_implements(class_entry, 4, class_entry_IteratorAggregate, class_entry_ArrayAccess, class_entry_MongoDB_BSON_Type, class_entry_Stringable);
 
 	return class_entry;

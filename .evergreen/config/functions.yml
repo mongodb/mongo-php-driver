@@ -140,7 +140,6 @@ functions:
              echo "Checking out libmongoc version: ${LIBMONGOC_VERSION}"
              git fetch
              git checkout ${LIBMONGOC_VERSION}
-             # Note: compile-unix.sh will run `make libmongoc-version-current`
           fi
     - command: subprocess.exec
       type: test
@@ -160,6 +159,26 @@ functions:
     - command: attach.results
       params:
         file_location: "${DRIVERS_TOOLS}/results.json"
+    - command: shell.exec
+      params:
+        working_dir: src
+        script: |
+          ${PREPARE_SHELL}
+          if [ -f test-results.xml ]; then
+            curl -Os https://cli.codecov.io/latest/linux/codecov
+            curl -Os https://cli.codecov.io/latest/linux/codecov.SHA256SUM
+            shasum -a 256 -c codecov.SHA256SUM
+            sudo chmod +x codecov
+            ./codecov upload-process \
+              --report-type test_results \
+              --disable-search \
+              --fail-on-error \
+              --token ${CODECOV_TOKEN} \
+              --flag "${MONGODB_VERSION}-${TOPOLOGY}" \
+              --file test-results.xml
+          else
+            echo "Skipping codecov test result upload"
+          fi
 
   "bootstrap mongo-orchestration":
     - command: shell.exec
@@ -177,6 +196,15 @@ functions:
           ${PREPARE_SHELL}
           SKIP_LEGACY_SHELL=true \
           bash ${DRIVERS_TOOLS}/.evergreen/run-orchestration.sh
+    - command: shell.exec
+      params:
+        include_expansions_in_env:
+          - MONGODB_VERSION
+          - TOPOLOGY
+        script: |
+          printf "\n" >> mo-expansion.yml
+          printf "MONGODB_VERSION: '%s'\n" "${MONGODB_VERSION}" >> mo-expansion.yml
+          printf "TOPOLOGY: '%s'\n" "${TOPOLOGY}" >> mo-expansion.yml
     # run-orchestration generates expansion file with MONGODB_URI and CRYPT_SHARED_LIB_PATH
     - command: expansions.update
       params:

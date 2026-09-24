@@ -32,7 +32,7 @@ void phongo_readpreference_init(zval* return_value, const mongoc_read_prefs_t* r
 
 const mongoc_read_prefs_t* phongo_read_preference_from_zval(zval* zread_preference);
 
-void php_phongo_read_preference_prep_tagsets(zval* tagSets);
-bool php_phongo_read_preference_tags_are_valid(const bson_t* tags);
+void phongo_read_preference_prep_tagsets(zval* tagSets);
+bool phongo_read_preference_tags_are_valid(const bson_t* tags);
 
 #endif /* PHONGO_READPREFERENCE_H */

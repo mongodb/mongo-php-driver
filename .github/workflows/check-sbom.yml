@@ -1,0 +1,46 @@
+name: "Check SBOM"
+
+on:
+  pull_request:
+    branches:
+      - "v*.*"
+      - "feature/*"
+    paths:
+      - ".github/workflows/check-sbom.yml"
+      - "sbom.json"
+      - "src/libmongoc"
+      - "src/libmongocrypt"
+  push:
+    branches:
+      - "v*.*"
+      - "feature/*"
+    paths:
+      - ".github/workflows/check-sbom.yml"
+      - "sbom.json"
+      - "src/libmongoc"
+      - "src/libmongocrypt"
+
+jobs:
+  check-sbom:
+    name: "Check SBOM component versions"
+    runs-on: "ubuntu-24.04"
+
+    steps:
+      - name: "Checkout"
+        uses: "actions/checkout@v7"
+        with:
+          # The purls are derived from version files inside the submodules
+          submodules: true
+
+      # silkbomb percent-encodes the version segment, so a git-describe version such as
+      # 1.10.1-20260825+git048fa8ef67 is stored as ...%2Bgit048fa8ef67. Decode before comparing.
+      - name: "Check SBOM purls against bundled dependency versions"
+        run: |
+          ./scripts/generate-purls.sh | sort > expected-purls.txt
+          jq -r '.components[].purl' sbom.json |
+            python3 -c 'import sys, urllib.parse; sys.stdout.writelines(urllib.parse.unquote(line) for line in sys.stdin)' |
+            sort > actual-purls.txt
+          if ! diff --unified expected-purls.txt actual-purls.txt; then
+            echo "::error::sbom.json is out of date; run ./scripts/update-sbom.sh"
+            exit 1
+          fi

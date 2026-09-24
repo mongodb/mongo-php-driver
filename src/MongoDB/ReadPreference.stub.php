@@ -2,7 +2,7 @@
 
 /**
  * @generate-class-entries static
- * @generate-function-entries static
+ * @generate-legacy-arginfo 80100
  */
 
 namespace MongoDB\Driver;
@@ -51,8 +51,16 @@ final class ReadPreference implements \MongoDB\BSON\Serializable
      */
     public const SMALLEST_MAX_STALENESS_SECONDS = UNKNOWN;
 
+    public readonly string $mode;
+    public readonly array|null $tags;
+    public readonly int $maxStalenessSeconds;
+
+    /** @deprecated */
+    public readonly object|null $hedge;
+
     final public function __construct(string $mode, ?array $tagSets = null, ?array $options = null) {}
 
+    /** @deprecated Hedged reads are deprecated in MongoDB 8.0 and will be removed in a future release */
     final public function getHedge(): ?object {}
 
     final public function getMaxStalenessSeconds(): int {}
@@ -66,6 +74,4 @@ final class ReadPreference implements \MongoDB\BSON\Serializable
     final public function bsonSerialize(): \stdClass {}
 
     final public function __unserialize(array $data): void {}
-
-    final public function __serialize(): array {}
 }
