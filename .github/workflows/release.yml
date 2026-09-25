@@ -155,7 +155,7 @@ jobs:
           if [[ "${{ inputs.version }}" =~ (alpha|beta|RC) ]]; then
             PRERELEASE="--prerelease --latest=false"
           fi
-          echo "RELEASE_URL=$(gh release create ${{ inputs.version }} ${PRERELEASE} --target ${{ github.ref_name }} --title "${{ inputs.version }}" --notes-file release-message --draft)" >> "$GITHUB_ENV"
+          echo "RELEASE_URL=$(gh release create ${{ inputs.version }} ${PRERELEASE} --target ${{ github.ref_name }} --title "${{ inputs.version }}" --generate-notes --notes-file release-message --draft)" >> "$GITHUB_ENV"
 
       - name: "Set summary"
         run: |
