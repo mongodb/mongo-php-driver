@@ -1,6 +1,11 @@
 version: 2
 updates:
   - package-ecosystem: "github-actions"
+    target-branch: "v1.21"
     directory: "/"
     schedule:
       interval: "weekly"
+    groups:
+      github-actions:
+        patterns:
+          - "*"

@@ -39,7 +39,7 @@ jobs:
         ts: [ ts, nts ]
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262  # v4.4.0
         with:
           submodules: true
           ref: ${{ inputs.ref }}
@@ -63,28 +63,28 @@ jobs:
 
     steps:
       - name: "Generate token and checkout repository"
-        uses: mongodb-labs/drivers-github-tools/secure-checkout@v3
+        uses: mongodb-labs/drivers-github-tools/secure-checkout@4089c3eb27d7a5101d987088c3345013858d65f8  # v3.0.6
         with:
           app_id: ${{ vars.APP_ID }}
           private_key: ${{ secrets.APP_PRIVATE_KEY }}
           ref: ${{ inputs.ref }}
 
       - name: "Set up drivers-github-tools"
-        uses: mongodb-labs/drivers-github-tools/setup@v3
+        uses: mongodb-labs/drivers-github-tools/setup@4089c3eb27d7a5101d987088c3345013858d65f8  # v3.0.6
         with:
           aws_role_arn: ${{ secrets.AWS_ROLE_ARN }}
           aws_region_name: ${{ vars.AWS_REGION_NAME }}
           aws_secret_id: ${{ secrets.AWS_SECRET_ID }}
 
       - name: Get artifacts
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0  # v5.0.0
         with:
           path: artifacts
           pattern: php_mongodb-*.zip
           merge-multiple: true
 
       - name: "Create detached signatures for packages"
-        uses: mongodb-labs/drivers-github-tools/gpg-sign@v3
+        uses: mongodb-labs/drivers-github-tools/gpg-sign@4089c3eb27d7a5101d987088c3345013858d65f8  # v3.0.6
         with:
           filenames: artifacts/php_mongodb*.zip
 
