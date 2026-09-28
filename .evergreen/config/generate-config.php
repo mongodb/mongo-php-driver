@@ -1,4 +1,4 @@
-#!/bin/env php
+#!/usr/bin/env php
 <?php
 
 // Supported PHP versions. Add new versions to the beginning of the list
@@ -19,7 +19,6 @@ $supportedMongoDBVersions = [
     '5.0',
     '4.4',
     '4.2',
-    '4.0',
 ];
 
 // TODO: Change when PHP 8.4 is stable
