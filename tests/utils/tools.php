@@ -803,9 +803,16 @@ function configureTargetedFailPoint(Server $server, $failPoint, $mode, array $da
     $server->executeCommand('admin', $cmd);
 }
 
-function failMaxTimeMS(Server $server)
+function failMaxTimeMS(Server $server, array $failCommands)
 {
-    configureTargetedFailPoint($server, 'maxTimeAlwaysTimeOut', [ 'times' => 1 ]);
+    /* Restricting the fail point to the commands under test keeps its single
+     * "times" slot from being taken by unrelated traffic, such as the awaitable
+     * "hello" sent by the monitoring connection on a replica set. Error code 50
+     * is MaxTimeMSExpired, which maps to ExecutionTimeoutException. */
+    configureTargetedFailPoint($server, 'failCommand', [ 'times' => 1 ], [
+        'errorCode' => 50,
+        'failCommands' => $failCommands,
+    ]);
 }
 
 function toPHP($var, $typemap = array()) {

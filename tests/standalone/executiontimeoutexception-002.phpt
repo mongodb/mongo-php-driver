@@ -21,7 +21,7 @@ $cmd = array(
 );
 $command = new MongoDB\Driver\Command($cmd);
 
-failMaxTimeMS($server);
+failMaxTimeMS($server, ['count']);
 throws(function() use ($server, $command) {
     $result = $server->executeCommand(DATABASE_NAME, $command);
 }, "MongoDB\Driver\Exception\ExecutionTimeoutException");
