@@ -4,7 +4,12 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
+  # Note: the gitsubmodule ecosystem reads the .gitmodules file at the root of
+  # the repository, so the directory must stay "/". Restrict the update to the
+  # drivers-evergreen-tools submodule instead.
   - package-ecosystem: "gitsubmodule"
-    directory: "/tests/drivers-evergreen-tools"
+    directory: "/"
     schedule:
       interval: "weekly"
+    allow:
+      - dependency-name: "tests/drivers-evergreen-tools"
