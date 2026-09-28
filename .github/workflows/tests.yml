@@ -174,6 +174,76 @@ jobs:
           MONGODB_URI: ${{ steps.setup-mongodb.outputs.cluster-uri }}
           CRYPT_SHARED_LIB_PATH: ${{ steps.setup-mongodb.outputs.crypt-shared-lib-path }}
 
+  test-system-libs:
+    name: "System Library Tests"
+    # Runs from v2.5 onward only. On v1.21 and v2.1 the driver does not capture
+    # the trace output of the libmongoc 1.x that this job builds, which would
+    # break every test in it. Remove a branch from the list once the driver
+    # there handles those traces.
+    if: ${{ !contains(fromJSON('["v1.21","v2.1"]'), github.base_ref || github.ref_name) }}
+    runs-on: "ubuntu-latest"
+    env:
+      PHP_VERSION: "8.3"
+      # Note: omit the patch version so apt prefix-matches any 1.x.y patch release.
+      # The published apt repository only keeps recent releases, and config.m4
+      # accepts any libmongocrypt >= 1.12.0.
+      LIBMONGOCRYPT_VERSION: "1.20"
+      # Note: include the patch version when referring to a libmongoc release tarball
+      LIBMONGOC_VERSION: "1.30.12"
+      SERVER_VERSION: "8.0"
+
+    steps:
+      - name: "Checkout"
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          submodules: true
+
+      - name: "Install libmongocrypt"
+        uses: ./.github/actions/linux/build-libmongocrypt
+        with:
+          version: ${{ env.LIBMONGOCRYPT_VERSION }}
+
+      - name: "Build libmongoc"
+        uses: ./.github/actions/linux/build-libmongoc
+        with:
+          version: ${{ env.LIBMONGOC_VERSION }}
+
+      - name: "Build Driver"
+        uses: ./.github/actions/linux/build
+        with:
+          version: ${{ env.PHP_VERSION }}
+          configureOpts: "--with-mongodb-system-libs=yes"
+
+      - name: "Check driver version"
+        shell: bash
+        run: php -n -d extension=modules/mongodb.so --ri mongodb
+
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97  # v7.0.0
+        with:
+          python-version: "3.13"
+
+      - name: Setup MongoDB
+        id: setup-mongodb
+        uses: ./tests/drivers-evergreen-tools
+        with:
+          version: ${{ env.SERVER_VERSION }}
+          topology: "server"
+
+      - name: "Run Tests"
+        run: make test
+        env:
+          TEST_PHP_ARGS: "-q -x -j1 --show-diff -g FAIL,XFAIL,BORK,WARN,LEAK,SKIP"
+          TEST_PHP_JUNIT: "test-results.xml"
+          MONGODB_URI: ${{ steps.setup-mongodb.outputs.cluster-uri }}
+
+      - name: Upload test results to Codecov
+        uses: codecov/test-results-action@0fa95f0e1eeaafde2c782583b36b28ad0d8c77d3  # v1.2.1
+        with:
+          disable_search: true
+          files: test-results.xml
+          flags: "${{ env.SERVER_VERSION }}-server"
+          token: ${{ secrets.CODECOV_TOKEN }}
+
   # Verifies that the extension can be compiled statically into PHP (i.e. with
   # --enable-mongodb instead of --enable-mongodb=shared), as done by projects
   # like StaticPHP.  This exercises the PHP in-tree build path where configure
