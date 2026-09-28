@@ -230,9 +230,9 @@ git checkout 1.20.0
 During development, it may be necessary to temporarily point the submodule to a
 commit on the developer's fork. For instance, the developer may be working on a
 PHP driver feature that depends on unmerged or unreleased changes. In this case,
-the submodule path can be updated using the `git submodule set-url` command can
-be used to change the URL, and `git submodule set-branch` can be used to point
-the submodule to a development branch:
+the submodule path can be updated using the `git submodule set-url` command to
+change the URL, and `git submodule set-branch` can be used to point the
+submodule to a development branch:
 
 ```shell
 git submodule set-url src/libmongoc https://github.com/<owner>/<repo>.git
