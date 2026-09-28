@@ -19,7 +19,7 @@ $query = new MongoDB\Driver\Query(array("company" => "Smith, Carter and Buckridg
     'maxTimeMS' => 1,
 ));
 
-failMaxTimeMS($server);
+failMaxTimeMS($server, ['find']);
 throws(function() use ($server, $query) {
     $result = $server->executeQuery(NS, $query);
 }, "MongoDB\Driver\Exception\ExecutionTimeoutException");
