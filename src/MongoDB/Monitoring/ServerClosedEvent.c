@@ -17,102 +17,44 @@
 #include <php.h>
 #include <Zend/zend_interfaces.h>
 
-#include "php_phongo.h"
+#include "phongo.h"
 #include "phongo_error.h"
 
 #include "BSON/ObjectId.h"
 #include "ServerClosedEvent_arginfo.h"
 
-zend_class_entry* php_phongo_serverclosedevent_ce;
+zend_class_entry* phongo_serverclosedevent_ce;
 
 PHONGO_DISABLED_CONSTRUCTOR(MongoDB_Driver_Monitoring_ServerClosedEvent)
 
-/* Returns this event's host */
-static PHP_METHOD(MongoDB_Driver_Monitoring_ServerClosedEvent, getHost)
+PHONGO_PROPERTY_GETTER(MongoDB_Driver_Monitoring_ServerClosedEvent, getHost, serverclosedevent, "host")
+PHONGO_PROPERTY_GETTER(MongoDB_Driver_Monitoring_ServerClosedEvent, getPort, serverclosedevent, "port")
+PHONGO_PROPERTY_GETTER(MongoDB_Driver_Monitoring_ServerClosedEvent, getTopologyId, serverclosedevent, "topologyId")
+
+static void phongo_serverclosedevent_update_properties(zend_object* object, const mongoc_apm_server_closed_t* event)
 {
-	php_phongo_serverclosedevent_t* intern = Z_SERVERCLOSEDEVENT_OBJ_P(getThis());
+	zval       ztopology_id;
+	bson_oid_t topology_id;
 
-	PHONGO_PARSE_PARAMETERS_NONE();
+	zend_update_property_string(phongo_serverclosedevent_ce, object, ZEND_STRL("host"), mongoc_apm_server_closed_get_host(event)->host);
+	zend_update_property_long(phongo_serverclosedevent_ce, object, ZEND_STRL("port"), mongoc_apm_server_closed_get_host(event)->port);
 
-	RETVAL_STRING(intern->host.host);
-}
+	mongoc_apm_server_closed_get_topology_id(event, &topology_id);
 
-/* Returns this event's port */
-static PHP_METHOD(MongoDB_Driver_Monitoring_ServerClosedEvent, getPort)
-{
-	php_phongo_serverclosedevent_t* intern = Z_SERVERCLOSEDEVENT_OBJ_P(getThis());
-
-	PHONGO_PARSE_PARAMETERS_NONE();
-
-	RETVAL_LONG(intern->host.port);
-}
-
-/* Returns this event's topology id */
-static PHP_METHOD(MongoDB_Driver_Monitoring_ServerClosedEvent, getTopologyId)
-{
-	php_phongo_serverclosedevent_t* intern = Z_SERVERCLOSEDEVENT_OBJ_P(getThis());
-
-	PHONGO_PARSE_PARAMETERS_NONE();
-
-	phongo_objectid_new(return_value, &intern->topology_id);
-}
-
-/* MongoDB\Driver\Monitoring\ServerClosedEvent object handlers */
-static zend_object_handlers php_phongo_handler_serverclosedevent;
-
-static void php_phongo_serverclosedevent_free_object(zend_object* object)
-{
-	php_phongo_serverclosedevent_t* intern = Z_OBJ_SERVERCLOSEDEVENT(object);
-
-	zend_object_std_dtor(&intern->std);
-}
-
-static zend_object* php_phongo_serverclosedevent_create_object(zend_class_entry* class_type)
-{
-	php_phongo_serverclosedevent_t* intern = zend_object_alloc(sizeof(php_phongo_serverclosedevent_t), class_type);
-
-	zend_object_std_init(&intern->std, class_type);
-	object_properties_init(&intern->std, class_type);
-
-	intern->std.handlers = &php_phongo_handler_serverclosedevent;
-
-	return &intern->std;
-}
-
-static HashTable* php_phongo_serverclosedevent_get_debug_info(zend_object* object, int* is_temp)
-{
-	php_phongo_serverclosedevent_t* intern;
-	zval                            retval = ZVAL_STATIC_INIT;
-
-	intern   = Z_OBJ_SERVERCLOSEDEVENT(object);
-	*is_temp = 1;
-	array_init_size(&retval, 3);
-
-	ADD_ASSOC_STRING(&retval, "host", intern->host.host);
-	ADD_ASSOC_LONG_EX(&retval, "port", intern->host.port);
-
-	{
-		zval topology_id;
-
-		if (!phongo_objectid_new(&topology_id, &intern->topology_id)) {
-			/* Exception should already have been thrown */
-			goto done;
-		}
-
-		ADD_ASSOC_ZVAL_EX(&retval, "topologyId", &topology_id);
+	if (phongo_objectid_new(&ztopology_id, &topology_id)) {
+		zend_update_property(phongo_serverclosedevent_ce, object, ZEND_STRL("topologyId"), &ztopology_id);
+		zval_ptr_dtor(&ztopology_id);
 	}
-
-done:
-	return Z_ARRVAL(retval);
 }
 
-void php_phongo_serverclosedevent_init_ce(INIT_FUNC_ARGS)
+void phongo_serverclosedevent_init_ce(INIT_FUNC_ARGS)
 {
-	php_phongo_serverclosedevent_ce                = register_class_MongoDB_Driver_Monitoring_ServerClosedEvent();
-	php_phongo_serverclosedevent_ce->create_object = php_phongo_serverclosedevent_create_object;
+	phongo_serverclosedevent_ce = register_class_MongoDB_Driver_Monitoring_ServerClosedEvent();
+}
 
-	memcpy(&php_phongo_handler_serverclosedevent, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
-	php_phongo_handler_serverclosedevent.get_debug_info = php_phongo_serverclosedevent_get_debug_info;
-	php_phongo_handler_serverclosedevent.free_obj       = php_phongo_serverclosedevent_free_object;
-	php_phongo_handler_serverclosedevent.offset         = XtOffsetOf(php_phongo_serverclosedevent_t, std);
+void phongo_serverclosedevent_init(zval* return_value, const mongoc_apm_server_closed_t* event)
+{
+	PHONGO_OBJECT_INIT_EX(serverclosedevent, return_value);
+
+	phongo_serverclosedevent_update_properties(object, event);
 }

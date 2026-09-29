@@ -22,21 +22,27 @@ foreach ($tests as $test) {
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-object(MongoDB\Driver\WriteConcern)#%d (%d) {
+object(MongoDB\Driver\WriteConcern)#%d (3) {
   ["w"]=>
   int(2)
+  ["j"]=>
+  NULL
   ["wtimeout"]=>
   int(4294967296)
 }
-object(MongoDB\Driver\WriteConcern)#%d (%d) {
+object(MongoDB\Driver\WriteConcern)#%d (3) {
   ["w"]=>
   string(8) "majority"
+  ["j"]=>
+  NULL
   ["wtimeout"]=>
   int(4294967296)
 }
-object(MongoDB\Driver\WriteConcern)#%d (%d) {
+object(MongoDB\Driver\WriteConcern)#%d (3) {
   ["w"]=>
   string(12) "customTagSet"
+  ["j"]=>
+  NULL
   ["wtimeout"]=>
   int(4294967296)
 }

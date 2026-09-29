@@ -21,24 +21,24 @@
 
 #include "phongo_classes.h"
 
-const char* php_phongo_crypt_shared_version(void);
+const char* phongo_crypt_shared_version(void);
 
-void phongo_manager_init(php_phongo_manager_t* manager, const char* uri_string, zval* options, zval* driverOptions);
+void phongo_manager_init(phongo_manager_t* manager, const char* uri_string, zval* options, zval* driverOptions);
 
-void php_phongo_client_reset_once(php_phongo_manager_t* manager, int pid);
-bool php_phongo_client_register(php_phongo_manager_t* manager);
-bool php_phongo_client_unregister(php_phongo_manager_t* manager);
+void phongo_client_reset_once(phongo_manager_t* manager, int pid);
+bool phongo_client_register(phongo_manager_t* manager);
+bool phongo_client_unregister(phongo_manager_t* manager);
 
-bool php_phongo_manager_register(php_phongo_manager_t* manager);
-bool php_phongo_manager_unregister(php_phongo_manager_t* manager);
+bool phongo_manager_register(phongo_manager_t* manager);
+bool phongo_manager_unregister(phongo_manager_t* manager);
 
-void php_phongo_pclient_destroy_ptr(zval* ptr);
+void phongo_pclient_destroy_ptr(zval* ptr);
 
 #define PHONGO_RESET_CLIENT_IF_PID_DIFFERS(intern, manager) \
 	do {                                                    \
 		int pid = (int) getpid();                           \
 		if ((intern)->created_by_pid != pid) {              \
-			php_phongo_client_reset_once((manager), pid);   \
+			phongo_client_reset_once((manager), pid);       \
 		}                                                   \
 	} while (0)
 

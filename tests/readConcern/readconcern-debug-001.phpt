@@ -19,6 +19,8 @@ foreach ($tests as $test) {
 <?php exit(0); ?>
 --EXPECTF--
 object(MongoDB\Driver\ReadConcern)#%d (%d) {
+  ["level"]=>
+  NULL
 }
 object(MongoDB\Driver\ReadConcern)#%d (%d) {
   ["level"]=>

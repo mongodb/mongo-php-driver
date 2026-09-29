@@ -1,15 +1,17 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: b9746862d533c46cd8977bde20093fe92d8f4440 */
+ * Stub hash: 56ea9546c171aa438abb57626f0129fe473339fb */
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_BSON_Unserializable_bsonUnserialize, 0, 1, IS_VOID, 0)
 	ZEND_ARG_TYPE_INFO(0, data, IS_ARRAY, 0)
 ZEND_END_ARG_INFO()
 
 
-
-
 static const zend_function_entry class_MongoDB_BSON_Unserializable_methods[] = {
-	ZEND_ABSTRACT_ME_WITH_FLAGS(MongoDB_BSON_Unserializable, bsonUnserialize, arginfo_class_MongoDB_BSON_Unserializable_bsonUnserialize, ZEND_ACC_PUBLIC|ZEND_ACC_ABSTRACT)
+#if (PHP_VERSION_ID >= 80400)
+	ZEND_RAW_FENTRY("bsonUnserialize", NULL, arginfo_class_MongoDB_BSON_Unserializable_bsonUnserialize, ZEND_ACC_PUBLIC|ZEND_ACC_ABSTRACT, NULL, NULL)
+#else
+	ZEND_RAW_FENTRY("bsonUnserialize", NULL, arginfo_class_MongoDB_BSON_Unserializable_bsonUnserialize, ZEND_ACC_PUBLIC|ZEND_ACC_ABSTRACT)
+#endif
 	ZEND_FE_END
 };
 

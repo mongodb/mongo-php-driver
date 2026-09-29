@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: e598fccd4b9b82f6da64f43855fa7a302ac86ae8 */
+ * Stub hash: 78a1878cbe0b4ba92c8daa4385876643b6c191e7 */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_Driver_Cursor___construct, 0, 0, 0)
 ZEND_END_ARG_INFO()
@@ -33,7 +33,6 @@ ZEND_END_ARG_INFO()
 
 #define arginfo_class_MongoDB_Driver_Cursor_valid arginfo_class_MongoDB_Driver_Cursor_isDead
 
-
 static ZEND_METHOD(MongoDB_Driver_Cursor, __construct);
 static ZEND_METHOD(MongoDB_Driver_Cursor, current);
 static ZEND_METHOD(MongoDB_Driver_Cursor, getId);
@@ -45,7 +44,6 @@ static ZEND_METHOD(MongoDB_Driver_Cursor, rewind);
 static ZEND_METHOD(MongoDB_Driver_Cursor, setTypeMap);
 static ZEND_METHOD(MongoDB_Driver_Cursor, toArray);
 static ZEND_METHOD(MongoDB_Driver_Cursor, valid);
-
 
 static const zend_function_entry class_MongoDB_Driver_Cursor_methods[] = {
 	ZEND_ME(MongoDB_Driver_Cursor, __construct, arginfo_class_MongoDB_Driver_Cursor___construct, ZEND_ACC_PRIVATE|ZEND_ACC_FINAL)
@@ -67,8 +65,12 @@ static zend_class_entry *register_class_MongoDB_Driver_Cursor(zend_class_entry *
 	zend_class_entry ce, *class_entry;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver", "Cursor", class_MongoDB_Driver_Cursor_methods);
+#if (PHP_VERSION_ID >= 80400)
+	class_entry = zend_register_internal_class_with_flags(&ce, NULL, ZEND_ACC_FINAL|ZEND_ACC_NOT_SERIALIZABLE);
+#else
 	class_entry = zend_register_internal_class_ex(&ce, NULL);
 	class_entry->ce_flags |= ZEND_ACC_FINAL|ZEND_ACC_NOT_SERIALIZABLE;
+#endif
 	zend_class_implements(class_entry, 1, class_entry_MongoDB_Driver_CursorInterface);
 
 	return class_entry;

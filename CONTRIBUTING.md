@@ -52,9 +52,14 @@ docker build .github/docker/ -f .github/docker/Dockerfile.pecl-alpine
 ## Generating arginfo from stub files
 
 Arginfo structures are generated from stub files using the `gen_stub.php`
-file. Note that this requires `phpize` to be run for **PHP 8.2** to make use
-of all features. After changing a stub file, run `./build/gen_stub.php`
-to regenerate the corresponding arginfo files and commit the results.
+file. After changing a stub file, run `./build/gen_stub.php` to regenerate the
+corresponding arginfo files and commit the results.
+
+The `gen_stub.php` file is added to the `build` directory when calling `phpize`.
+Arginfo structures are generated with the latest version of PHP. The
+`@generate-legacy-arginfo` directive ensures that the generated files are
+compatible with the indicated version of PHP. When bumping the minimum PHP
+requirement, this directive needs to be updated accordingly.
 
 ## Generating function maps for static analysis tools
 
@@ -224,7 +229,7 @@ always refer to libmongoc.
 ```shell
 cd src/libmongoc
 git fetch
-git checkout 1.20.0
+git checkout 2.1.0
 ```
 
 During development, it may be necessary to temporarily point the submodule to a
@@ -239,23 +244,15 @@ git submodule set-url src/libmongoc https://github.com/<owner>/<repo>.git
 git submodule set-branch -b <branch> src/libmongoc
 ```
 
-#### Ensure version information is correct
+#### Ensure version information is correct (libmongocrypt only)
 
-Various build processes and tools rely on the version files to infer version
-information. This file can be regenerated using Makefile targets:
+For libmongocrypt, version information needs to be updated after updating to
+a newer submodule version. This can be done by running the corresponding make
+target:
 
 ```shell
-make libmongoc-version-current
+make libmongocrypt-version-current
 ```
-
-Alternatively, the `build/calc_release_version.py` script in the submodule can
-be executed directly.
-
-Note: If the submodule points to a non-release, non-master branch, the script
-may fail to correctly detect the version. This issue is being tracked in
-[CDRIVER-3315](https://jira.mongodb.org/browse/CDRIVER-3315) and can be safely ignored since this should only happen
-during development (any PHP driver release should point to a tagged submodule
-version).
 
 #### Update sources in build configurations
 
@@ -282,11 +279,11 @@ libmongoc and libbson.
 For example, the following lines might be updated for libmongoc:
 
 ```
-if $PKG_CONFIG libmongoc-1.0 --atleast-version 1.20.0; then
+if $PKG_CONFIG mongoc2 --atleast-version 2.1.0; then
 
 ...
 
-AC_MSG_ERROR(system libmongoc must be upgraded to version >= 1.20.0)
+AC_MSG_ERROR(system libmongoc must be upgraded to version >= 2.1.0)
 ```
 
 #### Update tested versions in Evergreen configuration (libmongoc only)
@@ -298,7 +295,7 @@ information about the build tasks and where they are used. In general, we test
 against two additional versions of libmongoc:
 
 - The upcoming patch release of the current libmongoc minor version (e.g. the
-  `r1.x` branch)
+  `r2.x` branch)
 - The upcoming minor release of libmongoc (e.g. the `master` branch)
 
 #### Update tested system library versions in GitHub Actions
@@ -307,11 +304,6 @@ GitHub Actions tests against libmongoc and libmongocrypt system libraries. When
 updating the version number for each dependency in `config.m4` you must also
 update the `LIBMONGOC_VERSION` and `LIBMONGOCRYPT_VERSION` environment variables
 of the `test-system-libs` job in `.github/workflows/tests.yml`.
-
-On this branch the job is skipped, because the trace output of the libmongoc 1.x
-built by the job is not captured by the driver and would break every test in it.
-It runs again from v2.5 onward; remove the branch from the condition when it can
-run here.
 
 #### Update sources in PECL package generation script
 
@@ -330,7 +322,7 @@ script to automate this process:
 
 This script will generate a temporary purl file with our dependencies, then run
 the internal silkbomb tool to update the SBOM. Note that you need to have docker
-installed in order to run this.
+installed in order to run this. You must also [log in to AWS ECR (MongoDB internal access required)](https://docs.devprod.prod.corp.mongodb.com/devprod-platforms-ecr#from-your-laptop).
 
 #### Test and commit your changes
 
@@ -340,5 +332,6 @@ test suite passes. Once done, commit the changes to all of the above
 files/paths. For example:
 
 ```shell
-git commit -m "Bump libmongoc to 1.20.0" config.m4 config.w32 src/libmongoc src/LIBMONGOC_VERSION_CURRENT sbom.json
+git commit -m "Bump libmongoc to 2.1.0" config.m4 config.w32 src/libmongoc sbom.
+json
 ```

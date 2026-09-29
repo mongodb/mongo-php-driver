@@ -32,33 +32,52 @@ foreach ($tests as $test) {
 --EXPECTF--
 %r\\?%rMongoDB\Driver\WriteConcern::__set_state(array(
    'w' => 'majority',
+   'j' => NULL,
+   'wtimeout' => 0,
 ))
 %r\\?%rMongoDB\Driver\WriteConcern::__set_state(array(
+   'w' => NULL,
+   'j' => NULL,
+   'wtimeout' => 0,
 ))
 %r\\?%rMongoDB\Driver\WriteConcern::__set_state(array(
    'w' => -1,
+   'j' => NULL,
+   'wtimeout' => 0,
 ))
 %r\\?%rMongoDB\Driver\WriteConcern::__set_state(array(
    'w' => 0,
+   'j' => NULL,
+   'wtimeout' => 0,
 ))
 %r\\?%rMongoDB\Driver\WriteConcern::__set_state(array(
    'w' => 1,
+   'j' => NULL,
+   'wtimeout' => 0,
 ))
 %r\\?%rMongoDB\Driver\WriteConcern::__set_state(array(
    'w' => 'majority',
+   'j' => NULL,
+   'wtimeout' => 0,
 ))
 %r\\?%rMongoDB\Driver\WriteConcern::__set_state(array(
    'w' => 'tag',
+   'j' => NULL,
+   'wtimeout' => 0,
 ))
 %r\\?%rMongoDB\Driver\WriteConcern::__set_state(array(
    'w' => 1,
+   'j' => NULL,
+   'wtimeout' => 0,
 ))
 %r\\?%rMongoDB\Driver\WriteConcern::__set_state(array(
    'w' => 1,
    'j' => false,
+   'wtimeout' => 0,
 ))
 %r\\?%rMongoDB\Driver\WriteConcern::__set_state(array(
    'w' => 1,
+   'j' => NULL,
    'wtimeout' => 1000,
 ))
 %r\\?%rMongoDB\Driver\WriteConcern::__set_state(array(
@@ -67,13 +86,18 @@ foreach ($tests as $test) {
    'wtimeout' => 1000,
 ))
 %r\\?%rMongoDB\Driver\WriteConcern::__set_state(array(
+   'w' => NULL,
    'j' => true,
+   'wtimeout' => 0,
 ))
 %r\\?%rMongoDB\Driver\WriteConcern::__set_state(array(
+   'w' => NULL,
+   'j' => NULL,
    'wtimeout' => 1000,
 ))
 %r\\?%rMongoDB\Driver\WriteConcern::__set_state(array(
    'w' => 2,
-   'wtimeout' => %r2147483648|'2147483648'%r,
+   'j' => NULL,
+   'wtimeout' => %r2147483648|2147483647%r,
 ))
 ===DONE===

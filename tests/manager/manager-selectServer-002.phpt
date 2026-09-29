@@ -11,7 +11,7 @@ use MongoDB\Driver\Server;
 require_once __DIR__ . "/../utils/basic.inc";
 
 /* Specifying a client-level read preference will also ensure that it is not
- * inherited by php_phongo_manager_select_server. */
+ * inherited by phongo_manager_select_server. */
 $manager = create_test_manager(null, ['readPreference' => 'secondary']);
 
 function isPrimary(Server $server): bool {

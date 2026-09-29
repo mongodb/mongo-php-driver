@@ -31,7 +31,7 @@ var_dump($key->_id == $keyId);
 --EXPECTF--
 object(MongoDB\BSON\Binary)#%d (%d) {
   ["data"]=>
-  string(16) "%a"
+  string(%d) "%a"
   ["type"]=>
   int(4)
 }

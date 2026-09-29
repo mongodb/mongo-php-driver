@@ -22,12 +22,37 @@ try {
     $result = $manager->executeBulkWrite(NS, $bulk);
 } catch (MongoDB\Driver\Exception\BulkWriteException $e) {
     var_dump($e->getWriteResult()->getWriteErrors());
+    var_dump($e->getWriteResult()->writeErrors);
 }
 
 ?>
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
+array(2) {
+  [0]=>
+  object(MongoDB\Driver\WriteError)#%d (%d) {
+    ["message"]=>
+    string(%d) "%SE11000 duplicate key error %s: phongo.writeResult_writeresult_getwriteerrors_002%sdup key: { %S: 2 }"
+    ["code"]=>
+    int(11000)
+    ["index"]=>
+    int(2)
+    ["info"]=>
+    NULL
+  }
+  [1]=>
+  object(MongoDB\Driver\WriteError)#%d (%d) {
+    ["message"]=>
+    string(%d) "%SE11000 duplicate key error %s: phongo.writeResult_writeresult_getwriteerrors_002%sdup key: { %S: 4 }"
+    ["code"]=>
+    int(11000)
+    ["index"]=>
+    int(5)
+    ["info"]=>
+    NULL
+  }
+}
 array(2) {
   [0]=>
   object(MongoDB\Driver\WriteError)#%d (%d) {

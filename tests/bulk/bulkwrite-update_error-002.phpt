@@ -12,7 +12,7 @@ echo throws(function() use ($bulk) {
 }, 'MongoDB\Driver\Exception\InvalidArgumentException'), "\n\n";
 
 /* This newObj argument mixes an update and replacement document, but
- * php_phongo_bulkwrite_update_has_operators() will categorize it as an update
+ * phongo_bulkwrite_update_has_operators() will categorize it as an update
  * due to the presence of an atomic operator. As such, _mongoc_validate_update()
  * will report the error. */
 echo throws(function() use ($bulk) {

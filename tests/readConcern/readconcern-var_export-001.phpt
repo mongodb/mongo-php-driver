@@ -19,6 +19,7 @@ foreach ($tests as $test) {
 <?php exit(0); ?>
 --EXPECTF--
 %r\\?%rMongoDB\Driver\ReadConcern::__set_state(array(
+   'level' => NULL,
 ))
 %r\\?%rMongoDB\Driver\ReadConcern::__set_state(array(
    'level' => 'local',

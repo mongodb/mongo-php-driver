@@ -2,7 +2,7 @@
 Causal consistency: second read's afterClusterTime uses last reply's operationTime (even on error)
 --DESCRIPTION--
 Causal consistency spec prose test #4 and #5
-https://github.com/mongodb/specifications/blob/master/source/causal-consistency/causal-consistency.rst#test-plan
+https://github.com/mongodb/specifications/blob/master/source/causal-consistency/causal-consistency.md#test-plan
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_libmongoc_crypto(); ?>

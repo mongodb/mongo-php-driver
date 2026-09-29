@@ -19,22 +19,28 @@ configureTargetedFailPoint(
     ['errorCode' => 8, 'failCommands' => ['insert']]
 );
 
+function dumpErrors(array $errors): void
+{
+    var_dump(count($errors));
+    var_dump($errors[0]->code);
+}
+
 $errors = [];
 try {
     $bulk = new MongoDB\Driver\BulkWrite;
     $bulk->insert(['_id' => 1, 'x' => 'bar']);
     $server->executeBulkWrite(NS, $bulk);
 } catch (MongoDB\Driver\Exception\BulkWriteException $e) {
-    $errors = $e->getWriteResult()->getErrorReplies();
+    dumpErrors($e->getWriteResult()->getErrorReplies());
+    dumpErrors($e->getWriteResult()->errorReplies);
 }
-
-var_dump(count($errors));
-var_dump($errors[0]->code);
 
 ?>
 ===DONE===
 <?php exit(0); ?>
 --EXPECT--
+int(1)
+int(8)
 int(1)
 int(8)
 ===DONE===

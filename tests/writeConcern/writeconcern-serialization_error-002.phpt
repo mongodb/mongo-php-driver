@@ -6,7 +6,7 @@ MongoDB\Driver\WriteConcern unserialization errors (__serialize and __unserializ
 require_once __DIR__ . '/../utils/basic.inc';
 
 /* Note: this file does not exhaustively test all code paths in
- * php_phongo_readpreference_init_from_hash since those are already covered by
+ * phongo_readpreference_init_from_hash since those are already covered by
  * tests for ReadPreference::__set_state() */
 
 echo throws(function() {

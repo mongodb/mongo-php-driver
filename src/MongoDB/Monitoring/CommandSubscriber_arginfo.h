@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 9733d9c7cb3460bd7fb85be93cc5c9fbe70e3762 */
+ * Stub hash: 3207fb6b6a5b00471d08add24c41e062d7d2b43e */
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_Driver_Monitoring_CommandSubscriber_commandStarted, 0, 1, IS_VOID, 0)
 	ZEND_ARG_OBJ_INFO(0, event, MongoDB\\Driver\\Monitoring\\CommandStartedEvent, 0)
@@ -14,12 +14,22 @@ ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_Driver_Monitoring_
 ZEND_END_ARG_INFO()
 
 
-
-
 static const zend_function_entry class_MongoDB_Driver_Monitoring_CommandSubscriber_methods[] = {
-	ZEND_ABSTRACT_ME_WITH_FLAGS(MongoDB_Driver_Monitoring_CommandSubscriber, commandStarted, arginfo_class_MongoDB_Driver_Monitoring_CommandSubscriber_commandStarted, ZEND_ACC_PUBLIC|ZEND_ACC_ABSTRACT)
-	ZEND_ABSTRACT_ME_WITH_FLAGS(MongoDB_Driver_Monitoring_CommandSubscriber, commandSucceeded, arginfo_class_MongoDB_Driver_Monitoring_CommandSubscriber_commandSucceeded, ZEND_ACC_PUBLIC|ZEND_ACC_ABSTRACT)
-	ZEND_ABSTRACT_ME_WITH_FLAGS(MongoDB_Driver_Monitoring_CommandSubscriber, commandFailed, arginfo_class_MongoDB_Driver_Monitoring_CommandSubscriber_commandFailed, ZEND_ACC_PUBLIC|ZEND_ACC_ABSTRACT)
+#if (PHP_VERSION_ID >= 80400)
+	ZEND_RAW_FENTRY("commandStarted", NULL, arginfo_class_MongoDB_Driver_Monitoring_CommandSubscriber_commandStarted, ZEND_ACC_PUBLIC|ZEND_ACC_ABSTRACT, NULL, NULL)
+#else
+	ZEND_RAW_FENTRY("commandStarted", NULL, arginfo_class_MongoDB_Driver_Monitoring_CommandSubscriber_commandStarted, ZEND_ACC_PUBLIC|ZEND_ACC_ABSTRACT)
+#endif
+#if (PHP_VERSION_ID >= 80400)
+	ZEND_RAW_FENTRY("commandSucceeded", NULL, arginfo_class_MongoDB_Driver_Monitoring_CommandSubscriber_commandSucceeded, ZEND_ACC_PUBLIC|ZEND_ACC_ABSTRACT, NULL, NULL)
+#else
+	ZEND_RAW_FENTRY("commandSucceeded", NULL, arginfo_class_MongoDB_Driver_Monitoring_CommandSubscriber_commandSucceeded, ZEND_ACC_PUBLIC|ZEND_ACC_ABSTRACT)
+#endif
+#if (PHP_VERSION_ID >= 80400)
+	ZEND_RAW_FENTRY("commandFailed", NULL, arginfo_class_MongoDB_Driver_Monitoring_CommandSubscriber_commandFailed, ZEND_ACC_PUBLIC|ZEND_ACC_ABSTRACT, NULL, NULL)
+#else
+	ZEND_RAW_FENTRY("commandFailed", NULL, arginfo_class_MongoDB_Driver_Monitoring_CommandSubscriber_commandFailed, ZEND_ACC_PUBLIC|ZEND_ACC_ABSTRACT)
+#endif
 	ZEND_FE_END
 };
 

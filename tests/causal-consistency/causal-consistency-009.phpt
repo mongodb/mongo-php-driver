@@ -2,7 +2,7 @@
 Causal consistency: default read concern includes afterClusterTime but not level
 --DESCRIPTION--
 Causal consistency spec prose test #8
-https://github.com/mongodb/specifications/blob/master/source/causal-consistency/causal-consistency.rst#test-plan
+https://github.com/mongodb/specifications/blob/master/source/causal-consistency/causal-consistency.md#test-plan
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_libmongoc_crypto(); ?>

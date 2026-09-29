@@ -1,11 +1,11 @@
 name: "Build libmongoc"
-description: "Builds and installs libmongoc"
+description: "Builds and install libmongoc"
 inputs:
   prefix:
     description: "Prefix to install libmongoc to"
     default: "/usr/local"
   version:
-    description: "Libmongoc version to build (major.minor.patch)"
+    description: "Libmongoc version to build (major.minor)"
     required: true
 runs:
   using: composite
@@ -33,10 +33,8 @@ runs:
           -D CMAKE_BUILD_TYPE=RelWithDebInfo \
           -D BUILD_VERSION="${LIBMONGOC_VERSION}" \
           -D ENABLE_MONGOC=ON \
+          -D ENABLE_TRACING=ON \
           -D ENABLE_CLIENT_SIDE_ENCRYPTION=ON
-        # Note: ENABLE_TRACING is deliberately left off. libmongoc 1.x writes its
-        # trace output to stdout, and this branch has no log handler to capture
-        # it, so the traces would break the expected output of every test.
       env:
         LIBMONGOC_VERSION: ${{ inputs.version }}
 
@@ -52,8 +50,6 @@ runs:
       env:
         PREFIX: ${{ inputs.prefix }}
 
-    # Note: libmongoc 1.x installs its pkg-config file as libmongoc-1.0.pc,
-    # whereas libmongoc 2.x uses mongoc2.pc.
     - name: Check pkg-config availability
       shell: bash
-      run: pkg-config --modversion libmongoc-1.0
+      run: pkg-config --modversion mongoc2

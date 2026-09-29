@@ -72,11 +72,6 @@ if [ -n "$LIBMONGOC_VERSION" ]; then
    echo "Finding Python3 binary... done."
 
    php scripts/update-submodule-sources.php
-
-   # We invoke python manually as it may not be in the path
-   pushd src/libmongoc/
-   $PYTHON build/calc_release_version.py > ../LIBMONGOC_VERSION_CURRENT
-   popd
 fi
 
 phpize

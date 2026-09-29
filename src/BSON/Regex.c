@@ -18,14 +18,14 @@
 #include <ext/standard/php_var.h>
 #include <Zend/zend_interfaces.h>
 
-#include "php_phongo.h"
+#include "phongo.h"
 #include "phongo_error.h"
 #include "Regex_arginfo.h"
 
-zend_class_entry* php_phongo_regex_ce;
+zend_class_entry* phongo_regex_ce;
 
 /* qsort() compare callback for alphabetizing regex flags upon initialization */
-static int php_phongo_regex_compare_flags(const void* f1, const void* f2)
+static int phongo_regex_compare_flags(const void* f1, const void* f2)
 {
 	if (*(const char*) f1 == *(const char*) f2) {
 		return 0;
@@ -36,24 +36,33 @@ static int php_phongo_regex_compare_flags(const void* f1, const void* f2)
 
 /* Initialize the object and return whether it was successful. An exception will
  * be thrown on error. */
-static bool php_phongo_regex_init(php_phongo_regex_t* intern, const char* pattern, size_t pattern_len, const char* flags, size_t flags_len)
+static bool phongo_regex_init(phongo_regex_t* intern, const char* pattern, size_t pattern_len, const char* flags, size_t flags_len)
 {
 	if (strlen(pattern) != (size_t) pattern_len) {
 		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Pattern cannot contain null bytes");
 		return false;
 	}
+
+	if (flags && strlen(flags) != (size_t) flags_len) {
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Flags cannot contain null bytes");
+		return false;
+	}
+
+	if (intern->pattern) {
+		efree(intern->pattern);
+	}
+	if (intern->flags) {
+		efree(intern->flags);
+	}
+
 	intern->pattern     = estrndup(pattern, pattern_len);
 	intern->pattern_len = pattern_len;
 
 	if (flags) {
-		if (strlen(flags) != (size_t) flags_len) {
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Flags cannot contain null bytes");
-			return false;
-		}
 		intern->flags     = estrndup(flags, flags_len);
 		intern->flags_len = flags_len;
 		/* Ensure flags are alphabetized upon initialization */
-		qsort((void*) intern->flags, flags_len, 1, php_phongo_regex_compare_flags);
+		qsort((void*) intern->flags, flags_len, 1, phongo_regex_compare_flags);
 	} else {
 		intern->flags     = estrdup("");
 		intern->flags_len = 0;
@@ -64,26 +73,25 @@ static bool php_phongo_regex_init(php_phongo_regex_t* intern, const char* patter
 
 /* Initialize the object from a HashTable and return whether it was successful.
  * An exception will be thrown on error. */
-static bool php_phongo_regex_init_from_hash(php_phongo_regex_t* intern, HashTable* props)
+static bool phongo_regex_init_from_hash(phongo_regex_t* intern, HashTable* props)
 {
 	zval *pattern, *flags;
 
 	if ((pattern = zend_hash_str_find(props, "pattern", sizeof("pattern") - 1)) && Z_TYPE_P(pattern) == IS_STRING &&
 		(flags = zend_hash_str_find(props, "flags", sizeof("flags") - 1)) && Z_TYPE_P(flags) == IS_STRING) {
 
-		return php_phongo_regex_init(intern, Z_STRVAL_P(pattern), Z_STRLEN_P(pattern), Z_STRVAL_P(flags), Z_STRLEN_P(flags));
+		return phongo_regex_init(intern, Z_STRVAL_P(pattern), Z_STRLEN_P(pattern), Z_STRVAL_P(flags), Z_STRLEN_P(flags));
 	}
 
-	phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "%s initialization requires \"pattern\" and \"flags\" string fields", ZSTR_VAL(php_phongo_regex_ce->name));
+	phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "%s initialization requires \"pattern\" and \"flags\" string fields", ZSTR_VAL(phongo_regex_ce->name));
 	return false;
 }
 
-static HashTable* php_phongo_regex_get_properties_hash(zend_object* object, bool is_temp)
+static HashTable* phongo_regex_get_properties_hash(zend_object* object, bool is_temp)
 {
-	php_phongo_regex_t* intern;
-	HashTable*          props;
+	PHONGO_INTERN_FROM_Z_OBJ(regex, object);
 
-	intern = Z_OBJ_REGEX(object);
+	HashTable* props;
 
 	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_temp, intern, props, 2);
 
@@ -107,13 +115,12 @@ static HashTable* php_phongo_regex_get_properties_hash(zend_object* object, bool
 /* Constructs a new BSON regular expression type. */
 static PHP_METHOD(MongoDB_BSON_Regex, __construct)
 {
-	php_phongo_regex_t* intern;
-	char*               pattern;
-	size_t              pattern_len;
-	char*               flags     = NULL;
-	size_t              flags_len = 0;
+	PHONGO_INTERN_FROM_THIS(regex);
 
-	intern = Z_REGEX_OBJ_P(getThis());
+	char*  pattern;
+	size_t pattern_len;
+	char*  flags     = NULL;
+	size_t flags_len = 0;
 
 	PHONGO_PARSE_PARAMETERS_START(1, 2)
 	Z_PARAM_STRING(pattern, pattern_len)
@@ -121,14 +128,12 @@ static PHP_METHOD(MongoDB_BSON_Regex, __construct)
 	Z_PARAM_STRING(flags, flags_len)
 	PHONGO_PARSE_PARAMETERS_END();
 
-	php_phongo_regex_init(intern, pattern, pattern_len, flags, flags_len);
+	phongo_regex_init(intern, pattern, pattern_len, flags, flags_len);
 }
 
 static PHP_METHOD(MongoDB_BSON_Regex, getPattern)
 {
-	php_phongo_regex_t* intern;
-
-	intern = Z_REGEX_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(regex);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -137,9 +142,7 @@ static PHP_METHOD(MongoDB_BSON_Regex, getPattern)
 
 static PHP_METHOD(MongoDB_BSON_Regex, getFlags)
 {
-	php_phongo_regex_t* intern;
-
-	intern = Z_REGEX_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(regex);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -148,30 +151,26 @@ static PHP_METHOD(MongoDB_BSON_Regex, getFlags)
 
 static PHP_METHOD(MongoDB_BSON_Regex, __set_state)
 {
-	php_phongo_regex_t* intern;
-	HashTable*          props;
-	zval*               array;
+	HashTable* props;
+	zval*      array;
 
 	PHONGO_PARSE_PARAMETERS_START(1, 1)
 	Z_PARAM_ARRAY(array)
 	PHONGO_PARSE_PARAMETERS_END();
 
-	object_init_ex(return_value, php_phongo_regex_ce);
+	PHONGO_INTERN_INIT_EX(regex, return_value);
+	props = Z_ARRVAL_P(array);
 
-	intern = Z_REGEX_OBJ_P(return_value);
-	props  = Z_ARRVAL_P(array);
-
-	php_phongo_regex_init_from_hash(intern, props);
+	phongo_regex_init_from_hash(intern, props);
 }
 
 /* Returns a string in the form: /pattern/flags */
 static PHP_METHOD(MongoDB_BSON_Regex, __toString)
 {
-	php_phongo_regex_t* intern;
-	char*               regex;
-	int                 regex_len;
+	PHONGO_INTERN_FROM_THIS(regex);
 
-	intern = Z_REGEX_OBJ_P(getThis());
+	char* regex;
+	int   regex_len;
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -182,11 +181,9 @@ static PHP_METHOD(MongoDB_BSON_Regex, __toString)
 
 static PHP_METHOD(MongoDB_BSON_Regex, jsonSerialize)
 {
-	php_phongo_regex_t* intern;
+	PHONGO_INTERN_FROM_THIS(regex);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
-
-	intern = Z_REGEX_OBJ_P(getThis());
 
 	array_init_size(return_value, 2);
 	ADD_ASSOC_STRINGL(return_value, "$regex", intern->pattern, intern->pattern_len);
@@ -197,7 +194,7 @@ static PHP_METHOD(MongoDB_BSON_Regex, __serialize)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
 
-	RETURN_ARR(php_phongo_regex_get_properties_hash(Z_OBJ_P(getThis()), true));
+	RETURN_ARR(phongo_regex_get_properties_hash(Z_OBJ_P(getThis()), true));
 }
 
 static PHP_METHOD(MongoDB_BSON_Regex, __unserialize)
@@ -208,15 +205,15 @@ static PHP_METHOD(MongoDB_BSON_Regex, __unserialize)
 	Z_PARAM_ARRAY(data)
 	PHONGO_PARSE_PARAMETERS_END();
 
-	php_phongo_regex_init_from_hash(Z_REGEX_OBJ_P(getThis()), Z_ARRVAL_P(data));
+	phongo_regex_init_from_hash(Z_REGEX_OBJ_P(getThis()), Z_ARRVAL_P(data));
 }
 
 /* MongoDB\BSON\Regex object handlers */
-static zend_object_handlers php_phongo_handler_regex;
+static zend_object_handlers phongo_handler_regex;
 
-static void php_phongo_regex_free_object(zend_object* object)
+static void phongo_regex_free_object(zend_object* object)
 {
-	php_phongo_regex_t* intern = Z_OBJ_REGEX(object);
+	PHONGO_INTERN_FROM_Z_OBJ(regex, object);
 
 	zend_object_std_dtor(&intern->std);
 
@@ -234,39 +231,36 @@ static void php_phongo_regex_free_object(zend_object* object)
 	}
 }
 
-static zend_object* php_phongo_regex_create_object(zend_class_entry* class_type)
+static zend_object* phongo_regex_create_object(zend_class_entry* class_type)
 {
-	php_phongo_regex_t* intern = zend_object_alloc(sizeof(php_phongo_regex_t), class_type);
+	PHONGO_INTERN_OBJECT_ALLOC(regex, class_type);
 
-	zend_object_std_init(&intern->std, class_type);
-	object_properties_init(&intern->std, class_type);
-
-	intern->std.handlers = &php_phongo_handler_regex;
+	intern->std.handlers = &phongo_handler_regex;
 
 	return &intern->std;
 }
 
-static zend_object* php_phongo_regex_clone_object(zend_object* object)
+static zend_object* phongo_regex_clone_object(zend_object* object)
 {
-	php_phongo_regex_t* intern;
-	php_phongo_regex_t* new_intern;
-	zend_object*        new_object;
+	PHONGO_INTERN_FROM_Z_OBJ(regex, object);
 
-	intern     = Z_OBJ_REGEX(object);
-	new_object = php_phongo_regex_create_object(object->ce);
+	phongo_regex_t* new_intern;
+	zend_object*    new_object;
+
+	new_object = phongo_regex_create_object(object->ce);
 
 	new_intern = Z_OBJ_REGEX(new_object);
 	zend_objects_clone_members(&new_intern->std, &intern->std);
 
-	php_phongo_regex_init(new_intern, intern->pattern, intern->pattern_len, intern->flags, intern->flags_len);
+	phongo_regex_init(new_intern, intern->pattern, intern->pattern_len, intern->flags, intern->flags_len);
 
 	return new_object;
 }
 
-static int php_phongo_regex_compare_objects(zval* o1, zval* o2)
+static int phongo_regex_compare_objects(zval* o1, zval* o2)
 {
-	php_phongo_regex_t *intern1, *intern2;
-	int                 retval;
+	phongo_regex_t *intern1, *intern2;
+	int             retval;
 
 	ZEND_COMPARE_OBJECTS_FALLBACK(o1, o2);
 
@@ -283,42 +277,34 @@ static int php_phongo_regex_compare_objects(zval* o1, zval* o2)
 	return strcmp(intern1->flags, intern2->flags);
 }
 
-static HashTable* php_phongo_regex_get_debug_info(zend_object* object, int* is_temp)
+static HashTable* phongo_regex_get_debug_info(zend_object* object, int* is_temp)
 {
 	*is_temp = 1;
-	return php_phongo_regex_get_properties_hash(object, true);
+	return phongo_regex_get_properties_hash(object, true);
 }
 
-static HashTable* php_phongo_regex_get_properties(zend_object* object)
+static HashTable* phongo_regex_get_properties(zend_object* object)
 {
-	return php_phongo_regex_get_properties_hash(object, false);
+	return phongo_regex_get_properties_hash(object, false);
 }
 
-void php_phongo_regex_init_ce(INIT_FUNC_ARGS)
+void phongo_regex_init_ce(INIT_FUNC_ARGS)
 {
-	php_phongo_regex_ce                = register_class_MongoDB_BSON_Regex(php_phongo_regex_interface_ce, php_phongo_json_serializable_ce, php_phongo_type_ce, zend_ce_stringable);
-	php_phongo_regex_ce->create_object = php_phongo_regex_create_object;
+	phongo_regex_ce                = register_class_MongoDB_BSON_Regex(phongo_regex_interface_ce, phongo_json_serializable_ce, phongo_type_ce, zend_ce_stringable);
+	phongo_regex_ce->create_object = phongo_regex_create_object;
 
-	memcpy(&php_phongo_handler_regex, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
-	php_phongo_handler_regex.compare        = php_phongo_regex_compare_objects;
-	php_phongo_handler_regex.clone_obj      = php_phongo_regex_clone_object;
-	php_phongo_handler_regex.get_debug_info = php_phongo_regex_get_debug_info;
-	php_phongo_handler_regex.get_properties = php_phongo_regex_get_properties;
-	php_phongo_handler_regex.free_obj       = php_phongo_regex_free_object;
-	php_phongo_handler_regex.offset         = XtOffsetOf(php_phongo_regex_t, std);
+	memcpy(&phongo_handler_regex, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
+	phongo_handler_regex.compare        = phongo_regex_compare_objects;
+	phongo_handler_regex.clone_obj      = phongo_regex_clone_object;
+	phongo_handler_regex.get_debug_info = phongo_regex_get_debug_info;
+	phongo_handler_regex.get_properties = phongo_regex_get_properties;
+	phongo_handler_regex.free_obj       = phongo_regex_free_object;
+	phongo_handler_regex.offset         = offsetof(phongo_regex_t, std);
 }
 
 bool phongo_regex_new(zval* object, const char* pattern, const char* flags)
 {
-	php_phongo_regex_t* intern;
+	PHONGO_INTERN_INIT_EX(regex, object);
 
-	object_init_ex(object, php_phongo_regex_ce);
-
-	intern              = Z_REGEX_OBJ_P(object);
-	intern->pattern_len = strlen(pattern);
-	intern->pattern     = estrndup(pattern, intern->pattern_len);
-	intern->flags_len   = strlen(flags);
-	intern->flags       = estrndup(flags, intern->flags_len);
-
-	return true;
+	return phongo_regex_init(intern, pattern, strlen(pattern), flags, strlen(flags));
 }

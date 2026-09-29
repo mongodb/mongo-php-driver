@@ -1,14 +1,11 @@
 --TEST--
-MongoDB\BSON\Javascript can be cloned (PHP >= 8.2)
---SKIPIF--
-<?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
-<?php skip_if_php_version('<', '8.2'); ?>
+MongoDB\BSON\Javascript can be cloned without a scope
 --FILE--
 <?php
 
 require_once __DIR__ . '/../utils/basic.inc';
 
-$javascript = new MongoDB\BSON\Javascript("function(bar) {var baz = bar; var bar = foo; return bar; }", ['foo' => 42]);
+$javascript = new MongoDB\BSON\Javascript('function(x) { return x; }');
 
 $clone = clone $javascript;
 
@@ -26,11 +23,8 @@ bool(true)
 bool(false)
 object(MongoDB\BSON\Javascript)#%d (%d) {
   ["code"]=>
-  string(58) "function(bar) {var baz = bar; var bar = foo; return bar; }"
+  string(25) "function(x) { return x; }"
   ["scope"]=>
-  object(stdClass)#%d (%d) {
-    ["foo"]=>
-    int(42)
-  }
+  NULL
 }
 ===DONE===

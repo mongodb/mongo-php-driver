@@ -27,21 +27,39 @@ foreach ($tests as $test) {
 --EXPECTF--
 %r\\?%rMongoDB\Driver\ReadPreference::__set_state(array(
    'mode' => 'primary',
+   'tags' => NULL,
+   'maxStalenessSeconds' => -1,
+   'hedge' => NULL,
 ))
 %r\\?%rMongoDB\Driver\ReadPreference::__set_state(array(
    'mode' => 'primaryPreferred',
+   'tags' => NULL,
+   'maxStalenessSeconds' => -1,
+   'hedge' => NULL,
 ))
 %r\\?%rMongoDB\Driver\ReadPreference::__set_state(array(
    'mode' => 'secondary',
+   'tags' => NULL,
+   'maxStalenessSeconds' => -1,
+   'hedge' => NULL,
 ))
 %r\\?%rMongoDB\Driver\ReadPreference::__set_state(array(
    'mode' => 'secondaryPreferred',
+   'tags' => NULL,
+   'maxStalenessSeconds' => -1,
+   'hedge' => NULL,
 ))
 %r\\?%rMongoDB\Driver\ReadPreference::__set_state(array(
    'mode' => 'nearest',
+   'tags' => NULL,
+   'maxStalenessSeconds' => -1,
+   'hedge' => NULL,
 ))
 %r\\?%rMongoDB\Driver\ReadPreference::__set_state(array(
    'mode' => 'primary',
+   'tags' => NULL,
+   'maxStalenessSeconds' => -1,
+   'hedge' => NULL,
 ))
 %r\\?%rMongoDB\Driver\ReadPreference::__set_state(array(
    'mode' => 'secondary',
@@ -52,6 +70,8 @@ foreach ($tests as $test) {
        'dc' => 'ny',
     ),
   ),
+   'maxStalenessSeconds' => -1,
+   'hedge' => NULL,
 ))
 %r\\?%rMongoDB\Driver\ReadPreference::__set_state(array(
    'mode' => 'secondary',
@@ -70,9 +90,13 @@ foreach ($tests as $test) {
     (object) array(
     ),
   ),
+   'maxStalenessSeconds' => -1,
+   'hedge' => NULL,
 ))
 %r\\?%rMongoDB\Driver\ReadPreference::__set_state(array(
    'mode' => 'secondary',
+   'tags' => NULL,
    'maxStalenessSeconds' => 1000,
+   'hedge' => NULL,
 ))
 ===DONE===

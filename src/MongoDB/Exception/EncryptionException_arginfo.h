@@ -1,19 +1,16 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 432323bdeb13c6e1ce5e0201f0957290f412d26d */
-
-
-
-
-static const zend_function_entry class_MongoDB_Driver_Exception_EncryptionException_methods[] = {
-	ZEND_FE_END
-};
+ * Stub hash: 27f5cb800d4f6d5bc710a48c3831622d2bc1e83d */
 
 static zend_class_entry *register_class_MongoDB_Driver_Exception_EncryptionException(zend_class_entry *class_entry_MongoDB_Driver_Exception_RuntimeException)
 {
 	zend_class_entry ce, *class_entry;
 
-	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver\\Exception", "EncryptionException", class_MongoDB_Driver_Exception_EncryptionException_methods);
+	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver\\Exception", "EncryptionException", NULL);
+#if (PHP_VERSION_ID >= 80400)
+	class_entry = zend_register_internal_class_with_flags(&ce, class_entry_MongoDB_Driver_Exception_RuntimeException, 0);
+#else
 	class_entry = zend_register_internal_class_ex(&ce, class_entry_MongoDB_Driver_Exception_RuntimeException);
+#endif
 
 	return class_entry;
 }

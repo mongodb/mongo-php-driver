@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 94e08d9aa9d6b2f361f14207a86881c54ee3ff67 */
+ * Stub hash: 1fee3e4e276420cfc5b18ab7d6e076be94779105 */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_Driver_Manager___construct, 0, 0, 0)
 	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, uri, IS_STRING, 1, "null")
@@ -69,7 +69,6 @@ ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_MongoDB_Driver_Manager_star
 	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, options, IS_ARRAY, 1, "null")
 ZEND_END_ARG_INFO()
 
-
 static ZEND_METHOD(MongoDB_Driver_Manager, __construct);
 static ZEND_METHOD(MongoDB_Driver_Manager, addSubscriber);
 static ZEND_METHOD(MongoDB_Driver_Manager, createClientEncryption);
@@ -88,7 +87,6 @@ static ZEND_METHOD(MongoDB_Driver_Manager, getWriteConcern);
 static ZEND_METHOD(MongoDB_Driver_Manager, removeSubscriber);
 static ZEND_METHOD(MongoDB_Driver_Manager, selectServer);
 static ZEND_METHOD(MongoDB_Driver_Manager, startSession);
-
 
 static const zend_function_entry class_MongoDB_Driver_Manager_methods[] = {
 	ZEND_ME(MongoDB_Driver_Manager, __construct, arginfo_class_MongoDB_Driver_Manager___construct, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
@@ -117,8 +115,12 @@ static zend_class_entry *register_class_MongoDB_Driver_Manager(void)
 	zend_class_entry ce, *class_entry;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver", "Manager", class_MongoDB_Driver_Manager_methods);
+#if (PHP_VERSION_ID >= 80400)
+	class_entry = zend_register_internal_class_with_flags(&ce, NULL, ZEND_ACC_FINAL|ZEND_ACC_NOT_SERIALIZABLE);
+#else
 	class_entry = zend_register_internal_class_ex(&ce, NULL);
 	class_entry->ce_flags |= ZEND_ACC_FINAL|ZEND_ACC_NOT_SERIALIZABLE;
+#endif
 
 	return class_entry;
 }

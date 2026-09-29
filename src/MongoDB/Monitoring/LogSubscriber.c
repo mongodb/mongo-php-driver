@@ -18,12 +18,12 @@
 
 #include <php.h>
 
-#include "php_phongo.h"
+#include "phongo.h"
 #include "LogSubscriber_arginfo.h"
 
-zend_class_entry* php_phongo_logsubscriber_ce;
+zend_class_entry* phongo_logsubscriber_ce;
 
-void php_phongo_logsubscriber_init_ce(INIT_FUNC_ARGS)
+void phongo_logsubscriber_init_ce(INIT_FUNC_ARGS)
 {
-	php_phongo_logsubscriber_ce = register_class_MongoDB_Driver_Monitoring_LogSubscriber(php_phongo_subscriber_ce);
+	phongo_logsubscriber_ce = register_class_MongoDB_Driver_Monitoring_LogSubscriber(phongo_subscriber_ce);
 }

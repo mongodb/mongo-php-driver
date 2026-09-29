@@ -75,7 +75,7 @@ object(MongoDB\Driver\BulkWriteCommand)#%d (%d) {
   ["bypassDocumentValidation"]=>
   NULL
   ["comment"]=>
-  object(stdClass)#2 (1) {
+  object(stdClass)#%d (1) {
     ["foo"]=>
     int(1)
   }
@@ -90,7 +90,7 @@ object(MongoDB\Driver\BulkWriteCommand)#%d (%d) {
   ["bypassDocumentValidation"]=>
   NULL
   ["let"]=>
-  object(stdClass)#2 (2) {
+  object(stdClass)#%d (2) {
     ["id"]=>
     int(1)
     ["x"]=>

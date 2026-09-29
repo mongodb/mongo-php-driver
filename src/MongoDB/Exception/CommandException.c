@@ -16,11 +16,11 @@
 
 #include <php.h>
 
-#include "php_phongo.h"
+#include "phongo.h"
 #include "phongo_error.h"
 #include "CommandException_arginfo.h"
 
-zend_class_entry* php_phongo_commandexception_ce;
+zend_class_entry* phongo_commandexception_ce;
 
 /* Returns the result document from the failed command. */
 static PHP_METHOD(MongoDB_Driver_Exception_CommandException, getResultDocument)
@@ -30,12 +30,12 @@ static PHP_METHOD(MongoDB_Driver_Exception_CommandException, getResultDocument)
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
-	resultdocument = zend_read_property(php_phongo_commandexception_ce, Z_OBJ_P(getThis()), ZEND_STRL("resultDocument"), 0, &rv);
+	resultdocument = zend_read_property(phongo_commandexception_ce, Z_OBJ_P(getThis()), ZEND_STRL("resultDocument"), 0, &rv);
 
 	RETURN_ZVAL(resultdocument, 1, 0);
 }
 
-void php_phongo_commandexception_init_ce(INIT_FUNC_ARGS)
+void phongo_commandexception_init_ce(INIT_FUNC_ARGS)
 {
-	php_phongo_commandexception_ce = register_class_MongoDB_Driver_Exception_CommandException(php_phongo_serverexception_ce);
+	phongo_commandexception_ce = register_class_MongoDB_Driver_Exception_CommandException(phongo_serverexception_ce);
 }

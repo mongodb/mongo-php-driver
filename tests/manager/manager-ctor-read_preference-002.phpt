@@ -24,31 +24,51 @@ foreach ($tests as $test) {
 object(MongoDB\Driver\ReadPreference)#%d (%d) {
   ["mode"]=>
   string(9) "secondary"
+  ["tags"]=>
+  NULL
   ["maxStalenessSeconds"]=>
   int(1231)
+  ["hedge"]=>
+  NULL
 }
 object(MongoDB\Driver\ReadPreference)#%d (%d) {
   ["mode"]=>
   string(9) "secondary"
+  ["tags"]=>
+  NULL
   ["maxStalenessSeconds"]=>
   int(1231)
+  ["hedge"]=>
+  NULL
 }
 object(MongoDB\Driver\ReadPreference)#%d (%d) {
   ["mode"]=>
   string(9) "secondary"
+  ["tags"]=>
+  NULL
   ["maxStalenessSeconds"]=>
   int(2000)
+  ["hedge"]=>
+  NULL
 }
 object(MongoDB\Driver\ReadPreference)#%d (%d) {
   ["mode"]=>
   string(9) "secondary"
+  ["tags"]=>
+  NULL
   ["maxStalenessSeconds"]=>
   int(1231)
+  ["hedge"]=>
+  NULL
 }
 object(MongoDB\Driver\ReadPreference)#%d (%d) {
   ["mode"]=>
   string(9) "secondary"
+  ["tags"]=>
+  NULL
   ["maxStalenessSeconds"]=>
   int(1231)
+  ["hedge"]=>
+  NULL
 }
 ===DONE===

@@ -22,7 +22,7 @@
 
 #include "php_array_api.h"
 
-#include "php_phongo.h"
+#include "phongo.h"
 #include "phongo_error.h"
 #include "phongo_execute.h"
 #include "phongo_util.h"
@@ -89,8 +89,8 @@ static bool phongo_parse_read_concern(zval* options, bson_t* mongoc_opts)
 		return true;
 	}
 
-	if (Z_TYPE_P(option) != IS_OBJECT || !instanceof_function(Z_OBJCE_P(option), php_phongo_readconcern_ce)) {
-		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"readConcern\" option to be %s, %s given", ZSTR_VAL(php_phongo_readconcern_ce->name), zend_zval_type_name(option));
+	if (Z_TYPE_P(option) != IS_OBJECT || !instanceof_function(Z_OBJCE_P(option), phongo_readconcern_ce)) {
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"readConcern\" option to be %s, %s given", ZSTR_VAL(phongo_readconcern_ce->name), zend_zval_type_name(option));
 		return false;
 	}
 
@@ -126,8 +126,8 @@ bool phongo_parse_read_preference(zval* options, zval** zreadPreference)
 		return true;
 	}
 
-	if (Z_TYPE_P(option) != IS_OBJECT || !instanceof_function(Z_OBJCE_P(option), php_phongo_readpreference_ce)) {
-		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"readPreference\" option to be %s, %s given", ZSTR_VAL(php_phongo_readpreference_ce->name), zend_zval_type_name(option));
+	if (Z_TYPE_P(option) != IS_OBJECT || !instanceof_function(Z_OBJCE_P(option), phongo_readpreference_ce)) {
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"readPreference\" option to be %s, %s given", ZSTR_VAL(phongo_readpreference_ce->name), zend_zval_type_name(option));
 		return false;
 	}
 
@@ -164,8 +164,8 @@ bool phongo_parse_session(zval* options, mongoc_client_t* client, bson_t* mongoc
 		return true;
 	}
 
-	if (Z_TYPE_P(option) != IS_OBJECT || !instanceof_function(Z_OBJCE_P(option), php_phongo_session_ce)) {
-		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"session\" option to be %s, %s given", ZSTR_VAL(php_phongo_session_ce->name), zend_zval_type_name(option));
+	if (Z_TYPE_P(option) != IS_OBJECT || !instanceof_function(Z_OBJCE_P(option), phongo_session_ce)) {
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"session\" option to be %s, %s given", ZSTR_VAL(phongo_session_ce->name), zend_zval_type_name(option));
 		return false;
 	}
 
@@ -212,8 +212,8 @@ static bool phongo_parse_write_concern(zval* options, bson_t* mongoc_opts, zval*
 		return true;
 	}
 
-	if (Z_TYPE_P(option) != IS_OBJECT || !instanceof_function(Z_OBJCE_P(option), php_phongo_writeconcern_ce)) {
-		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"writeConcern\" option to be %s, %s given", ZSTR_VAL(php_phongo_writeconcern_ce->name), zend_zval_type_name(option));
+	if (Z_TYPE_P(option) != IS_OBJECT || !instanceof_function(Z_OBJCE_P(option), phongo_writeconcern_ce)) {
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"writeConcern\" option to be %s, %s given", ZSTR_VAL(phongo_writeconcern_ce->name), zend_zval_type_name(option));
 		return false;
 	}
 
@@ -231,14 +231,13 @@ static bool phongo_parse_write_concern(zval* options, bson_t* mongoc_opts, zval*
 	return true;
 }
 
-bool phongo_execute_bulk_write(zval* manager, const char* namespace, size_t namespace_len, php_phongo_bulkwrite_t* bulk_write, zval* options, uint32_t server_id, zval* return_value)
+bool phongo_execute_bulk_write(zval* manager, const char* namespace, size_t namespace_len, phongo_bulkwrite_t* bulk_write, zval* options, uint32_t server_id, zval* return_value)
 {
 	mongoc_client_t*              client = NULL;
 	bson_error_t                  error  = { 0 };
 	int                           success;
-	bson_t                        reply = BSON_INITIALIZER;
-	mongoc_bulk_operation_t*      bulk  = bulk_write->bulk;
-	php_phongo_writeresult_t*     writeresult;
+	bson_t                        reply         = BSON_INITIALIZER;
+	mongoc_bulk_operation_t*      bulk          = bulk_write->bulk;
 	zval*                         zwriteConcern = NULL;
 	zval*                         zsession      = NULL;
 	const mongoc_write_concern_t* write_concern = NULL;
@@ -297,8 +296,7 @@ bool phongo_execute_bulk_write(zval* manager, const char* namespace, size_t name
 	success              = mongoc_bulk_operation_execute(bulk, &reply, &error);
 	bulk_write->executed = true;
 
-	writeresult                = phongo_writeresult_init(return_value, &reply, manager, mongoc_bulk_operation_get_server_id(bulk));
-	writeresult->write_concern = mongoc_write_concern_copy(write_concern);
+	phongo_writeresult_init(return_value, &reply, manager, mongoc_bulk_operation_get_server_id(bulk), write_concern);
 
 	/* A BulkWriteException is always thrown if mongoc_bulk_operation_execute()
 	 * fails to ensure that the write result is accessible. If the error does
@@ -321,10 +319,10 @@ bool phongo_execute_bulk_write(zval* manager, const char* namespace, size_t name
 			char* message;
 
 			(void) spprintf(&message, 0, "Bulk write failed due to previous %s: %s", PHONGO_ZVAL_EXCEPTION_NAME(EG(exception)), error.message);
-			zend_throw_exception(php_phongo_bulkwriteexception_ce, message, 0);
+			zend_throw_exception(phongo_bulkwriteexception_ce, message, 0);
 			efree(message);
 		} else {
-			zend_throw_exception(php_phongo_bulkwriteexception_ce, error.message, error.code);
+			zend_throw_exception(phongo_bulkwriteexception_ce, error.message, error.code);
 		}
 
 		/* Ensure error labels are added to the final BulkWriteException. If a
@@ -340,7 +338,7 @@ cleanup:
 	return success;
 }
 
-bool phongo_execute_bulkwritecommand(zval* manager, php_phongo_bulkwritecommand_t* bwc, zval* zoptions, uint32_t server_id, zval* return_value)
+bool phongo_execute_bulkwritecommand(zval* manager, phongo_bulkwritecommand_t* bwc, zval* zoptions, uint32_t server_id, zval* return_value)
 {
 	mongoc_client_t*              client        = NULL;
 	mongoc_bulkwrite_t*           bw            = bwc->bw;
@@ -434,7 +432,7 @@ bool phongo_execute_bulkwritecommand(zval* manager, php_phongo_bulkwritecommand_
 		 * (CDRIVER-5842). Throw InvalidArgumentException directly iff there is
 		 * neither a partial write result nor an error reply (we can assume
 		 * there are no write or write concern errors for this case). */
-		if (EG(exception) && EG(exception)->ce == php_phongo_invalidargumentexception_ce && !bw_ret.res && bson_empty(error_reply)) {
+		if (EG(exception) && EG(exception)->ce == phongo_invalidargumentexception_ce && !bw_ret.res && bson_empty(error_reply)) {
 			goto cleanup;
 		}
 
@@ -442,16 +440,16 @@ bool phongo_execute_bulkwritecommand(zval* manager, php_phongo_bulkwritecommand_
 			char* message;
 
 			(void) spprintf(&message, 0, "Bulk write failed due to previous %s: %s", PHONGO_ZVAL_EXCEPTION_NAME(EG(exception)), error.message);
-			zend_throw_exception(php_phongo_bulkwritecommandexception_ce, message, 0);
+			zend_throw_exception(phongo_bulkwritecommandexception_ce, message, 0);
 			efree(message);
 		} else {
-			zend_throw_exception(php_phongo_bulkwritecommandexception_ce, has_top_level_error ? error.message : "Bulk write failed", error.code);
+			zend_throw_exception(phongo_bulkwritecommandexception_ce, has_top_level_error ? error.message : "Bulk write failed", error.code);
 		}
 
 		/* Initialize BulkWriteCommandException properties. Although a
 		 * BulkWriteCommandResult is always returned on success, the partial
 		 * result reported via the exception may be null. */
-		php_phongo_bulkwritecommandexception_init_props(EG(exception), bw_ret.exc, bw_ret.res ? return_value : NULL);
+		phongo_bulkwritecommandexception_init_props(EG(exception), bw_ret.exc, bw_ret.res ? return_value : NULL);
 
 		/* Ensure error labels are added to the final BulkWriteCommandException.
 		 * If RuntimeException was previously thrown, labels may also have been
@@ -467,21 +465,21 @@ cleanup:
 	return success;
 }
 
-bool phongo_execute_command(zval* manager, php_phongo_command_type_t type, const char* db, size_t db_len, zval* zcommand, zval* options, uint32_t server_id, zval* return_value)
+bool phongo_execute_command(zval* manager, phongo_command_type_t type, const char* db, size_t db_len, zval* zcommand, zval* options, uint32_t server_id, zval* return_value)
 {
-	mongoc_client_t*            client;
-	const php_phongo_command_t* command;
-	bson_iter_t                 iter;
-	bson_t                      reply;
-	bson_error_t                error = { 0 };
-	bson_t                      opts  = BSON_INITIALIZER;
-	mongoc_cursor_t*            cmd_cursor;
-	zval*                       zreadPreference                 = NULL;
-	zval*                       zsession                        = NULL;
-	bool                        result                          = false;
-	bool                        free_reply                      = false;
-	bool                        free_zsession                   = false;
-	bool                        is_unacknowledged_write_concern = false;
+	mongoc_client_t*        client;
+	const phongo_command_t* command;
+	bson_iter_t             iter;
+	bson_t                  reply;
+	bson_error_t            error = { 0 };
+	bson_t                  opts  = BSON_INITIALIZER;
+	mongoc_cursor_t*        cmd_cursor;
+	zval*                   zreadPreference                 = NULL;
+	zval*                   zsession                        = NULL;
+	bool                    result                          = false;
+	bool                    free_reply                      = false;
+	bool                    free_zsession                   = false;
+	bool                    is_unacknowledged_write_concern = false;
 
 	client  = Z_MANAGER_OBJ_P(manager)->client;
 	command = Z_COMMAND_OBJ_P(zcommand);
@@ -589,20 +587,20 @@ bool phongo_execute_command(zval* manager, php_phongo_command_type_t type, const
 
 		bson_copy_to(&reply, &initial_reply);
 
-		bson_append_int32(&cursor_opts, "serverId", -1, server_id);
+		bson_append_int32(&cursor_opts, ZEND_STRL("serverId"), server_id);
 
 		if (command->max_await_time_ms) {
-			bson_append_bool(&cursor_opts, "awaitData", -1, 1);
-			bson_append_int64(&cursor_opts, "maxAwaitTimeMS", -1, command->max_await_time_ms);
-			bson_append_bool(&cursor_opts, "tailable", -1, 1);
+			bson_append_bool(&cursor_opts, ZEND_STRL("awaitData"), 1);
+			bson_append_int64(&cursor_opts, ZEND_STRL("maxAwaitTimeMS"), command->max_await_time_ms);
+			bson_append_bool(&cursor_opts, ZEND_STRL("tailable"), 1);
 		}
 
 		if (command->batch_size) {
-			bson_append_int64(&cursor_opts, "batchSize", -1, command->batch_size);
+			bson_append_int64(&cursor_opts, ZEND_STRL("batchSize"), command->batch_size);
 		}
 
 		if (bson_iter_init(&iter, command->bson) && bson_iter_find(&iter, "comment")) {
-			bson_append_value(&cursor_opts, "comment", -1, bson_iter_value(&iter));
+			bson_append_value(&cursor_opts, ZEND_STRL("comment"), bson_iter_value(&iter));
 		}
 
 		if (zsession && !mongoc_client_session_append(Z_SESSION_OBJ_P(zsession)->client_session, &cursor_opts, &error)) {
@@ -619,7 +617,7 @@ bool phongo_execute_command(zval* manager, php_phongo_command_type_t type, const
 		bson_t  cursor_opts   = BSON_INITIALIZER;
 		bson_t* wrapped_reply = create_wrapped_command_envelope(db, &reply);
 
-		bson_append_int32(&cursor_opts, "serverId", -1, server_id);
+		bson_append_int32(&cursor_opts, ZEND_STRL("serverId"), server_id);
 		cmd_cursor = mongoc_cursor_new_from_command_reply_with_opts(client, wrapped_reply, &cursor_opts);
 		bson_destroy(&cursor_opts);
 	}
@@ -643,15 +641,15 @@ cleanup:
 
 bool phongo_execute_query(zval* manager, const char* namespace, size_t namespace_len, zval* zquery, zval* options, uint32_t server_id, zval* return_value)
 {
-	mongoc_client_t*          client;
-	const php_phongo_query_t* query;
-	bson_t                    opts = BSON_INITIALIZER;
-	mongoc_cursor_t*          cursor;
-	char*                     dbname;
-	char*                     collname;
-	mongoc_collection_t*      collection;
-	zval*                     zreadPreference = NULL;
-	zval*                     zsession        = NULL;
+	mongoc_client_t*      client;
+	const phongo_query_t* query;
+	bson_t                opts = BSON_INITIALIZER;
+	mongoc_cursor_t*      cursor;
+	char*                 dbname;
+	char*                 collname;
+	mongoc_collection_t*  collection;
+	zval*                 zreadPreference = NULL;
+	zval*                 zsession        = NULL;
 
 	client = Z_MANAGER_OBJ_P(manager)->client;
 

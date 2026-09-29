@@ -18,7 +18,7 @@
 
 #include "phongo_compat.h"
 
-zend_bool php_phongo_zend_hash_apply_protection_begin(zend_array* ht)
+zend_bool phongo_zend_hash_apply_protection_begin(zend_array* ht)
 {
 	if (GC_IS_RECURSIVE(ht)) {
 		return 0;
@@ -29,7 +29,7 @@ zend_bool php_phongo_zend_hash_apply_protection_begin(zend_array* ht)
 	return 1;
 }
 
-zend_bool php_phongo_zend_hash_apply_protection_end(zend_array* ht)
+zend_bool phongo_zend_hash_apply_protection_end(zend_array* ht)
 {
 	if (!GC_IS_RECURSIVE(ht)) {
 		return 0;

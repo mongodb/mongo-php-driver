@@ -16,12 +16,12 @@
 
 #include <php.h>
 
-#include "php_phongo.h"
+#include "phongo.h"
 #include "SDAMSubscriber_arginfo.h"
 
-zend_class_entry* php_phongo_sdamsubscriber_ce;
+zend_class_entry* phongo_sdamsubscriber_ce;
 
-void php_phongo_sdamsubscriber_init_ce(INIT_FUNC_ARGS)
+void phongo_sdamsubscriber_init_ce(INIT_FUNC_ARGS)
 {
-	php_phongo_sdamsubscriber_ce = register_class_MongoDB_Driver_Monitoring_SDAMSubscriber(php_phongo_subscriber_ce);
+	phongo_sdamsubscriber_ce = register_class_MongoDB_Driver_Monitoring_SDAMSubscriber(phongo_subscriber_ce);
 }

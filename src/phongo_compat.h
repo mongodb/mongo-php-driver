@@ -97,12 +97,9 @@
 	} while (0)
 #define ADD_NEXT_INDEX_STRINGL(_zv, _value, _len) add_next_index_stringl(_zv, _value, _len);
 #define PHONGO_RETVAL_SMART_STR(val) RETVAL_STRINGL(ZSTR_VAL((val).s), ZSTR_LEN((val).s));
-#define ZVAL_STATIC_INIT \
-	{                    \
-		{                \
-			0            \
-		}                \
-	}
+/* clang-format off */
+#define ZVAL_STATIC_INIT { { 0 } }
+/* clang-format on */
 
 #define ADD_NEXT_INDEX_INT64_OBJ(_zv, _value) \
 	do {                                      \
@@ -208,8 +205,8 @@
 	} while (0)
 #endif
 
-zend_bool php_phongo_zend_hash_apply_protection_begin(HashTable* ht);
-zend_bool php_phongo_zend_hash_apply_protection_end(HashTable* ht);
+zend_bool phongo_zend_hash_apply_protection_begin(HashTable* ht);
+zend_bool phongo_zend_hash_apply_protection_end(HashTable* ht);
 
 /* zend_get_object_type_case functions were introduced in PHP 8.2 */
 #if PHP_VERSION_ID < 80200
@@ -217,5 +214,12 @@ const char* zend_get_object_type_case(const zend_class_entry* ce, zend_bool uppe
 #define zend_get_object_type(ce) zend_get_object_type_case((ce), false)
 #define zend_get_object_type_uc(ce) zend_get_object_type_case((ce), true)
 #endif /* PHP_VERSION_ID < 80200 */
+
+/* zend_object_iterator_funcs.valid return type changed to zend_result in PHP 8.4 */
+#if PHP_VERSION_ID < 80400
+#define PHONGO_ITERATOR_VALID_RESULT int
+#else
+#define PHONGO_ITERATOR_VALID_RESULT zend_result
+#endif
 
 #endif /* PHONGO_COMPAT_H */

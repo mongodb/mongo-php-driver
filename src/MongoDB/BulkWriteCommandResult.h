@@ -23,6 +23,6 @@
 
 #include "phongo_structs.h"
 
-php_phongo_bulkwritecommandresult_t* phongo_bulkwritecommandresult_init(zval* return_value, mongoc_bulkwriteresult_t* bw_res);
+phongo_bulkwritecommandresult_t* phongo_bulkwritecommandresult_init(zval* return_value, mongoc_bulkwriteresult_t* bw_res);
 
 #endif /* PHONGO_BULKWRITECOMMANDRESULT_H */

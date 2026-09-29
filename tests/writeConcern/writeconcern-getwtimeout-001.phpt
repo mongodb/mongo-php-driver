@@ -11,17 +11,22 @@ $tests = array(
 foreach ($tests as $test) {
     $wc = new MongoDB\Driver\WriteConcern(1, $test);
     var_dump($wc->getWtimeout());
+    var_dump($wc->wtimeout);
 }
 
 // Test with default value
 $wc = new MongoDB\Driver\WriteConcern(1);
 var_dump($wc->getWtimeout());
+var_dump($wc->wtimeout);
 
 ?>
 ===DONE===
 <?php exit(0); ?>
 --EXPECT--
 int(0)
+int(0)
 int(1)
+int(1)
+int(0)
 int(0)
 ===DONE===

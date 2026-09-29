@@ -34,11 +34,11 @@ jobs:
         include:
           - os: "ubuntu-24.04"
             php-version: "8.1"
-            mongodb-version: "8.0"
+            mongodb-version: "8.2"
             topology: "replica_set"
           - os: "ubuntu-24.04"
             php-version: "8.1"
-            mongodb-version: "8.0"
+            mongodb-version: "8.2"
             topology: "sharded_cluster"
           - os: "ubuntu-22.04"
             php-version: "8.1"
@@ -48,6 +48,11 @@ jobs:
             php-version: "8.1"
             mongodb-version: "6.0"
             topology: "sharded_cluster"
+          - os: "ubuntu-24.04"
+            php-version: "8.6"
+            mongodb-version: "8.2"
+            topology: "replica_set"
+            allow_failures: true
 
     steps:
       - name: "Checkout"
@@ -106,7 +111,7 @@ jobs:
           version: ${{ env.PHP_VERSION }}
 
       - name: "Write changelog file for packaging"
-        run: echo "Testing" > changelog
+        run: echo 'Testing <special> & "chars" to exercise XML escaping' > changelog
 
       - name: "Build package.xml"
         run: "make package.xml RELEASE_NOTES_FILE=$(pwd)/changelog"
@@ -148,7 +153,6 @@ jobs:
           - "8.3"
           - "8.4"
           - "8.5"
-        arch: [ x64, x86 ]
         ts: [ ts, nts ]
 
     steps:
@@ -167,7 +171,6 @@ jobs:
         uses: ./.github/actions/windows/build
         with:
           php-version: ${{ matrix.php-version }}
-          arch: ${{ matrix.arch }}
           ts: ${{ matrix.ts }}
           run-tests: true
         env:
@@ -178,20 +181,13 @@ jobs:
 
   test-system-libs:
     name: "System Library Tests"
-    # Runs from v2.5 onward only. On v1.21 and v2.1 the driver does not capture
-    # the trace output of the libmongoc 1.x that this job builds, which would
-    # break every test in it. Remove a branch from the list once the driver
-    # there handles those traces.
-    if: ${{ !contains(fromJSON('["v1.21","v2.1"]'), github.base_ref || github.ref_name) }}
     runs-on: "ubuntu-latest"
     env:
       PHP_VERSION: "8.3"
-      # Note: omit the patch version so apt prefix-matches any 1.x.y patch release.
-      # The published apt repository only keeps recent releases, and config.m4
-      # accepts any libmongocrypt >= 1.12.0.
+      # Note: omit the patch version so apt prefix-matches any 1.x.y patch release
       LIBMONGOCRYPT_VERSION: "1.20"
       # Note: include the patch version when referring to a libmongoc release tarball
-      LIBMONGOC_VERSION: "1.30.12"
+      LIBMONGOC_VERSION: "2.5.5"
       SERVER_VERSION: "8.0"
 
     steps:
@@ -218,7 +214,7 @@ jobs:
 
       - name: "Check driver version"
         shell: bash
-        run: php -n -d extension=modules/mongodb.so --ri mongodb
+        run: make show-config
 
       - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97  # v7.0.0
         with:
@@ -259,7 +255,7 @@ jobs:
     name: "Static PHP Build (${{ matrix.mode }})"
     runs-on: "ubuntu-latest"
     env:
-      PHP_VERSION: "8.4.26"
+      PHP_VERSION: "8.5.5"
 
     strategy:
       matrix:
@@ -332,7 +328,7 @@ jobs:
     name: "Out-of-source Build"
     runs-on: "ubuntu-latest"
     env:
-      PHP_VERSION: "8.4"
+      PHP_VERSION: "8.5"
 
     steps:
       - name: "Checkout"

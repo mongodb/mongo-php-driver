@@ -11,9 +11,11 @@ var_dump(new MongoDB\Driver\WriteConcern(1, 2147483648));
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-object(MongoDB\Driver\WriteConcern)#%d (%d) {
+object(MongoDB\Driver\WriteConcern)#%d (3) {
   ["w"]=>
   int(1)
+  ["j"]=>
+  NULL
   ["wtimeout"]=>
   int(2147483648)
 }

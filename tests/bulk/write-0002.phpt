@@ -70,9 +70,11 @@ object(MongoDB\Driver\BulkWrite)#%d (%d) {
   ["session"]=>
   NULL
   ["write_concern"]=>
-  array(%d) {
+  object(MongoDB\Driver\WriteConcern)#%d (%d) {
     ["w"]=>
     int(1)
+    ["j"]=>
+    NULL
     ["wtimeout"]=>
     int(1000)
   }
