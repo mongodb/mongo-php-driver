@@ -32,6 +32,23 @@ will report `phpinfo()` output for the extension:
 $ php --ri mongodb
 ```
 
+## Testing the PECL package on Alpine Linux
+
+Alpine Linux uses musl libc instead of glibc and does not include zstd by default. It is
+a popular base image for PHP Docker containers and represents a distinct build environment
+from RHEL/Debian. Testing PECL installation on Alpine catches issues that would not appear
+on glibc-based systems, such as missing POSIX extensions (e.g. `GLOB_BRACE`) or generated
+config headers that are incorrectly bundled in the package.
+
+First generate the PECL package, then test installation on Alpine:
+
+```
+make package.xml RELEASE_NOTES_FILE=/dev/null
+make package
+cp mongodb-*.tgz .github/docker/
+docker build .github/docker/ -f .github/docker/Dockerfile.pecl-alpine
+```
+
 ## Generating arginfo from stub files
 
 Arginfo structures are generated from stub files using the `gen_stub.php`
@@ -142,7 +159,7 @@ The test suite references the following environment variables:
    [drivers-evergreen-tools](https://github.com/mongodb-labs/drivers-evergreen-tools).
    If undefined or inaccessible, tests requiring certificates will be skipped.
 
-The following environment variable is used for [stable API testing](https://github.com/mongodb/specifications/blob/master/source/versioned-api/tests/README.rst):
+The following environment variable is used for [stable API testing](https://github.com/mongodb/specifications/blob/master/source/versioned-api/tests/README.md):
 
  * `API_VERSION`: If defined, this value will be used to construct a
    [`MongoDB\Driver\ServerApi`](https://www.php.net/manual/en/mongodb-driver-serverapi.construct.php),
@@ -150,7 +167,7 @@ The following environment variable is used for [stable API testing](https://gith
    [`MongoDB\Driver\Manager`](https://www.php.net/manual/en/class.mongodb-driver-manager.php)
    objects created by the test suite.
 
-The following environment variables are used for [CSFLE testing](https://github.com/mongodb/specifications/blob/master/source/client-side-encryption/tests/README.rst):
+The following environment variables are used for [CSFLE testing](https://github.com/mongodb/specifications/blob/master/source/client-side-encryption/tests/README.md):
 
  * `CRYPT_SHARED_LIB_PATH`: If defined, this value will be used to set the
    `cryptSharedLibPath` autoEncryption driver option for
@@ -213,13 +230,13 @@ git checkout 1.20.0
 During development, it may be necessary to temporarily point the submodule to a
 commit on the developer's fork. For instance, the developer may be working on a
 PHP driver feature that depends on unmerged or unreleased changes. In this case,
-the submodule path can be updated using the `git submodules set-url` command can
-be used to change the URL, and `git submodules set-branch` can be used to point
-the submodule to a development branch:
+the submodule path can be updated using the `git submodule set-url` command to
+change the URL, and `git submodule set-branch` can be used to point the
+submodule to a development branch:
 
 ```shell
-git submodules set-url src/libmongoc https://github.com/<owner>/<repo>.git
-git submodules set-branch -b <branch> src/libmongoc
+git submodule set-url src/libmongoc https://github.com/<owner>/<repo>.git
+git submodule set-branch -b <branch> src/libmongoc
 ```
 
 #### Ensure version information is correct
@@ -283,6 +300,18 @@ against two additional versions of libmongoc:
 - The upcoming patch release of the current libmongoc minor version (e.g. the
   `r1.x` branch)
 - The upcoming minor release of libmongoc (e.g. the `master` branch)
+
+#### Update tested system library versions in GitHub Actions
+
+GitHub Actions tests against libmongoc and libmongocrypt system libraries. When
+updating the version number for each dependency in `config.m4` you must also
+update the `LIBMONGOC_VERSION` and `LIBMONGOCRYPT_VERSION` environment variables
+of the `test-system-libs` job in `.github/workflows/tests.yml`.
+
+On this branch the job is skipped, because the trace output of the libmongoc 1.x
+built by the job is not captured by the driver and would break every test in it.
+It runs again from v2.5 onward; remove the branch from the condition when it can
+run here.
 
 #### Update sources in PECL package generation script
 
