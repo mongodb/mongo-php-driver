@@ -109,11 +109,7 @@ function skip_if_not_replica_set_or_sharded_cluster_with_replica_set()
 
 function skip_if_no_transactions()
 {
-    if (is_sharded_cluster_with_replica_set(URI)) {
-        skip_if_server_version('<', '4.2');
-    } elseif (is_replica_set(URI)) {
-        skip_if_server_version('<', '4.0');
-    } else {
+    if (! is_sharded_cluster_with_replica_set(URI) && ! is_replica_set(URI)) {
         exit('skip topology does not support transactions');
     }
 }
@@ -438,28 +434,6 @@ function skip_if_not_clean($databaseName = DATABASE_NAME, $collectionName = COLL
     /* Since this function modifies the state of the database, we need it to run
      * each time before a test. */
     disable_skipif_caching();
-}
-
-function skip_if_no_getmore_failpoint()
-{
-    $serverVersion = get_server_version(URI);
-
-    if (version_compare($serverVersion, '4.0', '<')) {
-        exit("skip Server version '$serverVersion' does not support a getMore failpoint'");
-    }
-}
-
-function skip_if_no_failcommand_failpoint()
-{
-    skip_if_test_commands_disabled();
-
-    $serverVersion = get_server_version(URI);
-
-    if (is_mongos(URI) && version_compare($serverVersion, '4.1.8', '<')) {
-        exit("skip mongos version '$serverVersion' does not support 'failCommand' failpoint'");
-    } elseif (version_compare($serverVersion, '4.0', '<')) {
-        exit("skip mongod version '$serverVersion' does not support 'failCommand' failpoint'");
-    }
 }
 
 function skip_if_no_mongo_orchestration()

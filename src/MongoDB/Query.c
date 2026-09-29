@@ -39,7 +39,7 @@ static bool php_phongo_query_opts_append_string(bson_t* opts, const char* opts_k
 	zval* value = php_array_fetch_deref(zarr, zarr_key);
 
 	if (Z_TYPE_P(value) != IS_STRING) {
-		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"%s\" %s to be string, %s given", zarr_key, zarr_key[0] == '$' ? "modifier" : "option", zend_zval_type_name(value));
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"%s\" option to be string, %s given", zarr_key, zend_zval_type_name(value));
 		return false;
 	}
 
@@ -59,7 +59,7 @@ static bool php_phongo_query_opts_append_document(bson_t* opts, const char* opts
 	bson_t b     = BSON_INITIALIZER;
 
 	if (Z_TYPE_P(value) != IS_OBJECT && Z_TYPE_P(value) != IS_ARRAY) {
-		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"%s\" %s to be array or object, %s given", zarr_key, zarr_key[0] == '$' ? "modifier" : "option", zend_zval_type_name(value));
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"%s\" option to be array or object, %s given", zarr_key, zend_zval_type_name(value));
 		return false;
 	}
 
@@ -71,7 +71,7 @@ static bool php_phongo_query_opts_append_document(bson_t* opts, const char* opts
 	}
 
 	if (!bson_validate(&b, BSON_VALIDATE_EMPTY_KEYS, NULL)) {
-		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Cannot use empty keys in \"%s\" %s", zarr_key, zarr_key[0] == '$' ? "modifier" : "option");
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Cannot use empty keys in \"%s\" option", zarr_key);
 		bson_destroy(&b);
 		return false;
 	}
@@ -110,19 +110,13 @@ static bool php_phongo_query_opts_append_value(bson_t* opts, const char* opts_ke
 	return true;
 }
 
-#define PHONGO_QUERY_OPT_BOOL_EX(opt, zarr, key, deprecated)                                                                      \
-	if ((zarr) && php_array_existsc((zarr), (key))) {                                                                             \
-		if ((deprecated)) {                                                                                                       \
-			php_error_docref(NULL, E_DEPRECATED, "The \"%s\" option is deprecated and will be removed in a future release", key); \
-		}                                                                                                                         \
-		if (!BSON_APPEND_BOOL(intern->opts, (opt), php_array_fetchc_bool((zarr), (key)))) {                                       \
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Error appending \"%s\" option", (opt));                        \
-			return false;                                                                                                         \
-		}                                                                                                                         \
+#define PHONGO_QUERY_OPT_BOOL(opt, zarr, key)                                                              \
+	if ((zarr) && php_array_existsc((zarr), (key))) {                                                      \
+		if (!BSON_APPEND_BOOL(intern->opts, (opt), php_array_fetchc_bool((zarr), (key)))) {                \
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Error appending \"%s\" option", (opt)); \
+			return false;                                                                                  \
+		}                                                                                                  \
 	}
-
-#define PHONGO_QUERY_OPT_BOOL(opt, zarr, key) PHONGO_QUERY_OPT_BOOL_EX((opt), (zarr), (key), 0)
-#define PHONGO_QUERY_OPT_BOOL_DEPRECATED(opt, zarr, key) PHONGO_QUERY_OPT_BOOL_EX((opt), (zarr), (key), 1)
 
 #define PHONGO_QUERY_OPT_BSON_VALUE(opt, zarr, key)                                    \
 	if ((zarr) && php_array_existsc((zarr), (key))) {                                  \
@@ -140,20 +134,13 @@ static bool php_phongo_query_opts_append_value(bson_t* opts, const char* opts_ke
 
 /* Note: handling of integer options will depend on SIZEOF_ZEND_LONG and we
  * are not converting strings to 64-bit integers for 32-bit platforms. */
-
-#define PHONGO_QUERY_OPT_INT64_EX(opt, zarr, key, deprecated)                                                                     \
-	if ((zarr) && php_array_existsc((zarr), (key))) {                                                                             \
-		if ((deprecated)) {                                                                                                       \
-			php_error_docref(NULL, E_DEPRECATED, "The \"%s\" option is deprecated and will be removed in a future release", key); \
-		}                                                                                                                         \
-		if (!BSON_APPEND_INT64(intern->opts, (opt), php_array_fetchc_long((zarr), (key)))) {                                      \
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Error appending \"%s\" option", (opt));                        \
-			return false;                                                                                                         \
-		}                                                                                                                         \
+#define PHONGO_QUERY_OPT_INT64(opt, zarr, key)                                                             \
+	if ((zarr) && php_array_existsc((zarr), (key))) {                                                      \
+		if (!BSON_APPEND_INT64(intern->opts, (opt), php_array_fetchc_long((zarr), (key)))) {               \
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Error appending \"%s\" option", (opt)); \
+			return false;                                                                                  \
+		}                                                                                                  \
 	}
-
-#define PHONGO_QUERY_OPT_INT64(opt, zarr, key) PHONGO_QUERY_OPT_INT64_EX((opt), (zarr), (key), 0)
-#define PHONGO_QUERY_OPT_INT64_DEPRECATED(opt, zarr, key) PHONGO_QUERY_OPT_INT64_EX((opt), (zarr), (key), 1)
 
 #define PHONGO_QUERY_OPT_STRING(opt, zarr, key)                                         \
 	if ((zarr) && php_array_existsc((zarr), (key))) {                                   \
@@ -165,12 +152,10 @@ static bool php_phongo_query_opts_append_value(bson_t* opts, const char* opts_ke
 /* Initialize the "hint" option. Returns true on success; otherwise, false is
  * returned and an exception is thrown.
  *
- * The "hint" option (or "$hint" modifier) must be a string or document. Check
- * for both types and merge into BSON options accordingly. */
-static bool php_phongo_query_init_hint(php_phongo_query_t* intern, zval* options, zval* modifiers)
+ * The "hint" option must be a string or document. Check for both types and
+ * merge into BSON options accordingly. */
+static bool php_phongo_query_init_hint(php_phongo_query_t* intern, zval* options)
 {
-	/* The "hint" option (or "$hint" modifier) must be a string or document.
-	 * Check for both types and merge into BSON options accordingly. */
 	if (php_array_existsc(options, "hint")) {
 		zend_uchar type = Z_TYPE_P(php_array_fetchc_deref(options, "hint"));
 
@@ -182,52 +167,6 @@ static bool php_phongo_query_init_hint(php_phongo_query_t* intern, zval* options
 			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"hint\" option to be string, array, or object, %s given", zend_get_type_by_const(type));
 			return false;
 		}
-	} else if (modifiers && php_array_existsc(modifiers, "$hint")) {
-		zend_uchar type = Z_TYPE_P(php_array_fetchc_deref(modifiers, "$hint"));
-
-		if (type == IS_STRING) {
-			PHONGO_QUERY_OPT_STRING("hint", modifiers, "$hint");
-		} else if (type == IS_OBJECT || type == IS_ARRAY) {
-			PHONGO_QUERY_OPT_DOCUMENT("hint", modifiers, "$hint");
-		} else {
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"$hint\" modifier to be string, array, or object, %s given", zend_get_type_by_const(type));
-			return false;
-		}
-	}
-
-	return true;
-}
-
-/* Initialize the "limit" and "singleBatch" options. Returns true on success;
- * otherwise, false is returned and an exception is thrown.
- *
- * mongoc_collection_find_with_opts() requires a non-negative limit. For
- * backwards compatibility, a negative limit should be set as a positive value
- * and default singleBatch to true. */
-static bool php_phongo_query_init_limit_and_singlebatch(php_phongo_query_t* intern, zval* options)
-{
-	if (php_array_fetchc_long(options, "limit") < 0) {
-		zend_long limit = php_array_fetchc_long(options, "limit");
-
-		php_error_docref(NULL, E_DEPRECATED, "Support for negative \"limit\" values is deprecated and will be removed in ext-mongodb 2.0");
-
-		if (!BSON_APPEND_INT64(intern->opts, "limit", -limit)) {
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Error appending \"limit\" option");
-			return false;
-		}
-
-		if (php_array_existsc(options, "singleBatch") && !php_array_fetchc_bool(options, "singleBatch")) {
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Negative \"limit\" option conflicts with false \"singleBatch\" option");
-			return false;
-		} else {
-			if (!BSON_APPEND_BOOL(intern->opts, "singleBatch", true)) {
-				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Error appending \"singleBatch\" option");
-				return false;
-			}
-		}
-	} else {
-		PHONGO_QUERY_OPT_INT64("limit", options, "limit");
-		PHONGO_QUERY_OPT_BOOL("singleBatch", options, "singleBatch");
 	}
 
 	return true;
@@ -289,14 +228,10 @@ static bool php_phongo_query_init_max_await_time_ms(php_phongo_query_t* intern, 
 }
 
 /* Initializes the query from filter and options arguments and returns whether
- * an error occurred. If query is undefined, it will be initialized.
- *
- * This function will fall back to a modifier in the absence of a top-level
- * option (where applicable). */
+ * an error occurred. If query is undefined, it will be initialized. */
 bool phongo_query_init(zval* return_value, zval* filter, zval* options)
 {
 	php_phongo_query_t* intern;
-	zval*               modifiers = NULL;
 
 	if (Z_ISUNDEF_P(return_value)) {
 		object_init_ex(return_value, php_phongo_query_ce);
@@ -332,59 +267,28 @@ bool phongo_query_init(zval* return_value, zval* filter, zval* options)
 		return true;
 	}
 
-	if (php_array_existsc(options, "modifiers")) {
-		modifiers = php_array_fetchc_deref(options, "modifiers");
-
-		if (Z_TYPE_P(modifiers) != IS_ARRAY) {
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"modifiers\" option to be array, %s given", zend_zval_type_name(modifiers));
-			return false;
-		}
-
-		php_error_docref(NULL, E_DEPRECATED, "The \"modifiers\" option is deprecated and will be removed in a future release");
-	}
-
-	PHONGO_QUERY_OPT_BOOL("allowDiskUse", options, "allowDiskUse")
-	PHONGO_QUERY_OPT_BOOL("allowPartialResults", options, "allowPartialResults")
-	else PHONGO_QUERY_OPT_BOOL("allowPartialResults", options, "partial");
+	PHONGO_QUERY_OPT_BOOL("allowDiskUse", options, "allowDiskUse");
+	PHONGO_QUERY_OPT_BOOL("allowPartialResults", options, "allowPartialResults");
 	PHONGO_QUERY_OPT_BOOL("awaitData", options, "awaitData");
 	PHONGO_QUERY_OPT_INT64("batchSize", options, "batchSize");
 	PHONGO_QUERY_OPT_DOCUMENT("collation", options, "collation");
-	PHONGO_QUERY_OPT_BSON_VALUE("comment", options, "comment")
-	else PHONGO_QUERY_OPT_BSON_VALUE("comment", modifiers, "$comment");
+	PHONGO_QUERY_OPT_BSON_VALUE("comment", options, "comment");
 	PHONGO_QUERY_OPT_BOOL("exhaust", options, "exhaust");
 	PHONGO_QUERY_OPT_DOCUMENT("let", options, "let");
-	PHONGO_QUERY_OPT_DOCUMENT("max", options, "max")
-	else PHONGO_QUERY_OPT_DOCUMENT("max", modifiers, "$max");
-	PHONGO_QUERY_OPT_INT64_DEPRECATED("maxScan", options, "maxScan")
-	else PHONGO_QUERY_OPT_INT64_DEPRECATED("maxScan", modifiers, "$maxScan");
-	PHONGO_QUERY_OPT_INT64("maxTimeMS", options, "maxTimeMS")
-	else PHONGO_QUERY_OPT_INT64("maxTimeMS", modifiers, "$maxTimeMS");
-	PHONGO_QUERY_OPT_DOCUMENT("min", options, "min")
-	else PHONGO_QUERY_OPT_DOCUMENT("min", modifiers, "$min");
+	PHONGO_QUERY_OPT_INT64("limit", options, "limit");
+	PHONGO_QUERY_OPT_DOCUMENT("max", options, "max");
+	PHONGO_QUERY_OPT_INT64("maxTimeMS", options, "maxTimeMS");
+	PHONGO_QUERY_OPT_DOCUMENT("min", options, "min");
 	PHONGO_QUERY_OPT_BOOL("noCursorTimeout", options, "noCursorTimeout");
-	PHONGO_QUERY_OPT_BOOL_DEPRECATED("oplogReplay", options, "oplogReplay");
 	PHONGO_QUERY_OPT_DOCUMENT("projection", options, "projection");
-	PHONGO_QUERY_OPT_BOOL("returnKey", options, "returnKey")
-	else PHONGO_QUERY_OPT_BOOL("returnKey", modifiers, "$returnKey");
-	PHONGO_QUERY_OPT_BOOL("showRecordId", options, "showRecordId")
-	else PHONGO_QUERY_OPT_BOOL("showRecordId", modifiers, "$showDiskLoc");
+	PHONGO_QUERY_OPT_BOOL("returnKey", options, "returnKey");
+	PHONGO_QUERY_OPT_BOOL("showRecordId", options, "showRecordId");
+	PHONGO_QUERY_OPT_BOOL("singleBatch", options, "singleBatch");
 	PHONGO_QUERY_OPT_INT64("skip", options, "skip");
-	PHONGO_QUERY_OPT_DOCUMENT("sort", options, "sort")
-	else PHONGO_QUERY_OPT_DOCUMENT("sort", modifiers, "$orderby");
-	PHONGO_QUERY_OPT_BOOL_DEPRECATED("snapshot", options, "snapshot")
-	else PHONGO_QUERY_OPT_BOOL_DEPRECATED("snapshot", modifiers, "$snapshot");
+	PHONGO_QUERY_OPT_DOCUMENT("sort", options, "sort");
 	PHONGO_QUERY_OPT_BOOL("tailable", options, "tailable");
 
-	/* The "$explain" modifier should be converted to an "explain" option, which
-	 * libmongoc will later convert back to a modifier for the OP_QUERY code
-	 * path. This modifier will be ignored for the find command code path. */
-	PHONGO_QUERY_OPT_BOOL("explain", modifiers, "$explain");
-
-	if (!php_phongo_query_init_hint(intern, options, modifiers)) {
-		return false;
-	}
-
-	if (!php_phongo_query_init_limit_and_singlebatch(intern, options)) {
+	if (!php_phongo_query_init_hint(intern, options)) {
 		return false;
 	}
 
@@ -399,14 +303,10 @@ bool phongo_query_init(zval* return_value, zval* filter, zval* options)
 	return true;
 }
 
-#undef PHONGO_QUERY_OPT_BOOL_EX
 #undef PHONGO_QUERY_OPT_BOOL
-#undef PHONGO_QUERY_OPT_BOOL_DEPRECATED
 #undef PHONGO_QUERY_OPT_BSON_VALUE
 #undef PHONGO_QUERY_OPT_DOCUMENT
-#undef PHONGO_QUERY_OPT_INT64_EX
 #undef PHONGO_QUERY_OPT_INT64
-#undef PHONGO_QUERY_OPT_INT64_DEPRECATED
 #undef PHONGO_QUERY_OPT_STRING
 
 /* Constructs a new Query */

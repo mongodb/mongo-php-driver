@@ -5,11 +5,11 @@ PHPC-1598: BSON type get_gc should delegate to zend_std_get_properties
 <?php skip_if_php_version('>=', '8.1.99'); ?>
 --FILE--
 <?php
+require_once __DIR__ . "/../utils/basic.inc";
 
 $tests = [
     [ 'binary' => new MongoDB\BSON\Binary('foo', MongoDB\BSON\Binary::TYPE_GENERIC) ],
-    // Use serialized strings to construct types with disabled constructors
-    [ 'dbpointer' => unserialize('C:22:"MongoDB\BSON\DBPointer":76:{a:2:{s:3:"ref";s:11:"phongo.test";s:2:"id";s:24:"5a2e78accd485d55b4050000";}}') ],
+    [ 'dbpointer' => createDBPointer(), ],
     [ 'decimal128' => new MongoDB\BSON\Decimal128('1234.5678') ],
     [ 'int64' => new MongoDB\BSON\Int64('9223372036854775807') ],
     // JavaScript w/ scope may not be necessary (same code path as w/o scope), but we'll test it anyway
@@ -20,7 +20,7 @@ $tests = [
     [ 'minkey' => new MongoDB\BSON\MinKey ],
     [ 'objectid' => new MongoDB\BSON\ObjectId ],
     [ 'regex' => new MongoDB\BSON\Regex('pattern', 'i') ],
-    [ 'symbol' => unserialize('C:19:"MongoDB\BSON\Symbol":38:{a:1:{s:6:"symbol";s:11:"symbolValue";}}') ],
+    [ 'symbol' => createSymbol() ],
     [ 'timestamp' => new MongoDB\BSON\Timestamp(1234, 5678) ],
     [ 'utcdatetime' => new MongoDB\BSON\UTCDateTime ],
 ];

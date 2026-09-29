@@ -1,7 +1,7 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 2954181cca6d68d40bf46d5ffad15f3ccbc73b72 */
+ * Stub hash: b9746862d533c46cd8977bde20093fe92d8f4440 */
 
-ZEND_BEGIN_ARG_WITH_TENTATIVE_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_BSON_Unserializable_bsonUnserialize, 0, 1, IS_VOID, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_BSON_Unserializable_bsonUnserialize, 0, 1, IS_VOID, 0)
 	ZEND_ARG_TYPE_INFO(0, data, IS_ARRAY, 0)
 ZEND_END_ARG_INFO()
 

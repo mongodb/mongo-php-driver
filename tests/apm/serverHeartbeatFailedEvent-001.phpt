@@ -3,7 +3,7 @@ MongoDB\Driver\Monitoring\ServerHeartbeatFailedEvent
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_live(); ?>
-<?php skip_if_no_failcommand_failpoint(); ?>
+<?php skip_if_test_commands_disabled(); ?>
 <?php skip_if_not_standalone(); ?>
 <?php skip_if_auth(); ?>
 --FILE--

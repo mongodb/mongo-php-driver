@@ -7,7 +7,7 @@
 
 namespace MongoDB\BSON;
 
-final class Regex implements RegexInterface, \JsonSerializable, Type, \Serializable, \Stringable
+final class Regex implements RegexInterface, \JsonSerializable, Type, \Stringable
 {
     final public function __construct(string $pattern, string $flags = '') {}
 
@@ -18,10 +18,6 @@ final class Regex implements RegexInterface, \JsonSerializable, Type, \Serializa
     final public function __toString(): string {}
 
     final public static function __set_state(array $properties): Regex {}
-
-    final public function serialize(): string {}
-
-    final public function unserialize(string $data): void {}
 
     final public function __unserialize(array $data): void {}
 

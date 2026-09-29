@@ -7,7 +7,7 @@
 
 namespace MongoDB\BSON;
 
-final class Javascript implements JavascriptInterface, \JsonSerializable, Type, \Serializable, \Stringable
+final class Javascript implements JavascriptInterface, \JsonSerializable, Type, \Stringable
 {
     final public function __construct(string $code, array|object|null $scope = null) {}
 
@@ -18,10 +18,6 @@ final class Javascript implements JavascriptInterface, \JsonSerializable, Type, 
     final public function getScope(): ?object {}
 
     final public function __toString(): string {}
-
-    final public function serialize(): string {}
-
-    final public function unserialize(string $data): void {}
 
     final public function __unserialize(array $data): void {}
 

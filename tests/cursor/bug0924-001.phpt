@@ -17,8 +17,7 @@ class MyDocument implements MongoDB\BSON\Serializable, MongoDB\BSON\Unserializab
         $this->data['_id'] = $id;
     }
 
-    #[\ReturnTypeWillChange]
-    public function bsonSerialize()
+    public function bsonSerialize(): \stdClass
     {
         return (object) $this->data;
     }

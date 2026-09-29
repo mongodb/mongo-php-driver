@@ -1,8 +1,8 @@
 --TEST--
-MongoDB\Driver\CursorInterface extends Traversable
+MongoDB\Driver\CursorInterface extends Iterator
 --FILE--
 <?php
-var_dump(in_array('Traversable', class_implements('MongoDB\Driver\CursorInterface')));
+var_dump(in_array('Iterator', class_implements('MongoDB\Driver\CursorInterface')));
 ?>
 ===DONE===
 <?php exit(0); ?>
