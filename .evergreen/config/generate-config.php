@@ -19,6 +19,7 @@ $supportedMongoDBVersions = [
     '5.0',
     '4.4',
     '4.2',
+    '4.0',
 ];
 
 // TODO: Change when PHP 8.4 is stable
