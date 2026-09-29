@@ -106,8 +106,7 @@ static void phongo_topologydescription_free_object(zend_object* object)
 	zend_object_std_dtor(&intern->std);
 
 	if (intern->properties) {
-		zend_hash_destroy(intern->properties);
-		FREE_HASHTABLE(intern->properties);
+		zend_hash_release(intern->properties);
 	}
 
 	if (intern->topology_description) {
