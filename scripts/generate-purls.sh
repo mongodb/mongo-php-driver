@@ -1,9 +1,8 @@
 #!/usr/bin/env bash
 
 # Writes the purls for the bundled dependencies to stdout, derived from the
-# version files that accompany the submodules. Shared by update-sbom.sh, which
-# feeds them to silkbomb, and by the check-sbom workflow, which compares them
-# against the committed sbom.json.
+# version files that accompany the submodules. Used by the check-sbom workflow,
+# which compares them against the committed sbom.json.
 
 set -euo pipefail
 
