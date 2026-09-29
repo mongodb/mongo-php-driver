@@ -1,4 +1,4 @@
-#!/bin/env php
+#!/usr/bin/env php
 <?php
 
 // Supported PHP versions. Add new versions to the beginning of the list

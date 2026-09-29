@@ -1,4 +1,38 @@
 tasks:
+  - name: "test-pecl-package"
+    tags: ["pecl", "nodb", "pr", "tag"]
+    commands:
+      - command: shell.exec
+        type: test
+        params:
+          working_dir: "src"
+          add_expansions_to_env: true
+          script: |
+            set -o errexit
+
+            PHP_PATH=$(find /opt/php/ -maxdepth 1 -type d -name "${PHP_VERSION}*-64bit" -print | sort -V -r | head -n 1)/bin
+            export PATH="$PHP_PATH:$PATH"
+            echo "PHP: $(php --version | head -n 1)"
+
+            # Compile the extension: required to generate the Makefile and to
+            # make MONGODB_VERSION available for `make package.xml`
+            phpize
+            ./configure --enable-mongodb-developer-flags
+            make all
+
+            echo "Testing" > changelog
+            make package.xml RELEASE_NOTES_FILE=$(pwd)/changelog
+            make package
+
+            PACKAGE_VERSION=$(./bin/update-release-version.php get-version)
+            PACKAGE_FILE="mongodb-$PACKAGE_VERSION.tgz"
+
+            # Install via PECL (fresh configure + build in a temp directory, same as a real user install)
+            # Redirect stdin from /dev/null to prevent PECL from reading the rest of the script when
+            # prompting for configure options (it would use the next script line as the first answer).
+            pecl install "$PACKAGE_FILE" < /dev/null
+            php -d extension="$(php-config --extension-dir)/mongodb.so" --ri mongodb
+
   - name: "test-atlas-connectivity"
     tags: ["atlas", "nodb", "pr", "tag"]
     commands:

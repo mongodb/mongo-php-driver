@@ -6,3 +6,6 @@
 	path = src/libmongocrypt
 	url = https://github.com/mongodb/libmongocrypt.git
 	ignore = untracked
+[submodule "tests/drivers-evergreen-tools"]
+	path = tests/drivers-evergreen-tools
+	url = https://github.com/mongodb-labs/drivers-evergreen-tools.git

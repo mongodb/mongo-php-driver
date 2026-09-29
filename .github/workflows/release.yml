@@ -119,7 +119,7 @@ jobs:
 
       - name: "Determine branch to merge up to"
         id: get-next-branch
-        uses: alcaeus/automatic-merge-up-action/get-next-branch@a43d2c2d3ed5a92a1fce3e3bde21c27c578f50d3  # 1.0.0
+        uses: alcaeus/automatic-merge-up-action/get-next-branch@e23e7c71d58f12531cbaba73473bbe78fd14baf0  # 1.0.1
         with:
           ref: ${{ github.ref_name }}
           branchNamePattern: 'v<major>.<minor>'
