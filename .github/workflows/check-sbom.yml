@@ -8,6 +8,7 @@ on:
     paths:
       - ".github/workflows/check-sbom.yml"
       - "sbom.json"
+      - "scripts/generate-purls.sh"
       - "src/libmongoc"
       - "src/libmongocrypt"
   push:
@@ -17,6 +18,7 @@ on:
     paths:
       - ".github/workflows/check-sbom.yml"
       - "sbom.json"
+      - "scripts/generate-purls.sh"
       - "src/libmongoc"
       - "src/libmongocrypt"
 
@@ -27,7 +29,7 @@ jobs:
 
     steps:
       - name: "Checkout"
-        uses: "actions/checkout@v7"
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
         with:
           # The purls are derived from version files inside the submodules
           submodules: true

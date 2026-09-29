@@ -1,10 +1,15 @@
 version: 2
 updates:
   - package-ecosystem: "github-actions"
+    target-branch: "v1.21"
     directory: "/"
     schedule:
       interval: "weekly"
+  # Note: the gitsubmodule ecosystem reads the .gitmodules file at the root of
+  # the repository, so the directory must stay "/". Restrict the update to the
+  # drivers-evergreen-tools submodule instead.
   - package-ecosystem: "gitsubmodule"
+    target-branch: "v1.21"
     directory: "/"
     schedule:
       interval: "weekly"

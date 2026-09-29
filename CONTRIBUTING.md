@@ -235,9 +235,9 @@ git checkout 2.1.0
 During development, it may be necessary to temporarily point the submodule to a
 commit on the developer's fork. For instance, the developer may be working on a
 PHP driver feature that depends on unmerged or unreleased changes. In this case,
-the submodule path can be updated using the `git submodule set-url` command can
-be used to change the URL, and `git submodule set-branch` can be used to point
-the submodule to a development branch:
+the submodule path can be updated using the `git submodule set-url` command to
+change the URL, and `git submodule set-branch` can be used to point the
+submodule to a development branch:
 
 ```shell
 git submodule set-url src/libmongoc https://github.com/<owner>/<repo>.git
@@ -302,7 +302,8 @@ against two additional versions of libmongoc:
 
 GitHub Actions tests against libmongoc and libmongocrypt system libraries. When
 updating the version number for each dependency in `config.m4` you must also
-update environment variables for the `test-system-libs` job in `tests.yml`.
+update the `LIBMONGOC_VERSION` and `LIBMONGOCRYPT_VERSION` environment variables
+of the `test-system-libs` job in `.github/workflows/tests.yml`.
 
 #### Update sources in PECL package generation script
 
