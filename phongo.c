@@ -343,8 +343,7 @@ PHP_RSHUTDOWN_FUNCTION(mongodb) /* {{{ */
 {
 	/* Destroy HashTable for loggers, which was initialized in RINIT. */
 	if (MONGODB_G(loggers)) {
-		zend_hash_destroy(MONGODB_G(loggers));
-		FREE_HASHTABLE(MONGODB_G(loggers));
+		zend_hash_release(MONGODB_G(loggers));
 		MONGODB_G(loggers) = NULL;
 	}
 
@@ -353,8 +352,7 @@ PHP_RSHUTDOWN_FUNCTION(mongodb) /* {{{ */
 
 	/* Destroy HashTable for APM subscribers, which was initialized in RINIT. */
 	if (MONGODB_G(subscribers)) {
-		zend_hash_destroy(MONGODB_G(subscribers));
-		FREE_HASHTABLE(MONGODB_G(subscribers));
+		zend_hash_release(MONGODB_G(subscribers));
 		MONGODB_G(subscribers) = NULL;
 	}
 
@@ -366,15 +364,13 @@ PHP_RSHUTDOWN_FUNCTION(mongodb) /* {{{ */
 	 * is no need to use zend_hash_graceful_reverse_destroy here like we do for
 	 * persistent clients; moreover, the HashTable should already be empty. */
 	if (MONGODB_G(request_clients)) {
-		zend_hash_destroy(MONGODB_G(request_clients));
-		FREE_HASHTABLE(MONGODB_G(request_clients));
+		zend_hash_release(MONGODB_G(request_clients));
 		MONGODB_G(request_clients) = NULL;
 	}
 
 	/* Destroy HashTable for Managers, which was initialized in RINIT. */
 	if (MONGODB_G(managers)) {
-		zend_hash_destroy(MONGODB_G(managers));
-		FREE_HASHTABLE(MONGODB_G(managers));
+		zend_hash_release(MONGODB_G(managers));
 		MONGODB_G(managers) = NULL;
 	}
 

@@ -118,8 +118,7 @@ static void phongo_apm_command_started(const mongoc_apm_command_started_t* event
 	zval_ptr_dtor(&z_event);
 
 cleanup:
-	zend_hash_destroy(subscribers);
-	FREE_HASHTABLE(subscribers);
+	zend_hash_release(subscribers);
 }
 
 static void phongo_apm_command_succeeded(const mongoc_apm_command_succeeded_t* event)
@@ -142,8 +141,7 @@ static void phongo_apm_command_succeeded(const mongoc_apm_command_succeeded_t* e
 	zval_ptr_dtor(&z_event);
 
 cleanup:
-	zend_hash_destroy(subscribers);
-	FREE_HASHTABLE(subscribers);
+	zend_hash_release(subscribers);
 }
 
 static void phongo_apm_command_failed(const mongoc_apm_command_failed_t* event)
@@ -165,8 +163,7 @@ static void phongo_apm_command_failed(const mongoc_apm_command_failed_t* event)
 	zval_ptr_dtor(&z_event);
 
 cleanup:
-	zend_hash_destroy(subscribers);
-	FREE_HASHTABLE(subscribers);
+	zend_hash_release(subscribers);
 }
 
 static void phongo_apm_server_changed(const mongoc_apm_server_changed_t* event)
@@ -188,8 +185,7 @@ static void phongo_apm_server_changed(const mongoc_apm_server_changed_t* event)
 	zval_ptr_dtor(&z_event);
 
 cleanup:
-	zend_hash_destroy(subscribers);
-	FREE_HASHTABLE(subscribers);
+	zend_hash_release(subscribers);
 }
 
 static void phongo_apm_server_closed(const mongoc_apm_server_closed_t* event)
@@ -211,8 +207,7 @@ static void phongo_apm_server_closed(const mongoc_apm_server_closed_t* event)
 	zval_ptr_dtor(&z_event);
 
 cleanup:
-	zend_hash_destroy(subscribers);
-	FREE_HASHTABLE(subscribers);
+	zend_hash_release(subscribers);
 }
 
 static void phongo_apm_server_heartbeat_failed(const mongoc_apm_server_heartbeat_failed_t* event)
@@ -234,8 +229,7 @@ static void phongo_apm_server_heartbeat_failed(const mongoc_apm_server_heartbeat
 	zval_ptr_dtor(&z_event);
 
 cleanup:
-	zend_hash_destroy(subscribers);
-	FREE_HASHTABLE(subscribers);
+	zend_hash_release(subscribers);
 }
 
 static void phongo_apm_server_heartbeat_succeeded(const mongoc_apm_server_heartbeat_succeeded_t* event)
@@ -257,8 +251,7 @@ static void phongo_apm_server_heartbeat_succeeded(const mongoc_apm_server_heartb
 	zval_ptr_dtor(&z_event);
 
 cleanup:
-	zend_hash_destroy(subscribers);
-	FREE_HASHTABLE(subscribers);
+	zend_hash_release(subscribers);
 }
 
 static void phongo_apm_server_heartbeat_started(const mongoc_apm_server_heartbeat_started_t* event)
@@ -280,8 +273,7 @@ static void phongo_apm_server_heartbeat_started(const mongoc_apm_server_heartbea
 	zval_ptr_dtor(&z_event);
 
 cleanup:
-	zend_hash_destroy(subscribers);
-	FREE_HASHTABLE(subscribers);
+	zend_hash_release(subscribers);
 }
 
 static void phongo_apm_server_opening(const mongoc_apm_server_opening_t* event)
@@ -303,8 +295,7 @@ static void phongo_apm_server_opening(const mongoc_apm_server_opening_t* event)
 	zval_ptr_dtor(&z_event);
 
 cleanup:
-	zend_hash_destroy(subscribers);
-	FREE_HASHTABLE(subscribers);
+	zend_hash_release(subscribers);
 }
 
 static void phongo_apm_topology_changed(const mongoc_apm_topology_changed_t* event)
@@ -326,8 +317,7 @@ static void phongo_apm_topology_changed(const mongoc_apm_topology_changed_t* eve
 	zval_ptr_dtor(&z_event);
 
 cleanup:
-	zend_hash_destroy(subscribers);
-	FREE_HASHTABLE(subscribers);
+	zend_hash_release(subscribers);
 }
 
 static void phongo_apm_topology_closed(const mongoc_apm_topology_closed_t* event)
@@ -349,8 +339,7 @@ static void phongo_apm_topology_closed(const mongoc_apm_topology_closed_t* event
 	zval_ptr_dtor(&z_event);
 
 cleanup:
-	zend_hash_destroy(subscribers);
-	FREE_HASHTABLE(subscribers);
+	zend_hash_release(subscribers);
 }
 
 static void phongo_apm_topology_opening(const mongoc_apm_topology_opening_t* event)
@@ -372,8 +361,7 @@ static void phongo_apm_topology_opening(const mongoc_apm_topology_opening_t* eve
 	zval_ptr_dtor(&z_event);
 
 cleanup:
-	zend_hash_destroy(subscribers);
-	FREE_HASHTABLE(subscribers);
+	zend_hash_release(subscribers);
 }
 
 /* Assigns APM callbacks to a client, which will notify any global or per-client
