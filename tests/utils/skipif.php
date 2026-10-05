@@ -440,15 +440,6 @@ function skip_if_not_clean($databaseName = DATABASE_NAME, $collectionName = COLL
     disable_skipif_caching();
 }
 
-function skip_if_no_getmore_failpoint()
-{
-    $serverVersion = get_server_version(URI);
-
-    if (version_compare($serverVersion, '4.0', '<')) {
-        exit("skip Server version '$serverVersion' does not support a getMore failpoint'");
-    }
-}
-
 function skip_if_no_failcommand_failpoint()
 {
     skip_if_test_commands_disabled();
