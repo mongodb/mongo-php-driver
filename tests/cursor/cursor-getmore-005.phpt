@@ -11,7 +11,7 @@ MongoDB\Driver\Cursor query result iteration with getmore failure
 <?php skip_if_not_standalone(); ?>
 <?php skip_if_no_getmore_failpoint(); ?>
 <?php skip_if_auth(); ?>
-<?php skip_if_no_mongo_orchestration(); ?>
+<?php skip_if_no_temporary_mongod(); ?>
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";

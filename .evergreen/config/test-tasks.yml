@@ -56,7 +56,7 @@ tasks:
   - name: "test-mongodb-4.0-standalone-inmemory"
     tags: ["standalone", "local", "4.0", "storage-engines"]
     commands:
-      - func: "bootstrap mongo-orchestration"
+      - func: "bootstrap mongodb-runner"
         vars:
           TOPOLOGY: "server"
           MONGODB_VERSION: "4.0"
@@ -65,7 +65,7 @@ tasks:
   - name: "test-mongodb-4.0-standalone-mmapv1"
     tags: ["standalone", "local", "4.0", "storage-engines"]
     commands:
-      - func: "bootstrap mongo-orchestration"
+      - func: "bootstrap mongodb-runner"
         vars:
           TOPOLOGY: "server"
           MONGODB_VERSION: "4.0"

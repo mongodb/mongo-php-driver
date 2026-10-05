@@ -14,13 +14,12 @@ exec_timeout_secs: 600
 # MongoDB instances. All other tasks that require special preparation should be run from within a task group
 pre:
   - func: "fetch source"
-  - func: "prepare resources"
   - func: "fix absolute paths"
   - func: "init test-results"
   - func: "fetch build"
 post:
   - func: "upload test results"
-  - func: "stop mongo-orchestration"
+  - func: "stop mongodb-runner"
   - func: "stop load balancer"
   - func: "stop OCSP responder"
   - func: "cleanup"

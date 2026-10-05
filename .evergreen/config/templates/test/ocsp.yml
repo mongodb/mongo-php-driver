@@ -5,7 +5,7 @@
         vars:
           SERVER_TYPE: "valid-delegate"
           OCSP_ALGORITHM: "rsa"
-      - func: "bootstrap mongo-orchestration"
+      - func: "bootstrap mongodb-runner"
         vars:
           MONGODB_VERSION: "%mongodbVersion%"
           TOPOLOGY: "server"
@@ -22,7 +22,7 @@
         vars:
           SERVER_TYPE: "valid-delegate"
           OCSP_ALGORITHM: "ecdsa"
-      - func: "bootstrap mongo-orchestration"
+      - func: "bootstrap mongodb-runner"
         vars:
           MONGODB_VERSION: "%mongodbVersion%"
           TOPOLOGY: "server"
@@ -39,7 +39,7 @@
         vars:
           SERVER_TYPE: "valid"
           OCSP_ALGORITHM: "rsa"
-      - func: "bootstrap mongo-orchestration"
+      - func: "bootstrap mongodb-runner"
         vars:
           MONGODB_VERSION: "%mongodbVersion%"
           TOPOLOGY: "server"
@@ -56,7 +56,7 @@
         vars:
           SERVER_TYPE: "valid"
           OCSP_ALGORITHM: "ecdsa"
-      - func: "bootstrap mongo-orchestration"
+      - func: "bootstrap mongodb-runner"
         vars:
           MONGODB_VERSION: "%mongodbVersion%"
           TOPOLOGY: "server"
@@ -73,7 +73,7 @@
         vars:
           SERVER_TYPE: "revoked-delegate"
           OCSP_ALGORITHM: "rsa"
-      - func: "bootstrap mongo-orchestration"
+      - func: "bootstrap mongodb-runner"
         vars:
           MONGODB_VERSION: "%mongodbVersion%"
           TOPOLOGY: "server"
@@ -90,7 +90,7 @@
         vars:
           SERVER_TYPE: "revoked-delegate"
           OCSP_ALGORITHM: "ecdsa"
-      - func: "bootstrap mongo-orchestration"
+      - func: "bootstrap mongodb-runner"
         vars:
           MONGODB_VERSION: "%mongodbVersion%"
           TOPOLOGY: "server"
@@ -107,7 +107,7 @@
         vars:
           SERVER_TYPE: "revoked"
           OCSP_ALGORITHM: "rsa"
-      - func: "bootstrap mongo-orchestration"
+      - func: "bootstrap mongodb-runner"
         vars:
           MONGODB_VERSION: "%mongodbVersion%"
           TOPOLOGY: "server"
@@ -124,7 +124,7 @@
         vars:
           SERVER_TYPE: "revoked"
           OCSP_ALGORITHM: "ecdsa"
-      - func: "bootstrap mongo-orchestration"
+      - func: "bootstrap mongodb-runner"
         vars:
           MONGODB_VERSION: "%mongodbVersion%"
           TOPOLOGY: "server"
@@ -141,7 +141,7 @@
         vars:
           SERVER_TYPE: "valid-delegate"
           OCSP_ALGORITHM: "rsa"
-      - func: "bootstrap mongo-orchestration"
+      - func: "bootstrap mongodb-runner"
         vars:
           MONGODB_VERSION: "%mongodbVersion%"
           TOPOLOGY: "server"
@@ -158,7 +158,7 @@
         vars:
           SERVER_TYPE: "valid-delegate"
           OCSP_ALGORITHM: "ecdsa"
-      - func: "bootstrap mongo-orchestration"
+      - func: "bootstrap mongodb-runner"
         vars:
           MONGODB_VERSION: "%mongodbVersion%"
           TOPOLOGY: "server"
@@ -175,7 +175,7 @@
         vars:
           SERVER_TYPE: "valid"
           OCSP_ALGORITHM: "rsa"
-      - func: "bootstrap mongo-orchestration"
+      - func: "bootstrap mongodb-runner"
         vars:
           MONGODB_VERSION: "%mongodbVersion%"
           TOPOLOGY: "server"
@@ -192,7 +192,7 @@
         vars:
           SERVER_TYPE: "valid"
           OCSP_ALGORITHM: "ecdsa"
-      - func: "bootstrap mongo-orchestration"
+      - func: "bootstrap mongodb-runner"
         vars:
           MONGODB_VERSION: "%mongodbVersion%"
           TOPOLOGY: "server"
@@ -209,7 +209,7 @@
         vars:
           SERVER_TYPE: "revoked-delegate"
           OCSP_ALGORITHM: "rsa"
-      - func: "bootstrap mongo-orchestration"
+      - func: "bootstrap mongodb-runner"
         vars:
           MONGODB_VERSION: "%mongodbVersion%"
           TOPOLOGY: "server"
@@ -226,7 +226,7 @@
         vars:
           SERVER_TYPE: "revoked-delegate"
           OCSP_ALGORITHM: "ecdsa"
-      - func: "bootstrap mongo-orchestration"
+      - func: "bootstrap mongodb-runner"
         vars:
           MONGODB_VERSION: "%mongodbVersion%"
           TOPOLOGY: "server"
@@ -243,7 +243,7 @@
         vars:
           SERVER_TYPE: "revoked"
           OCSP_ALGORITHM: "rsa"
-      - func: "bootstrap mongo-orchestration"
+      - func: "bootstrap mongodb-runner"
         vars:
           MONGODB_VERSION: "%mongodbVersion%"
           TOPOLOGY: "server"
@@ -260,7 +260,7 @@
         vars:
           SERVER_TYPE: "revoked"
           OCSP_ALGORITHM: "ecdsa"
-      - func: "bootstrap mongo-orchestration"
+      - func: "bootstrap mongodb-runner"
         vars:
           MONGODB_VERSION: "%mongodbVersion%"
           TOPOLOGY: "server"
@@ -273,7 +273,7 @@
   - name: "ocsp-soft_fail_test-rsa-%mongodbVersion%"
     tags: ["ocsp", "%mongodbVersion%"]
     commands:
-      - func: "bootstrap mongo-orchestration"
+      - func: "bootstrap mongodb-runner"
         vars:
           MONGODB_VERSION: "%mongodbVersion%"
           TOPOLOGY: "server"
@@ -286,7 +286,7 @@
   - name: "ocsp-soft_fail_test-ecdsa-%mongodbVersion%"
     tags: ["ocsp", "%mongodbVersion%"]
     commands:
-      - func: "bootstrap mongo-orchestration"
+      - func: "bootstrap mongodb-runner"
         vars:
           MONGODB_VERSION: "%mongodbVersion%"
           TOPOLOGY: "server"
@@ -303,7 +303,7 @@
         vars:
           SERVER_TYPE: "revoked-delegate"
           OCSP_ALGORITHM: "rsa"
-      - func: "bootstrap mongo-orchestration"
+      - func: "bootstrap mongodb-runner"
         vars:
           MONGODB_VERSION: "%mongodbVersion%"
           TOPOLOGY: "server"
@@ -320,7 +320,7 @@
         vars:
           SERVER_TYPE: "revoked-delegate"
           OCSP_ALGORITHM: "ecdsa"
-      - func: "bootstrap mongo-orchestration"
+      - func: "bootstrap mongodb-runner"
         vars:
           MONGODB_VERSION: "%mongodbVersion%"
           TOPOLOGY: "server"
@@ -337,7 +337,7 @@
         vars:
           SERVER_TYPE: "revoked"
           OCSP_ALGORITHM: "rsa"
-      - func: "bootstrap mongo-orchestration"
+      - func: "bootstrap mongodb-runner"
         vars:
           MONGODB_VERSION: "%mongodbVersion%"
           TOPOLOGY: "server"
@@ -354,7 +354,7 @@
         vars:
           SERVER_TYPE: "revoked"
           OCSP_ALGORITHM: "ecdsa"
-      - func: "bootstrap mongo-orchestration"
+      - func: "bootstrap mongodb-runner"
         vars:
           MONGODB_VERSION: "%mongodbVersion%"
           TOPOLOGY: "server"
@@ -367,7 +367,7 @@
   - name: "ocsp-malicious_server_test_2-rsa-%mongodbVersion%"
     tags: ["ocsp", "%mongodbVersion%"]
     commands:
-      - func: "bootstrap mongo-orchestration"
+      - func: "bootstrap mongodb-runner"
         vars:
           MONGODB_VERSION: "%mongodbVersion%"
           TOPOLOGY: "server"
@@ -380,7 +380,7 @@
   - name: "ocsp-malicious_server_test_2-ecdsa-%mongodbVersion%"
     tags: ["ocsp", "%mongodbVersion%"]
     commands:
-      - func: "bootstrap mongo-orchestration"
+      - func: "bootstrap mongodb-runner"
         vars:
           MONGODB_VERSION: "%mongodbVersion%"
           TOPOLOGY: "server"

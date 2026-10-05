@@ -533,39 +533,76 @@ function loadFixtures(Manager $manager, $dbname = DATABASE_NAME, $collname = COL
     }
 }
 
+/**
+ * Returns the path to the mongod binary, or null when it cannot be found.
+ */
+function find_mongod_binary()
+{
+    $binariesDir = getenv('MONGODB_BINARIES');
+
+    if ($binariesDir !== false && $binariesDir !== '') {
+        $candidate = rtrim($binariesDir, '/\\') . DIRECTORY_SEPARATOR . 'mongod';
+
+        if (is_executable($candidate)) {
+            return $candidate;
+        }
+    }
+
+    $path = trim((string) shell_exec('command -v mongod 2>/dev/null'));
+
+    return $path !== '' ? $path : null;
+}
+
+/**
+ * Starts a throwaway standalone mongod and returns its connection URI.
+ *
+ * The getMore tests enable an always-on failCommand failpoint, which must not
+ * affect the shared server. The instance listens on a free local port and uses
+ * a temporary dbpath.
+ */
 function createTemporaryMongoInstance(array $options = [])
 {
-    $id = 'mo_' . COLLECTION_NAME;
-    $options += [
-        "name" => "mongod",
-        "id" => $id,
-        'procParams' => [
-            'logpath' => "/tmp/MO/phongo/{$id}.log",
-            'ipv6' => true,
-            'setParameter' => [ 'enableTestCommands' => 1 ],
-        ],
-    ];
-    $opts = array(
-        "http" => array(
-            "timeout" => 60,
-            "method"  => "PUT",
-            "header"  => "Accept: application/json\r\n" .
-                         "Content-type: application/x-www-form-urlencoded",
-            "content" => json_encode($options),
-            "ignore_errors" => true,
-        ),
-    );
-    $ctx = stream_context_create($opts);
-    $json = file_get_contents(MONGO_ORCHESTRATION_URI . "/servers/$id", false, $ctx);
-    $result = json_decode($json, true);
+    $mongod = find_mongod_binary();
 
-    /* Failed -- or was already started */
-    if (!isset($result["mongodb_uri"])) {
-        destroyTemporaryMongoInstance($id);
-        throw new Exception("Could not start temporary server instance\n");
-    } else {
-        return $result['mongodb_uri'];
+    if ($mongod === null) {
+        throw new Exception("Could not find the mongod binary\n");
     }
+
+    $id = 'mo_' . COLLECTION_NAME;
+    $baseDir = sys_get_temp_dir() . '/MO/phongo';
+    $dbPath = $baseDir . '/' . $id . '-db';
+    $logPath = $baseDir . '/' . $id . '.log';
+    $pidFile = $baseDir . '/' . $id . '.pid';
+
+    if (!is_dir($baseDir)) {
+        mkdir($baseDir, 0777, true);
+    }
+
+    /* Drop any leftover state from a previous run. */
+    destroyTemporaryMongoInstance($id);
+
+    if (!is_dir($dbPath)) {
+        mkdir($dbPath, 0777, true);
+    }
+
+    $port = find_free_port();
+
+    $command = sprintf(
+        '%s --dbpath %s --port %d --logpath %s --pidfilepath %s --bind_ip 127.0.0.1 --setParameter enableTestCommands=1 --fork',
+        escapeshellarg($mongod),
+        escapeshellarg($dbPath),
+        $port,
+        escapeshellarg($logPath),
+        escapeshellarg($pidFile),
+    );
+
+    exec($command, $output, $returnCode);
+
+    if ($returnCode !== 0) {
+        throw new Exception("Could not start temporary server instance: " . implode("\n", $output) . "\n");
+    }
+
+    return 'mongodb://127.0.0.1:' . $port;
 }
 
 function destroyTemporaryMongoInstance($id = NULL)
@@ -574,16 +611,65 @@ function destroyTemporaryMongoInstance($id = NULL)
         $id = 'mo_' . COLLECTION_NAME;
     }
 
-    $opts = array(
-        "http" => array(
-            "timeout" => 60,
-            "method"  => "DELETE",
-            "header"  => "Accept: application/json\r\n",
-            "ignore_errors" => true,
-        ),
-    );
-    $ctx = stream_context_create($opts);
-    $json = file_get_contents(MONGO_ORCHESTRATION_URI . "/servers/$id", false, $ctx);
+    $baseDir = sys_get_temp_dir() . '/MO/phongo';
+    $dbPath = $baseDir . '/' . $id . '-db';
+
+    if (!is_dir($dbPath)) {
+        return;
+    }
+
+    $mongod = find_mongod_binary();
+
+    if ($mongod !== null) {
+        exec(sprintf('%s --dbpath %s --shutdown', escapeshellarg($mongod), escapeshellarg($dbPath)));
+    }
+
+    remove_directory($dbPath);
+    @unlink($baseDir . '/' . $id . '.log');
+    @unlink($baseDir . '/' . $id . '.pid');
+}
+
+/**
+ * Returns a free TCP port on the loopback interface.
+ */
+function find_free_port()
+{
+    $socket = stream_socket_server('tcp://127.0.0.1:0', $errno, $errstr);
+
+    if ($socket === false) {
+        throw new Exception("Could not find a free port: $errstr\n");
+    }
+
+    $name = stream_socket_get_name($socket, false);
+    fclose($socket);
+
+    return (int) substr($name, strrpos($name, ':') + 1);
+}
+
+/**
+ * Recursively removes a directory.
+ */
+function remove_directory($path)
+{
+    if (!is_dir($path)) {
+        return;
+    }
+
+    foreach (scandir($path) as $entry) {
+        if ($entry === '.' || $entry === '..') {
+            continue;
+        }
+
+        $fullPath = $path . DIRECTORY_SEPARATOR . $entry;
+
+        if (is_dir($fullPath) && !is_link($fullPath)) {
+            remove_directory($fullPath);
+        } else {
+            @unlink($fullPath);
+        }
+    }
+
+    @rmdir($path);
 }
 
 /**

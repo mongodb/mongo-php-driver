@@ -462,16 +462,10 @@ function skip_if_no_failcommand_failpoint()
     }
 }
 
-function skip_if_no_mongo_orchestration()
+function skip_if_no_temporary_mongod()
 {
-    $ctx = stream_context_create(['http' => ['timeout' => 0.5]]);
-    $result = @file_get_contents(MONGO_ORCHESTRATION_URI, false, $ctx);
-
-    /* Note: file_get_contents emits an E_WARNING on failure, which will be
-     * caught by the error handler in basic-skipif.inc. In that case, this may
-     * never be reached. */
-    if ($result === false) {
-        exit("skip mongo-orchestration is not accessible: '" . MONGO_ORCHESTRATION_URI . "'");
+    if (find_mongod_binary() === null) {
+        exit('skip the mongod binary is not available to start a temporary instance');
     }
 }
 

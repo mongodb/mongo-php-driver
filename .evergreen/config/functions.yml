@@ -69,15 +69,6 @@ functions:
       params:
         file: src/expansion.yml
 
-  "prepare resources":
-    - command: shell.exec
-      params:
-        working_dir: src
-        script: |
-          ${PREPARE_SHELL}
-          echo "{ \"releases\": { \"default\": \"$MONGODB_BINARIES\" }}" > $MONGO_ORCHESTRATION_HOME/orchestration.config
-
-
   # Upload build artifacts that other tasks may depend on
   # Note this URL needs to be totally unique, while predictable for the next task
   # so it can automatically download the artifacts
@@ -181,7 +172,7 @@ functions:
             echo "Skipping codecov test result upload"
           fi
 
-  "bootstrap mongo-orchestration":
+  "bootstrap mongodb-runner":
     - command: shell.exec
       params:
         include_expansions_in_env:
@@ -196,7 +187,7 @@ functions:
         script: |
           ${PREPARE_SHELL}
           SKIP_LEGACY_SHELL=true \
-          bash ${DRIVERS_TOOLS}/.evergreen/run-orchestration.sh
+          bash ${DRIVERS_TOOLS}/.evergreen/run-mongodb.sh start
     - command: shell.exec
       params:
         include_expansions_in_env:
@@ -206,17 +197,17 @@ functions:
           printf "\n" >> mo-expansion.yml
           printf "MONGODB_VERSION: '%s'\n" "${MONGODB_VERSION}" >> mo-expansion.yml
           printf "TOPOLOGY: '%s'\n" "${TOPOLOGY}" >> mo-expansion.yml
-    # run-orchestration generates expansion file with MONGODB_URI and CRYPT_SHARED_LIB_PATH
+    # run-mongodb generates expansion file with MONGODB_URI and CRYPT_SHARED_LIB_PATH
     - command: expansions.update
       params:
         file: mo-expansion.yml
 
-  "stop mongo-orchestration":
+  "stop mongodb-runner":
     - command: shell.exec
       params:
         script: |
           ${PREPARE_SHELL}
-          bash ${DRIVERS_TOOLS}/.evergreen/stop-orchestration.sh
+          bash ${DRIVERS_TOOLS}/.evergreen/run-mongodb.sh stop
 
   "start OCSP responder":
     - command: subprocess.exec

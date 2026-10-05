@@ -3,7 +3,7 @@ tasks:
   - name: "test-requireApiVersion-latest"
     tags: [ "standalone", "local", "latest", "versioned_api", "tag" ]
     commands:
-      - func: "bootstrap mongo-orchestration"
+      - func: "bootstrap mongodb-runner"
         vars:
           TOPOLOGY: "server"
           AUTH: "auth"
@@ -15,7 +15,7 @@ tasks:
   - name: "test-requireApiVersion-rapid"
     tags: [ "standalone", "local", "rapid", "versioned_api", "tag" ]
     commands:
-      - func: "bootstrap mongo-orchestration"
+      - func: "bootstrap mongodb-runner"
         vars:
           TOPOLOGY: "server"
           AUTH: "auth"
@@ -27,7 +27,7 @@ tasks:
   - name: "test-requireApiVersion-8.0"
     tags: [ "standalone", "local", "8.0", "versioned_api", "tag" ]
     commands:
-      - func: "bootstrap mongo-orchestration"
+      - func: "bootstrap mongodb-runner"
         vars:
           TOPOLOGY: "server"
           AUTH: "auth"
@@ -39,7 +39,7 @@ tasks:
   - name: "test-requireApiVersion-7.0"
     tags: [ "standalone", "local", "7.0", "versioned_api", "tag" ]
     commands:
-      - func: "bootstrap mongo-orchestration"
+      - func: "bootstrap mongodb-runner"
         vars:
           TOPOLOGY: "server"
           AUTH: "auth"
@@ -51,7 +51,7 @@ tasks:
   - name: "test-requireApiVersion-6.0"
     tags: [ "standalone", "local", "6.0", "versioned_api", "tag" ]
     commands:
-      - func: "bootstrap mongo-orchestration"
+      - func: "bootstrap mongodb-runner"
         vars:
           TOPOLOGY: "server"
           AUTH: "auth"
@@ -63,7 +63,7 @@ tasks:
   - name: "test-requireApiVersion-5.0"
     tags: [ "standalone", "local", "5.0", "versioned_api", "tag" ]
     commands:
-      - func: "bootstrap mongo-orchestration"
+      - func: "bootstrap mongodb-runner"
         vars:
           TOPOLOGY: "server"
           AUTH: "auth"

@@ -1,7 +1,6 @@
 variables:
   build_setup: &build_setup
     - func: "fetch source"
-    - func: "prepare resources"
     - func: "fix absolute paths"
   build_teardown: &build_teardown
     - func: "cleanup"
