@@ -534,145 +534,6 @@ function loadFixtures(Manager $manager, $dbname = DATABASE_NAME, $collname = COL
 }
 
 /**
- * Returns the path to the mongod binary, or null when it cannot be found.
- */
-function find_mongod_binary()
-{
-    $binariesDir = getenv('MONGODB_BINARIES');
-
-    if ($binariesDir !== false && $binariesDir !== '') {
-        $candidate = rtrim($binariesDir, '/\\') . DIRECTORY_SEPARATOR . 'mongod';
-
-        if (is_executable($candidate)) {
-            return $candidate;
-        }
-    }
-
-    $path = trim((string) shell_exec('command -v mongod 2>/dev/null'));
-
-    return $path !== '' ? $path : null;
-}
-
-/**
- * Starts a throwaway standalone mongod and returns its connection URI.
- *
- * The getMore tests enable an always-on failCommand failpoint, which must not
- * affect the shared server. The instance listens on a free local port and uses
- * a temporary dbpath.
- */
-function createTemporaryMongoInstance(array $options = [])
-{
-    $mongod = find_mongod_binary();
-
-    if ($mongod === null) {
-        throw new Exception("Could not find the mongod binary\n");
-    }
-
-    $id = 'mo_' . COLLECTION_NAME;
-    $baseDir = sys_get_temp_dir() . '/MO/phongo';
-    $dbPath = $baseDir . '/' . $id . '-db';
-    $logPath = $baseDir . '/' . $id . '.log';
-    $pidFile = $baseDir . '/' . $id . '.pid';
-
-    if (!is_dir($baseDir)) {
-        mkdir($baseDir, 0777, true);
-    }
-
-    /* Drop any leftover state from a previous run. */
-    destroyTemporaryMongoInstance($id);
-
-    if (!is_dir($dbPath)) {
-        mkdir($dbPath, 0777, true);
-    }
-
-    $port = find_free_port();
-
-    $command = sprintf(
-        '%s --dbpath %s --port %d --logpath %s --pidfilepath %s --bind_ip 127.0.0.1 --setParameter enableTestCommands=1 --fork',
-        escapeshellarg($mongod),
-        escapeshellarg($dbPath),
-        $port,
-        escapeshellarg($logPath),
-        escapeshellarg($pidFile),
-    );
-
-    exec($command, $output, $returnCode);
-
-    if ($returnCode !== 0) {
-        throw new Exception("Could not start temporary server instance: " . implode("\n", $output) . "\n");
-    }
-
-    return 'mongodb://127.0.0.1:' . $port;
-}
-
-function destroyTemporaryMongoInstance($id = NULL)
-{
-    if ($id == NULL) {
-        $id = 'mo_' . COLLECTION_NAME;
-    }
-
-    $baseDir = sys_get_temp_dir() . '/MO/phongo';
-    $dbPath = $baseDir . '/' . $id . '-db';
-
-    if (!is_dir($dbPath)) {
-        return;
-    }
-
-    $mongod = find_mongod_binary();
-
-    if ($mongod !== null) {
-        exec(sprintf('%s --dbpath %s --shutdown', escapeshellarg($mongod), escapeshellarg($dbPath)));
-    }
-
-    remove_directory($dbPath);
-    @unlink($baseDir . '/' . $id . '.log');
-    @unlink($baseDir . '/' . $id . '.pid');
-}
-
-/**
- * Returns a free TCP port on the loopback interface.
- */
-function find_free_port()
-{
-    $socket = stream_socket_server('tcp://127.0.0.1:0', $errno, $errstr);
-
-    if ($socket === false) {
-        throw new Exception("Could not find a free port: $errstr\n");
-    }
-
-    $name = stream_socket_get_name($socket, false);
-    fclose($socket);
-
-    return (int) substr($name, strrpos($name, ':') + 1);
-}
-
-/**
- * Recursively removes a directory.
- */
-function remove_directory($path)
-{
-    if (!is_dir($path)) {
-        return;
-    }
-
-    foreach (scandir($path) as $entry) {
-        if ($entry === '.' || $entry === '..') {
-            continue;
-        }
-
-        $fullPath = $path . DIRECTORY_SEPARATOR . $entry;
-
-        if (is_dir($fullPath) && !is_link($fullPath)) {
-            remove_directory($fullPath);
-        } else {
-            @unlink($fullPath);
-        }
-    }
-
-    @rmdir($path);
-}
-
-/**
  * Converts an error level (constant or bitmask) to a string description.
  */
 function severityToString(int $severity): string {
@@ -928,8 +789,8 @@ function fromJSON($var) {
     return (string) MongoDB\BSON\Document::fromJSON($var);
 }
 
-/* Note: this fail point may terminate the mongod process, so you may want to
- * use this in conjunction with a throwaway server. */
+/* The fail point is scoped to a single getMore command so that it can be used
+ * against the shared server without affecting later tests. */
 function failGetMore(Manager $manager)
 {
     /* We need to do version detection here */
@@ -942,7 +803,7 @@ function failGetMore(Manager $manager)
          * allows us to make things consistent with the getMore OP behaviour
          * from previous mongod versions. An errorCode is required here for the
          * failPoint to work. */
-        configureFailPoint($manager, 'failCommand', 'alwaysOn', [ 'errorCode' => 237, 'failCommands' => ['getMore'] ]);
+        configureFailPoint($manager, 'failCommand', [ 'times' => 1 ], [ 'errorCode' => 237, 'failCommands' => ['getMore'] ]);
         return;
     }
 

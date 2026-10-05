@@ -462,13 +462,6 @@ function skip_if_no_failcommand_failpoint()
     }
 }
 
-function skip_if_no_temporary_mongod()
-{
-    if (find_mongod_binary() === null) {
-        exit('skip the mongod binary is not available to start a temporary instance');
-    }
-}
-
 function skip_if_crypt_shared()
 {
     // Intentionally ignore empty values for CRYPT_SHARED_LIB_PATH

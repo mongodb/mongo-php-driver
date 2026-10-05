@@ -3,21 +3,18 @@ MongoDB\Driver\Cursor query result iteration with getmore failure
 --SKIPIF--
 <?php require __DIR__ . "/" ."../utils/basic-skipif.inc"; ?>
 <?php
-/* This test spins up its own mongod instance, so only run this in the most default "standalone, no
- * auth" configurations. This way, we can test on multiple server versions, but not waste resources
- * on f.e. Travis. */
+/* The failCommand failpoint is scoped to a single getMore, so this test can run
+ * against the configured standalone server. */
 ?>
 <?php skip_if_not_live(); ?>
 <?php skip_if_not_standalone(); ?>
-<?php skip_if_no_getmore_failpoint(); ?>
+<?php skip_if_no_failcommand_failpoint(); ?>
 <?php skip_if_auth(); ?>
-<?php skip_if_no_temporary_mongod(); ?>
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
 
-$uri = createTemporaryMongoInstance();
-$manager = create_test_manager($uri);
+$manager = create_test_manager();
 
 $bulkWrite = new MongoDB\Driver\BulkWrite;
 
@@ -40,11 +37,12 @@ throws(function() use ($cursor) {
 }, MongoDB\Driver\Exception\ServerException::class);
 ?>
 ===DONE===
-<?php destroyTemporaryMongoInstance(); ?>
-<?php exit(0); ?>
 --CLEAN--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
-<?php destroyTemporaryMongoInstance(); ?>
+<?php
+$manager = create_test_manager();
+configureFailPoint($manager, 'failCommand', 'off');
+?>
 --EXPECT--
 Inserted: 5
 0 => {_id: 0}
