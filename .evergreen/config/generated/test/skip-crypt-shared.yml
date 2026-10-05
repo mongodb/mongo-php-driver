@@ -3,7 +3,7 @@ tasks:
   - name: "test-skip_crypt_shared-latest"
     tags: [ "replicaset", "local", "latest", "skip_crypt_shared" ]
     commands:
-      - func: "bootstrap mongo-orchestration"
+      - func: "bootstrap mongodb-runner"
         vars:
           TOPOLOGY: "replica_set"
           MONGODB_VERSION: "latest"
@@ -13,7 +13,7 @@ tasks:
   - name: "test-skip_crypt_shared-rapid"
     tags: [ "replicaset", "local", "rapid", "skip_crypt_shared" ]
     commands:
-      - func: "bootstrap mongo-orchestration"
+      - func: "bootstrap mongodb-runner"
         vars:
           TOPOLOGY: "replica_set"
           MONGODB_VERSION: "rapid"
@@ -23,7 +23,7 @@ tasks:
   - name: "test-skip_crypt_shared-8.0"
     tags: [ "replicaset", "local", "8.0", "skip_crypt_shared" ]
     commands:
-      - func: "bootstrap mongo-orchestration"
+      - func: "bootstrap mongodb-runner"
         vars:
           TOPOLOGY: "replica_set"
           MONGODB_VERSION: "8.0"
@@ -33,7 +33,7 @@ tasks:
   - name: "test-skip_crypt_shared-7.0"
     tags: [ "replicaset", "local", "7.0", "skip_crypt_shared" ]
     commands:
-      - func: "bootstrap mongo-orchestration"
+      - func: "bootstrap mongodb-runner"
         vars:
           TOPOLOGY: "replica_set"
           MONGODB_VERSION: "7.0"
@@ -43,7 +43,7 @@ tasks:
   - name: "test-skip_crypt_shared-6.0"
     tags: [ "replicaset", "local", "6.0", "skip_crypt_shared" ]
     commands:
-      - func: "bootstrap mongo-orchestration"
+      - func: "bootstrap mongodb-runner"
         vars:
           TOPOLOGY: "replica_set"
           MONGODB_VERSION: "6.0"

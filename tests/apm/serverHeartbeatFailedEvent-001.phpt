@@ -55,8 +55,6 @@ throws(function() use ($m, $command) {
     $m->executeCommand(DATABASE_NAME, $command);
 }, MongoDB\Driver\Exception\ConnectionTimeoutException::class);
 
-configureFailPoint($m2, 'failCommand', 'off');
-
 ?>
 ===DONE===
 <?php exit(0); ?>

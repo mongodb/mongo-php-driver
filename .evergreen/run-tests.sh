@@ -16,6 +16,11 @@ OS=$(uname -s | tr '[:upper:]' '[:lower:]')
 
 export REPORT_EXIT_STATUS=1
 
+# The connection string produced by mongodb-runner ends with a slash. Remove it
+# so that appending URI options does not produce a double slash, which the driver
+# reads as an invalid database name.
+MONGODB_URI=${MONGODB_URI%/}
+
 # Append test-specific URI options
 MONGODB_URI=${MONGODB_URI}${APPEND_URI}
 

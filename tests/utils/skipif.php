@@ -440,15 +440,6 @@ function skip_if_not_clean($databaseName = DATABASE_NAME, $collectionName = COLL
     disable_skipif_caching();
 }
 
-function skip_if_no_getmore_failpoint()
-{
-    $serverVersion = get_server_version(URI);
-
-    if (version_compare($serverVersion, '4.0', '<')) {
-        exit("skip Server version '$serverVersion' does not support a getMore failpoint'");
-    }
-}
-
 function skip_if_no_failcommand_failpoint()
 {
     skip_if_test_commands_disabled();
@@ -459,19 +450,6 @@ function skip_if_no_failcommand_failpoint()
         exit("skip mongos version '$serverVersion' does not support 'failCommand' failpoint'");
     } elseif (version_compare($serverVersion, '4.0', '<')) {
         exit("skip mongod version '$serverVersion' does not support 'failCommand' failpoint'");
-    }
-}
-
-function skip_if_no_mongo_orchestration()
-{
-    $ctx = stream_context_create(['http' => ['timeout' => 0.5]]);
-    $result = @file_get_contents(MONGO_ORCHESTRATION_URI, false, $ctx);
-
-    /* Note: file_get_contents emits an E_WARNING on failure, which will be
-     * caught by the error handler in basic-skipif.inc. In that case, this may
-     * never be reached. */
-    if ($result === false) {
-        exit("skip mongo-orchestration is not accessible: '" . MONGO_ORCHESTRATION_URI . "'");
     }
 }
 

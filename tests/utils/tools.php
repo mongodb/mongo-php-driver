@@ -533,59 +533,6 @@ function loadFixtures(Manager $manager, $dbname = DATABASE_NAME, $collname = COL
     }
 }
 
-function createTemporaryMongoInstance(array $options = [])
-{
-    $id = 'mo_' . COLLECTION_NAME;
-    $options += [
-        "name" => "mongod",
-        "id" => $id,
-        'procParams' => [
-            'logpath' => "/tmp/MO/phongo/{$id}.log",
-            'ipv6' => true,
-            'setParameter' => [ 'enableTestCommands' => 1 ],
-        ],
-    ];
-    $opts = array(
-        "http" => array(
-            "timeout" => 60,
-            "method"  => "PUT",
-            "header"  => "Accept: application/json\r\n" .
-                         "Content-type: application/x-www-form-urlencoded",
-            "content" => json_encode($options),
-            "ignore_errors" => true,
-        ),
-    );
-    $ctx = stream_context_create($opts);
-    $json = file_get_contents(MONGO_ORCHESTRATION_URI . "/servers/$id", false, $ctx);
-    $result = json_decode($json, true);
-
-    /* Failed -- or was already started */
-    if (!isset($result["mongodb_uri"])) {
-        destroyTemporaryMongoInstance($id);
-        throw new Exception("Could not start temporary server instance\n");
-    } else {
-        return $result['mongodb_uri'];
-    }
-}
-
-function destroyTemporaryMongoInstance($id = NULL)
-{
-    if ($id == NULL) {
-        $id = 'mo_' . COLLECTION_NAME;
-    }
-
-    $opts = array(
-        "http" => array(
-            "timeout" => 60,
-            "method"  => "DELETE",
-            "header"  => "Accept: application/json\r\n",
-            "ignore_errors" => true,
-        ),
-    );
-    $ctx = stream_context_create($opts);
-    $json = file_get_contents(MONGO_ORCHESTRATION_URI . "/servers/$id", false, $ctx);
-}
-
 /**
  * Converts an error level (constant or bitmask) to a string description.
  */
@@ -787,6 +734,8 @@ function configureFailPoint(Manager $manager, $failPoint, $mode, array $data = [
 
     $cmd = new Command($doc);
     $manager->executeCommand('admin', $cmd);
+
+    registerFailPointCleanup($manager, $failPoint, $mode);
 }
 
 function configureTargetedFailPoint(Server $server, $failPoint, $mode, array $data = [])
@@ -801,6 +750,54 @@ function configureTargetedFailPoint(Server $server, $failPoint, $mode, array $da
 
     $cmd = new Command($doc);
     $server->executeCommand('admin', $cmd);
+
+    registerFailPointCleanup($server, $failPoint, $mode);
+}
+
+/**
+ * Registers a shutdown handler that disables the given fail point when the test
+ * process ends.
+ *
+ * Most fail points are configured with a "times" limit and expire on their own.
+ * This handler is a safety net for a fail point that was not consumed, for
+ * example because the test failed early, so that it does not leak into the next
+ * test on a shared server.
+ */
+function registerFailPointCleanup($target, $failPoint, $mode)
+{
+    static $failPoints = [];
+    static $registered = false;
+
+    /* The fail point is already disabled. */
+    if ($mode === 'off') {
+        return;
+    }
+
+    $failPoints[] = [$target, $failPoint];
+
+    if ($registered) {
+        return;
+    }
+
+    $registered = true;
+
+    register_shutdown_function(function() use (&$failPoints, &$registered) {
+        foreach ($failPoints as [$target, $failPoint]) {
+            try {
+                $target->executeCommand('admin', new Command([
+                    'configureFailPoint' => $failPoint,
+                    'mode'               => 'off',
+                ]));
+            } catch (Throwable $e) {
+                /* The server may be unreachable, for example when the test
+                 * closed the connection. There is nothing to clean up then. */
+            }
+        }
+
+        /* Reset the state in case the function is called again. */
+        $failPoints = [];
+        $registered = false;
+    });
 }
 
 function failMaxTimeMS(Server $server, array $failCommands)
@@ -842,8 +839,8 @@ function fromJSON($var) {
     return (string) MongoDB\BSON\Document::fromJSON($var);
 }
 
-/* Note: this fail point may terminate the mongod process, so you may want to
- * use this in conjunction with a throwaway server. */
+/* The fail point is scoped to a single getMore command so that it can be used
+ * against the shared server without affecting later tests. */
 function failGetMore(Manager $manager)
 {
     /* We need to do version detection here */
@@ -856,7 +853,7 @@ function failGetMore(Manager $manager)
          * allows us to make things consistent with the getMore OP behaviour
          * from previous mongod versions. An errorCode is required here for the
          * failPoint to work. */
-        configureFailPoint($manager, 'failCommand', 'alwaysOn', [ 'errorCode' => 237, 'failCommands' => ['getMore'] ]);
+        configureFailPoint($manager, 'failCommand', [ 'times' => 1 ], [ 'errorCode' => 237, 'failCommands' => ['getMore'] ]);
         return;
     }
 
