@@ -41,6 +41,10 @@ throws(
     \MongoDB\Driver\Exception\ConnectionTimeoutException::class
 );
 
+/* Detach the subscriber so that it does not observe the fail point cleanup
+ * command issued when the test process ends. */
+MongoDB\Driver\Monitoring\removeSubscriber($observer);
+
 ?>
 ===DONE===
 <?php exit(0); ?>
