@@ -734,6 +734,8 @@ function configureFailPoint(Manager $manager, $failPoint, $mode, array $data = [
 
     $cmd = new Command($doc);
     $manager->executeCommand('admin', $cmd);
+
+    registerFailPointCleanup($manager, $failPoint, $mode);
 }
 
 function configureTargetedFailPoint(Server $server, $failPoint, $mode, array $data = [])
@@ -748,6 +750,54 @@ function configureTargetedFailPoint(Server $server, $failPoint, $mode, array $da
 
     $cmd = new Command($doc);
     $server->executeCommand('admin', $cmd);
+
+    registerFailPointCleanup($server, $failPoint, $mode);
+}
+
+/**
+ * Registers a shutdown handler that disables the given fail point when the test
+ * process ends.
+ *
+ * Most fail points are configured with a "times" limit and expire on their own.
+ * This handler is a safety net for a fail point that was not consumed, for
+ * example because the test failed early, so that it does not leak into the next
+ * test on a shared server.
+ */
+function registerFailPointCleanup($target, $failPoint, $mode)
+{
+    static $failPoints = [];
+    static $registered = false;
+
+    /* The fail point is already disabled. */
+    if ($mode === 'off') {
+        return;
+    }
+
+    $failPoints[] = [$target, $failPoint];
+
+    if ($registered) {
+        return;
+    }
+
+    $registered = true;
+
+    register_shutdown_function(function() use (&$failPoints, &$registered) {
+        foreach ($failPoints as [$target, $failPoint]) {
+            try {
+                $target->executeCommand('admin', new Command([
+                    'configureFailPoint' => $failPoint,
+                    'mode'               => 'off',
+                ]));
+            } catch (Throwable $e) {
+                /* The server may be unreachable, for example when the test
+                 * closed the connection. There is nothing to clean up then. */
+            }
+        }
+
+        /* Reset the state in case the function is called again. */
+        $failPoints = [];
+        $registered = false;
+    });
 }
 
 function failMaxTimeMS(Server $server, array $failCommands)

@@ -37,12 +37,6 @@ throws(function() use ($cursor) {
 }, MongoDB\Driver\Exception\ServerException::class);
 ?>
 ===DONE===
---CLEAN--
-<?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
-<?php
-$manager = create_test_manager();
-configureFailPoint($manager, 'failCommand', 'off');
-?>
 --EXPECT--
 Inserted: 5
 0 => {_id: 0}

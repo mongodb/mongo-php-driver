@@ -28,8 +28,6 @@ $result = $manager->executeBulkWrite(NS, $bulk);
 
 var_dump($result->getWriteConcernError());
 
-configureFailPoint($manager, 'failCommand', 'off');
-
 ?>
 ===DONE===
 <?php exit(0); ?>
