@@ -29,6 +29,11 @@ zend_class_entry* php_phongo_symbol_ce;
  * be thrown on error. */
 static bool php_phongo_symbol_init(php_phongo_symbol_t* intern, const char* symbol, size_t symbol_len)
 {
+	if (symbol_len > PHONGO_BSON_MAX_LENGTH) {
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected symbol length to be <= %" PRId32 " bytes, %zu given", (int32_t) PHONGO_BSON_MAX_LENGTH, symbol_len);
+		return false;
+	}
+
 	if (strlen(symbol) != (size_t) symbol_len) {
 		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Symbol cannot contain null bytes");
 		return false;

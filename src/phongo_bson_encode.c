@@ -44,8 +44,26 @@
 #endif
 
 /* Forwards declarations */
-static void php_phongo_bson_append(bson_t* bson, php_phongo_field_path* field_path, php_phongo_bson_flags_t flags, const char* key, long key_len, zval* entry);
+static void php_phongo_bson_append(bson_t* bson, php_phongo_field_path* field_path, php_phongo_bson_flags_t flags, const char* key, size_t key_len, zval* entry);
 static void php_phongo_zval_to_bson_internal(zval* data, php_phongo_field_path* field_path, php_phongo_bson_flags_t flags, bson_t* bson, bson_t** bson_out);
+
+/* Rejects a string or binary length that BSON cannot represent. The encoder
+ * narrows these lengths to int32 or uint32 when appending, so an unchecked
+ * value would be silently truncated or wrap an allocation size. */
+static bool phongo_bson_length_is_valid(size_t length, php_phongo_field_path* field_path, const char* description)
+{
+	char* path_string;
+
+	if (length <= PHONGO_BSON_MAX_LENGTH) {
+		return true;
+	}
+
+	path_string = php_phongo_field_path_as_string(field_path);
+	phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Expected %s for field path \"%s\" to be <= %" PRId32 " bytes, %zu given", description, path_string, (int32_t) PHONGO_BSON_MAX_LENGTH, length);
+	efree(path_string);
+
+	return false;
+}
 
 /* Determines whether the argument should be serialized as a BSON array or
  * document. IS_ARRAY is returned if the argument's keys are a sequence of
@@ -145,7 +163,7 @@ static inline bool phongo_check_bson_serialize_return_type(zval* retval, zend_cl
  * type.
  * Other array or object values will be appended as an embedded document.
  */
-static void php_phongo_bson_append_object(bson_t* bson, php_phongo_field_path* field_path, php_phongo_bson_flags_t flags, const char* key, long key_len, zval* object)
+static void php_phongo_bson_append_object(bson_t* bson, php_phongo_field_path* field_path, php_phongo_bson_flags_t flags, const char* key, size_t key_len, zval* object)
 {
 	if (Z_TYPE_P(object) == IS_OBJECT && instanceof_function(Z_OBJCE_P(object), php_phongo_cursorid_ce)) {
 		bson_append_int64(bson, key, key_len, Z_CURSORID_OBJ_P(object)->id);
@@ -188,6 +206,10 @@ static void php_phongo_bson_append_object(bson_t* bson, php_phongo_field_path* f
 			/* Persistable objects must always be serialized as BSON documents;
 			 * otherwise, infer based on bsonSerialize()'s return value. */
 			if (instanceof_function(Z_OBJCE_P(object), php_phongo_persistable_ce) || php_phongo_is_array_or_document(&obj_data) != IS_ARRAY) {
+				if (instanceof_function(Z_OBJCE_P(object), php_phongo_persistable_ce) && !phongo_bson_length_is_valid(Z_OBJCE_P(object)->name->len, field_path, "class name")) {
+					zval_ptr_dtor(&obj_data);
+					return;
+				}
 				bson_append_document_begin(bson, key, key_len, &child);
 				if (instanceof_function(Z_OBJCE_P(object), php_phongo_persistable_ce)) {
 					bson_append_binary(&child, PHONGO_ODM_FIELD_NAME, -1, 0x80, (const uint8_t*) Z_OBJCE_P(object)->name->val, Z_OBJCE_P(object)->name->len);
@@ -220,6 +242,10 @@ static void php_phongo_bson_append_object(bson_t* bson, php_phongo_field_path* f
 		}
 		if (instanceof_function(Z_OBJCE_P(object), php_phongo_binary_ce)) {
 			php_phongo_binary_t* intern = Z_BINARY_OBJ_P(object);
+
+			if (!phongo_bson_length_is_valid(intern->data_len, field_path, "binary data")) {
+				return;
+			}
 
 			bson_append_binary(bson, key, key_len, intern->type, (const uint8_t*) intern->data, (uint32_t) intern->data_len);
 			return;
@@ -279,6 +305,10 @@ static void php_phongo_bson_append_object(bson_t* bson, php_phongo_field_path* f
 		if (instanceof_function(Z_OBJCE_P(object), php_phongo_symbol_ce)) {
 			php_phongo_symbol_t* intern = Z_SYMBOL_OBJ_P(object);
 
+			if (!phongo_bson_length_is_valid(intern->symbol_len, field_path, "symbol")) {
+				return;
+			}
+
 			bson_append_symbol(bson, key, key_len, intern->symbol, intern->symbol_len);
 			return;
 		}
@@ -315,8 +345,17 @@ static void php_phongo_bson_append_object(bson_t* bson, php_phongo_field_path* f
 /* Appends the zval argument to the BSON document. If the argument is an object,
  * or an array that should be serialized as an embedded document, this function
  * will defer to php_phongo_bson_append_object(). */
-static void php_phongo_bson_append(bson_t* bson, php_phongo_field_path* field_path, php_phongo_bson_flags_t flags, const char* key, long key_len, zval* entry)
+static void php_phongo_bson_append(bson_t* bson, php_phongo_field_path* field_path, php_phongo_bson_flags_t flags, const char* key, size_t key_len, zval* entry)
 {
+	/* A key longer than BSON_MAX_SIZE wraps a size_t/long length to a small
+	 * non-negative int in the libbson append, silently truncating the field
+	 * name to a prefix (SECBUG-4150). Reject before narrowing. The key is not
+	 * included in the message or the field path, as it may be gigabytes. */
+	if (key_len > PHONGO_BSON_MAX_LENGTH) {
+		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Expected key length to be <= %" PRId32 " bytes, %zu given", (int32_t) PHONGO_BSON_MAX_LENGTH, (size_t) key_len);
+		return;
+	}
+
 	php_phongo_field_path_write_item_at_current_level(field_path, key);
 
 try_again:
@@ -341,6 +380,10 @@ try_again:
 			break;
 
 		case IS_STRING:
+			if (!phongo_bson_length_is_valid(Z_STRLEN_P(entry), field_path, "string")) {
+				break;
+			}
+
 			if (bson_utf8_validate(Z_STRVAL_P(entry), Z_STRLEN_P(entry), true)) {
 				bson_append_utf8(bson, key, key_len, Z_STRVAL_P(entry), Z_STRLEN_P(entry));
 			} else {
@@ -506,6 +549,9 @@ static void php_phongo_zval_to_bson_internal(zval* data, php_phongo_field_path* 
 				}
 
 				if (instanceof_function(Z_OBJCE_P(data), php_phongo_persistable_ce)) {
+					if (!phongo_bson_length_is_valid(Z_OBJCE_P(data)->name->len, field_path, "class name")) {
+						goto cleanup;
+					}
 					bson_append_binary(bson, PHONGO_ODM_FIELD_NAME, -1, 0x80, (const uint8_t*) Z_OBJCE_P(data)->name->val, Z_OBJCE_P(data)->name->len);
 					/* Ensure that we ignore an existing key with the same name
 					 * if one exists in the bsonSerialize() return value. */
@@ -703,6 +749,11 @@ bool phongo_zval_to_bson_value(zval* data, bson_value_t* value)
 			return true;
 
 		case IS_STRING:
+			if (Z_STRLEN_P(data) > PHONGO_BSON_MAX_LENGTH) {
+				phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Expected string to be <= %" PRId32 " bytes, %zu given", (int32_t) PHONGO_BSON_MAX_LENGTH, Z_STRLEN_P(data));
+				return false;
+			}
+
 			value->value_type       = BSON_TYPE_UTF8;
 			value->value.v_utf8.len = Z_STRLEN_P(data);
 
