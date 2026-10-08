@@ -34,4 +34,3 @@ jobs:
           ignoredBranches: ${{ vars.IGNORED_MERGE_UP_BRANCHES }}
           labels: merge-up
           enableAutoMerge: true
-          labels: merge-up
