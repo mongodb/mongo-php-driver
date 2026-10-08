@@ -251,6 +251,11 @@ static bool php_phongo_bulkwrite_opt_hint(bson_t* boptions, zval* zoptions)
 		if (type == IS_STRING) {
 			zval* value = php_array_fetchc_deref(zoptions, "hint");
 
+			if (Z_STRLEN_P(value) > PHONGO_BSON_MAX_LENGTH) {
+				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"hint\" option to be <= %" PRId32 " bytes, %zu given", (int32_t) PHONGO_BSON_MAX_LENGTH, Z_STRLEN_P(value));
+				return false;
+			}
+
 			if (!bson_append_utf8(boptions, "hint", 4, Z_STRVAL_P(value), Z_STRLEN_P(value))) {
 				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Error appending \"hint\" option");
 				return false;
