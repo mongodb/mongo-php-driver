@@ -43,6 +43,11 @@ static bool phongo_query_opts_append_string(bson_t* opts, const char* opts_key, 
 		return false;
 	}
 
+	if (Z_STRLEN_P(value) > PHONGO_BSON_MAX_LENGTH) {
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"%s\" option to be <= %" PRId32 " bytes, %zu given", opts_key, (int32_t) PHONGO_BSON_MAX_LENGTH, Z_STRLEN_P(value));
+		return false;
+	}
+
 	if (!bson_append_utf8(opts, opts_key, strlen(opts_key), Z_STRVAL_P(value), Z_STRLEN_P(value))) {
 		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Error appending \"%s\" option", opts_key);
 		return false;

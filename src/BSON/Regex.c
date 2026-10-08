@@ -38,6 +38,16 @@ static int phongo_regex_compare_flags(const void* f1, const void* f2)
  * be thrown on error. */
 static bool phongo_regex_init(phongo_regex_t* intern, const char* pattern, size_t pattern_len, const char* flags, size_t flags_len)
 {
+	if (pattern_len > PHONGO_BSON_MAX_LENGTH) {
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected pattern length to be <= %" PRId32 " bytes, %zu given", (int32_t) PHONGO_BSON_MAX_LENGTH, pattern_len);
+		return false;
+	}
+
+	if (flags_len > PHONGO_BSON_MAX_LENGTH) {
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected flags length to be <= %" PRId32 " bytes, %zu given", (int32_t) PHONGO_BSON_MAX_LENGTH, flags_len);
+		return false;
+	}
+
 	if (strlen(pattern) != (size_t) pattern_len) {
 		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Pattern cannot contain null bytes");
 		return false;
