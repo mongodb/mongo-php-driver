@@ -464,3 +464,43 @@ function skip_if_no_crypt_shared()
         exit('skip crypt_shared is not available');
     }
 }
+
+/**
+ * Returns the memory the process can plausibly allocate, in bytes, or null when
+ * it cannot be determined. Only Linux is handled: the platforms these tests run
+ * on outside CI expose no cheap equivalent, so the tests skip there.
+ */
+function get_available_memory()
+{
+    if (is_readable('/proc/meminfo') && preg_match('/^MemAvailable:\s+(\d+) kB$/m', file_get_contents('/proc/meminfo'), $matches)) {
+        return (int) $matches[1] * 1024;
+    }
+
+    return null;
+}
+
+/**
+ * Skips the test unless the process can plausibly allocate the given number of
+ * bytes. Tests exercising the 2 GiB BSON length limit need multi-gigabyte
+ * strings, which many CI hosts cannot supply.
+ *
+ * @param int $requiredBytes Bytes the test needs to allocate
+ */
+function skip_if_not_enough_memory($requiredBytes)
+{
+    if (PHP_INT_SIZE !== 8) {
+        exit('skip Allocating more than 2 GiB requires a 64-bit platform');
+    }
+
+    $availableBytes = get_available_memory();
+
+    if ($availableBytes === null) {
+        exit('skip Cannot determine available memory on this platform');
+    }
+
+    /* Require headroom beyond the payload itself, since the driver copies the
+     * string while encoding and the process needs room for everything else. */
+    if ($availableBytes < $requiredBytes * 2) {
+        exit(sprintf('skip Requires %d bytes of available memory, %d available', $requiredBytes * 2, $availableBytes));
+    }
+}

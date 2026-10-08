@@ -29,6 +29,11 @@ zend_class_entry* php_phongo_dbpointer_ce;
  * be thrown on error. */
 static bool php_phongo_dbpointer_init(php_phongo_dbpointer_t* intern, const char* ref, size_t ref_len, const char* id, size_t id_len)
 {
+	if (ref_len > PHONGO_BSON_MAX_LENGTH) {
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected ref length to be <= %" PRId32 " bytes, %zu given", (int32_t) PHONGO_BSON_MAX_LENGTH, ref_len);
+		return false;
+	}
+
 	if (strlen(ref) != (size_t) ref_len) {
 		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Ref cannot contain null bytes");
 		return false;

@@ -26,6 +26,12 @@
 #define PHONGO_ODM_FIELD_NAME "__pclass"
 #define BSON_MAX_NESTING_LEVEL 100
 
+/* Maximum length for a BSON string or binary value. BSON encodes these lengths
+ * as int32, so anything larger cannot be represented on the wire and would be
+ * silently truncated (or wrap an allocation) by the narrowing casts in the
+ * encoder. */
+#define PHONGO_BSON_MAX_LENGTH INT32_MAX
+
 typedef enum {
 	PHONGO_FIELD_PATH_ITEM_NONE,
 	PHONGO_FIELD_PATH_ITEM_ARRAY,
