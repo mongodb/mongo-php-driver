@@ -8,14 +8,13 @@
 namespace MongoDB\Driver;
 
 /** @not-serializable */
-final class Cursor implements \Iterator, CursorInterface
+final class Cursor implements CursorInterface
 {
     final private function __construct() {}
 
     public function current(): array|object|null {}
 
-    /** @tentative-return-type */
-    final public function getId(bool $asInt64 = false): CursorId|\MongoDB\BSON\Int64 {}
+    final public function getId(): \MongoDB\BSON\Int64 {}
 
     final public function getServer(): Server {}
 

@@ -20,7 +20,7 @@ $bulk->insert(array('foo' => 'bar'));
 $server = $manager->executeBulkWrite(NS, $bulk)->getServer();
 
 $expectedHost = $parsed['host'];
-$expectedPort = (integer) (isset($parsed['port']) ? $parsed['port'] : 27017);
+$expectedPort = (int) (isset($parsed['port']) ? $parsed['port'] : 27017);
 
 var_dump($server->getHost() == $expectedHost);
 var_dump($server->getPort() == $expectedPort);

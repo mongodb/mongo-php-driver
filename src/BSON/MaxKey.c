@@ -15,8 +15,6 @@
  */
 
 #include <php.h>
-#include <zend_smart_str.h>
-#include <ext/standard/php_var.h>
 #include <Zend/zend_interfaces.h>
 
 #include "php_phongo.h"
@@ -42,23 +40,6 @@ static PHP_METHOD(MongoDB_BSON_MaxKey, jsonSerialize)
 
 	array_init_size(return_value, 1);
 	ADD_ASSOC_LONG_EX(return_value, "$maxKey", 1);
-}
-
-static PHP_METHOD(MongoDB_BSON_MaxKey, serialize)
-{
-	PHONGO_PARSE_PARAMETERS_NONE();
-
-	RETURN_STRING("");
-}
-
-static PHP_METHOD(MongoDB_BSON_MaxKey, unserialize)
-{
-	char*  serialized;
-	size_t serialized_len;
-
-	PHONGO_PARSE_PARAMETERS_START(1, 1)
-	Z_PARAM_STRING(serialized, serialized_len)
-	PHONGO_PARSE_PARAMETERS_END();
 }
 
 static PHP_METHOD(MongoDB_BSON_MaxKey, __serialize)
@@ -101,7 +82,7 @@ static zend_object* php_phongo_maxkey_create_object(zend_class_entry* class_type
 
 void php_phongo_maxkey_init_ce(INIT_FUNC_ARGS)
 {
-	php_phongo_maxkey_ce                = register_class_MongoDB_BSON_MaxKey(php_phongo_maxkey_interface_ce, php_phongo_json_serializable_ce, php_phongo_type_ce, zend_ce_serializable);
+	php_phongo_maxkey_ce                = register_class_MongoDB_BSON_MaxKey(php_phongo_maxkey_interface_ce, php_phongo_json_serializable_ce, php_phongo_type_ce);
 	php_phongo_maxkey_ce->create_object = php_phongo_maxkey_create_object;
 
 	memcpy(&php_phongo_handler_maxkey, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));

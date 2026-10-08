@@ -350,7 +350,7 @@ char *php_array_zval_to_string(zval *z, int *plen, zend_bool *pfree) {
 			zval c = *z;
 			zval_copy_ctor(&c);
 			convert_to_string(&c);
-			*pfree = ! IS_INTERNED(Z_STR(c));
+			*pfree = ! ZSTR_IS_INTERNED(Z_STR(c));
 			*plen = Z_STRLEN(c);
 			return Z_STRVAL(c);
 		}

@@ -1,0 +1,119 @@
+/* config.h.in.  Generated from configure.ac by autoheader.  */
+
+/* Description */
+#undef ACCEPT_ARG2
+
+/* Description */
+#undef ACCEPT_ARG3
+
+/* Define to 1 if the PHP extension 'mongodb' is built as a dynamic module. */
+#undef COMPILE_DL_MONGODB
+
+/* Define to 1 if you have the declaration of 'ASN1_STRING_get0_data', and to
+   0 if you don't. */
+#undef HAVE_DECL_ASN1_STRING_GET0_DATA
+
+/* Define to 1 if you have the <dlfcn.h> header file. */
+#undef HAVE_DLFCN_H
+
+/* Define to 1 if you have the <inttypes.h> header file. */
+#undef HAVE_INTTYPES_H
+
+/* Have PTHREAD_PRIO_INHERIT. */
+#undef HAVE_PTHREAD_PRIO_INHERIT
+
+/* Define to 1 if you have the 'shm_open' function. */
+#undef HAVE_SHM_OPEN
+
+/* Define to 1 if stdbool.h conforms to C99. */
+#undef HAVE_STDBOOL_H
+
+/* Define to 1 if you have the <stdint.h> header file. */
+#undef HAVE_STDINT_H
+
+/* Define to 1 if you have the <stdio.h> header file. */
+#undef HAVE_STDIO_H
+
+/* Define to 1 if you have the <stdlib.h> header file. */
+#undef HAVE_STDLIB_H
+
+/* Define to 1 if you have the <strings.h> header file. */
+#undef HAVE_STRINGS_H
+
+/* Define to 1 if you have the <string.h> header file. */
+#undef HAVE_STRING_H
+
+/* Use system libbson */
+#undef HAVE_SYSTEM_LIBBSON
+
+/* Use system libmongoc */
+#undef HAVE_SYSTEM_LIBMONGOC
+
+/* Use system libmongocrypt */
+#undef HAVE_SYSTEM_LIBMONGOCRYPT
+
+/* Define to 1 if you have the <sys/stat.h> header file. */
+#undef HAVE_SYS_STAT_H
+
+/* Define to 1 if you have the <sys/types.h> header file. */
+#undef HAVE_SYS_TYPES_H
+
+/* Define to 1 if typeof works with your compiler. */
+#undef HAVE_TYPEOF
+
+/* Define to 1 if you have the <unistd.h> header file. */
+#undef HAVE_UNISTD_H
+
+/* Define to 1 if the system has the type '_Bool'. */
+#undef HAVE__BOOL
+
+/* Define to the address where bug reports for this package should be sent. */
+/* #undef PACKAGE_BUGREPORT */
+
+/* Define to the full name of this package. */
+/* #undef PACKAGE_NAME */
+
+/* Define to the full name and version of this package. */
+/* #undef PACKAGE_STRING */
+
+/* Define to the one symbol short name of this package. */
+/* #undef PACKAGE_TARNAME */
+
+/* Define to the home page for this package. */
+/* #undef PACKAGE_URL */
+
+/* Define to the version of this package. */
+/* #undef PACKAGE_VERSION */
+
+/* Define to necessary symbol if this constant uses a non-standard name on
+   your system. */
+#undef PTHREAD_CREATE_JOINABLE
+
+/* Define to 1 if all of the C89 standard headers exist (not just the ones
+   required in a freestanding environment). This macro is provided for
+   backward compatibility; new code need not use it. */
+#undef STDC_HEADERS
+
+/* Define WORDS_BIGENDIAN to 1 if your processor stores words with the most
+   significant byte first (like Motorola and SPARC, unlike Intel). */
+#if defined AC_APPLE_UNIVERSAL_BUILD
+# if defined __BIG_ENDIAN__
+#  define WORDS_BIGENDIAN 1
+# endif
+#else
+# ifndef WORDS_BIGENDIAN
+#  undef WORDS_BIGENDIAN
+# endif
+#endif
+
+/* Define to empty if 'const' does not conform to ANSI C. */
+#undef const
+
+/* Define to '__inline__' or '__inline' if that's what the C compiler
+   calls it, or to nothing if 'inline' is not supported under any name.  */
+#ifndef __cplusplus
+#undef inline
+#endif
+
+/* Define to __typeof__ if your compiler spells it that way. */
+#undef typeof

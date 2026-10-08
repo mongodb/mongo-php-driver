@@ -4,8 +4,6 @@ MongoDB\BSON\Decimal128 NaN values
 <?php
 
 $tests = [
-    acos(8),
-    NAN,
     'nan',
     'Nan',
     'NaN',
@@ -20,8 +18,6 @@ foreach ($tests as $test) {
 ===DONE===
 <?php exit(0); ?>
 --EXPECT--
-NaN
-NaN
 NaN
 NaN
 NaN

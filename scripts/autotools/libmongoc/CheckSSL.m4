@@ -19,17 +19,6 @@ fi
 
 PHP_MONGODB_VALIDATE_ARG([PHP_MONGODB_SSL], [auto openssl libressl darwin no])
 
-PHP_ARG_WITH([openssl-dir],
-             [deprecated option for OpenSSL library path],
-             [AS_HELP_STRING([--with-openssl-dir=@<:@auto/DIR@:>@],
-                             [MongoDB: OpenSSL library path (deprecated for pkg-config) [default=auto]])],
-             [auto],
-             [no])
-
-if test "$PHP_OPENSSL_DIR" != "auto"; then
-    AC_MSG_WARN([Using --with-openssl-dir is deprecated and will be removed in a future version.])
-fi
-
 AS_IF([test "$PHP_MONGODB_SSL" = "openssl" -o "$PHP_MONGODB_SSL" = "auto"],[
   found_openssl="no"
 
@@ -54,13 +43,10 @@ AS_IF([test "$PHP_MONGODB_SSL" = "openssl" -o "$PHP_MONGODB_SSL" = "auto"],[
     unset OPENSSL_INCDIR
     unset OPENSSL_LIBDIR
 
-    dnl Use a list of directories from PHP_SETUP_OPENSSL by default.
-    dnl Support documented "auto" and older, undocumented "yes" options
-    if test "$PHP_OPENSSL_DIR" = "auto" -o "$PHP_OPENSSL_DIR" = "yes"; then
-      PHP_OPENSSL_DIR="/usr/local/ssl /usr/local /usr /usr/local/openssl"
-    fi
+    dnl Use a list of directories from PHP_SETUP_OPENSSL by default. 
+    OPENSSL_SEARCH_PATHS="/usr/local/ssl /usr/local /usr /usr/local/openssl"
 
-    for i in $PHP_OPENSSL_DIR; do
+    for i in $OPENSSL_SEARCH_PATHS; do
       if test -r $i/include/openssl/evp.h; then
         OPENSSL_INCDIR="$i/include"
       fi
@@ -79,7 +65,6 @@ AS_IF([test "$PHP_MONGODB_SSL" = "openssl" -o "$PHP_MONGODB_SSL" = "auto"],[
                       [have_crypto_lib="yes"],
                       [have_crypto_lib="no"],
                       [$OPENSSL_LIBDIR_LDFLAG])
-
 
     dnl Check whether OpenSSL >= 1.1.0 is available
     PHP_CHECK_LIBRARY([ssl],
@@ -244,25 +229,7 @@ PHP_ARG_ENABLE([mongodb-crypto-system-profile],
                [no])
 PHP_MONGODB_VALIDATE_ARG([PHP_MONGODB_CRYPTO_SYSTEM_PROFILE], [yes no])
 
-PHP_ARG_WITH([system-ciphers],
-             [deprecated option for whether to use system crypto profile],
-             AS_HELP_STRING([--enable-system-ciphers],
-                            [MongoDB: whether to use system crypto profile (deprecated for --enable-mongodb-crypto-system-profile) [default=no]]),
-             [no],
-             [no])
-
-dnl Do not validate PHP_SYSTEM_CIPHERS for static builds, since it is also used
-dnl by the OpenSSL extension, which checks for values other than "no".
-if test "$ext_shared" = "yes"; then
-  PHP_MONGODB_VALIDATE_ARG([PHP_SYSTEM_CIPHERS], [yes no])
-
-  if test "$PHP_SYSTEM_CIPHERS" != "no"; then
-    AC_MSG_WARN([Using --enable-system-ciphers is deprecated and will be removed in a future version. Please use --enable-mongodb-crypto-system-profile instead])
-  fi
-fi
-
-dnl Also consider the deprecated --enable-system-ciphers option
-if test "$PHP_MONGODB_CRYPTO_SYSTEM_PROFILE" = "yes" -o "$PHP_SYSTEM_CIPHERS" = "yes"; then
+if test "$PHP_MONGODB_CRYPTO_SYSTEM_PROFILE" = "yes"; then
   if test "$PHP_MONGODB_SSL" = "openssl"; then
     AC_SUBST(MONGOC_ENABLE_CRYPTO_SYSTEM_PROFILE, 1)
   else

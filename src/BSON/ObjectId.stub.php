@@ -7,7 +7,7 @@
 
 namespace MongoDB\BSON;
 
-final class ObjectId implements ObjectIdInterface, \JsonSerializable, Type, \Serializable, \Stringable
+final class ObjectId implements ObjectIdInterface, \JsonSerializable, Type, \Stringable
 {
     final public function __construct(?string $id = null) {}
 
@@ -16,10 +16,6 @@ final class ObjectId implements ObjectIdInterface, \JsonSerializable, Type, \Ser
     final public function __toString(): string {}
 
     final public static function __set_state(array $properties): ObjectId {}
-
-    final public function serialize(): string {}
-
-    final public function unserialize(string $data): void {}
 
     final public function __unserialize(array $data): void {}
 

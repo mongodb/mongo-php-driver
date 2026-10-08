@@ -17,8 +17,7 @@ class MyClass implements MongoDB\BSON\Persistable
         ];
     }
 
-    #[\ReturnTypeWillChange]
-    public function bsonSerialize()
+    public function bsonSerialize(): array
     {
         return $this->data;
     }

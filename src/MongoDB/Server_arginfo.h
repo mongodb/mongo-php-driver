@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 5edd7242100364c5e4beddc89b4d92dda70c09f6 */
+ * Stub hash: ed6e371d10ddbcfd3ffed6aeb48758d0e88d717f */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_Driver_Server___construct, 0, 0, 0)
 ZEND_END_ARG_INFO()
@@ -7,30 +7,31 @@ ZEND_END_ARG_INFO()
 ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_MongoDB_Driver_Server_executeBulkWrite, 0, 2, MongoDB\\Driver\\WriteResult, 0)
 	ZEND_ARG_TYPE_INFO(0, namespace, IS_STRING, 0)
 	ZEND_ARG_OBJ_INFO(0, bulkWrite, MongoDB\\Driver\\BulkWrite, 0)
-	ZEND_ARG_OBJ_TYPE_MASK(0, options, MongoDB\\Driver\\WriteConcern, MAY_BE_ARRAY|MAY_BE_NULL, "null")
+	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, options, IS_ARRAY, 1, "null")
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_MongoDB_Driver_Server_executeCommand, 0, 2, MongoDB\\Driver\\Cursor, 0)
-	ZEND_ARG_TYPE_INFO(0, db, IS_STRING, 0)
-	ZEND_ARG_OBJ_INFO(0, command, MongoDB\\Driver\\Command, 0)
-	ZEND_ARG_OBJ_TYPE_MASK(0, options, MongoDB\\Driver\\ReadPreference, MAY_BE_ARRAY|MAY_BE_NULL, "null")
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_MongoDB_Driver_Server_executeBulkWriteCommand, 0, 1, MongoDB\\Driver\\BulkWriteCommandResult, 0)
+	ZEND_ARG_OBJ_INFO(0, bulkWriteCommand, MongoDB\\Driver\\BulkWriteCommand, 0)
+	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, options, IS_ARRAY, 1, "null")
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_MongoDB_Driver_Server_executeQuery, 0, 2, MongoDB\\Driver\\Cursor, 0)
-	ZEND_ARG_TYPE_INFO(0, namespace, IS_STRING, 0)
-	ZEND_ARG_OBJ_INFO(0, query, MongoDB\\Driver\\Query, 0)
-	ZEND_ARG_OBJ_TYPE_MASK(0, options, MongoDB\\Driver\\ReadPreference, MAY_BE_ARRAY|MAY_BE_NULL, "null")
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_MongoDB_Driver_Server_executeReadCommand, 0, 2, MongoDB\\Driver\\Cursor, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_MongoDB_Driver_Server_executeCommand, 0, 2, MongoDB\\Driver\\CursorInterface, 0)
 	ZEND_ARG_TYPE_INFO(0, db, IS_STRING, 0)
 	ZEND_ARG_OBJ_INFO(0, command, MongoDB\\Driver\\Command, 0)
 	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, options, IS_ARRAY, 1, "null")
 ZEND_END_ARG_INFO()
 
-#define arginfo_class_MongoDB_Driver_Server_executeReadWriteCommand arginfo_class_MongoDB_Driver_Server_executeReadCommand
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_MongoDB_Driver_Server_executeQuery, 0, 2, MongoDB\\Driver\\CursorInterface, 0)
+	ZEND_ARG_TYPE_INFO(0, namespace, IS_STRING, 0)
+	ZEND_ARG_OBJ_INFO(0, query, MongoDB\\Driver\\Query, 0)
+	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, options, IS_ARRAY, 1, "null")
+ZEND_END_ARG_INFO()
 
-#define arginfo_class_MongoDB_Driver_Server_executeWriteCommand arginfo_class_MongoDB_Driver_Server_executeReadCommand
+#define arginfo_class_MongoDB_Driver_Server_executeReadCommand arginfo_class_MongoDB_Driver_Server_executeCommand
+
+#define arginfo_class_MongoDB_Driver_Server_executeReadWriteCommand arginfo_class_MongoDB_Driver_Server_executeCommand
+
+#define arginfo_class_MongoDB_Driver_Server_executeWriteCommand arginfo_class_MongoDB_Driver_Server_executeCommand
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_Driver_Server_getHost, 0, 0, IS_STRING, 0)
 ZEND_END_ARG_INFO()
@@ -65,6 +66,7 @@ ZEND_END_ARG_INFO()
 
 static ZEND_METHOD(MongoDB_Driver_Server, __construct);
 static ZEND_METHOD(MongoDB_Driver_Server, executeBulkWrite);
+static ZEND_METHOD(MongoDB_Driver_Server, executeBulkWriteCommand);
 static ZEND_METHOD(MongoDB_Driver_Server, executeCommand);
 static ZEND_METHOD(MongoDB_Driver_Server, executeQuery);
 static ZEND_METHOD(MongoDB_Driver_Server, executeReadCommand);
@@ -87,6 +89,7 @@ static ZEND_METHOD(MongoDB_Driver_Server, isSecondary);
 static const zend_function_entry class_MongoDB_Driver_Server_methods[] = {
 	ZEND_ME(MongoDB_Driver_Server, __construct, arginfo_class_MongoDB_Driver_Server___construct, ZEND_ACC_PRIVATE|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_Driver_Server, executeBulkWrite, arginfo_class_MongoDB_Driver_Server_executeBulkWrite, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	ZEND_ME(MongoDB_Driver_Server, executeBulkWriteCommand, arginfo_class_MongoDB_Driver_Server_executeBulkWriteCommand, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_Driver_Server, executeCommand, arginfo_class_MongoDB_Driver_Server_executeCommand, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_Driver_Server, executeQuery, arginfo_class_MongoDB_Driver_Server_executeQuery, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_Driver_Server, executeReadCommand, arginfo_class_MongoDB_Driver_Server_executeReadCommand, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
