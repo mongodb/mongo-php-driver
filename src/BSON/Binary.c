@@ -41,8 +41,13 @@ static bool phongo_binary_init(phongo_binary_t* intern, const char* data, size_t
 		return false;
 	}
 
+	if (data_len > PHONGO_BSON_MAX_LENGTH) {
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected data length to be <= %" PRId32 " bytes, %zu given", (int32_t) PHONGO_BSON_MAX_LENGTH, data_len);
+		return false;
+	}
+
 	if ((type == BSON_SUBTYPE_UUID_DEPRECATED || type == BSON_SUBTYPE_UUID) && data_len != PHONGO_BINARY_UUID_SIZE) {
-		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected UUID length to be %d bytes, %d given", PHONGO_BINARY_UUID_SIZE, data_len);
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected UUID length to be %d bytes, %zu given", PHONGO_BINARY_UUID_SIZE, data_len);
 		return false;
 	}
 

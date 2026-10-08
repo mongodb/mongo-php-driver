@@ -30,12 +30,8 @@
 #define MONGOC_LOG_DOMAIN "PHONGO-BSON"
 
 #if SIZEOF_ZEND_LONG == 8
-#define BSON_APPEND_INT(b, key, keylen, val)    \
-	if (val > INT32_MAX || val < INT32_MIN) {   \
-		bson_append_int64(b, key, keylen, val); \
-	} else {                                    \
-		bson_append_int32(b, key, keylen, val); \
-	}
+#define BSON_APPEND_INT(b, key, keylen, val) \
+	(val > INT32_MAX || val < INT32_MIN ? bson_append_int64(b, key, keylen, val) : bson_append_int32(b, key, keylen, val))
 #elif SIZEOF_ZEND_LONG == 4
 #define BSON_APPEND_INT(b, key, keylen, val) \
 	bson_append_int32(b, key, keylen, val)
@@ -46,6 +42,41 @@
 /* Forwards declarations */
 static void phongo_bson_append(bson_t* bson, phongo_field_path* field_path, phongo_bson_flags_t flags, const char* key, long key_len, zval* entry);
 static void phongo_zval_to_bson_internal(zval* data, phongo_field_path* field_path, phongo_bson_flags_t flags, bson_t* bson, bson_t** bson_out);
+
+/* Throws if a libbson append call failed. libbson rejects an append when the
+ * resulting document would exceed the maximum BSON size, when a key contains
+ * an embedded NUL, or when regex options contain invalid characters. Does
+ * nothing if an exception is already pending. */
+static void phongo_bson_append_check(bool append_ok, phongo_field_path* field_path)
+{
+	char* path_string;
+
+	if (append_ok || EG(exception)) {
+		return;
+	}
+
+	path_string = phongo_field_path_as_string(field_path);
+	phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Could not append BSON data for field path \"%s\".", path_string);
+	efree(path_string);
+}
+
+/* Rejects a string or binary length that BSON cannot represent. The encoder
+ * narrows these lengths to int32 or uint32 when appending, so an unchecked
+ * value would be silently truncated or wrap an allocation size. */
+static bool phongo_bson_length_is_valid(size_t length, phongo_field_path* field_path, const char* description)
+{
+	char* path_string;
+
+	if (length <= PHONGO_BSON_MAX_LENGTH) {
+		return true;
+	}
+
+	path_string = phongo_field_path_as_string(field_path);
+	phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Expected %s for field path \"%s\" to be <= %" PRId32 " bytes, %zu given", description, path_string, (int32_t) PHONGO_BSON_MAX_LENGTH, length);
+	efree(path_string);
+
+	return false;
+}
 
 /* Determines whether the argument should be serialized as a BSON array or
  * document. IS_ARRAY is returned if the argument's keys are a sequence of
@@ -98,14 +129,14 @@ static void phongo_bson_append_object(bson_t* bson, phongo_field_path* field_pat
 	if (Z_TYPE_P(object) == IS_OBJECT && instanceof_function(Z_OBJCE_P(object), phongo_type_ce)) {
 		if (instanceof_function(Z_OBJCE_P(object), phongo_document_ce)) {
 			PHONGO_INTERN_FROM_ZVAL(document, object);
-			bson_append_document(bson, key, key_len, intern->bson);
+			phongo_bson_append_check(bson_append_document(bson, key, key_len, intern->bson), field_path);
 
 			return;
 		}
 
 		if (instanceof_function(Z_OBJCE_P(object), phongo_packedarray_ce)) {
 			PHONGO_INTERN_FROM_ZVAL(packedarray, object);
-			bson_append_array(bson, key, key_len, intern->bson);
+			phongo_bson_append_check(bson_append_array(bson, key, key_len, intern->bson), field_path);
 
 			return;
 		}
@@ -122,16 +153,30 @@ static void phongo_bson_append_object(bson_t* bson, phongo_field_path* field_pat
 			/* Persistable objects must always be serialized as BSON documents;
 			 * otherwise, infer based on bsonSerialize()'s return value. */
 			if (instanceof_function(Z_OBJCE_P(object), phongo_persistable_ce) || phongo_is_array_or_document(&obj_data) != IS_ARRAY) {
-				bson_append_document_begin(bson, key, key_len, &child);
+				if (instanceof_function(Z_OBJCE_P(object), phongo_persistable_ce) && !phongo_bson_length_is_valid(Z_OBJCE_P(object)->name->len, field_path, "class name")) {
+					zval_ptr_dtor(&obj_data);
+					return;
+				}
+				/* If the append fails, the child is not initialized and must not
+				 * be used. */
+				if (!bson_append_document_begin(bson, key, key_len, &child)) {
+					phongo_bson_append_check(false, field_path);
+					zval_ptr_dtor(&obj_data);
+					return;
+				}
 				if (instanceof_function(Z_OBJCE_P(object), phongo_persistable_ce)) {
-					bson_append_binary(&child, PHONGO_ODM_FIELD_NAME, -1, 0x80, (const uint8_t*) Z_OBJCE_P(object)->name->val, Z_OBJCE_P(object)->name->len);
+					phongo_bson_append_check(bson_append_binary(&child, PHONGO_ODM_FIELD_NAME, -1, 0x80, (const uint8_t*) Z_OBJCE_P(object)->name->val, Z_OBJCE_P(object)->name->len), field_path);
 				}
 				phongo_zval_to_bson_internal(&obj_data, field_path, flags, &child, NULL);
-				bson_append_document_end(bson, &child);
+				phongo_bson_append_check(bson_append_document_end(bson, &child), field_path);
 			} else {
-				bson_append_array_unsafe_begin(bson, key, key_len, &child);
+				if (!bson_append_array_unsafe_begin(bson, key, key_len, &child)) {
+					phongo_bson_append_check(false, field_path);
+					zval_ptr_dtor(&obj_data);
+					return;
+				}
 				phongo_zval_to_bson_internal(&obj_data, field_path, flags, &child, NULL);
-				bson_append_array_end(bson, &child);
+				phongo_bson_append_check(bson_append_array_end(bson, &child), field_path);
 			}
 
 			zval_ptr_dtor(&obj_data);
@@ -143,62 +188,66 @@ static void phongo_bson_append_object(bson_t* bson, phongo_field_path* field_pat
 			bson_oid_t oid;
 
 			bson_oid_init_from_string(&oid, intern->oid);
-			bson_append_oid(bson, key, key_len, &oid);
+			phongo_bson_append_check(bson_append_oid(bson, key, key_len, &oid), field_path);
 			return;
 		}
 		if (instanceof_function(Z_OBJCE_P(object), phongo_utcdatetime_ce)) {
 			PHONGO_INTERN_FROM_ZVAL(utcdatetime, object);
 
-			bson_append_date_time(bson, key, key_len, intern->milliseconds);
+			phongo_bson_append_check(bson_append_date_time(bson, key, key_len, intern->milliseconds), field_path);
 			return;
 		}
 		// TODO: confirm that this handles binary vector
 		if (instanceof_function(Z_OBJCE_P(object), phongo_binary_ce)) {
 			PHONGO_INTERN_FROM_ZVAL(binary, object);
 
-			bson_append_binary(bson, key, key_len, intern->type, (const uint8_t*) intern->data, (uint32_t) intern->data_len);
+			if (!phongo_bson_length_is_valid(intern->data_len, field_path, "binary data")) {
+				return;
+			}
+
+			phongo_bson_append_check(bson_append_binary(bson, key, key_len, intern->type, (const uint8_t*) intern->data, (uint32_t) intern->data_len), field_path);
 			return;
 		}
 		if (instanceof_function(Z_OBJCE_P(object), phongo_decimal128_ce)) {
 			PHONGO_INTERN_FROM_ZVAL(decimal128, object);
 
-			bson_append_decimal128(bson, key, key_len, &intern->decimal);
+			phongo_bson_append_check(bson_append_decimal128(bson, key, key_len, &intern->decimal), field_path);
 			return;
 		}
 		if (instanceof_function(Z_OBJCE_P(object), phongo_int64_ce)) {
 			PHONGO_INTERN_FROM_ZVAL(int64, object);
 
-			bson_append_int64(bson, key, key_len, intern->integer);
+			phongo_bson_append_check(bson_append_int64(bson, key, key_len, intern->integer), field_path);
 			return;
 		}
 		if (instanceof_function(Z_OBJCE_P(object), phongo_regex_ce)) {
 			PHONGO_INTERN_FROM_ZVAL(regex, object);
 
-			bson_append_regex(bson, key, key_len, intern->pattern, intern->flags);
+			phongo_bson_append_check(bson_append_regex(bson, key, key_len, intern->pattern, intern->flags), field_path);
 			return;
 		}
 		if (instanceof_function(Z_OBJCE_P(object), phongo_javascript_ce)) {
 			PHONGO_INTERN_FROM_ZVAL(javascript, object);
 
 			if (intern->scope) {
-				bson_append_code_with_scope(bson, key, key_len, intern->code, intern->scope);
+				phongo_bson_append_check(bson_append_code_with_scope(bson, key, key_len, intern->code, intern->scope), field_path);
 			} else {
-				bson_append_code(bson, key, key_len, intern->code);
+				phongo_bson_append_check(bson_append_code(bson, key, key_len, intern->code), field_path);
 			}
 			return;
 		}
 		if (instanceof_function(Z_OBJCE_P(object), phongo_timestamp_ce)) {
 			PHONGO_INTERN_FROM_ZVAL(timestamp, object);
 
-			bson_append_timestamp(bson, key, key_len, intern->timestamp, intern->increment);
+			phongo_bson_append_check(bson_append_timestamp(bson, key, key_len, intern->timestamp, intern->increment), field_path);
 			return;
 		}
 		if (instanceof_function(Z_OBJCE_P(object), phongo_maxkey_ce)) {
-			bson_append_maxkey(bson, key, key_len);
+			phongo_bson_append_check(bson_append_maxkey(bson, key, key_len), field_path);
 			return;
 		}
 		if (instanceof_function(Z_OBJCE_P(object), phongo_minkey_ce)) {
-			bson_append_minkey(bson, key, key_len);
+			phongo_bson_append_check(bson_append_minkey(bson, key, key_len), field_path);
 			return;
 		}
 
@@ -208,17 +257,21 @@ static void phongo_bson_append_object(bson_t* bson, phongo_field_path* field_pat
 			bson_oid_t oid;
 
 			bson_oid_init_from_string(&oid, intern->id);
-			bson_append_dbpointer(bson, key, key_len, intern->ref, &oid);
+			phongo_bson_append_check(bson_append_dbpointer(bson, key, key_len, intern->ref, &oid), field_path);
 			return;
 		}
 		if (instanceof_function(Z_OBJCE_P(object), phongo_symbol_ce)) {
 			PHONGO_INTERN_FROM_ZVAL(symbol, object);
 
-			bson_append_symbol(bson, key, key_len, intern->symbol, intern->symbol_len);
+			if (!phongo_bson_length_is_valid(intern->symbol_len, field_path, "symbol")) {
+				return;
+			}
+
+			phongo_bson_append_check(bson_append_symbol(bson, key, key_len, intern->symbol, intern->symbol_len), field_path);
 			return;
 		}
 		if (instanceof_function(Z_OBJCE_P(object), phongo_undefined_ce)) {
-			bson_append_undefined(bson, key, key_len);
+			phongo_bson_append_check(bson_append_undefined(bson, key, key_len), field_path);
 			return;
 		}
 
@@ -241,9 +294,15 @@ static void phongo_bson_append_object(bson_t* bson, phongo_field_path* field_pat
 	{
 		bson_t child;
 
-		bson_append_document_begin(bson, key, key_len, &child);
+		/* If the append fails, the child is not initialized and must not be
+		 * used. */
+		if (!bson_append_document_begin(bson, key, key_len, &child)) {
+			phongo_bson_append_check(false, field_path);
+			return;
+		}
+
 		phongo_zval_to_bson_internal(object, field_path, flags, &child, NULL);
-		bson_append_document_end(bson, &child);
+		phongo_bson_append_check(bson_append_document_end(bson, &child), field_path);
 	}
 }
 
@@ -252,32 +311,45 @@ static void phongo_bson_append_object(bson_t* bson, phongo_field_path* field_pat
  * will defer to phongo_bson_append_object(). */
 static void phongo_bson_append(bson_t* bson, phongo_field_path* field_path, phongo_bson_flags_t flags, const char* key, long key_len, zval* entry)
 {
+	/* A key longer than BSON_MAX_SIZE wraps a size_t/long length to a small
+	 * non-negative int in the libbson append, silently truncating the field
+	 * name to a prefix (SECBUG-4150). Reject before narrowing. The key is not
+	 * included in the message or the field path, as it may be gigabytes. */
+	if (key_len > PHONGO_BSON_MAX_LENGTH) {
+		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Expected key length to be <= %" PRId32 " bytes, %zu given", (int32_t) PHONGO_BSON_MAX_LENGTH, (size_t) key_len);
+		return;
+	}
+
 	phongo_field_path_write_item_at_current_level(field_path, key);
 
 try_again:
 	switch (Z_TYPE_P(entry)) {
 		case IS_NULL:
-			bson_append_null(bson, key, key_len);
+			phongo_bson_append_check(bson_append_null(bson, key, key_len), field_path);
 			break;
 		case IS_TRUE:
-			bson_append_bool(bson, key, key_len, true);
+			phongo_bson_append_check(bson_append_bool(bson, key, key_len, true), field_path);
 			break;
 
 		case IS_FALSE:
-			bson_append_bool(bson, key, key_len, false);
+			phongo_bson_append_check(bson_append_bool(bson, key, key_len, false), field_path);
 			break;
 
 		case IS_LONG:
-			BSON_APPEND_INT(bson, key, key_len, Z_LVAL_P(entry));
+			phongo_bson_append_check(BSON_APPEND_INT(bson, key, key_len, Z_LVAL_P(entry)), field_path);
 			break;
 
 		case IS_DOUBLE:
-			bson_append_double(bson, key, key_len, Z_DVAL_P(entry));
+			phongo_bson_append_check(bson_append_double(bson, key, key_len, Z_DVAL_P(entry)), field_path);
 			break;
 
 		case IS_STRING:
+			if (!phongo_bson_length_is_valid(Z_STRLEN_P(entry), field_path, "string")) {
+				break;
+			}
+
 			if (bson_utf8_validate(Z_STRVAL_P(entry), Z_STRLEN_P(entry), true)) {
-				bson_append_utf8(bson, key, key_len, Z_STRVAL_P(entry), Z_STRLEN_P(entry));
+				phongo_bson_append_check(bson_append_utf8(bson, key, key_len, Z_STRVAL_P(entry), Z_STRLEN_P(entry)), field_path);
 			} else {
 				char* path_string = phongo_field_path_as_string(field_path);
 				phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Detected invalid UTF-8 for field path \"%s\": %s", path_string, Z_STRVAL_P(entry));
@@ -303,10 +375,18 @@ try_again:
 					break;
 				}
 
-				bson_append_array_unsafe_begin(bson, key, key_len, &child);
+				/* If the append fails, the child is not initialized and must
+				 * not be used. */
+				if (!bson_append_array_unsafe_begin(bson, key, key_len, &child)) {
+					phongo_bson_append_check(false, field_path);
+					phongo_field_path_pop(field_path);
+					phongo_zend_hash_apply_protection_end(tmp_ht);
+					break;
+				}
+
 				phongo_zval_to_bson_internal(entry, field_path, flags, &child, NULL);
 				phongo_field_path_pop(field_path);
-				bson_append_array_end(bson, &child);
+				phongo_bson_append_check(bson_append_array_end(bson, &child), field_path);
 
 				phongo_zend_hash_apply_protection_end(tmp_ht);
 				break;
@@ -365,8 +445,8 @@ static void phongo_bson_copy_to_noinit(const bson_t* src, bson_t* dst)
 	if (bson_iter_init(&iter, src)) {
 		while (bson_iter_next(&iter)) {
 			if (!bson_append_iter(dst, NULL, 0, &iter)) {
-				/* This should not be able to happen since we are copying from
-				 * within a valid bson_t. */
+				/* The source is a valid bson_t, so this only happens when the
+				 * destination would exceed the maximum BSON size. */
 				phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Error copying \"%s\" field from source document", bson_iter_key(&iter));
 				return;
 			}
@@ -399,6 +479,10 @@ static void phongo_zval_to_bson_internal(zval* data, phongo_field_path* field_pa
 
 				phongo_bson_copy_to_noinit(intern->bson, bson);
 
+				if (EG(exception)) {
+					goto cleanup;
+				}
+
 				// Check if the document instance already has an _id field
 				if (flags & PHONGO_BSON_ADD_ID && bson_iter_init_find(&iter, bson, "_id")) {
 					flags &= ~PHONGO_BSON_ADD_ID;
@@ -421,6 +505,10 @@ static void phongo_zval_to_bson_internal(zval* data, phongo_field_path* field_pa
 
 				phongo_bson_copy_to_noinit(intern->bson, bson);
 
+				if (EG(exception)) {
+					goto cleanup;
+				}
+
 				goto done;
 			}
 
@@ -433,7 +521,15 @@ static void phongo_zval_to_bson_internal(zval* data, phongo_field_path* field_pa
 				}
 
 				if (instanceof_function(Z_OBJCE_P(data), phongo_persistable_ce)) {
-					bson_append_binary(bson, PHONGO_ODM_FIELD_NAME, -1, 0x80, (const uint8_t*) Z_OBJCE_P(data)->name->val, Z_OBJCE_P(data)->name->len);
+					if (!phongo_bson_length_is_valid(Z_OBJCE_P(data)->name->len, field_path, "class name")) {
+						goto cleanup;
+					}
+					if (!bson_append_binary(bson, PHONGO_ODM_FIELD_NAME, -1, 0x80, (const uint8_t*) Z_OBJCE_P(data)->name->val, Z_OBJCE_P(data)->name->len)) {
+						phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Could not append \"%s\" field to encoded document. The document may exceed the maximum BSON size of %zu bytes.", PHONGO_ODM_FIELD_NAME, (size_t) BSON_MAX_SIZE);
+
+						goto cleanup;
+					}
+
 					/* Ensure that we ignore an existing key with the same name
 					 * if one exists in the bsonSerialize() return value. */
 					skip_odm_field = true;
@@ -518,6 +614,12 @@ static void phongo_zval_to_bson_internal(zval* data, phongo_field_path* field_pa
 			phongo_bson_append(bson, field_path, flags & ~PHONGO_BSON_ADD_ID, ZSTR_VAL(string_key), strlen(ZSTR_VAL(string_key)), value);
 
 			zend_string_release(string_key);
+
+			/* Stop encoding as soon as a field could not be appended.
+			 * Continuing would only throw again for each remaining field. */
+			if (EG(exception)) {
+				goto cleanup;
+			}
 		}
 		ZEND_HASH_FOREACH_END();
 	}
@@ -527,7 +629,11 @@ done:
 		bson_oid_t oid;
 
 		bson_oid_init(&oid, NULL);
-		bson_append_oid(bson, ZEND_STRL("_id"), &oid);
+		if (!bson_append_oid(bson, "_id", strlen("_id"), &oid)) {
+			phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Could not append \"_id\" field to encoded document. The document may exceed the maximum BSON size of %zu bytes.", (size_t) BSON_MAX_SIZE);
+
+			goto cleanup;
+		}
 	}
 
 	if (flags & PHONGO_BSON_RETURN_ID && bson_out) {
@@ -585,9 +691,17 @@ static bool phongo_zval_to_bson_value_ex(zval* data, phongo_bson_flags_t flags, 
 
 	phongo_zval_to_bson(&data_object, flags, &bson, NULL);
 
-	if (!EG(exception) && bson_iter_init_find(&iter, &bson, "data")) {
-		bson_value_copy(bson_iter_value(&iter), value);
-		success = true;
+	/* If the encoder threw, the value was never appended and must be left
+	 * untouched so the caller does not read uninitialized memory. */
+	if (!EG(exception)) {
+		if (bson_iter_init_find(&iter, &bson, "data")) {
+			bson_value_copy(bson_iter_value(&iter), value);
+			success = true;
+		} else {
+			/* Callers rely on an exception being thrown, so make sure one is
+			 * pending even if the encoder failed without throwing. */
+			phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Could not convert value to BSON");
+		}
 	}
 
 	bson_destroy(&bson);
@@ -643,6 +757,11 @@ bool phongo_zval_to_bson_value(zval* data, bson_value_t* value)
 			return true;
 
 		case IS_STRING:
+			if (Z_STRLEN_P(data) > PHONGO_BSON_MAX_LENGTH) {
+				phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Expected string to be <= %" PRId32 " bytes, %zu given", (int32_t) PHONGO_BSON_MAX_LENGTH, Z_STRLEN_P(data));
+				return false;
+			}
+
 			if (!bson_utf8_validate(Z_STRVAL_P(data), Z_STRLEN_P(data), true)) {
 				phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Detected invalid UTF-8 in string value");
 				return false;
