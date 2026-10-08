@@ -1,4 +1,25 @@
 changelog:
   exclude:
-    authors:
-      - mongodb-php-bot
+    labels:
+      - tidy
+      - merge-up
+      - dependencies
+  categories:
+    - title: Breaking Changes 🛠
+      labels:
+        - breaking-change
+    - title: Security
+      labels:
+        - security
+    - title: New Features
+      labels:
+        - feature
+    - title: Fixed
+      labels:
+        - bug
+    - title: Minor
+      labels:
+        - minor
+    - title: Other Changes
+      labels:
+        - '*'

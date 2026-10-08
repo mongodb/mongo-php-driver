@@ -38,6 +38,11 @@ static bool phongo_javascript_init(phongo_javascript_t* intern, const char* code
 		return false;
 	}
 
+	if (code_len > PHONGO_BSON_MAX_LENGTH) {
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected code length to be <= %" PRId32 " bytes, %zu given", (int32_t) PHONGO_BSON_MAX_LENGTH, code_len);
+		return false;
+	}
+
 	if (strlen(code) != (size_t) code_len) {
 		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Code cannot contain null bytes");
 		return false;
