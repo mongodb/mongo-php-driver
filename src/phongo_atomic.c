@@ -31,7 +31,7 @@ static void _thrd_yield(void)
 	BSON_IF_POSIX(sched_yield();)
 }
 
-/**
+/*
  * Some platforms do not support compiler intrinsics for atomic operations.
  * We emulate that here using a spin lock and regular arithmetic operations
  */
