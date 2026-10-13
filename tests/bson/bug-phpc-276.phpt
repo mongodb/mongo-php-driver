@@ -88,6 +88,18 @@ echo throws(function() {
     MongoDB\BSON\Document::fromBSON(nestedArray(501))->toPHP();
 }, MongoDB\Driver\Exception\UnexpectedValueException::class), "\n";
 
+/* A raw BSON sub-document is not traversed, so it does not count against the
+ * nesting limit even at the deepest level. */
+echo "Decoding a 501-level document with a raw BSON leaf\n";
+MongoDB\BSON\Document::fromBSON(nestedDocument(501))->toPHP([
+    'fieldPaths' => [implode('.', array_fill(0, 501, 'a')) => 'bson'],
+]);
+
+echo "Decoding a 501-level array with a raw BSON leaf\n";
+MongoDB\BSON\Document::fromBSON(nestedArray(501))->toPHP([
+    'fieldPaths' => [implode('.', array_fill(0, 501, '0')) => 'bson'],
+]);
+
 /* Well past the point at which the C recursion would exhaust the stack. */
 echo "Decoding a document nested 20000 levels deep\n";
 echo throws(function() {
@@ -109,6 +121,8 @@ Decoding an array nested 500 levels deep
 Decoding an array nested 501 levels deep
 OK: Got MongoDB\Driver\Exception\UnexpectedValueException
 Nesting level too deep for field path "0%s0"
+Decoding a 501-level document with a raw BSON leaf
+Decoding a 501-level array with a raw BSON leaf
 Decoding a document nested 20000 levels deep
 OK: Got MongoDB\Driver\Exception\UnexpectedValueException
 Nesting level too deep for field path "a%sa"
