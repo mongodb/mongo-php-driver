@@ -64,7 +64,7 @@ jobs:
         run: echo '🎬 Release process for version ${{ inputs.version }} started by @${{ github.triggering_actor }}' >> $GITHUB_STEP_SUMMARY
 
       - name: "Generate token and checkout repository"
-        uses: mongodb-labs/drivers-github-tools/secure-checkout@4089c3eb27d7a5101d987088c3345013858d65f8  # v3.0.6
+        uses: mongodb-labs/drivers-github-tools/secure-checkout@11cb3898ea71493d38e8cdea7cc17b44320899e5  # v3.0.7
         with:
           app_id: ${{ vars.APP_ID }}
           private_key: ${{ secrets.APP_PRIVATE_KEY }}
