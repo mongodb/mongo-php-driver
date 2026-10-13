@@ -7,9 +7,9 @@ decoding a deeply nested BSON document. Both paths now throw an
 UnexpectedValueException before the stack is exhausted.
 
 The encoding limit is 100 levels (BSON_MAX_NESTING_LEVEL, matching libbson's
-JSON parser). The decoding limit is higher (BSON_MAX_DECODE_NESTING_LEVEL)
-because the server stores documents nested up to 180 levels, which the driver
-must be able to decode.
+JSON parser). The decoding limit is higher (BSON_MAX_DECODE_NESTING_LEVEL,
+matching libbson's BSON_VALIDATION_MAX_NESTING_DEPTH).
+The server has a limit of 100 levels, but users may decode BSON directly. 
 --FILE--
 <?php
 

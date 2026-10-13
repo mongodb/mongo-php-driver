@@ -27,7 +27,7 @@
 #define BSON_MAX_NESTING_LEVEL 100
 
 /* The maximum nesting level accepted when decoding BSON. Higher than the
- * encoding limit because the server stores deeper documents, and lower than the
+ * encoding limit because the user can pass deeper documents, and lower than the
  * level at which the C recursion exhausts the stack. Mirrors libbson's
  * BSON_VALIDATION_MAX_NESTING_DEPTH. */
 #define BSON_MAX_DECODE_NESTING_LEVEL 500
