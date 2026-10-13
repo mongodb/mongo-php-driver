@@ -55,9 +55,30 @@ function nestedArray(int $depth): string
     return $arr;
 }
 
+/* Builds a document nesting a CodeWScope under "a", $depth levels deep. Each
+ * scope is a document decoded with its own field path. */
+function nestedCodeWithScope(int $depth): string
+{
+    $doc = bsonDocument([]);
+
+    for ($i = 0; $i < $depth; $i++) {
+        $doc = bsonDocument([bsonCodeWithScope('a', 'x', $doc)]);
+    }
+
+    return $doc;
+}
+
 function bsonString(string $key, string $value): string
 {
     return "\x02" . $key . "\x00" . pack('V', strlen($value) + 1) . $value . "\x00";
+}
+
+function bsonCodeWithScope(string $key, string $code, string $scopeDocument): string
+{
+    $codeString = pack('V', strlen($code) + 1) . $code . "\x00";
+    $length     = 4 + strlen($codeString) + strlen($scopeDocument);
+
+    return "\x0F" . $key . "\x00" . pack('V', $length) . $codeString . $scopeDocument;
 }
 
 function bsonDocument(array $elements): string
@@ -86,6 +107,16 @@ MongoDB\BSON\Document::fromBSON(nestedArray(500))->toPHP();
 echo "Decoding an array nested 501 levels deep\n";
 echo throws(function() {
     MongoDB\BSON\Document::fromBSON(nestedArray(501))->toPHP();
+}, MongoDB\Driver\Exception\UnexpectedValueException::class), "\n";
+
+/* A CodeWScope scope is decoded with its own field path, so the nesting depth
+ * must be carried over explicitly. */
+echo "Decoding a CodeWScope nested 500 levels deep\n";
+MongoDB\BSON\Document::fromBSON(nestedCodeWithScope(500))->toPHP();
+
+echo "Decoding a CodeWScope nested 501 levels deep\n";
+echo throws(function() {
+    MongoDB\BSON\Document::fromBSON(nestedCodeWithScope(501))->toPHP();
 }, MongoDB\Driver\Exception\UnexpectedValueException::class), "\n";
 
 /* A raw BSON sub-document is not traversed, so it does not count against the
@@ -121,6 +152,10 @@ Decoding an array nested 500 levels deep
 Decoding an array nested 501 levels deep
 OK: Got MongoDB\Driver\Exception\UnexpectedValueException
 Nesting level too deep for field path "0%s0"
+Decoding a CodeWScope nested 500 levels deep
+Decoding a CodeWScope nested 501 levels deep
+OK: Got MongoDB\Driver\Exception\UnexpectedValueException
+Nesting level too deep for field path "a"
 Decoding a 501-level document with a raw BSON leaf
 Decoding a 501-level array with a raw BSON leaf
 Decoding a document nested 20000 levels deep
