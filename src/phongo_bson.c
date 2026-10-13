@@ -728,6 +728,16 @@ static void php_phongo_handle_field_path_entry_for_compound_type(php_phongo_bson
 	}
 }
 
+/* Throws when the maximum BSON nesting level is exceeded while decoding. */
+static void php_phongo_bson_throw_nesting_exception(php_phongo_field_path* field_path)
+{
+	char* path_string = php_phongo_field_path_as_string(field_path);
+
+	phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Nesting level too deep for field path \"%s\"", path_string);
+
+	efree(path_string);
+}
+
 static bool php_phongo_bson_visit_document(const bson_iter_t* iter ARG_UNUSED, const char* key, const bson_t* v_document, void* data)
 {
 	zval*                  retval = PHONGO_BSON_STATE_ZCHILD(data);
@@ -735,6 +745,8 @@ static bool php_phongo_bson_visit_document(const bson_iter_t* iter ARG_UNUSED, c
 	php_phongo_bson_state* parent_state = (php_phongo_bson_state*) data;
 	php_phongo_bson_state  state;
 
+	/* The return value reports the encoding limit, which is lower than the
+	 * decoding limit checked below. */
 	php_phongo_field_path_push(parent_state->field_path, key, PHONGO_FIELD_PATH_ITEM_DOCUMENT);
 
 	PHONGO_BSON_INIT_STATE(state);
@@ -746,6 +758,14 @@ static bool php_phongo_bson_visit_document(const bson_iter_t* iter ARG_UNUSED, c
 
 	/* Only traverse BSON document if we're not returning a raw BSON structure */
 	if (state.field_type.type != PHONGO_TYPEMAP_BSON) {
+		/* Check the limit just before recursing: raw BSON structures are not
+		 * traversed and do not consume the stack. */
+		if (parent_state->field_path->size > BSON_MAX_DECODE_NESTING_LEVEL) {
+			php_phongo_bson_state_dtor(&state);
+			php_phongo_bson_throw_nesting_exception(parent_state->field_path);
+			return true;
+		}
+
 		if (!bson_iter_init(&child, v_document)) {
 			php_phongo_bson_state_dtor(&state);
 			return false;
@@ -821,6 +841,8 @@ static bool php_phongo_bson_visit_array(const bson_iter_t* iter ARG_UNUSED, cons
 	php_phongo_bson_state* parent_state = (php_phongo_bson_state*) data;
 	php_phongo_bson_state  state;
 
+	/* The return value reports the encoding limit, which is lower than the
+	 * decoding limit checked below. */
 	php_phongo_field_path_push(parent_state->field_path, key, PHONGO_FIELD_PATH_ITEM_ARRAY);
 
 	PHONGO_BSON_INIT_STATE(state);
@@ -832,6 +854,14 @@ static bool php_phongo_bson_visit_array(const bson_iter_t* iter ARG_UNUSED, cons
 
 	/* Only traverse BSON array if we're not returning a raw BSON structure */
 	if (state.field_type.type != PHONGO_TYPEMAP_BSON) {
+		/* Check the limit just before recursing: raw BSON structures are not
+		 * traversed and do not consume the stack. */
+		if (parent_state->field_path->size > BSON_MAX_DECODE_NESTING_LEVEL) {
+			php_phongo_bson_state_dtor(&state);
+			php_phongo_bson_throw_nesting_exception(parent_state->field_path);
+			return true;
+		}
+
 		if (!bson_iter_init(&child, v_array)) {
 			php_phongo_bson_state_dtor(&state);
 			return false;
