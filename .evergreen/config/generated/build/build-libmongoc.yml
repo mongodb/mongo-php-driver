@@ -1,9 +1,8 @@
 # This file is generated automatically - please edit the "templates/build/build-libmongoc.yml" template file instead.
 tasks:
 # The following tasks are used to build with different libmongoc versions.
-# If libmongoc is not set to a stable version, disable the first two builds and only leave the last one enabled.
-# When updating libmongoc to a stable release, make sure all builds are enabled.
-# These tasks are used in the build task group "build-php-libmongoc" defined in .evergreen/config/templates/build-task-groups.yml,
+# PHP v2.1 targets libmongoc 1.x and is not expected to build against libmongoc master (2.x), so there is no "latest" task (PHPC-2777).
+# These tasks are used in the build task group "build-php-libmongoc" defined in .evergreen/config/build-task-groups.yml,
 # where the "max_hosts" setting must be set to the number of enabled tasks.
 # Last but not least, make sure the corresponding test variants are enabled in .evergreen/config/templates/test-variant/libmongoc.yml
   - name: "build-php-8.3-libmongoc-lowest-supported"
@@ -22,13 +21,4 @@ tasks:
         vars:
           PHP_VERSION: "8.3"
           LIBMONGOC_VERSION: "r1.30"
-      - func: "upload build"
-
-  - name: "build-php-8.3-libmongoc-latest"
-    tags: ["build-libmongoc", "php8.3"]
-    commands:
-      - func: "compile driver"
-        vars:
-          PHP_VERSION: "8.3"
-          LIBMONGOC_VERSION: "master"
       - func: "upload build"
