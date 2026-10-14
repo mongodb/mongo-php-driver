@@ -26,6 +26,12 @@
 #define PHONGO_ODM_FIELD_NAME "__pclass"
 #define BSON_MAX_NESTING_LEVEL 100
 
+/* The maximum nesting level accepted when decoding BSON. Higher than the
+ * encoding limit because the user can pass deeper documents, and lower than the
+ * level at which the C recursion exhausts the stack. Mirrors libbson's
+ * BSON_VALIDATION_MAX_NESTING_DEPTH. */
+#define BSON_MAX_DECODE_NESTING_LEVEL 500
+
 /* Maximum length for a BSON string or binary value. BSON encodes these lengths
  * as int32, so anything larger cannot be represented on the wire and would be
  * silently truncated (or wrap an allocation) by the narrowing casts in the
@@ -43,8 +49,12 @@ typedef struct {
 	php_phongo_bson_field_path_item_types* element_types;
 	size_t                                 allocated_size;
 	size_t                                 size;
-	size_t                                 ref_count;
-	bool                                   owns_elements;
+	/* Nesting depth inherited from an enclosing decode, added to "size" when
+	 * enforcing the decoding nesting limit. Non-zero for the scope of a
+	 * CodeWScope value, which is decoded with its own field path. */
+	size_t base_depth;
+	size_t ref_count;
+	bool   owns_elements;
 } php_phongo_field_path;
 
 typedef enum {
@@ -86,8 +96,11 @@ typedef struct {
 	 * driver-internal conversions, where the BSON may originate from a server
 	 * reply or from data the application does not control, and where there is
 	 * no type map through which a caller could opt out. */
-	bool                            skip_odm;
-	php_phongo_field_path*          field_path;
+	bool                   skip_odm;
+	php_phongo_field_path* field_path;
+	/* Nesting depth inherited from an enclosing decode, copied to the field path
+	 * when the state creates it. Set for the scope of a CodeWScope value. */
+	size_t                          nesting_depth;
 	php_phongo_bson_typemap_element field_type;
 } php_phongo_bson_state;
 

@@ -17,6 +17,6 @@
 #ifndef PHONGO_BSON_JAVASCRIPT_H
 #define PHONGO_BSON_JAVASCRIPT_H
 
-bool phongo_javascript_new(zval* object, const char* code, size_t code_len, const bson_t* scope);
+bool phongo_javascript_new(zval* object, const char* code, size_t code_len, const bson_t* scope, size_t nesting_depth);
 
 #endif /* PHONGO_BSON_JAVASCRIPT_H */
