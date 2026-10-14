@@ -9,7 +9,6 @@ $labels = 'shouldBeAnArray';
 $reflection = new ReflectionClass($exception);
 
 $resultDocumentProperty = $reflection->getProperty('errorLabels');
-$resultDocumentProperty->setAccessible(true);
 $resultDocumentProperty->setValue($exception, $labels);
 
 var_dump($exception->hasErrorLabel('bar'));

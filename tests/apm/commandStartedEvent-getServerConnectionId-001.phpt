@@ -3,7 +3,6 @@ MongoDB\Driver\Monitoring\CommandStartedEvent includes serverConnectionId for 4.
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_live(); ?>
-<?php skip_if_server_version('<', '4.2'); ?>
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";

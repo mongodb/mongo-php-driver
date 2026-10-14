@@ -1,39 +1,39 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 19ae065e2a8ad6c8f4945262d6cf58ea723e5aed */
+ * Stub hash: 4288cbc04c5e6f432f960e0964ee7022c4a94ac5 */
 
-ZEND_BEGIN_ARG_WITH_TENTATIVE_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_Driver_Monitoring_SDAMSubscriber_serverChanged, 0, 1, IS_VOID, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_Driver_Monitoring_SDAMSubscriber_serverChanged, 0, 1, IS_VOID, 0)
 	ZEND_ARG_OBJ_INFO(0, event, MongoDB\\Driver\\Monitoring\\ServerChangedEvent, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_WITH_TENTATIVE_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_Driver_Monitoring_SDAMSubscriber_serverClosed, 0, 1, IS_VOID, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_Driver_Monitoring_SDAMSubscriber_serverClosed, 0, 1, IS_VOID, 0)
 	ZEND_ARG_OBJ_INFO(0, event, MongoDB\\Driver\\Monitoring\\ServerClosedEvent, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_WITH_TENTATIVE_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_Driver_Monitoring_SDAMSubscriber_serverOpening, 0, 1, IS_VOID, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_Driver_Monitoring_SDAMSubscriber_serverOpening, 0, 1, IS_VOID, 0)
 	ZEND_ARG_OBJ_INFO(0, event, MongoDB\\Driver\\Monitoring\\ServerOpeningEvent, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_WITH_TENTATIVE_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_Driver_Monitoring_SDAMSubscriber_serverHeartbeatFailed, 0, 1, IS_VOID, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_Driver_Monitoring_SDAMSubscriber_serverHeartbeatFailed, 0, 1, IS_VOID, 0)
 	ZEND_ARG_OBJ_INFO(0, event, MongoDB\\Driver\\Monitoring\\ServerHeartbeatFailedEvent, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_WITH_TENTATIVE_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_Driver_Monitoring_SDAMSubscriber_serverHeartbeatStarted, 0, 1, IS_VOID, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_Driver_Monitoring_SDAMSubscriber_serverHeartbeatStarted, 0, 1, IS_VOID, 0)
 	ZEND_ARG_OBJ_INFO(0, event, MongoDB\\Driver\\Monitoring\\ServerHeartbeatStartedEvent, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_WITH_TENTATIVE_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_Driver_Monitoring_SDAMSubscriber_serverHeartbeatSucceeded, 0, 1, IS_VOID, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_Driver_Monitoring_SDAMSubscriber_serverHeartbeatSucceeded, 0, 1, IS_VOID, 0)
 	ZEND_ARG_OBJ_INFO(0, event, MongoDB\\Driver\\Monitoring\\ServerHeartbeatSucceededEvent, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_WITH_TENTATIVE_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_Driver_Monitoring_SDAMSubscriber_topologyChanged, 0, 1, IS_VOID, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_Driver_Monitoring_SDAMSubscriber_topologyChanged, 0, 1, IS_VOID, 0)
 	ZEND_ARG_OBJ_INFO(0, event, MongoDB\\Driver\\Monitoring\\TopologyChangedEvent, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_WITH_TENTATIVE_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_Driver_Monitoring_SDAMSubscriber_topologyClosed, 0, 1, IS_VOID, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_Driver_Monitoring_SDAMSubscriber_topologyClosed, 0, 1, IS_VOID, 0)
 	ZEND_ARG_OBJ_INFO(0, event, MongoDB\\Driver\\Monitoring\\TopologyClosedEvent, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_WITH_TENTATIVE_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_Driver_Monitoring_SDAMSubscriber_topologyOpening, 0, 1, IS_VOID, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_Driver_Monitoring_SDAMSubscriber_topologyOpening, 0, 1, IS_VOID, 0)
 	ZEND_ARG_OBJ_INFO(0, event, MongoDB\\Driver\\Monitoring\\TopologyOpeningEvent, 0)
 ZEND_END_ARG_INFO()
 

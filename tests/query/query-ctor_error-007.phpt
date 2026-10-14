@@ -16,9 +16,6 @@ $tests = [
     ['min' => MongoDB\BSON\PackedArray::fromPHP([])],
     ['projection' => MongoDB\BSON\PackedArray::fromPHP([])],
     ['sort' => MongoDB\BSON\PackedArray::fromPHP([])],
-    ['modifiers' => ['$max' => MongoDB\BSON\PackedArray::fromPHP([])]],
-    ['modifiers' => ['$min' => MongoDB\BSON\PackedArray::fromPHP([])]],
-    ['modifiers' => ['$orderby' => MongoDB\BSON\PackedArray::fromPHP([])]],
 ];
 
 foreach ($tests as $options) {
@@ -43,18 +40,6 @@ OK: Got MongoDB\Driver\Exception\UnexpectedValueException
 MongoDB\BSON\PackedArray cannot be serialized as a root document
 OK: Got MongoDB\Driver\Exception\UnexpectedValueException
 MongoDB\BSON\PackedArray cannot be serialized as a root document
-OK: Got MongoDB\Driver\Exception\UnexpectedValueException
-MongoDB\BSON\PackedArray cannot be serialized as a root document
-
-Deprecated: MongoDB\Driver\Query::__construct(): The "modifiers" option is deprecated and will be removed in a future release in %s on line %d
-OK: Got MongoDB\Driver\Exception\UnexpectedValueException
-MongoDB\BSON\PackedArray cannot be serialized as a root document
-
-Deprecated: MongoDB\Driver\Query::__construct(): The "modifiers" option is deprecated and will be removed in a future release in %s on line %d
-OK: Got MongoDB\Driver\Exception\UnexpectedValueException
-MongoDB\BSON\PackedArray cannot be serialized as a root document
-
-Deprecated: MongoDB\Driver\Query::__construct(): The "modifiers" option is deprecated and will be removed in a future release in %s on line %d
 OK: Got MongoDB\Driver\Exception\UnexpectedValueException
 MongoDB\BSON\PackedArray cannot be serialized as a root document
 ===DONE===

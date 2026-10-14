@@ -60,9 +60,6 @@ object(MongoDB\Driver\Monitoring\CommandFailedEvent)#%d (%d) {
   string(%d) "%d"
   ["requestId"]=>
   string(%d) "%d"
-  ["server"]=>
-  object(MongoDB\Driver\Server)#%d (%d) {%A
-  }
   ["serviceId"]=>
   %r(NULL|object\(MongoDB\\BSON\\ObjectId\).*)%r
   ["serverConnectionId"]=>

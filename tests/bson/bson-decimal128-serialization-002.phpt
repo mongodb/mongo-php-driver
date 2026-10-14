@@ -6,9 +6,9 @@ MongoDB\BSON\Decimal128 serialization (__serialize and __unserialize)
 $tests = [
     '1234.5678',
     '-1234.5678',
-    1234.56e-78,
-    INF,
-    NAN,
+    '1234.56e-78',
+    'INF',
+    'NAN',
 ];
 
 foreach ($tests as $value) {

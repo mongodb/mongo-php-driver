@@ -10,15 +10,15 @@ Connect to MongoDB with SSL and X509 auth
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
 
-$driverOptions = [
+$uriOptions = [
     // libmongoc does not allow the hostname to be overridden as "server"
-    'allow_invalid_hostname' => true,
-    'weak_cert_validation' => false,
-    'ca_file' => SSL_DIR . '/ca.pem',
-    'pem_file' => SSL_DIR . '/client.pem',
+    'tlsAllowInvalidHostnames' => true,
+    'tlsAllowInvalidCertificates' => false,
+    'tlsCAFile' => SSL_DIR . '/ca.pem',
+    'tlsCertificateKeyFile' => SSL_DIR . '/client.pem',
 ];
 
-$manager = create_test_manager(URI, [], $driverOptions);
+$manager = create_test_manager(URI, $uriOptions);
 $cursor = $manager->executeCommand(DATABASE_NAME, new MongoDB\Driver\Command(['ping' => 1]));
 var_dump($cursor->toArray()[0]);
 

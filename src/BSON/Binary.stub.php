@@ -7,7 +7,7 @@
 
 namespace MongoDB\BSON;
 
-final class Binary implements BinaryInterface, \JsonSerializable, Type, \Serializable, \Stringable
+final class Binary implements BinaryInterface, \JsonSerializable, Type, \Stringable
 {
     /**
      * @var int
@@ -78,10 +78,6 @@ final class Binary implements BinaryInterface, \JsonSerializable, Type, \Seriali
     final public static function __set_state(array $properties): Binary {}
 
     final public function __toString(): string {}
-
-    final public function serialize(): string {}
-
-    final public function unserialize(string $data): void {}
 
     final public function __unserialize(array $data): void {}
 

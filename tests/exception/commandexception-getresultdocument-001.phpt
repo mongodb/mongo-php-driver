@@ -9,7 +9,6 @@ $resultDocument = (object) ['x' => 1];
 $reflection = new ReflectionClass($exception);
 
 $resultDocumentProperty = $reflection->getProperty('resultDocument');
-$resultDocumentProperty->setAccessible(true);
 $resultDocumentProperty->setValue($exception, $resultDocument);
 
 var_dump($resultDocument === $exception->getResultDocument());

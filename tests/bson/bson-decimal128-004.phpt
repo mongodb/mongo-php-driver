@@ -4,9 +4,9 @@ MongoDB\BSON\Decimal128 debug handler
 <?php
 
 $tests = [
-    1234.5678,
-    NAN,
-    INF,
+    '1234.5678',
+    'NAN',
+    'INF',
 ];
 
 foreach ($tests as $test) {
