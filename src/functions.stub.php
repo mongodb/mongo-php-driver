@@ -1,6 +1,9 @@
 <?php
 
-/** @generate-function-entries */
+/**
+ * @generate-function-entries
+ * @generate-legacy-arginfo 80100
+ */
 
 namespace MongoDB\Driver\Monitoring {
     function addSubscriber(Subscriber $subscriber): void {}

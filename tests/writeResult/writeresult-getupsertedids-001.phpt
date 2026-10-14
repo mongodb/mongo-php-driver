@@ -20,11 +20,24 @@ $bulk->delete(['x' => 1]);
 $result = $manager->executeBulkWrite(NS, $bulk);
 
 var_dump($result->getUpsertedIds());
+var_dump($result->upsertedIds);
 
 ?>
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
+array(2) {
+  [2]=>
+  object(MongoDB\BSON\ObjectId)#%d (%d) {
+    ["oid"]=>
+    string(24) "%x"
+  }
+  [3]=>
+  object(MongoDB\BSON\ObjectId)#%d (%d) {
+    ["oid"]=>
+    string(24) "%x"
+  }
+}
 array(2) {
   [2]=>
   object(MongoDB\BSON\ObjectId)#%d (%d) {

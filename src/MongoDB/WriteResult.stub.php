@@ -2,7 +2,7 @@
 
 /**
  * @generate-class-entries static
- * @generate-function-entries static
+ * @generate-legacy-arginfo 80100
  */
 
 namespace MongoDB\Driver;
@@ -10,6 +10,28 @@ namespace MongoDB\Driver;
 /** @not-serializable */
 final class WriteResult
 {
+    public readonly int|null $insertedCount;
+
+    public readonly int|null $matchedCount;
+
+    public readonly int|null $modifiedCount;
+
+    public readonly int|null $deletedCount;
+
+    public readonly int|null $upsertedCount;
+
+    public readonly Server $server;
+
+    public readonly array $upsertedIds;
+
+    public readonly array $writeErrors;
+
+    public readonly WriteConcernError|null $writeConcernError;
+
+    public readonly WriteConcern|null $writeConcern;
+
+    public readonly array $errorReplies;
+
     final private function __construct() {}
 
     final public function getInsertedCount(): int {}

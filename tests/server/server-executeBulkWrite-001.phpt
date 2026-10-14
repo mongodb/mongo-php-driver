@@ -45,25 +45,23 @@ upsertedCount: 1
 deletedCount: 1
 upsertedId[3]: int(3)
 object(MongoDB\Driver\WriteResult)#%d (%d) {
-  ["nInserted"]=>
+  ["insertedCount"]=>
   int(2)
-  ["nMatched"]=>
+  ["matchedCount"]=>
   int(1)
-  ["nModified"]=>
+  ["modifiedCount"]=>
   int(1)
-  ["nRemoved"]=>
+  ["deletedCount"]=>
   int(1)
-  ["nUpserted"]=>
+  ["upsertedCount"]=>
   int(1)
+  ["server"]=>
+  object(MongoDB\Driver\Server)#%d (%d) {%A
+  }
   ["upsertedIds"]=>
   array(1) {
-    [0]=>
-    array(%d) {
-      ["index"]=>
-      int(3)
-      ["_id"]=>
-      int(3)
-    }
+    [3]=>
+    int(3)
   }
   ["writeErrors"]=>
   array(0) {
@@ -71,7 +69,13 @@ object(MongoDB\Driver\WriteResult)#%d (%d) {
   ["writeConcernError"]=>
   NULL
   ["writeConcern"]=>
-  object(MongoDB\Driver\WriteConcern)#%d (%d) {
+  object(MongoDB\Driver\WriteConcern)#%d (3) {
+    ["w"]=>
+    NULL
+    ["j"]=>
+    NULL
+    ["wtimeout"]=>
+    int(0)
   }
   ["errorReplies"]=>
   array(0) {

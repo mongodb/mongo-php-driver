@@ -24,8 +24,7 @@ class MyRecursiveSerializable implements MongoDB\BSON\Serializable
         $this->depth = $depth;
     }
 
-    #[\ReturnTypeWillChange]
-    public function bsonSerialize()
+    public function bsonSerialize(): array
     {
         return $this->depth >= 1 ? [new self($this->depth - 1)] : ['end'];
     }

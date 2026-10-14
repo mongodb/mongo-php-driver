@@ -32,7 +32,7 @@ $manager->executeCommand(DATABASE_NAME, new MongoDB\Driver\Command(['ping' => 1]
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-object(MongoDB\Driver\Monitoring\CommandStartedEvent)#%d (%d) {
+object(MongoDB\Driver\Monitoring\CommandStartedEvent)#%d (9) {
   ["host"]=>
   string(%d) "%s"
   ["port"]=>

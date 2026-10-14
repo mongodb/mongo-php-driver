@@ -26,6 +26,7 @@ class MySubscriber implements MongoDB\Driver\Monitoring\SDAMSubscriber
     public function topologyClosed(MongoDB\Driver\Monitoring\TopologyClosedEvent $event): void
     {
         printf("getTopologyId() returns an ObjectId: %s\n", ($event->getTopologyId() instanceof MongoDB\BSON\ObjectId) ? 'yes' : 'no');
+        printf("topologyId returns an ObjectId: %s\n", ($event->topologyId instanceof MongoDB\BSON\ObjectId) ? 'yes' : 'no');
 
         var_dump($event);
     }
@@ -52,6 +53,7 @@ unset($m);
 <?php exit(0); ?>
 --EXPECTF--
 getTopologyId() returns an ObjectId: yes
+topologyId returns an ObjectId: yes
 object(MongoDB\Driver\Monitoring\TopologyClosedEvent)#%d (%d) {
   ["topologyId"]=>
   object(MongoDB\BSON\ObjectId)#%d (%d) {

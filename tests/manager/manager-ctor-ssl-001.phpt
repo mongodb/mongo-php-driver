@@ -21,6 +21,8 @@ object(MongoDB\Driver\Manager)#%d (%d) {
   ["cluster"]=>
   array(0) {
   }
+  ["cryptSharedVersion"]=>
+  NULL
 }
 object(MongoDB\Driver\Manager)#%d (%d) {
   ["uri"]=>
@@ -28,5 +30,7 @@ object(MongoDB\Driver\Manager)#%d (%d) {
   ["cluster"]=>
   array(0) {
   }
+  ["cryptSharedVersion"]=>
+  NULL
 }
 ===DONE===

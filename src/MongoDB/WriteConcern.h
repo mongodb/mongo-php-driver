@@ -27,6 +27,4 @@ void phongo_writeconcern_init(zval* return_value, const mongoc_write_concern_t* 
 
 const mongoc_write_concern_t* phongo_write_concern_from_zval(zval* zwrite_concern);
 
-void php_phongo_write_concern_to_zval(zval* retval, const mongoc_write_concern_t* write_concern);
-
 #endif /* PHONGO_WRITECONCERN_H */

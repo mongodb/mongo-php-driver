@@ -18,11 +18,13 @@ try {
     $manager->executeBulkWrite(NS, $bulk, ['writeConcern' => new MongoDB\Driver\WriteConcern(12)]);
 } catch(MongoDB\Driver\Exception\BulkWriteException $e) {
     var_dump($e->getWriteResult()->getWriteConcernError()->getCode());
+    var_dump($e->getWriteResult()->getWriteConcernError()->code);
 }
 
 ?>
 ===DONE===
 <?php exit(0); ?>
 --EXPECT--
+int(100)
 int(100)
 ===DONE===

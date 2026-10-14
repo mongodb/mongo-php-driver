@@ -2,7 +2,7 @@
 
 /**
  * @generate-class-entries static
- * @generate-function-entries static
+ * @generate-legacy-arginfo 80100
  */
 
 namespace MongoDB\Driver;
@@ -10,6 +10,14 @@ namespace MongoDB\Driver;
 /** @not-serializable */
 final class WriteError
 {
+    public readonly string $message;
+
+    public readonly int $code;
+
+    public readonly int $index;
+
+    public readonly object|null $info;
+
     final private function __construct() {}
 
     final public function getCode(): int {}

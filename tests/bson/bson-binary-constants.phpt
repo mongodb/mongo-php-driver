@@ -14,6 +14,7 @@ var_dump(Binary::TYPE_MD5);
 var_dump(Binary::TYPE_ENCRYPTED);
 var_dump(Binary::TYPE_COLUMN);
 var_dump(Binary::TYPE_SENSITIVE);
+var_dump(Binary::TYPE_VECTOR);
 var_dump(Binary::TYPE_USER_DEFINED);
 
 ?>
@@ -29,5 +30,6 @@ int(5)
 int(6)
 int(7)
 int(8)
+int(9)
 int(128)
 ===DONE===

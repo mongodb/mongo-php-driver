@@ -19,21 +19,21 @@
 #include <php.h>
 #include <Zend/zend_interfaces.h>
 
-#include "php_phongo.h"
+#include "phongo.h"
 #include "phongo_error.h"
 
 #include "BSON/ObjectId.h"
 #include "MongoDB/TopologyDescription.h"
 #include "TopologyChangedEvent_arginfo.h"
 
-zend_class_entry* php_phongo_topologychangedevent_ce;
+zend_class_entry* phongo_topologychangedevent_ce;
 
 PHONGO_DISABLED_CONSTRUCTOR(MongoDB_Driver_Monitoring_TopologyChangedEvent)
 
 /* Returns this event's new description */
 static PHP_METHOD(MongoDB_Driver_Monitoring_TopologyChangedEvent, getNewDescription)
 {
-	php_phongo_topologychangedevent_t* intern = Z_TOPOLOGYCHANGEDEVENT_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(topologychangedevent);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -43,7 +43,7 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_TopologyChangedEvent, getNewDescript
 /* Returns this event's previous description */
 static PHP_METHOD(MongoDB_Driver_Monitoring_TopologyChangedEvent, getPreviousDescription)
 {
-	php_phongo_topologychangedevent_t* intern = Z_TOPOLOGYCHANGEDEVENT_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(topologychangedevent);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -53,19 +53,37 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_TopologyChangedEvent, getPreviousDes
 /* Returns this event's topology id */
 static PHP_METHOD(MongoDB_Driver_Monitoring_TopologyChangedEvent, getTopologyId)
 {
-	php_phongo_topologychangedevent_t* intern = Z_TOPOLOGYCHANGEDEVENT_OBJ_P(getThis());
+	PHONGO_INTERN_FROM_THIS(topologychangedevent);
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
 	phongo_objectid_new(return_value, &intern->topology_id);
 }
 
-/* MongoDB\Driver\Monitoring\TopologyChangedEvent object handlers */
-static zend_object_handlers php_phongo_handler_topologychangedevent;
-
-static void php_phongo_topologychangedevent_free_object(zend_object* object)
+static void phongo_topologychangedevent_update_properties(phongo_topologychangedevent_t* intern)
 {
-	php_phongo_topologychangedevent_t* intern = Z_OBJ_TOPOLOGYCHANGEDEVENT(object);
+	zval topology_id, new_td, old_td;
+
+	if (phongo_objectid_new(&topology_id, &intern->topology_id)) {
+		zend_update_property(phongo_topologychangedevent_ce, &intern->std, ZEND_STRL("topologyId"), &topology_id);
+		zval_ptr_dtor(&topology_id);
+	}
+
+	phongo_topologydescription_init(&new_td, intern->new_topology_description);
+	zend_update_property(phongo_topologychangedevent_ce, &intern->std, ZEND_STRL("newDescription"), &new_td);
+	zval_ptr_dtor(&new_td);
+
+	phongo_topologydescription_init(&old_td, intern->old_topology_description);
+	zend_update_property(phongo_topologychangedevent_ce, &intern->std, ZEND_STRL("previousDescription"), &old_td);
+	zval_ptr_dtor(&old_td);
+}
+
+/* MongoDB\Driver\Monitoring\TopologyChangedEvent object handlers */
+static zend_object_handlers phongo_handler_topologychangedevent;
+
+static void phongo_topologychangedevent_free_object(zend_object* object)
+{
+	PHONGO_INTERN_FROM_Z_OBJ(topologychangedevent, object);
 
 	zend_object_std_dtor(&intern->std);
 
@@ -78,61 +96,32 @@ static void php_phongo_topologychangedevent_free_object(zend_object* object)
 	}
 }
 
-static zend_object* php_phongo_topologychangedevent_create_object(zend_class_entry* class_type)
+static zend_object* phongo_topologychangedevent_create_object(zend_class_entry* class_type)
 {
-	php_phongo_topologychangedevent_t* intern = zend_object_alloc(sizeof(php_phongo_topologychangedevent_t), class_type);
+	PHONGO_INTERN_OBJECT_ALLOC(topologychangedevent, class_type);
 
-	zend_object_std_init(&intern->std, class_type);
-	object_properties_init(&intern->std, class_type);
-
-	intern->std.handlers = &php_phongo_handler_topologychangedevent;
+	intern->std.handlers = &phongo_handler_topologychangedevent;
 
 	return &intern->std;
 }
 
-static HashTable* php_phongo_topologychangedevent_get_debug_info(zend_object* object, int* is_temp)
+void phongo_topologychangedevent_init_ce(INIT_FUNC_ARGS)
 {
-	php_phongo_topologychangedevent_t* intern;
-	zval                               retval = ZVAL_STATIC_INIT;
+	phongo_topologychangedevent_ce                = register_class_MongoDB_Driver_Monitoring_TopologyChangedEvent();
+	phongo_topologychangedevent_ce->create_object = phongo_topologychangedevent_create_object;
 
-	intern   = Z_OBJ_TOPOLOGYCHANGEDEVENT(object);
-	*is_temp = 1;
-	array_init_size(&retval, 3);
-
-	{
-		zval topology_id;
-
-		if (!phongo_objectid_new(&topology_id, &intern->topology_id)) {
-			/* Exception should already have been thrown */
-			goto done;
-		}
-
-		ADD_ASSOC_ZVAL_EX(&retval, "topologyId", &topology_id);
-	}
-
-	{
-		zval new_td;
-		phongo_topologydescription_init(&new_td, intern->new_topology_description);
-		ADD_ASSOC_ZVAL_EX(&retval, "newDescription", &new_td);
-	}
-
-	{
-		zval old_td;
-		phongo_topologydescription_init(&old_td, intern->old_topology_description);
-		ADD_ASSOC_ZVAL_EX(&retval, "oldDescription", &old_td);
-	}
-
-done:
-	return Z_ARRVAL(retval);
+	memcpy(&phongo_handler_topologychangedevent, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
+	phongo_handler_topologychangedevent.free_obj = phongo_topologychangedevent_free_object;
+	phongo_handler_topologychangedevent.offset   = offsetof(phongo_topologychangedevent_t, std);
 }
 
-void php_phongo_topologychangedevent_init_ce(INIT_FUNC_ARGS)
+void phongo_topologychangedevent_init(zval* return_value, const mongoc_apm_topology_changed_t* event)
 {
-	php_phongo_topologychangedevent_ce                = register_class_MongoDB_Driver_Monitoring_TopologyChangedEvent();
-	php_phongo_topologychangedevent_ce->create_object = php_phongo_topologychangedevent_create_object;
+	PHONGO_INTERN_INIT_EX(topologychangedevent, return_value);
 
-	memcpy(&php_phongo_handler_topologychangedevent, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
-	php_phongo_handler_topologychangedevent.get_debug_info = php_phongo_topologychangedevent_get_debug_info;
-	php_phongo_handler_topologychangedevent.free_obj       = php_phongo_topologychangedevent_free_object;
-	php_phongo_handler_topologychangedevent.offset         = XtOffsetOf(php_phongo_topologychangedevent_t, std);
+	mongoc_apm_topology_changed_get_topology_id(event, &intern->topology_id);
+	intern->new_topology_description = mongoc_topology_description_new_copy(mongoc_apm_topology_changed_get_new_description(event));
+	intern->old_topology_description = mongoc_topology_description_new_copy(mongoc_apm_topology_changed_get_previous_description(event));
+
+	phongo_topologychangedevent_update_properties(intern);
 }

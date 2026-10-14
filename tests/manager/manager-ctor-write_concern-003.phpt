@@ -21,20 +21,36 @@ foreach ($tests as $test) {
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-object(MongoDB\Driver\WriteConcern)#%d (%d) {
+object(MongoDB\Driver\WriteConcern)#%d (3) {
+  ["w"]=>
+  NULL
   ["j"]=>
   bool(true)
+  ["wtimeout"]=>
+  int(0)
 }
-object(MongoDB\Driver\WriteConcern)#%d (%d) {
+object(MongoDB\Driver\WriteConcern)#%d (3) {
+  ["w"]=>
+  NULL
   ["j"]=>
   bool(false)
+  ["wtimeout"]=>
+  int(0)
 }
-object(MongoDB\Driver\WriteConcern)#%d (%d) {
+object(MongoDB\Driver\WriteConcern)#%d (3) {
+  ["w"]=>
+  NULL
   ["j"]=>
   bool(true)
+  ["wtimeout"]=>
+  int(0)
 }
-object(MongoDB\Driver\WriteConcern)#%d (%d) {
+object(MongoDB\Driver\WriteConcern)#%d (3) {
+  ["w"]=>
+  NULL
   ["j"]=>
   bool(false)
+  ["wtimeout"]=>
+  int(0)
 }
 ===DONE===

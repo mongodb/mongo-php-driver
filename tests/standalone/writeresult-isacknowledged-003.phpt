@@ -23,16 +23,19 @@ var_dump($result);
 --EXPECTF--
 WriteResult::isAcknowledged(): false
 object(MongoDB\Driver\WriteResult)#%d (%d) {
-  ["nInserted"]=>
+  ["insertedCount"]=>
   NULL
-  ["nMatched"]=>
+  ["matchedCount"]=>
   NULL
-  ["nModified"]=>
+  ["modifiedCount"]=>
   NULL
-  ["nRemoved"]=>
+  ["deletedCount"]=>
   NULL
-  ["nUpserted"]=>
+  ["upsertedCount"]=>
   NULL
+  ["server"]=>
+  object(MongoDB\Driver\Server)#%d (%d) {%A
+  }
   ["upsertedIds"]=>
   array(0) {
   }
@@ -42,8 +45,12 @@ object(MongoDB\Driver\WriteResult)#%d (%d) {
   ["writeConcernError"]=>
   NULL
   ["writeConcern"]=>
-  object(MongoDB\Driver\WriteConcern)#%d (%d) {
+  object(MongoDB\Driver\WriteConcern)#%d (3) {
     ["w"]=>
+    int(0)
+    ["j"]=>
+    NULL
+    ["wtimeout"]=>
     int(0)
   }
   ["errorReplies"]=>
