@@ -18,7 +18,12 @@ runs:
   using: composite
   steps:
     - name: Build extension
-      uses: php/php-windows-builder/extension@29352c0ef9e8ce65264ea9e287881a6f7758a953  # 1.9.0
+      # Temporary fork of php/php-windows-builder 1.9.0 (29352c0) with a fix for
+      # downloads.php.net returning 403 for directory listings: fall back to the
+      # series manifests for dependency detection.
+      # Refer: https://github.com/php/php-windows-builder/issues/34
+      # Revert to the upstream action once a release includes a fix.
+      uses: kevinAlbs/php-windows-builder/extension@8a1eec4a4dffc6a30a7ea86afa3a5c2bc5ac90e4  # fix-deps-listing-403
       with:
         php-version: ${{ inputs.php-version }}
         arch: ${{ inputs.arch }}
