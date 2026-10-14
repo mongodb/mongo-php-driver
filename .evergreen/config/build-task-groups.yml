@@ -28,7 +28,7 @@ task_groups:
       - "test-pecl-package"
 
   - name: "build-php-libmongoc"
-    # Keep this in sync with the actual number of libmongoc builds (typically 3) defined in _template-build-libmongoc.yml
+    # Keep this in sync with the actual number of libmongoc builds defined in templates/build/build-libmongoc.yml
     max_hosts: 2
     setup_task: *build_setup
     setup_task_can_fail_task: true
