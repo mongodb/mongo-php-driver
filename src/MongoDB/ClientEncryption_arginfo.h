@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: ea16be50be5151fdd45b9e1bc37856d94990725e */
+ * Stub hash: 1b2aa1b90af91216b8f9261143058edf9a2a81ca */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_Driver_ClientEncryption___construct, 0, 0, 1)
 	ZEND_ARG_TYPE_INFO(0, options, IS_ARRAY, 0)
@@ -51,7 +51,6 @@ ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_Driver_ClientEncry
 	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, options, IS_ARRAY, 1, "null")
 ZEND_END_ARG_INFO()
 
-
 static ZEND_METHOD(MongoDB_Driver_ClientEncryption, __construct);
 static ZEND_METHOD(MongoDB_Driver_ClientEncryption, addKeyAltName);
 static ZEND_METHOD(MongoDB_Driver_ClientEncryption, createDataKey);
@@ -64,7 +63,6 @@ static ZEND_METHOD(MongoDB_Driver_ClientEncryption, getKeyByAltName);
 static ZEND_METHOD(MongoDB_Driver_ClientEncryption, getKeys);
 static ZEND_METHOD(MongoDB_Driver_ClientEncryption, removeKeyAltName);
 static ZEND_METHOD(MongoDB_Driver_ClientEncryption, rewrapManyDataKey);
-
 
 static const zend_function_entry class_MongoDB_Driver_ClientEncryption_methods[] = {
 	ZEND_ME(MongoDB_Driver_ClientEncryption, __construct, arginfo_class_MongoDB_Driver_ClientEncryption___construct, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
@@ -87,8 +85,12 @@ static zend_class_entry *register_class_MongoDB_Driver_ClientEncryption(void)
 	zend_class_entry ce, *class_entry;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver", "ClientEncryption", class_MongoDB_Driver_ClientEncryption_methods);
+#if (PHP_VERSION_ID >= 80400)
+	class_entry = zend_register_internal_class_with_flags(&ce, NULL, ZEND_ACC_FINAL|ZEND_ACC_NOT_SERIALIZABLE);
+#else
 	class_entry = zend_register_internal_class_ex(&ce, NULL);
 	class_entry->ce_flags |= ZEND_ACC_FINAL|ZEND_ACC_NOT_SERIALIZABLE;
+#endif
 
 	zval const_AEAD_AES_256_CBC_HMAC_SHA_512_DETERMINISTIC_value;
 	zend_string *const_AEAD_AES_256_CBC_HMAC_SHA_512_DETERMINISTIC_value_str = zend_string_init(MONGOC_AEAD_AES_256_CBC_HMAC_SHA_512_DETERMINISTIC, strlen(MONGOC_AEAD_AES_256_CBC_HMAC_SHA_512_DETERMINISTIC), 1);

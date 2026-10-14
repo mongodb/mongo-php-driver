@@ -23,8 +23,11 @@ class MySubscriber implements MongoDB\Driver\Monitoring\SDAMSubscriber
         $this->isObserved = true;
 
         printf("getHost() returns a string: %s\n", is_string($event->getHost()) ? 'yes' : 'no');
-        printf("getPort() returns an integer: %s\n", is_integer($event->getPort()) ? 'yes' : 'no');
+        printf("host returns a string: %s\n", is_string($event->host) ? 'yes' : 'no');
+        printf("getPort() returns an integer: %s\n", is_int($event->getPort()) ? 'yes' : 'no');
+        printf("port returns an integer: %s\n", is_int($event->port) ? 'yes' : 'no');
         printf("getTopologyId() returns an ObjectId: %s\n", ($event->getTopologyId() instanceof MongoDB\BSON\ObjectId) ? 'yes' : 'no');
+        printf("topologyId returns an ObjectId: %s\n", ($event->topologyId instanceof MongoDB\BSON\ObjectId) ? 'yes' : 'no');
 
         var_dump($event);
     }
@@ -63,8 +66,11 @@ unset($m);
 <?php exit(0); ?>
 --EXPECTF--
 getHost() returns a string: yes
+host returns a string: yes
 getPort() returns an integer: yes
+port returns an integer: yes
 getTopologyId() returns an ObjectId: yes
+topologyId returns an ObjectId: yes
 object(MongoDB\Driver\Monitoring\ServerClosedEvent)#%d (%d) {
   ["host"]=>
   string(%d) "%s"

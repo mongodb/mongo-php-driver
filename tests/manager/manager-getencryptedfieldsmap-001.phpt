@@ -68,7 +68,7 @@ array(1) {
         ["keyId"]=>
         object(MongoDB\BSON\Binary)#%d (%d) {
           ["data"]=>
-          string(16) "0000000000000000"
+          string(%d) "%a"
           ["type"]=>
           int(4)
         }

@@ -22,7 +22,7 @@
 #include "phongo_error.h"
 #include "phongo_util.h"
 
-const char* php_phongo_bson_type_to_string(bson_type_t type)
+const char* phongo_bson_type_to_string(bson_type_t type)
 {
 	switch (type) {
 		case BSON_TYPE_EOD:
@@ -74,7 +74,7 @@ const char* php_phongo_bson_type_to_string(bson_type_t type)
 	}
 }
 
-bool php_phongo_parse_int64(int64_t* retval, const char* data, size_t data_len)
+bool phongo_parse_int64(int64_t* retval, const char* data, size_t data_len)
 {
 	int64_t value;
 	char*   endptr = NULL;

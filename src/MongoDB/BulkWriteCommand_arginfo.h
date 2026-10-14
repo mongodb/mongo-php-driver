@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 2af15e87d1d8095137d315218e688221ac2b5983 */
+ * Stub hash: 8c202ca492791b5f182d4a1e61f6152a10a6d0fe */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_Driver_BulkWriteCommand___construct, 0, 0, 0)
 	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, options, IS_ARRAY, 1, "null")
@@ -37,7 +37,6 @@ ZEND_END_ARG_INFO()
 
 #define arginfo_class_MongoDB_Driver_BulkWriteCommand_updateMany arginfo_class_MongoDB_Driver_BulkWriteCommand_updateOne
 
-
 static ZEND_METHOD(MongoDB_Driver_BulkWriteCommand, __construct);
 static ZEND_METHOD(MongoDB_Driver_BulkWriteCommand, count);
 static ZEND_METHOD(MongoDB_Driver_BulkWriteCommand, deleteOne);
@@ -46,7 +45,6 @@ static ZEND_METHOD(MongoDB_Driver_BulkWriteCommand, insertOne);
 static ZEND_METHOD(MongoDB_Driver_BulkWriteCommand, replaceOne);
 static ZEND_METHOD(MongoDB_Driver_BulkWriteCommand, updateOne);
 static ZEND_METHOD(MongoDB_Driver_BulkWriteCommand, updateMany);
-
 
 static const zend_function_entry class_MongoDB_Driver_BulkWriteCommand_methods[] = {
 	ZEND_ME(MongoDB_Driver_BulkWriteCommand, __construct, arginfo_class_MongoDB_Driver_BulkWriteCommand___construct, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
@@ -65,8 +63,12 @@ static zend_class_entry *register_class_MongoDB_Driver_BulkWriteCommand(zend_cla
 	zend_class_entry ce, *class_entry;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver", "BulkWriteCommand", class_MongoDB_Driver_BulkWriteCommand_methods);
+#if (PHP_VERSION_ID >= 80400)
+	class_entry = zend_register_internal_class_with_flags(&ce, NULL, ZEND_ACC_FINAL|ZEND_ACC_NOT_SERIALIZABLE);
+#else
 	class_entry = zend_register_internal_class_ex(&ce, NULL);
 	class_entry->ce_flags |= ZEND_ACC_FINAL|ZEND_ACC_NOT_SERIALIZABLE;
+#endif
 	zend_class_implements(class_entry, 1, class_entry_Countable);
 
 	return class_entry;

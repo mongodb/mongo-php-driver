@@ -27,6 +27,7 @@ $bulk->insert(['write' => 1]);
 $result = $manager->executeBulkWrite(NS, $bulk);
 
 var_dump($result->getWriteConcernError());
+var_dump($result->writeConcernError);
 
 configureFailPoint($manager, 'failCommand', 'off');
 
@@ -34,6 +35,14 @@ configureFailPoint($manager, 'failCommand', 'off');
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
+object(MongoDB\Driver\WriteConcernError)#%d (%d) {
+  ["message"]=>
+  string(0) ""
+  ["code"]=>
+  int(91)
+  ["info"]=>
+  NULL
+}
 object(MongoDB\Driver\WriteConcernError)#%d (%d) {
   ["message"]=>
   string(0) ""

@@ -23,10 +23,13 @@ echo throws(function() use ($result) {
     $result->getInsertedCount();
 }, MongoDB\Driver\Exception\LogicException::class), "\n";
 
+var_dump($result->insertedCount);
+
 ?>
 ===DONE===
 <?php exit(0); ?>
 --EXPECT--
 OK: Got MongoDB\Driver\Exception\LogicException
 MongoDB\Driver\WriteResult::getInsertedCount() should not be called for an unacknowledged write result
+NULL
 ===DONE===

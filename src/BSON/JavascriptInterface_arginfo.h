@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: d2335273fc900e95ba3ce8731fa241792beeec88 */
+ * Stub hash: 58512a88fdb87ca50ced15fb3509ec1bbdfd137d */
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_BSON_JavascriptInterface_getCode, 0, 0, IS_STRING, 0)
 ZEND_END_ARG_INFO()
@@ -10,12 +10,22 @@ ZEND_END_ARG_INFO()
 #define arginfo_class_MongoDB_BSON_JavascriptInterface___toString arginfo_class_MongoDB_BSON_JavascriptInterface_getCode
 
 
-
-
 static const zend_function_entry class_MongoDB_BSON_JavascriptInterface_methods[] = {
-	ZEND_ABSTRACT_ME_WITH_FLAGS(MongoDB_BSON_JavascriptInterface, getCode, arginfo_class_MongoDB_BSON_JavascriptInterface_getCode, ZEND_ACC_PUBLIC|ZEND_ACC_ABSTRACT)
-	ZEND_ABSTRACT_ME_WITH_FLAGS(MongoDB_BSON_JavascriptInterface, getScope, arginfo_class_MongoDB_BSON_JavascriptInterface_getScope, ZEND_ACC_PUBLIC|ZEND_ACC_ABSTRACT)
-	ZEND_ABSTRACT_ME_WITH_FLAGS(MongoDB_BSON_JavascriptInterface, __toString, arginfo_class_MongoDB_BSON_JavascriptInterface___toString, ZEND_ACC_PUBLIC|ZEND_ACC_ABSTRACT)
+#if (PHP_VERSION_ID >= 80400)
+	ZEND_RAW_FENTRY("getCode", NULL, arginfo_class_MongoDB_BSON_JavascriptInterface_getCode, ZEND_ACC_PUBLIC|ZEND_ACC_ABSTRACT, NULL, NULL)
+#else
+	ZEND_RAW_FENTRY("getCode", NULL, arginfo_class_MongoDB_BSON_JavascriptInterface_getCode, ZEND_ACC_PUBLIC|ZEND_ACC_ABSTRACT)
+#endif
+#if (PHP_VERSION_ID >= 80400)
+	ZEND_RAW_FENTRY("getScope", NULL, arginfo_class_MongoDB_BSON_JavascriptInterface_getScope, ZEND_ACC_PUBLIC|ZEND_ACC_ABSTRACT, NULL, NULL)
+#else
+	ZEND_RAW_FENTRY("getScope", NULL, arginfo_class_MongoDB_BSON_JavascriptInterface_getScope, ZEND_ACC_PUBLIC|ZEND_ACC_ABSTRACT)
+#endif
+#if (PHP_VERSION_ID >= 80400)
+	ZEND_RAW_FENTRY("__toString", NULL, arginfo_class_MongoDB_BSON_JavascriptInterface___toString, ZEND_ACC_PUBLIC|ZEND_ACC_ABSTRACT, NULL, NULL)
+#else
+	ZEND_RAW_FENTRY("__toString", NULL, arginfo_class_MongoDB_BSON_JavascriptInterface___toString, ZEND_ACC_PUBLIC|ZEND_ACC_ABSTRACT)
+#endif
 	ZEND_FE_END
 };
 

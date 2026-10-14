@@ -33,8 +33,11 @@ class MySubscriber implements MongoDB\Driver\Monitoring\SDAMSubscriber
         $this->isObserved = true;
 
         printf("getTopologyId() returns an ObjectId: %s\n", ($event->getTopologyId() instanceof MongoDB\BSON\ObjectId) ? 'yes' : 'no');
+        printf("topologyId returns an ObjectId: %s\n", ($event->topologyId instanceof MongoDB\BSON\ObjectId) ? 'yes' : 'no');
         printf("getNewDescription() returns a TopologyDescription: %s\n", ($event->getNewDescription() instanceof MongoDB\Driver\TopologyDescription) ? 'yes' : 'no');
+        printf("newDescription returns a TopologyDescription: %s\n", ($event->newDescription instanceof MongoDB\Driver\TopologyDescription) ? 'yes' : 'no');
         printf("getPreviousDescription() returns a TopologyDescription: %s\n", ($event->getPreviousDescription() instanceof MongoDB\Driver\TopologyDescription) ? 'yes' : 'no');
+        printf("previousDescription returns a TopologyDescription: %s\n", ($event->previousDescription instanceof MongoDB\Driver\TopologyDescription) ? 'yes' : 'no');
 
         var_dump($event);
     }
@@ -55,8 +58,11 @@ $m->executeCommand(DATABASE_NAME, $command);
 <?php exit(0); ?>
 --EXPECTF--
 getTopologyId() returns an ObjectId: yes
+topologyId returns an ObjectId: yes
 getNewDescription() returns a TopologyDescription: yes
+newDescription returns a TopologyDescription: yes
 getPreviousDescription() returns a TopologyDescription: yes
+previousDescription returns a TopologyDescription: yes
 object(MongoDB\Driver\Monitoring\TopologyChangedEvent)#%d (%d) {
   ["topologyId"]=>
   object(MongoDB\BSON\ObjectId)#%d (%d) {
@@ -66,7 +72,7 @@ object(MongoDB\Driver\Monitoring\TopologyChangedEvent)#%d (%d) {
   ["newDescription"]=>
   object(MongoDB\Driver\TopologyDescription)#%d (%d) {%A
   }
-  ["oldDescription"]=>
+  ["previousDescription"]=>
   object(MongoDB\Driver\TopologyDescription)#%d (%d) {%A
   }
 }

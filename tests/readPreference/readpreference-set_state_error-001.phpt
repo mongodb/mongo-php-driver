@@ -51,7 +51,7 @@ echo throws(function() {
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECT--
+--EXPECTF--
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 MongoDB\Driver\ReadPreference initialization requires specific values for "mode" string field
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
@@ -68,8 +68,12 @@ OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 MongoDB\Driver\ReadPreference initialization requires "maxStalenessSeconds" field to not be present with "primary" mode
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 MongoDB\Driver\ReadPreference initialization requires "hedge" field to be an array or object
+
+Deprecated: MongoDB\Driver\ReadPreference::__set_state(): The "hedge" option is deprecated as of MongoDB 8.0 and will be removed in a future release in %s
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 MongoDB\Driver\ReadPreference initialization requires "hedge" field to not be present with "primary" mode
+
+Deprecated: MongoDB\Driver\ReadPreference::__set_state(): The "hedge" option is deprecated as of MongoDB 8.0 and will be removed in a future release in %s
 OK: Got MongoDB\Driver\Exception\UnexpectedValueException
 MongoDB\BSON\PackedArray cannot be serialized as a root document
 ===DONE===

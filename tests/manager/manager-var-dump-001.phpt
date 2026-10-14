@@ -28,6 +28,8 @@ object(MongoDB\Driver\Manager)#%d (%d) {
   ["cluster"]=>
   array(0) {
   }
+  ["cryptSharedVersion"]=>
+  NULL
 }
 object(MongoDB\Driver\Manager)#%d (%d) {
   ["uri"]=>
@@ -35,7 +37,7 @@ object(MongoDB\Driver\Manager)#%d (%d) {
   ["cluster"]=>
   array(1) {
     [0]=>
-    array(10) {
+    object(MongoDB\Driver\Server)#%d (%d) {
       ["host"]=>
       string(%d) "%s"
       ["port"]=>
@@ -60,5 +62,7 @@ object(MongoDB\Driver\Manager)#%d (%d) {
       int(%d)
     }
   }
+  ["cryptSharedVersion"]=>
+  NULL
 }
 ===DONE===

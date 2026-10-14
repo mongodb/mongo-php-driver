@@ -16,23 +16,12 @@
 
 #include <php.h>
 
-#include "php_phongo.h"
+#include "phongo.h"
 #include "Persistable_arginfo.h"
 
-zend_class_entry* php_phongo_persistable_ce;
+zend_class_entry* phongo_persistable_ce;
 
-static int php_phongo_implement_persistable(zend_class_entry* interface, zend_class_entry* class_type)
+void phongo_persistable_init_ce(INIT_FUNC_ARGS)
 {
-	if (class_type->ce_flags & ZEND_ACC_ENUM) {
-		zend_error_noreturn(E_ERROR, "Enum class %s cannot implement interface %s", ZSTR_VAL(class_type->name), ZSTR_VAL(interface->name));
-		return FAILURE;
-	}
-
-	return SUCCESS;
-}
-
-void php_phongo_persistable_init_ce(INIT_FUNC_ARGS)
-{
-	php_phongo_persistable_ce                             = register_class_MongoDB_BSON_Persistable(php_phongo_serializable_ce, php_phongo_unserializable_ce);
-	php_phongo_persistable_ce->interface_gets_implemented = php_phongo_implement_persistable;
+	phongo_persistable_ce = register_class_MongoDB_BSON_Persistable(phongo_serializable_ce, phongo_unserializable_ce);
 }

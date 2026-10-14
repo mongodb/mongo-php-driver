@@ -21,6 +21,6 @@
 
 #include <php.h>
 
-void php_phongo_bulkwritecommandexception_init_props(zend_object* object, const mongoc_bulkwriteexception_t* bw_exc, zval* result);
+void phongo_bulkwritecommandexception_init_props(zend_object* object, const mongoc_bulkwriteexception_t* bw_exc, zval* result);
 
 #endif /* PHONGO_BULKWRITECOMMANDEXCEPTION_H */

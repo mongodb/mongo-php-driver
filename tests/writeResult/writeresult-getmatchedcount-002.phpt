@@ -23,10 +23,13 @@ echo throws(function() use ($result) {
     $result->getMatchedCount();
 }, MongoDB\Driver\Exception\LogicException::class), "\n";
 
+var_dump($result->matchedCount);
+
 ?>
 ===DONE===
 <?php exit(0); ?>
 --EXPECT--
 OK: Got MongoDB\Driver\Exception\LogicException
 MongoDB\Driver\WriteResult::getMatchedCount() should not be called for an unacknowledged write result
+NULL
 ===DONE===

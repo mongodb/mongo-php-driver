@@ -16,12 +16,12 @@
 
 #include <php.h>
 
-#include "php_phongo.h"
+#include "phongo.h"
 #include "MinKeyInterface_arginfo.h"
 
-zend_class_entry* php_phongo_minkey_interface_ce;
+zend_class_entry* phongo_minkey_interface_ce;
 
-void php_phongo_minkey_interface_init_ce(INIT_FUNC_ARGS)
+void phongo_minkey_interface_init_ce(INIT_FUNC_ARGS)
 {
-	php_phongo_minkey_interface_ce = register_class_MongoDB_BSON_MinKeyInterface();
+	phongo_minkey_interface_ce = register_class_MongoDB_BSON_MinKeyInterface();
 }
