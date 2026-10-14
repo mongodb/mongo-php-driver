@@ -343,13 +343,14 @@ void phongo_javascript_init_ce(INIT_FUNC_ARGS)
 	phongo_handler_javascript.offset         = offsetof(phongo_javascript_t, std);
 }
 
-bool phongo_javascript_new(zval* object, const char* code, size_t code_len, const bson_t* scope)
+bool phongo_javascript_new(zval* object, const char* code, size_t code_len, const bson_t* scope, size_t nesting_depth)
 {
 	if (scope) {
 		phongo_bson_state state;
 		bool              valid_scope;
 
 		PHONGO_BSON_INIT_STATE(state);
+		state.nesting_depth = nesting_depth;
 
 		valid_scope = phongo_bson_to_zval_ex(scope, &state);
 		zval_ptr_dtor(&state.zchild);
