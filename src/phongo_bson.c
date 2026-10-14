@@ -224,7 +224,8 @@ inline static bool php_phongo_bson_state_is_initialized(php_phongo_bson_state* s
 
 static void php_phongo_bson_state_ctor(php_phongo_bson_state* state)
 {
-	state->field_path = php_phongo_field_path_alloc(false);
+	state->field_path             = php_phongo_field_path_alloc(false);
+	state->field_path->base_depth = state->nesting_depth;
 }
 
 static void php_phongo_bson_state_copy_ctor(php_phongo_bson_state* dst, php_phongo_bson_state* src)
@@ -493,13 +494,23 @@ static bool php_phongo_bson_visit_symbol(const bson_iter_t* iter, const char* ke
 	return false;
 }
 
+/* Throws when the maximum BSON nesting level is exceeded while decoding. */
+static void php_phongo_bson_throw_nesting_exception(php_phongo_field_path* field_path)
+{
+	char* path_string = php_phongo_field_path_as_string(field_path);
+
+	phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Nesting level too deep for field path \"%s\"", path_string);
+
+	efree(path_string);
+}
+
 static bool php_phongo_bson_visit_code(const bson_iter_t* iter ARG_UNUSED, const char* key, size_t v_code_len, const char* v_code, void* data)
 {
 	zval*                  retval = PHONGO_BSON_STATE_ZCHILD(data);
 	php_phongo_bson_state* state  = (php_phongo_bson_state*) data;
 	zval                   zchild;
 
-	if (!phongo_javascript_new(&zchild, v_code, v_code_len, NULL)) {
+	if (!phongo_javascript_new(&zchild, v_code, v_code_len, NULL, 0)) {
 		return true;
 	}
 
@@ -540,8 +551,19 @@ static bool php_phongo_bson_visit_codewscope(const bson_iter_t* iter ARG_UNUSED,
 	zval*                  retval = PHONGO_BSON_STATE_ZCHILD(data);
 	php_phongo_bson_state* state  = (php_phongo_bson_state*) data;
 	zval                   zchild;
+	size_t                 nesting_depth;
 
-	if (!phongo_javascript_new(&zchild, v_code, v_code_len, v_scope)) {
+	php_phongo_field_path_write_item_at_current_level(state->field_path, key);
+
+	/* The scope is decoded with its own field path, so the nesting depth is
+	 * carried over explicitly. The scope counts as one level below this value. */
+	nesting_depth = state->field_path->base_depth + state->field_path->size + 1;
+	if (nesting_depth > BSON_MAX_DECODE_NESTING_LEVEL) {
+		php_phongo_bson_throw_nesting_exception(state->field_path);
+		return true;
+	}
+
+	if (!phongo_javascript_new(&zchild, v_code, v_code_len, v_scope, nesting_depth)) {
 		return true;
 	}
 
@@ -550,8 +572,6 @@ static bool php_phongo_bson_visit_codewscope(const bson_iter_t* iter ARG_UNUSED,
 	} else {
 		ADD_ASSOC_ZVAL(retval, key, &zchild);
 	}
-
-	php_phongo_field_path_write_item_at_current_level(state->field_path, key);
 
 	return false;
 }
@@ -728,16 +748,6 @@ static void php_phongo_handle_field_path_entry_for_compound_type(php_phongo_bson
 	}
 }
 
-/* Throws when the maximum BSON nesting level is exceeded while decoding. */
-static void php_phongo_bson_throw_nesting_exception(php_phongo_field_path* field_path)
-{
-	char* path_string = php_phongo_field_path_as_string(field_path);
-
-	phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Nesting level too deep for field path \"%s\"", path_string);
-
-	efree(path_string);
-}
-
 static bool php_phongo_bson_visit_document(const bson_iter_t* iter ARG_UNUSED, const char* key, const bson_t* v_document, void* data)
 {
 	zval*                  retval = PHONGO_BSON_STATE_ZCHILD(data);
@@ -760,7 +770,8 @@ static bool php_phongo_bson_visit_document(const bson_iter_t* iter ARG_UNUSED, c
 	if (state.field_type.type != PHONGO_TYPEMAP_BSON) {
 		/* Check the limit just before recursing: raw BSON structures are not
 		 * traversed and do not consume the stack. */
-		if (parent_state->field_path->size > BSON_MAX_DECODE_NESTING_LEVEL) {
+		if (parent_state->field_path->base_depth + parent_state->field_path->size >
+			BSON_MAX_DECODE_NESTING_LEVEL) {
 			php_phongo_bson_state_dtor(&state);
 			php_phongo_bson_throw_nesting_exception(parent_state->field_path);
 			return true;
@@ -856,7 +867,8 @@ static bool php_phongo_bson_visit_array(const bson_iter_t* iter ARG_UNUSED, cons
 	if (state.field_type.type != PHONGO_TYPEMAP_BSON) {
 		/* Check the limit just before recursing: raw BSON structures are not
 		 * traversed and do not consume the stack. */
-		if (parent_state->field_path->size > BSON_MAX_DECODE_NESTING_LEVEL) {
+		if (parent_state->field_path->base_depth + parent_state->field_path->size >
+			BSON_MAX_DECODE_NESTING_LEVEL) {
 			php_phongo_bson_state_dtor(&state);
 			php_phongo_bson_throw_nesting_exception(parent_state->field_path);
 			return true;
@@ -1074,7 +1086,7 @@ bool phongo_bson_value_to_zval(const bson_value_t* value, zval* zv)
 			return phongo_dbpointer_new(zv, value->value.v_dbpointer.collection, value->value.v_dbpointer.collection_len, &value->value.v_dbpointer.oid);
 
 		case BSON_TYPE_CODE:
-			return phongo_javascript_new(zv, value->value.v_code.code, value->value.v_code.code_len, NULL);
+			return phongo_javascript_new(zv, value->value.v_code.code, value->value.v_code.code_len, NULL, 0);
 
 		case BSON_TYPE_CODEWSCOPE:
 			if (!bson_init_static(&bson, value->value.v_codewscope.scope_data, value->value.v_codewscope.scope_len)) {
@@ -1082,7 +1094,9 @@ bool phongo_bson_value_to_zval(const bson_value_t* value, zval* zv)
 				return false;
 			}
 
-			return phongo_javascript_new(zv, value->value.v_codewscope.code, value->value.v_codewscope.code_len, &bson);
+			/* A standalone value sits one level below its document, so its scope starts
+			 * at depth 1, like a top-level CodeWScope in a full document decode. */
+			return phongo_javascript_new(zv, value->value.v_codewscope.code, value->value.v_codewscope.code_len, &bson, 1);
 
 		case BSON_TYPE_SYMBOL:
 			return phongo_symbol_new(zv, value->value.v_symbol.symbol, value->value.v_symbol.len);

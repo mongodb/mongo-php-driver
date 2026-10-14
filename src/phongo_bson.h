@@ -49,8 +49,12 @@ typedef struct {
 	php_phongo_bson_field_path_item_types* element_types;
 	size_t                                 allocated_size;
 	size_t                                 size;
-	size_t                                 ref_count;
-	bool                                   owns_elements;
+	/* Nesting depth inherited from an enclosing decode, added to "size" when
+	 * enforcing the decoding nesting limit. Non-zero for the scope of a
+	 * CodeWScope value, which is decoded with its own field path. */
+	size_t base_depth;
+	size_t ref_count;
+	bool   owns_elements;
 } php_phongo_field_path;
 
 typedef enum {
@@ -92,8 +96,11 @@ typedef struct {
 	 * driver-internal conversions, where the BSON may originate from a server
 	 * reply or from data the application does not control, and where there is
 	 * no type map through which a caller could opt out. */
-	bool                            skip_odm;
-	php_phongo_field_path*          field_path;
+	bool                   skip_odm;
+	php_phongo_field_path* field_path;
+	/* Nesting depth inherited from an enclosing decode, copied to the field path
+	 * when the state creates it. Set for the scope of a CodeWScope value. */
+	size_t                          nesting_depth;
 	php_phongo_bson_typemap_element field_type;
 } php_phongo_bson_state;
 
