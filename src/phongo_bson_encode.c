@@ -78,6 +78,28 @@ static bool phongo_bson_length_is_valid(size_t length, phongo_field_path* field_
 	return false;
 }
 
+/* Writes the decimal representation of a non-negative array index into "buf"
+ * and returns its length. BSON array keys are the only keys the encoder has to
+ * synthesize, and a hash table index is always a non-negative zend_ulong.
+ * Formatting into a caller provided buffer avoids the allocation that
+ * zend_long_to_str() would perform for every element of an array. */
+static size_t phongo_ulong_to_string(char* buf, size_t buf_size, zend_ulong value)
+{
+	char*  ptr = buf + buf_size;
+	size_t len;
+
+	do {
+		*--ptr = (char) ('0' + (value % 10));
+		value /= 10;
+	} while (value);
+
+	len = (size_t) (buf + buf_size - ptr);
+
+	memmove(buf, ptr, len);
+
+	return len;
+}
+
 /* Determines whether the argument should be serialized as a BSON array or
  * document. IS_ARRAY is returned if the argument's keys are a sequence of
  * integers starting at zero; otherwise, IS_OBJECT is returned. */
@@ -579,6 +601,10 @@ static void phongo_zval_to_bson_internal(zval* data, phongo_field_path* field_pa
 
 		ZEND_HASH_FOREACH_KEY_VAL_IND(ht_data, num_key, string_key, value)
 		{
+			char        num_key_buf[ZEND_LTOA_BUF_LEN];
+			const char* key_str;
+			size_t      key_len;
+
 			if (string_key) {
 				if (ht_data_from_properties) {
 					/* Skip protected and private properties */
@@ -587,7 +613,9 @@ static void phongo_zval_to_bson_internal(zval* data, phongo_field_path* field_pa
 					}
 				}
 
-				if (strlen(ZSTR_VAL(string_key)) != ZSTR_LEN(string_key)) {
+				/* Zend strings are NUL terminated, so a NUL byte before the
+				 * recorded length is an embedded NUL. */
+				if (memchr(ZSTR_VAL(string_key), '\0', ZSTR_LEN(string_key)) != NULL) {
 					phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "BSON keys cannot contain null bytes. Unexpected null byte after \"%s\".", ZSTR_VAL(string_key));
 
 					goto cleanup;
@@ -602,18 +630,25 @@ static void phongo_zval_to_bson_internal(zval* data, phongo_field_path* field_pa
 						flags &= ~PHONGO_BSON_ADD_ID;
 					}
 				}
-			}
 
-			/* Ensure we're working with a string key */
-			if (!string_key) {
-				string_key = zend_long_to_str(num_key);
-			} else {
+				/* Hold a reference for the duration of the append. A
+				 * bsonSerialize() callback reached from phongo_bson_append() may
+				 * remove this entry from the hash table being iterated, which
+				 * would free the key. */
 				zend_string_addref(string_key);
+
+				key_str = ZSTR_VAL(string_key);
+				key_len = ZSTR_LEN(string_key);
+			} else {
+				key_len = phongo_ulong_to_string(num_key_buf, sizeof(num_key_buf), num_key);
+				key_str = num_key_buf;
 			}
 
-			phongo_bson_append(bson, field_path, flags & ~PHONGO_BSON_ADD_ID, ZSTR_VAL(string_key), strlen(ZSTR_VAL(string_key)), value);
+			phongo_bson_append(bson, field_path, flags & ~PHONGO_BSON_ADD_ID, key_str, (long) key_len, value);
 
-			zend_string_release(string_key);
+			if (string_key) {
+				zend_string_release(string_key);
+			}
 
 			/* Stop encoding as soon as a field could not be appended.
 			 * Continuing would only throw again for each remaining field. */
