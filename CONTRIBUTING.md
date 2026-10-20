@@ -3,7 +3,7 @@
 ## AI Usage
 
 We welcome contributions made with the help of AI. However, maintenance of this
-project is a human responsibility, and reviewing pull requests requires real, human,
+project is a human responsibility, and reviewing pull requests requires real, human
 time and energy. As such, please consider if:
 
 * your change solves a real, defined problem,
