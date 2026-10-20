@@ -2,9 +2,15 @@
 
 ## AI Usage
 
-AI use is OK, but all changes must be reviewed by a human. PRs may be rejected that
-appear to have little human involvement, have unclear motivation, or provide little
-value. Reviewing such changes takes developer time.
+We welcome contributions made with the help of AI. However, maintenance of this
+project is a human responsibility, and reviewing pull requests requires real, human,
+time and energy. As such, please consider if:
+
+* your change solves a real, defined problem,
+* you understand the changes you're contributing,
+* you have invested your own time and judgment in the change.
+
+Your PR may be rejected if the team feels it does not apply the above principles.
 
 ## Building from Source
 
