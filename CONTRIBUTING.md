@@ -1,5 +1,11 @@
 # Contributing to the PHP Driver for MongoDB
 
+## AI Usage
+
+AI use is OK, but all changes must be reviewed by a human. PRs may be rejected that
+appear to have little human involvement, have unclear motivation, or provide little
+value. Reviewing such changes takes developer time.
+
 ## Building from Source
 
 Developers who would like to contribute to the driver will need to build it from
