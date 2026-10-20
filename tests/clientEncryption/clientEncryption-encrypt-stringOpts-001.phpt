@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\Driver\ClientEncryption::encrypt() with stringOpts (substringPreview)
+MongoDB\Driver\ClientEncryption::encrypt() with stringOpts (substring)
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_libmongocrypt(); ?>
@@ -24,7 +24,7 @@ $keyId = $clientEncryption->createDataKey('local');
 $encryptOpts = [
     'keyId' => $keyId,
     'algorithm' => 'String',
-    'queryType' => 'substringPreview',
+    'queryType' => 'substring',
     'contentionFactor' => 0,
     'stringOpts' => [
         'caseSensitive' => true,
