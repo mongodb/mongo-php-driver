@@ -86,7 +86,7 @@ static int phongo_is_array_or_document(zval* val)
 	HashTable* ht_data = HASH_OF(val);
 
 	if (Z_TYPE_P(val) != IS_ARRAY) {
-		if (Z_TYPE_P(val) == IS_OBJECT && instanceof_function(Z_OBJCE_P(val), phongo_packedarray_ce)) {
+		if (Z_TYPE_P(val) == IS_OBJECT && Z_OBJCE_P(val) == phongo_packedarray_ce) {
 			return IS_ARRAY;
 		}
 
@@ -127,21 +127,122 @@ static bool phongo_bson_encode_serializable(zval* object, zval* out_data)
 static void phongo_bson_append_object(bson_t* bson, phongo_field_path* field_path, phongo_bson_flags_t flags, const char* key, long key_len, zval* object)
 {
 	if (Z_TYPE_P(object) == IS_OBJECT && instanceof_function(Z_OBJCE_P(object), phongo_type_ce)) {
-		if (instanceof_function(Z_OBJCE_P(object), phongo_document_ce)) {
+		zend_class_entry* ce = Z_OBJCE_P(object);
+
+		/* Every concrete MongoDB\BSON\Type implementation is final, so comparing
+		 * the class entry is equivalent to an instanceof check and avoids walking
+		 * the interface table for each field. */
+		if (ce == phongo_document_ce) {
 			PHONGO_INTERN_FROM_ZVAL(document, object);
 			phongo_bson_append_check(bson_append_document(bson, key, key_len, intern->bson), field_path);
 
 			return;
 		}
 
-		if (instanceof_function(Z_OBJCE_P(object), phongo_packedarray_ce)) {
+		if (ce == phongo_packedarray_ce) {
 			PHONGO_INTERN_FROM_ZVAL(packedarray, object);
 			phongo_bson_append_check(bson_append_array(bson, key, key_len, intern->bson), field_path);
 
 			return;
 		}
 
-		if (instanceof_function(Z_OBJCE_P(object), phongo_serializable_ce)) {
+		if (ce == phongo_objectid_ce) {
+			PHONGO_INTERN_FROM_ZVAL(objectid, object);
+			bson_oid_t oid;
+
+			bson_oid_init_from_string(&oid, intern->oid);
+			phongo_bson_append_check(bson_append_oid(bson, key, key_len, &oid), field_path);
+			return;
+		}
+		if (ce == phongo_utcdatetime_ce) {
+			PHONGO_INTERN_FROM_ZVAL(utcdatetime, object);
+
+			phongo_bson_append_check(bson_append_date_time(bson, key, key_len, intern->milliseconds), field_path);
+			return;
+		}
+		// TODO: confirm that this handles binary vector
+		if (ce == phongo_binary_ce) {
+			PHONGO_INTERN_FROM_ZVAL(binary, object);
+
+			if (!phongo_bson_length_is_valid(intern->data_len, field_path, "binary data")) {
+				return;
+			}
+
+			phongo_bson_append_check(bson_append_binary(bson, key, key_len, intern->type, (const uint8_t*) intern->data, (uint32_t) intern->data_len), field_path);
+			return;
+		}
+		if (ce == phongo_decimal128_ce) {
+			PHONGO_INTERN_FROM_ZVAL(decimal128, object);
+
+			phongo_bson_append_check(bson_append_decimal128(bson, key, key_len, &intern->decimal), field_path);
+			return;
+		}
+		if (ce == phongo_int64_ce) {
+			PHONGO_INTERN_FROM_ZVAL(int64, object);
+
+			phongo_bson_append_check(bson_append_int64(bson, key, key_len, intern->integer), field_path);
+			return;
+		}
+		if (ce == phongo_regex_ce) {
+			PHONGO_INTERN_FROM_ZVAL(regex, object);
+
+			phongo_bson_append_check(bson_append_regex(bson, key, key_len, intern->pattern, intern->flags), field_path);
+			return;
+		}
+		if (ce == phongo_javascript_ce) {
+			PHONGO_INTERN_FROM_ZVAL(javascript, object);
+
+			if (intern->scope) {
+				phongo_bson_append_check(bson_append_code_with_scope(bson, key, key_len, intern->code, intern->scope), field_path);
+			} else {
+				phongo_bson_append_check(bson_append_code(bson, key, key_len, intern->code), field_path);
+			}
+			return;
+		}
+		if (ce == phongo_timestamp_ce) {
+			PHONGO_INTERN_FROM_ZVAL(timestamp, object);
+
+			phongo_bson_append_check(bson_append_timestamp(bson, key, key_len, intern->timestamp, intern->increment), field_path);
+			return;
+		}
+		if (ce == phongo_maxkey_ce) {
+			phongo_bson_append_check(bson_append_maxkey(bson, key, key_len), field_path);
+			return;
+		}
+		if (ce == phongo_minkey_ce) {
+			phongo_bson_append_check(bson_append_minkey(bson, key, key_len), field_path);
+			return;
+		}
+
+		/* Deprecated types */
+		if (ce == phongo_dbpointer_ce) {
+			PHONGO_INTERN_FROM_ZVAL(dbpointer, object);
+			bson_oid_t oid;
+
+			bson_oid_init_from_string(&oid, intern->id);
+			phongo_bson_append_check(bson_append_dbpointer(bson, key, key_len, intern->ref, &oid), field_path);
+			return;
+		}
+		if (ce == phongo_symbol_ce) {
+			PHONGO_INTERN_FROM_ZVAL(symbol, object);
+
+			if (!phongo_bson_length_is_valid(intern->symbol_len, field_path, "symbol")) {
+				return;
+			}
+
+			phongo_bson_append_check(bson_append_symbol(bson, key, key_len, intern->symbol, intern->symbol_len), field_path);
+			return;
+		}
+		if (ce == phongo_undefined_ce) {
+			phongo_bson_append_check(bson_append_undefined(bson, key, key_len), field_path);
+			return;
+		}
+
+		/* No concrete BSON type implements MongoDB\BSON\Serializable, so this
+		 * check can run after the class entry comparisons above. Only a user
+		 * class that implements both MongoDB\BSON\Type and Serializable, or an
+		 * unrecognized Type implementation, reaches this point. */
+		if (instanceof_function(ce, phongo_serializable_ce)) {
 			zval   obj_data;
 			bson_t child;
 
@@ -152,8 +253,8 @@ static void phongo_bson_append_object(bson_t* bson, phongo_field_path* field_pat
 
 			/* Persistable objects must always be serialized as BSON documents;
 			 * otherwise, infer based on bsonSerialize()'s return value. */
-			if (instanceof_function(Z_OBJCE_P(object), phongo_persistable_ce) || phongo_is_array_or_document(&obj_data) != IS_ARRAY) {
-				if (instanceof_function(Z_OBJCE_P(object), phongo_persistable_ce) && !phongo_bson_length_is_valid(Z_OBJCE_P(object)->name->len, field_path, "class name")) {
+			if (instanceof_function(ce, phongo_persistable_ce) || phongo_is_array_or_document(&obj_data) != IS_ARRAY) {
+				if (instanceof_function(ce, phongo_persistable_ce) && !phongo_bson_length_is_valid(ce->name->len, field_path, "class name")) {
 					zval_ptr_dtor(&obj_data);
 					return;
 				}
@@ -164,8 +265,8 @@ static void phongo_bson_append_object(bson_t* bson, phongo_field_path* field_pat
 					zval_ptr_dtor(&obj_data);
 					return;
 				}
-				if (instanceof_function(Z_OBJCE_P(object), phongo_persistable_ce)) {
-					phongo_bson_append_check(bson_append_binary(&child, PHONGO_ODM_FIELD_NAME, -1, 0x80, (const uint8_t*) Z_OBJCE_P(object)->name->val, Z_OBJCE_P(object)->name->len), field_path);
+				if (instanceof_function(ce, phongo_persistable_ce)) {
+					phongo_bson_append_check(bson_append_binary(&child, PHONGO_ODM_FIELD_NAME, -1, 0x80, (const uint8_t*) ce->name->val, ce->name->len), field_path);
 				}
 				phongo_zval_to_bson_internal(&obj_data, field_path, flags, &child, NULL);
 				phongo_bson_append_check(bson_append_document_end(bson, &child), field_path);
@@ -183,99 +284,7 @@ static void phongo_bson_append_object(bson_t* bson, phongo_field_path* field_pat
 			return;
 		}
 
-		if (instanceof_function(Z_OBJCE_P(object), phongo_objectid_ce)) {
-			PHONGO_INTERN_FROM_ZVAL(objectid, object);
-			bson_oid_t oid;
-
-			bson_oid_init_from_string(&oid, intern->oid);
-			phongo_bson_append_check(bson_append_oid(bson, key, key_len, &oid), field_path);
-			return;
-		}
-		if (instanceof_function(Z_OBJCE_P(object), phongo_utcdatetime_ce)) {
-			PHONGO_INTERN_FROM_ZVAL(utcdatetime, object);
-
-			phongo_bson_append_check(bson_append_date_time(bson, key, key_len, intern->milliseconds), field_path);
-			return;
-		}
-		// TODO: confirm that this handles binary vector
-		if (instanceof_function(Z_OBJCE_P(object), phongo_binary_ce)) {
-			PHONGO_INTERN_FROM_ZVAL(binary, object);
-
-			if (!phongo_bson_length_is_valid(intern->data_len, field_path, "binary data")) {
-				return;
-			}
-
-			phongo_bson_append_check(bson_append_binary(bson, key, key_len, intern->type, (const uint8_t*) intern->data, (uint32_t) intern->data_len), field_path);
-			return;
-		}
-		if (instanceof_function(Z_OBJCE_P(object), phongo_decimal128_ce)) {
-			PHONGO_INTERN_FROM_ZVAL(decimal128, object);
-
-			phongo_bson_append_check(bson_append_decimal128(bson, key, key_len, &intern->decimal), field_path);
-			return;
-		}
-		if (instanceof_function(Z_OBJCE_P(object), phongo_int64_ce)) {
-			PHONGO_INTERN_FROM_ZVAL(int64, object);
-
-			phongo_bson_append_check(bson_append_int64(bson, key, key_len, intern->integer), field_path);
-			return;
-		}
-		if (instanceof_function(Z_OBJCE_P(object), phongo_regex_ce)) {
-			PHONGO_INTERN_FROM_ZVAL(regex, object);
-
-			phongo_bson_append_check(bson_append_regex(bson, key, key_len, intern->pattern, intern->flags), field_path);
-			return;
-		}
-		if (instanceof_function(Z_OBJCE_P(object), phongo_javascript_ce)) {
-			PHONGO_INTERN_FROM_ZVAL(javascript, object);
-
-			if (intern->scope) {
-				phongo_bson_append_check(bson_append_code_with_scope(bson, key, key_len, intern->code, intern->scope), field_path);
-			} else {
-				phongo_bson_append_check(bson_append_code(bson, key, key_len, intern->code), field_path);
-			}
-			return;
-		}
-		if (instanceof_function(Z_OBJCE_P(object), phongo_timestamp_ce)) {
-			PHONGO_INTERN_FROM_ZVAL(timestamp, object);
-
-			phongo_bson_append_check(bson_append_timestamp(bson, key, key_len, intern->timestamp, intern->increment), field_path);
-			return;
-		}
-		if (instanceof_function(Z_OBJCE_P(object), phongo_maxkey_ce)) {
-			phongo_bson_append_check(bson_append_maxkey(bson, key, key_len), field_path);
-			return;
-		}
-		if (instanceof_function(Z_OBJCE_P(object), phongo_minkey_ce)) {
-			phongo_bson_append_check(bson_append_minkey(bson, key, key_len), field_path);
-			return;
-		}
-
-		/* Deprecated types */
-		if (instanceof_function(Z_OBJCE_P(object), phongo_dbpointer_ce)) {
-			PHONGO_INTERN_FROM_ZVAL(dbpointer, object);
-			bson_oid_t oid;
-
-			bson_oid_init_from_string(&oid, intern->id);
-			phongo_bson_append_check(bson_append_dbpointer(bson, key, key_len, intern->ref, &oid), field_path);
-			return;
-		}
-		if (instanceof_function(Z_OBJCE_P(object), phongo_symbol_ce)) {
-			PHONGO_INTERN_FROM_ZVAL(symbol, object);
-
-			if (!phongo_bson_length_is_valid(intern->symbol_len, field_path, "symbol")) {
-				return;
-			}
-
-			phongo_bson_append_check(bson_append_symbol(bson, key, key_len, intern->symbol, intern->symbol_len), field_path);
-			return;
-		}
-		if (instanceof_function(Z_OBJCE_P(object), phongo_undefined_ce)) {
-			phongo_bson_append_check(bson_append_undefined(bson, key, key_len), field_path);
-			return;
-		}
-
-		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Unexpected %s instance: %s", ZSTR_VAL(phongo_type_ce->name), ZSTR_VAL(Z_OBJCE_P(object)->name));
+		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Unexpected %s instance: %s", ZSTR_VAL(phongo_type_ce->name), ZSTR_VAL(ce->name));
 		return;
 	}
 
@@ -403,7 +412,7 @@ try_again:
 				break;
 			}
 
-			if (Z_TYPE_P(entry) == IS_OBJECT && instanceof_function(Z_OBJCE_P(entry), phongo_packedarray_ce)) {
+			if (Z_TYPE_P(entry) == IS_OBJECT && Z_OBJCE_P(entry) == phongo_packedarray_ce) {
 				if (!phongo_field_path_push(field_path, NULL, PHONGO_FIELD_PATH_ITEM_ARRAY)) {
 					phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Nesting level too deep");
 					phongo_zend_hash_apply_protection_end(tmp_ht);
@@ -473,7 +482,7 @@ static void phongo_zval_to_bson_internal(zval* data, phongo_field_path* field_pa
 	switch (Z_TYPE_P(data)) {
 		case IS_OBJECT:
 			/* Short-circuit MongoDB\BSON\Document and MongoDB\BSON\PackedArray instances - copy the data */
-			if (instanceof_function(Z_OBJCE_P(data), phongo_document_ce)) {
+			if (Z_OBJCE_P(data) == phongo_document_ce) {
 				PHONGO_INTERN_FROM_ZVAL(document, data);
 				bson_iter_t iter;
 
@@ -491,7 +500,7 @@ static void phongo_zval_to_bson_internal(zval* data, phongo_field_path* field_pa
 				goto done;
 			}
 
-			if (instanceof_function(Z_OBJCE_P(data), phongo_packedarray_ce)) {
+			if (Z_OBJCE_P(data) == phongo_packedarray_ce) {
 				/* If we are at the root-level, PackedArray instances should be
 				 * prohibited unless PHONGO_BSON_ALLOW_ROOT_ARRAY is set. */
 				bool is_root_level = (field_path->size == 0);
@@ -536,7 +545,7 @@ static void phongo_zval_to_bson_internal(zval* data, phongo_field_path* field_pa
 				}
 
 				// If bsonSerialize() returns a BSON document or packedArray instance, recurse to copy data over directly
-				if (Z_TYPE(obj_data) == IS_OBJECT && (instanceof_function(Z_OBJCE(obj_data), phongo_document_ce) || instanceof_function(Z_OBJCE(obj_data), phongo_packedarray_ce))) {
+				if (Z_TYPE(obj_data) == IS_OBJECT && (Z_OBJCE(obj_data) == phongo_document_ce || Z_OBJCE(obj_data) == phongo_packedarray_ce)) {
 					phongo_zval_to_bson_internal(&obj_data, field_path, flags, bson, bson_out);
 
 					goto done;
