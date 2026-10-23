@@ -1,61 +1,27 @@
 --TEST--
-MongoDB\BSON\Document: Decoding BSON with duplicate keys
+MongoDB\BSON\Document: Encoding duplicate keys
 --DESCRIPTION--
-BSON corpus spec prose test #2.2 (decoding)
-https://github.com/mongodb/specifications/blob/master/source/bson-corpus/bson-corpus.md#22-test-decoding
+BSON corpus spec prose test #2.1 (encoding)
+https://github.com/mongodb/specifications/blob/master/source/bson-corpus/bson-corpus.md#21-test-encoding
 --FILE--
 <?php
 
 require_once __DIR__ . '/../utils/basic.inc';
 
-/* Duplicate keys are not validated by the driver. This test documents how each
- * decoding API behaves. Bytes represent BSON for { "foo": 1, "foo": 2 } */
-$document = MongoDB\BSON\Document::fromBSON(hex2bin('1700000010666f6f000100000010666f6f000200000000'));
+/* PHPC does not expose a BSON builder API. PHP arrays and objects cannot hold
+ * duplicate keys, so the duplicate keys below are collapsed by PHP itself
+ * before reaching the driver. */
+$document = MongoDB\BSON\Document::fromPHP(['foo' => 1, 'foo' => 2]);
 
-echo "Iteration returns both elements in order\n";
-foreach ($document as $key => $value) {
-    var_dump($key, $value);
-}
-
-echo "\nget() and offsetGet() return the first value\n";
-var_dump($document->get('foo'));
-var_dump($document['foo']);
-var_dump($document->has('foo'));
-
-echo "\ntoPHP() returns the last value\n";
-var_dump($document->toPHP());
-var_dump($document->toPHP(['root' => 'array']));
-
-echo "\nExtended JSON preserves duplicates\n";
+echo "PHP collapses duplicate keys, keeping the last value\n";
 echo $document->toRelaxedExtendedJSON(), "\n";
-echo $document->toCanonicalExtendedJSON(), "\n";
+var_dump((string) $document === hex2bin('0e00000010666f6f000200000000'));
 
 ?>
 ===DONE===
 <?php exit(0); ?>
 --EXPECT--
-Iteration returns both elements in order
-string(3) "foo"
-int(1)
-string(3) "foo"
-int(2)
-
-get() and offsetGet() return the first value
-int(1)
-int(1)
+PHP collapses duplicate keys, keeping the last value
+{ "foo" : 2 }
 bool(true)
-
-toPHP() returns the last value
-object(stdClass)#3 (1) {
-  ["foo"]=>
-  int(2)
-}
-array(1) {
-  ["foo"]=>
-  int(2)
-}
-
-Extended JSON preserves duplicates
-{ "foo" : 1, "foo" : 2 }
-{ "foo" : { "$numberInt" : "1" }, "foo" : { "$numberInt" : "2" } }
 ===DONE===
