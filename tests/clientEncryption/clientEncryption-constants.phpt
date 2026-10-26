@@ -8,8 +8,12 @@ var_dump(MongoDB\Driver\ClientEncryption::AEAD_AES_256_CBC_HMAC_SHA_512_RANDOM);
 var_dump(MongoDB\Driver\ClientEncryption::ALGORITHM_INDEXED);
 var_dump(MongoDB\Driver\ClientEncryption::ALGORITHM_UNINDEXED);
 var_dump(MongoDB\Driver\ClientEncryption::ALGORITHM_RANGE);
+var_dump(MongoDB\Driver\ClientEncryption::ALGORITHM_STRING);
 var_dump(MongoDB\Driver\ClientEncryption::QUERY_TYPE_EQUALITY);
 var_dump(MongoDB\Driver\ClientEncryption::QUERY_TYPE_RANGE);
+var_dump(MongoDB\Driver\ClientEncryption::QUERY_TYPE_PREFIX);
+var_dump(MongoDB\Driver\ClientEncryption::QUERY_TYPE_SUFFIX);
+var_dump(MongoDB\Driver\ClientEncryption::QUERY_TYPE_SUBSTRING);
 
 ?>
 ===DONE===
@@ -20,6 +24,10 @@ string(36) "AEAD_AES_256_CBC_HMAC_SHA_512-Random"
 string(7) "Indexed"
 string(9) "Unindexed"
 string(5) "Range"
+string(6) "String"
 string(8) "equality"
 string(5) "range"
+string(6) "prefix"
+string(6) "suffix"
+string(9) "substring"
 ===DONE===
