@@ -189,7 +189,7 @@ void phongo_throw_exception_from_bson_error_t_and_reply(bson_error_t* error, con
 	/* Server errors (other than ExceededTimeLimit) and write concern errors
 	 * may use CommandException and report the result document for the
 	 * failed command. For BC, ExceededTimeLimit errors will continue to use
-	 * ExcecutionTimeoutException and omit the result document. */
+	 * ExecutionTimeoutException and omit the result document. */
 	if (reply && ((error->domain == MONGOC_ERROR_SERVER && error->code != PHONGO_SERVER_ERROR_EXCEEDED_TIME_LIMIT) || error->domain == MONGOC_ERROR_WRITE_CONCERN)) {
 		zval zv;
 

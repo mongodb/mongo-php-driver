@@ -19,8 +19,7 @@ class Person implements MongoDB\BSON\Persistable {
     public function addFriend(Person $friend) {
         $this->friends[] = $friend;
     }
-    #[\ReturnTypeWillChange]
-    public function bsonSerialize() {
+    public function bsonSerialize(): array {
         return array(
             "name"    => $this->name,
             "age"     => $this->age,
@@ -43,8 +42,7 @@ class Address implements MongoDB\BSON\Persistable {
         $this->zip = $zip;
         $this->country = $country;
     }
-    #[\ReturnTypeWillChange]
-    public function bsonSerialize() {
+    public function bsonSerialize(): array {
         return array(
             "zip"     => $this->zip,
             "country" => $this->country,

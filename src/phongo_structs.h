@@ -39,6 +39,36 @@ typedef struct {
 } php_phongo_bulkwrite_t;
 
 typedef struct {
+	mongoc_bulkwrite_t*     bw;
+	int                     bypass;
+	bson_value_t*           comment;
+	bson_t*                 let;
+	size_t                  num_ops;
+	bool                    ordered;
+	zval                    session;
+	bool                    verbose;
+	mongoc_write_concern_t* write_concern;
+	zend_object             std;
+} php_phongo_bulkwritecommand_t;
+
+typedef struct {
+	bool        is_acknowledged;
+	int64_t     inserted_count;
+	int64_t     matched_count;
+	int64_t     modified_count;
+	int64_t     upserted_count;
+	int64_t     deleted_count;
+	bson_t*     insert_results;
+	bson_t*     update_results;
+	bson_t*     delete_results;
+	bson_t*     write_errors;
+	bson_t*     write_concern_errors;
+	bson_t*     error_reply;
+	zval        manager;
+	zend_object std;
+} php_phongo_bulkwritecommandresult_t;
+
+typedef struct {
 	mongoc_client_encryption_t* client_encryption;
 	zval                        key_vault_client_manager;
 	char*                       key_vault_namespace;
@@ -68,13 +98,6 @@ typedef struct {
 	zval                  session;
 	zend_object           std;
 } php_phongo_cursor_t;
-
-typedef struct {
-	bool        initialized;
-	int64_t     id;
-	HashTable*  properties;
-	zend_object std;
-} php_phongo_cursorid_t;
 
 typedef struct {
 	mongoc_client_t* client;
@@ -281,7 +304,6 @@ typedef struct {
 } php_phongo_utcdatetime_t;
 
 typedef struct {
-	zval               manager;
 	char*              command_name;
 	char*              database_name;
 	uint32_t           server_id;
@@ -298,7 +320,6 @@ typedef struct {
 } php_phongo_commandfailedevent_t;
 
 typedef struct {
-	zval               manager;
 	char*              command_name;
 	char*              database_name;
 	uint32_t           server_id;
@@ -313,7 +334,6 @@ typedef struct {
 } php_phongo_commandstartedevent_t;
 
 typedef struct {
-	zval               manager;
 	char*              command_name;
 	char*              database_name;
 	uint32_t           server_id;

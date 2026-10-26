@@ -19,8 +19,7 @@ class MyClass implements MongoDB\BSON\Persistable
         $this->child = $child;
     }
 
-    #[\ReturnTypeWillChange]
-    public function bsonSerialize()
+    public function bsonSerialize(): array
     {
         return [
             '_id' => $this->id,

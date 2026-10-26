@@ -21,6 +21,8 @@
 
 #include <php.h>
 
+#include "phongo_structs.h"
+
 php_phongo_writeresult_t* phongo_writeresult_init(zval* return_value, bson_t* reply, zval* manager, uint32_t server_id);
 
 #endif /* PHONGO_WRITERESULT_H */

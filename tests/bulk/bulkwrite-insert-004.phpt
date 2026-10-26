@@ -17,8 +17,7 @@ class MySerializableId implements MongoDB\BSON\Serializable
         $this->id = $id;
     }
 
-    #[\ReturnTypeWillChange]
-    public function bsonSerialize()
+    public function bsonSerialize(): array
     {
         return ['id' => $this->id];
     }

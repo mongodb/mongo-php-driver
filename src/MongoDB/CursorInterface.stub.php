@@ -7,20 +7,19 @@
 
 namespace MongoDB\Driver;
 
-interface CursorInterface extends \Traversable
+interface CursorInterface extends \Iterator
 {
-    /** @tentative-return-type */
-    public function getId(): CursorId|\MongoDB\BSON\Int64;
+    public function current(): array|object|null {}
 
-    /** @tentative-return-type */
+    public function getId(): \MongoDB\BSON\Int64;
+
     public function getServer(): Server;
 
-    /** @tentative-return-type */
     public function isDead(): bool;
 
-    /** @tentative-return-type */
+    public function key(): ?int;
+
     public function setTypeMap(array $typemap): void;
 
-    /** @tentative-return-type */
     public function toArray(): array;
 }

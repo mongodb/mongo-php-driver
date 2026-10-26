@@ -79,33 +79,6 @@ static HashTable* phongo_apm_get_subscribers_to_notify(zend_class_entry* subscri
 	return subscribers;
 }
 
-/* Search for a Manager associated with the given client in the request-scoped
- * registry. If any Manager is found, copy it to @out, increment its ref-count,
- * and return true; otherwise, set @out to undefined and return false. */
-static bool phongo_apm_copy_manager_for_client(mongoc_client_t* client, zval* out)
-{
-	php_phongo_manager_t* manager;
-
-	ZVAL_UNDEF(out);
-
-	if (!MONGODB_G(managers) || zend_hash_num_elements(MONGODB_G(managers)) == 0) {
-		return false;
-	}
-
-	ZEND_HASH_FOREACH_PTR(MONGODB_G(managers), manager)
-	{
-		if (manager->client == client) {
-			ZVAL_OBJ(out, &manager->std);
-			Z_ADDREF_P(out);
-
-			return true;
-		}
-	}
-	ZEND_HASH_FOREACH_END();
-
-	return false;
-}
-
 /* Dispatch an event to all subscribers in a HashTable. The caller is
  * responsible for ensuring that subscribers implement the correct interface. */
 static void phongo_apm_dispatch_event(HashTable* subscribers, const char* function_name, zval* event)
@@ -158,13 +131,6 @@ static void phongo_apm_command_started(const mongoc_apm_command_started_t* event
 		bson_oid_copy(mongoc_apm_command_started_get_service_id(event), &p_event->service_id);
 	}
 
-	if (!phongo_apm_copy_manager_for_client(client, &p_event->manager)) {
-		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Found no Manager for client in APM event context");
-		zval_ptr_dtor(&z_event);
-
-		goto cleanup;
-	}
-
 	phongo_apm_dispatch_event(subscribers, "commandStarted", &z_event);
 	zval_ptr_dtor(&z_event);
 
@@ -205,13 +171,6 @@ static void phongo_apm_command_succeeded(const mongoc_apm_command_succeeded_t* e
 
 	if (p_event->has_service_id) {
 		bson_oid_copy(mongoc_apm_command_succeeded_get_service_id(event), &p_event->service_id);
-	}
-
-	if (!phongo_apm_copy_manager_for_client(client, &p_event->manager)) {
-		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Found no Manager for client in APM event context");
-		zval_ptr_dtor(&z_event);
-
-		goto cleanup;
 	}
 
 	phongo_apm_dispatch_event(subscribers, "commandSucceeded", &z_event);
@@ -255,13 +214,6 @@ static void phongo_apm_command_failed(const mongoc_apm_command_failed_t* event)
 
 	if (p_event->has_service_id) {
 		bson_oid_copy(mongoc_apm_command_failed_get_service_id(event), &p_event->service_id);
-	}
-
-	if (!phongo_apm_copy_manager_for_client(client, &p_event->manager)) {
-		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Found no Manager for client in APM event context");
-		zval_ptr_dtor(&z_event);
-
-		goto cleanup;
 	}
 
 	/* We need to process and convert the error right here, otherwise
