@@ -80,6 +80,14 @@ when using this extension. To generate the function map, run the
 `generate-function-map` make target. The generated map will be stored in
 `scripts/functionMap.php`.
 
+## Documentation
+
+The reference documentation for the extension is published in the
+[PHP manual](https://www.php.net/manual/en/book.mongodb.php). Its source is
+maintained in the [php/doc-extensions](https://github.com/php/doc-extensions/)
+repository. Documentation changes, such as new classes, methods or options,
+must be submitted there.
+
 ## Testing
 
 The driver includes a test suite that can be run with `make test`. To run a single
