@@ -66,7 +66,7 @@ when using this extension. To generate the function map, run the
 ## Documentation
 
 The reference documentation for the extension is published in the
-[PHP manual](https://www.php.net/manual/en/set.mongodb.php). Its source is
+[PHP manual](https://www.php.net/manual/en/book.mongodb.php). Its source is
 maintained in the [php/doc-extensions](https://github.com/php/doc-extensions/)
 repository. Documentation changes, such as new classes, methods or options,
 must be submitted there.
