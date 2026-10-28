@@ -42,6 +42,12 @@ final class ClientEncryption
 
     /**
      * @var string
+     * @cvalue MONGOC_ENCRYPT_ALGORITHM_STRING
+     */
+    public const ALGORITHM_STRING = UNKNOWN;
+
+    /**
+     * @var string
      * @cvalue MONGOC_ENCRYPT_QUERY_TYPE_EQUALITY
      */
     public const QUERY_TYPE_EQUALITY = UNKNOWN;
@@ -51,6 +57,24 @@ final class ClientEncryption
      * @cvalue MONGOC_ENCRYPT_QUERY_TYPE_RANGE
      */
     public const QUERY_TYPE_RANGE = UNKNOWN;
+
+    /**
+     * @var string
+     * @cvalue MONGOC_ENCRYPT_QUERY_TYPE_PREFIX
+     */
+    public const QUERY_TYPE_PREFIX = UNKNOWN;
+
+    /**
+     * @var string
+     * @cvalue MONGOC_ENCRYPT_QUERY_TYPE_SUFFIX
+     */
+    public const QUERY_TYPE_SUFFIX = UNKNOWN;
+
+    /**
+     * @var string
+     * @cvalue MONGOC_ENCRYPT_QUERY_TYPE_SUBSTRING
+     */
+    public const QUERY_TYPE_SUBSTRING = UNKNOWN;
 
     final public function __construct(array $options) {}
 
