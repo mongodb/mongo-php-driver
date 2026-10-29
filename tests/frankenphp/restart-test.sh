@@ -39,15 +39,40 @@ if [ -z "${SKIP_BUILD:-}" ]; then
     docker build --tag "${IMAGE_NAME}" --file "${REPO_ROOT}/tests/frankenphp/Dockerfile" "${REPO_ROOT}"
 fi
 
-# Containers on their own network, so FrankenPHP reaches MongoDB by name.
-# The Atlas Local image starts a single-node replica set and ships a healthcheck
-# that reports when the server is ready.
 docker network create "${NETWORK_NAME}" >/dev/null
-docker run --detach \
-    --name "${MONGO_CONTAINER_NAME}" \
-    --network "${NETWORK_NAME}" \
-    --network-alias mongodb \
-    "${MONGO_IMAGE}" >/dev/null
+
+# In CI, the Atlas Local replica set runs as a GitHub Actions service and
+# MONGODB_URI is already set. Locally, start it here. The image ships a
+# healthcheck that reports when the server is ready.
+if [ -z "${MONGODB_URI:-}" ]; then
+    docker run --detach \
+        --name "${MONGO_CONTAINER_NAME}" \
+        --network "${NETWORK_NAME}" \
+        --network-alias mongodb \
+        "${MONGO_IMAGE}" >/dev/null
+
+    # The image healthcheck runs every 30 seconds after a start period of 60
+    # seconds, so allow up to three minutes.
+    echo "Waiting for MongoDB..."
+    mongo_health=""
+    for _ in $(seq 1 180); do
+        mongo_health=$(docker inspect --format '{{if .State.Health}}{{.State.Health.Status}}{{else}}none{{end}}' "${MONGO_CONTAINER_NAME}")
+        if [ "${mongo_health}" = "healthy" ]; then
+            break
+        fi
+        if [ "${mongo_health}" = "unhealthy" ]; then
+            echo "FAILED: MongoDB reported an unhealthy status"
+            exit 1
+        fi
+        sleep 1
+    done
+    if [ "${mongo_health}" != "healthy" ]; then
+        echo "FAILED: MongoDB did not become healthy"
+        exit 1
+    fi
+
+    MONGODB_URI="mongodb://mongodb:27017/?directConnection=true&serverSelectionTimeoutMS=2000"
+fi
 
 # ZEND_DONT_UNLOAD_MODULES keeps the extension mapped when the engine shuts
 # down, like SAPIs that restart the engine in-process. Without it, the extension
@@ -55,30 +80,11 @@ docker run --detach \
 docker run --detach \
     --name "${CONTAINER_NAME}" \
     --network "${NETWORK_NAME}" \
+    --add-host host.docker.internal:host-gateway \
     --env ZEND_DONT_UNLOAD_MODULES=1 \
-    --env MONGODB_URI="mongodb://mongodb:27017/?directConnection=true&serverSelectionTimeoutMS=2000" \
+    --env MONGODB_URI="${MONGODB_URI}" \
     --publish "${PORT}:80" \
     "${IMAGE_NAME}" >/dev/null
-
-# The image healthcheck runs every 30 seconds after a start period of 60
-# seconds, so allow up to three minutes.
-echo "Waiting for MongoDB..."
-mongo_health=""
-for _ in $(seq 1 180); do
-    mongo_health=$(docker inspect --format '{{if .State.Health}}{{.State.Health.Status}}{{else}}none{{end}}' "${MONGO_CONTAINER_NAME}")
-    if [ "${mongo_health}" = "healthy" ]; then
-        break
-    fi
-    if [ "${mongo_health}" = "unhealthy" ]; then
-        echo "FAILED: MongoDB reported an unhealthy status"
-        exit 1
-    fi
-    sleep 1
-done
-if [ "${mongo_health}" != "healthy" ]; then
-    echo "FAILED: MongoDB did not become healthy"
-    exit 1
-fi
 
 get() {
     curl --silent --fail --max-time 30 "${BASE_URL}$1"

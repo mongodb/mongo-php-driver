@@ -15,6 +15,18 @@ jobs:
     name: "FrankenPHP in-process thread reboot"
     runs-on: "ubuntu-24.04"
 
+    services:
+      mongodb:
+        # Single-node replica set with a built-in healthcheck, which the runner
+        # waits for before running the steps.
+        image: "mongodb/mongodb-atlas-local:8.0"
+        ports:
+          - "27017:27017"
+
+    env:
+      # The FrankenPHP container reaches the service through the Docker host.
+      MONGODB_URI: "mongodb://host.docker.internal:27017/?directConnection=true&serverSelectionTimeoutMS=2000"
+
     steps:
       - name: "Checkout"
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
