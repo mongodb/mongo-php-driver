@@ -1,0 +1,15 @@
+{
+	auto_https off
+}
+
+:80 {
+	root * /app/public
+	php_server {
+		worker {
+			file /app/public/worker.php
+			num 2
+			# All requests go to the worker, whatever the requested path is.
+			match *
+		}
+	}
+}
