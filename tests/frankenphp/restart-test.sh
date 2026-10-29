@@ -7,10 +7,14 @@
 # mongoc_handshake_data_append().
 #
 # The worker also runs a command on a MongoDB server on every request, so the
-# test checks that the connection still works after the restart.
+# test checks that the connection still works after the restart. Point
+# MONGODB_URI at a running server, for example:
+#   docker run --detach --publish 27017:27017 mongodb/mongodb-atlas-local:8.0
+#   MONGODB_URI='mongodb://host.docker.internal:27017/?directConnection=true' \
+#       bash tests/frankenphp/restart-test.sh
 #
 # Requires Docker. Run it with:
-#   bash tests/frankenphp/restart-test.sh
+#   MONGODB_URI=... bash tests/frankenphp/restart-test.sh
 
 set -o errexit
 set -o nounset
@@ -18,18 +22,19 @@ set -o pipefail
 
 REPO_ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)
 
-NETWORK_NAME=${NETWORK_NAME:-mongodb-frankenphp-restart}
-MONGO_CONTAINER_NAME=${MONGO_CONTAINER_NAME:-mongodb-frankenphp-mongo}
-MONGO_IMAGE=${MONGO_IMAGE:-mongodb/mongodb-atlas-local:8.0}
 CONTAINER_NAME=${CONTAINER_NAME:-mongodb-frankenphp-restart}
 IMAGE_NAME=${IMAGE_NAME:-mongodb-frankenphp}
 PORT=${PORT:-8080}
 BASE_URL="http://127.0.0.1:${PORT}"
 
+if [ -z "${MONGODB_URI:-}" ]; then
+    echo "FAILED: set MONGODB_URI, for example mongodb://host.docker.internal:27017/?directConnection=true"
+    exit 1
+fi
+
 cleanup() {
     docker logs "${CONTAINER_NAME}" 2>&1 || true
-    docker rm --force --volumes "${CONTAINER_NAME}" "${MONGO_CONTAINER_NAME}" >/dev/null 2>&1 || true
-    docker network rm "${NETWORK_NAME}" >/dev/null 2>&1 || true
+    docker rm --force --volumes "${CONTAINER_NAME}" >/dev/null 2>&1 || true
 }
 trap cleanup EXIT
 
@@ -39,47 +44,11 @@ if [ -z "${SKIP_BUILD:-}" ]; then
     docker build --tag "${IMAGE_NAME}" --file "${REPO_ROOT}/tests/frankenphp/Dockerfile" "${REPO_ROOT}"
 fi
 
-docker network create "${NETWORK_NAME}" >/dev/null
-
-# In CI, the Atlas Local replica set runs as a GitHub Actions service and
-# MONGODB_URI is already set. Locally, start it here. The image ships a
-# healthcheck that reports when the server is ready.
-if [ -z "${MONGODB_URI:-}" ]; then
-    docker run --detach \
-        --name "${MONGO_CONTAINER_NAME}" \
-        --network "${NETWORK_NAME}" \
-        --network-alias mongodb \
-        "${MONGO_IMAGE}" >/dev/null
-
-    # The image healthcheck runs every 30 seconds after a start period of 60
-    # seconds, so allow up to three minutes.
-    echo "Waiting for MongoDB..."
-    mongo_health=""
-    for _ in $(seq 1 180); do
-        mongo_health=$(docker inspect --format '{{if .State.Health}}{{.State.Health.Status}}{{else}}none{{end}}' "${MONGO_CONTAINER_NAME}")
-        if [ "${mongo_health}" = "healthy" ]; then
-            break
-        fi
-        if [ "${mongo_health}" = "unhealthy" ]; then
-            echo "FAILED: MongoDB reported an unhealthy status"
-            exit 1
-        fi
-        sleep 1
-    done
-    if [ "${mongo_health}" != "healthy" ]; then
-        echo "FAILED: MongoDB did not become healthy"
-        exit 1
-    fi
-
-    MONGODB_URI="mongodb://mongodb:27017/?directConnection=true&serverSelectionTimeoutMS=2000"
-fi
-
 # ZEND_DONT_UNLOAD_MODULES keeps the extension mapped when the engine shuts
 # down, like SAPIs that restart the engine in-process. Without it, the extension
 # is unloaded and reloaded with fresh global state, which hides PHPC-2797.
 docker run --detach \
     --name "${CONTAINER_NAME}" \
-    --network "${NETWORK_NAME}" \
     --add-host host.docker.internal:host-gateway \
     --env ZEND_DONT_UNLOAD_MODULES=1 \
     --env MONGODB_URI="${MONGODB_URI}" \
