@@ -10,6 +10,9 @@ on:
       - "v*.*"
       - "feature/*"
 
+permissions:
+  contents: read
+
 jobs:
   thread-reboot:
     name: "FrankenPHP in-process thread reboot"
