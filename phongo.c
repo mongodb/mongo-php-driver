@@ -25,7 +25,6 @@
 #include <ext/standard/info.h>
 
 #include "phongo.h"
-#include "src/phongo_atomic.h"
 #include "src/phongo_client.h"
 #include "src/phongo_error.h"
 #include "src/phongo_ini.h"
@@ -37,12 +36,25 @@ ZEND_DECLARE_MODULE_GLOBALS(mongodb)
 ZEND_TSRMLS_CACHE_DEFINE();
 #endif
 
-/* Initialize a thread counter, which will be atomically incremented in GINIT.
- * In turn, GSHUTDOWN will decrement the counter and call mongoc_cleanup() when
- * it reaches zero (i.e. last thread is shutdown). This is necessary because
- * mongoc_cleanup() must be called after all persistent clients have been
- * destroyed. */
-static int32_t phongo_num_threads = 0;
+/* Track whether libmongoc has been initialized in this process. libmongoc
+ * state is process-wide: the C driver documents that mongoc_init() must be
+ * called exactly once and that it does not reinitialize the driver after
+ * mongoc_cleanup(). Some SAPIs (e.g. FrankenPHP) shut the PHP engine down and
+ * start it again in the same process, which runs GINIT, GSHUTDOWN, MINIT, and
+ * MSHUTDOWN once per engine lifecycle. libmongoc must therefore be initialized
+ * and shut down once per process, not once per engine lifecycle. Otherwise, the
+ * next engine startup reuses a libmongoc instance whose global state (e.g. the
+ * handshake data) was freed by mongoc_cleanup() and cannot be restored by the
+ * subsequent mongoc_init() call. */
+static bool phongo_libmongoc_initialized = false;
+
+/* Shut down libmongoc when the process exits. This is registered with atexit()
+ * in MINIT and is intentionally not tied to the engine lifecycle. */
+static void phongo_libmongoc_shutdown(void)
+{
+	mongoc_cleanup();
+	bson_mem_restore_vtable();
+}
 
 /* Declare zend_class_entry dependencies, which are initialized in MINIT */
 zend_class_entry* phongo_json_serializable_ce;
@@ -130,9 +142,6 @@ PHP_GINIT_FUNCTION(mongodb) /* {{{ */
 	ZEND_TSRMLS_CACHE_UPDATE();
 #endif
 
-	/* Increment the thread counter. */
-	phongo_atomic_int32_fetch_add(&phongo_num_threads, 1, phongo_memory_order_seq_cst);
-
 	/* Clear extension globals */
 	memset(mongodb_globals, 0, sizeof(zend_mongodb_globals));
 
@@ -203,11 +212,20 @@ PHP_MINIT_FUNCTION(mongodb) /* {{{ */
 	phongo_register_ini_entries(INIT_FUNC_ARGS_PASSTHRU);
 
 	/* Assign our custom vtable to libbson, so all memory allocation in libbson
-	 * (and libmongoc) will use PHP's persistent memory API. After doing so,
-	 * initialize libmongoc. Later, we will shutdown libmongoc and restore
-	 * libbson's vtable in the final GSHUTDOWN. */
+	 * (and libmongoc) will use PHP's persistent memory API. The vtable must be
+	 * assigned on every engine startup because libmongoc outlives the engine.
+	 * libmongoc is initialized once per process and shut down along with the
+	 * vtable restoration when the process exits. */
 	bson_mem_set_vtable(&bson_mem_vtable);
-	mongoc_init();
+
+	if (!phongo_libmongoc_initialized) {
+		mongoc_init();
+		phongo_libmongoc_initialized = true;
+
+		/* libmongoc must be shut down at process exit. See the comment above
+		 * phongo_libmongoc_initialized for details. */
+		(void) atexit(phongo_libmongoc_shutdown);
+	}
 
 	/* Prep default object handlers to be used when we register the classes */
 	memcpy(&phongo_std_object_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
@@ -387,15 +405,6 @@ PHP_GSHUTDOWN_FUNCTION(mongodb) /* {{{ */
 	/* TODO: Check that logging actually gets disabled. The logger HashTable
 	 * should be empty by this point. */
 	phongo_log_set_stream(NULL);
-
-	/* Decrement the thread counter. If it reaches zero, we can infer that this
-	 * is the last thread, MSHUTDOWN has been called, persistent clients from
-	 * all threads have been destroyed, and it is now safe to shutdown libmongoc
-	 * and restore libbson's original vtable. */
-	if (phongo_atomic_int32_fetch_sub(&phongo_num_threads, 1, phongo_memory_order_seq_cst) - 1 == 0) {
-		mongoc_cleanup();
-		bson_mem_restore_vtable();
-	}
 } /* }}} */
 
 PHP_MINFO_FUNCTION(mongodb) /* {{{ */

@@ -1,0 +1,54 @@
+name: "FrankenPHP"
+
+on:
+  pull_request:
+    branches:
+      - "v*.*"
+      - "feature/*"
+  push:
+    branches:
+      - "v*.*"
+      - "feature/*"
+
+jobs:
+  thread-reboot:
+    name: "FrankenPHP in-process thread reboot"
+    runs-on: "ubuntu-24.04"
+
+    services:
+      mongodb:
+        # Single-node replica set with a built-in healthcheck, which the runner
+        # waits for before running the steps.
+        image: "mongodb/mongodb-atlas-local:8.0"
+        ports:
+          - "27017:27017"
+
+    env:
+      # The FrankenPHP container reaches the service through the Docker host.
+      MONGODB_URI: "mongodb://host.docker.internal:27017/?directConnection=true&serverSelectionTimeoutMS=2000"
+
+    steps:
+      - name: "Checkout"
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          submodules: true
+
+      - name: "Set up Docker buildx"
+        uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069  # v4.4.1
+
+      - name: "Build the image with the driver"
+        uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc  # v7.4.0
+        with:
+          context: "."
+          file: "tests/frankenphp/Dockerfile"
+          tags: "mongodb-frankenphp"
+          load: true
+          # Layer cache shared between runs: dependency layers and the extension
+          # build are reused when the sources they depend on did not change.
+          cache-from: "type=gha"
+          cache-to: "type=gha,mode=max"
+
+      - name: "Run the restart test"
+        run: "SKIP_BUILD=1 bash tests/frankenphp/restart-test.sh"
+        env:
+          IMAGE_NAME: "mongodb-frankenphp"
