@@ -19,22 +19,22 @@
       "version": "1.12.0"
     },
     {
-      "bom-ref": "pkg:github/mongodb/mongo-c-driver@1.30.13",
+      "bom-ref": "pkg:github/mongodb/mongo-c-driver@1.30.14",
       "externalReferences": [
         {
           "type": "distribution",
-          "url": "https://github.com/mongodb/mongo-c-driver/archive/refs/tags/1.30.13.tar.gz"
+          "url": "https://github.com/mongodb/mongo-c-driver/archive/refs/tags/1.30.14.tar.gz"
         },
         {
           "type": "website",
-          "url": "https://github.com/mongodb/mongo-c-driver/tree/1.30.13"
+          "url": "https://github.com/mongodb/mongo-c-driver/tree/1.30.14"
         }
       ],
       "group": "mongodb",
       "name": "mongo-c-driver",
-      "purl": "pkg:github/mongodb/mongo-c-driver@1.30.13",
+      "purl": "pkg:github/mongodb/mongo-c-driver@1.30.14",
       "type": "library",
-      "version": "1.30.13"
+      "version": "1.30.14"
     }
   ],
   "dependencies": [
@@ -42,7 +42,7 @@
       "ref": "pkg:github/mongodb/libmongocrypt@1.12.0"
     },
     {
-      "ref": "pkg:github/mongodb/mongo-c-driver@1.30.13"
+      "ref": "pkg:github/mongodb/mongo-c-driver@1.30.14"
     }
   ],
   "metadata": {
