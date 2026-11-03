@@ -40,7 +40,7 @@
 
 #define PHONGO_MANAGER_URI_DEFAULT "mongodb://127.0.0.1/"
 
-/**
+/*
  * Manager abstracts a cluster of Server objects (i.e. socket connections).
  *
  * Typically, users will connect to a cluster using a URI, and the Manager will

@@ -1272,7 +1272,7 @@ static void phongo_clientencryption_decrypt(phongo_clientencryption_t* clientenc
 		goto cleanup;
 	}
 
-	/** Use the legacy decoder to return PHP types instead of BSON types */
+	/* Use the legacy decoder to return PHP types instead of BSON types */
 	if (!phongo_bson_value_to_zval_legacy(&value, zvalue)) {
 		/* Exception already thrown */
 		goto cleanup;

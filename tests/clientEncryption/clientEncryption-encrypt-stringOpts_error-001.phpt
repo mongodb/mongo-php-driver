@@ -21,7 +21,7 @@ $keyId = new MongoDB\BSON\Binary(str_repeat("\x00", 16), MongoDB\BSON\Binary::TY
 $baseOpts = [
     'keyId' => $keyId,
     'algorithm' => 'String',
-    'queryType' => 'substringPreview',
+    'queryType' => 'substring',
     'contentionFactor' => 0,
 ];
 
