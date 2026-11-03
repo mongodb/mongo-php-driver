@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 1b2aa1b90af91216b8f9261143058edf9a2a81ca */
+ * Stub hash: abefe5c6f853ff3764b3a89565b659a60890231f */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_Driver_ClientEncryption___construct, 0, 0, 1)
 	ZEND_ARG_TYPE_INFO(0, options, IS_ARRAY, 0)
@@ -127,6 +127,13 @@ static zend_class_entry *register_class_MongoDB_Driver_ClientEncryption(void)
 	zend_declare_class_constant_ex(class_entry, const_ALGORITHM_RANGE_name, &const_ALGORITHM_RANGE_value, ZEND_ACC_PUBLIC, NULL);
 	zend_string_release(const_ALGORITHM_RANGE_name);
 
+	zval const_ALGORITHM_STRING_value;
+	zend_string *const_ALGORITHM_STRING_value_str = zend_string_init(MONGOC_ENCRYPT_ALGORITHM_STRING, strlen(MONGOC_ENCRYPT_ALGORITHM_STRING), 1);
+	ZVAL_STR(&const_ALGORITHM_STRING_value, const_ALGORITHM_STRING_value_str);
+	zend_string *const_ALGORITHM_STRING_name = zend_string_init_interned("ALGORITHM_STRING", sizeof("ALGORITHM_STRING") - 1, 1);
+	zend_declare_class_constant_ex(class_entry, const_ALGORITHM_STRING_name, &const_ALGORITHM_STRING_value, ZEND_ACC_PUBLIC, NULL);
+	zend_string_release(const_ALGORITHM_STRING_name);
+
 	zval const_QUERY_TYPE_EQUALITY_value;
 	zend_string *const_QUERY_TYPE_EQUALITY_value_str = zend_string_init(MONGOC_ENCRYPT_QUERY_TYPE_EQUALITY, strlen(MONGOC_ENCRYPT_QUERY_TYPE_EQUALITY), 1);
 	ZVAL_STR(&const_QUERY_TYPE_EQUALITY_value, const_QUERY_TYPE_EQUALITY_value_str);
@@ -140,6 +147,27 @@ static zend_class_entry *register_class_MongoDB_Driver_ClientEncryption(void)
 	zend_string *const_QUERY_TYPE_RANGE_name = zend_string_init_interned("QUERY_TYPE_RANGE", sizeof("QUERY_TYPE_RANGE") - 1, 1);
 	zend_declare_class_constant_ex(class_entry, const_QUERY_TYPE_RANGE_name, &const_QUERY_TYPE_RANGE_value, ZEND_ACC_PUBLIC, NULL);
 	zend_string_release(const_QUERY_TYPE_RANGE_name);
+
+	zval const_QUERY_TYPE_PREFIX_value;
+	zend_string *const_QUERY_TYPE_PREFIX_value_str = zend_string_init(MONGOC_ENCRYPT_QUERY_TYPE_PREFIX, strlen(MONGOC_ENCRYPT_QUERY_TYPE_PREFIX), 1);
+	ZVAL_STR(&const_QUERY_TYPE_PREFIX_value, const_QUERY_TYPE_PREFIX_value_str);
+	zend_string *const_QUERY_TYPE_PREFIX_name = zend_string_init_interned("QUERY_TYPE_PREFIX", sizeof("QUERY_TYPE_PREFIX") - 1, 1);
+	zend_declare_class_constant_ex(class_entry, const_QUERY_TYPE_PREFIX_name, &const_QUERY_TYPE_PREFIX_value, ZEND_ACC_PUBLIC, NULL);
+	zend_string_release(const_QUERY_TYPE_PREFIX_name);
+
+	zval const_QUERY_TYPE_SUFFIX_value;
+	zend_string *const_QUERY_TYPE_SUFFIX_value_str = zend_string_init(MONGOC_ENCRYPT_QUERY_TYPE_SUFFIX, strlen(MONGOC_ENCRYPT_QUERY_TYPE_SUFFIX), 1);
+	ZVAL_STR(&const_QUERY_TYPE_SUFFIX_value, const_QUERY_TYPE_SUFFIX_value_str);
+	zend_string *const_QUERY_TYPE_SUFFIX_name = zend_string_init_interned("QUERY_TYPE_SUFFIX", sizeof("QUERY_TYPE_SUFFIX") - 1, 1);
+	zend_declare_class_constant_ex(class_entry, const_QUERY_TYPE_SUFFIX_name, &const_QUERY_TYPE_SUFFIX_value, ZEND_ACC_PUBLIC, NULL);
+	zend_string_release(const_QUERY_TYPE_SUFFIX_name);
+
+	zval const_QUERY_TYPE_SUBSTRING_value;
+	zend_string *const_QUERY_TYPE_SUBSTRING_value_str = zend_string_init(MONGOC_ENCRYPT_QUERY_TYPE_SUBSTRING, strlen(MONGOC_ENCRYPT_QUERY_TYPE_SUBSTRING), 1);
+	ZVAL_STR(&const_QUERY_TYPE_SUBSTRING_value, const_QUERY_TYPE_SUBSTRING_value_str);
+	zend_string *const_QUERY_TYPE_SUBSTRING_name = zend_string_init_interned("QUERY_TYPE_SUBSTRING", sizeof("QUERY_TYPE_SUBSTRING") - 1, 1);
+	zend_declare_class_constant_ex(class_entry, const_QUERY_TYPE_SUBSTRING_name, &const_QUERY_TYPE_SUBSTRING_value, ZEND_ACC_PUBLIC, NULL);
+	zend_string_release(const_QUERY_TYPE_SUBSTRING_name);
 
 	return class_entry;
 }
