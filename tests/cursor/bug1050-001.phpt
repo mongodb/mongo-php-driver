@@ -88,7 +88,7 @@ Current position is valid: no
 
 Rewinding cursor
 Executing command: getMore
-Executing command took 0.%r(4|5)%r%d seconds
+Executing command took 0.%r(4|5|6|7)%r%d seconds
 Current position is valid: no
 
 Advancing cursor
