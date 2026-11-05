@@ -87,10 +87,17 @@ static bool phongo_utcdatetime_init_from_current_time(phongo_utcdatetime_t* inte
 }
 
 /* Initialize the object from a DateTime object and return whether it was
- * successful. */
+ * successful. An exception will be thrown on error. */
 static bool phongo_utcdatetime_init_from_date(phongo_utcdatetime_t* intern, php_date_obj* datetime_obj)
 {
 	int64_t sec, usec;
+
+	/* A DateTimeInterface subclass whose constructor does not call the parent
+	 * constructor has no time value. */
+	if (!datetime_obj->time) {
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "The %s object has not been correctly initialized by its constructor", ZSTR_VAL(datetime_obj->std.ce->name));
+		return false;
+	}
 
 	/* The following assignments use the same logic as date_format() in php_date.c */
 	sec  = datetime_obj->time->sse;
@@ -105,9 +112,7 @@ static bool phongo_utcdatetime_init_from_date(phongo_utcdatetime_t* intern, php_
 static bool phongo_utcdatetime_init_from_object(phongo_utcdatetime_t* intern, zend_object* object)
 {
 	if (instanceof_function(object->ce, php_date_get_interface_ce())) {
-		phongo_utcdatetime_init_from_date(intern, php_date_obj_from_obj(object));
-
-		return true;
+		return phongo_utcdatetime_init_from_date(intern, php_date_obj_from_obj(object));
 	}
 
 	if (instanceof_function(object->ce, phongo_int64_ce)) {
@@ -168,7 +173,16 @@ static void phongo_utcdatetime_to_php_date(zval* return_value, const zval* this,
 
 	/* TODO PHP 8.1.7+: microseconds can be included in the format string */
 	sec_len = spprintf(&sec_str, 0, "@%" PRId64, sec);
-	php_date_initialize(datetime_obj, sec_str, sec_len, NULL, NULL, 0);
+
+	if (!php_date_initialize(datetime_obj, sec_str, sec_len, NULL, NULL, 0)) {
+		efree(sec_str);
+		zval_ptr_dtor(return_value);
+		ZVAL_UNDEF(return_value);
+		phongo_throw_exception(PHONGO_ERROR_RUNTIME, "Could not initialize %s object from %s", ZSTR_VAL(ce->name), ZSTR_VAL(phongo_utcdatetime_ce->name));
+
+		return;
+	}
+
 	efree(sec_str);
 
 	datetime_obj->time->us = usec;
