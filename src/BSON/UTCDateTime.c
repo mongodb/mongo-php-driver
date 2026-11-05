@@ -173,7 +173,16 @@ static void phongo_utcdatetime_to_php_date(zval* return_value, const zval* this,
 
 	/* TODO PHP 8.1.7+: microseconds can be included in the format string */
 	sec_len = spprintf(&sec_str, 0, "@%" PRId64, sec);
-	php_date_initialize(datetime_obj, sec_str, sec_len, NULL, NULL, 0);
+
+	if (!php_date_initialize(datetime_obj, sec_str, sec_len, NULL, NULL, 0)) {
+		efree(sec_str);
+		zval_ptr_dtor(return_value);
+		ZVAL_UNDEF(return_value);
+		phongo_throw_exception(PHONGO_ERROR_RUNTIME, "Could not initialize %s object from %s", ZSTR_VAL(ce->name), ZSTR_VAL(phongo_utcdatetime_ce->name));
+
+		return;
+	}
+
 	efree(sec_str);
 
 	datetime_obj->time->us = usec;

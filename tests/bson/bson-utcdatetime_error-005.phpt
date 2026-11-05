@@ -25,6 +25,13 @@ echo throws(
     MongoDB\Driver\Exception\InvalidArgumentException::class,
 ), PHP_EOL;
 
+$reflectionClass = new ReflectionClass(MyDateTime::class);
+
+echo throws(
+    fn () => new MongoDB\BSON\UTCDateTime($reflectionClass->newInstanceWithoutConstructor()),
+    MongoDB\Driver\Exception\InvalidArgumentException::class,
+), PHP_EOL;
+
 ?>
 ===DONE===
 <?php exit(0); ?>
@@ -33,4 +40,6 @@ OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 The MyDateTime object has not been correctly initialized by its constructor
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 The MyDateTimeImmutable object has not been correctly initialized by its constructor
+OK: Got MongoDB\Driver\Exception\InvalidArgumentException
+The MyDateTime object has not been correctly initialized by its constructor
 ===DONE===
