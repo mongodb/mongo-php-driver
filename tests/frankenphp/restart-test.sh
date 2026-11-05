@@ -46,11 +46,17 @@ fi
 
 # ZEND_DONT_UNLOAD_MODULES keeps the extension mapped when the engine shuts
 # down, like SAPIs that restart the engine in-process. Without it, the extension
-# is unloaded and reloaded with fresh global state, which hides PHPC-2797.
+# is unloaded and reloaded with fresh global state, which hides PHPC-2797. Set
+# KEEP_MODULES=0 to exercise the unload and reload path.
+docker_run_args=()
+if [ "${KEEP_MODULES:-1}" = "1" ]; then
+    docker_run_args+=(--env ZEND_DONT_UNLOAD_MODULES=1)
+fi
+
 docker run --detach \
     --name "${CONTAINER_NAME}" \
     --add-host host.docker.internal:host-gateway \
-    --env ZEND_DONT_UNLOAD_MODULES=1 \
+    "${docker_run_args[@]}" \
     --env MONGODB_URI="${MONGODB_URI}" \
     --publish "${PORT}:80" \
     "${IMAGE_NAME}" >/dev/null
