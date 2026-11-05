@@ -430,13 +430,22 @@ PHP_GSHUTDOWN_FUNCTION(mongodb) /* {{{ */
 	phongo_log_set_stream(NULL);
 
 	/* Decrement the thread counter. If it reaches zero, this is the last engine
-	 * of the process, and every persistent client has been destroyed. Shut
-	 * libmongoc down when the SAPI ends the process after the module shutdown.
-	 * GSHUTDOWN runs during php_module_shutdown(), before the CLI frees argv. */
-	if (phongo_atomic_int32_fetch_sub(&phongo_num_threads, 1, phongo_memory_order_seq_cst) - 1 == 0 && phongo_sapi_ends_process()) {
-		mongoc_cleanup();
+	 * of the process, and every persistent client has been destroyed. Detach the
+	 * callbacks that point into this extension, then shut libmongoc down when
+	 * the SAPI ends the process after the module shutdown. GSHUTDOWN runs during
+	 * php_module_shutdown(), before the CLI frees argv. */
+	if (phongo_atomic_int32_fetch_sub(&phongo_num_threads, 1, phongo_memory_order_seq_cst) - 1 == 0) {
+		/* A host using system libbson or libmongoc can keep them loaded after
+		 * PHP unloads the extension. Never leave a callback pointing into this
+		 * extension. */
+		mongoc_log_set_handler(NULL, NULL);
+
+		if (phongo_sapi_ends_process()) {
+			mongoc_cleanup();
+			phongo_libmongoc_cleaned_up = true;
+		}
+
 		bson_mem_restore_vtable();
-		phongo_libmongoc_cleaned_up = true;
 	}
 } /* }}} */
 
