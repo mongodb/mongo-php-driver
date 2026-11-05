@@ -45,7 +45,7 @@ jobs:
           MONGODB_URI: ${{ steps.setup-mongodb.outputs.cluster-uri }}
           CRYPT_SHARED_LIB_PATH: ${{ steps.setup-mongodb.outputs.crypt-shared-lib-path }}
           NO_INTERACTION: "1"
-          TEST_PHP_ARGS: "-q --show-diff"
+          TEST_PHP_ARGS: "-q -x --show-diff"
         run: "make test"
 
       - name: "Check that PHP exits cleanly"

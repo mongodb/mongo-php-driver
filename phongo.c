@@ -69,7 +69,8 @@ static bool phongo_sapi_ends_process(void)
 		return false;
 	}
 
-	return strcmp(name, "cli") == 0 || strcmp(name, "cli-server") == 0 || strcmp(name, "phpdbg") == 0 || strcmp(name, "cgi-fcgi") == 0 || strcmp(name, "fpm-fcgi") == 0;
+	/* apache2handler, embed, frankenphp and phpdbg restart the engine in the same process. */
+	return strcmp(name, "cli") == 0 || strcmp(name, "cli-server") == 0 || strcmp(name, "cgi-fcgi") == 0 || strcmp(name, "fpm-fcgi") == 0;
 }
 
 /* Declare zend_class_entry dependencies, which are initialized in MINIT */
