@@ -17,9 +17,11 @@ MONGODB_EXTENSION="$(cd "$(dirname "$MONGODB_EXTENSION")" && pwd)/$(basename "$M
 # Use the default configuration, which is closer to what users run and makes
 # the crash more likely because more extensions are loaded. Fall back to -n when
 # the configuration already loads a mongodb extension, so that the extension
-# under test is the one loaded.
+# under test is the one loaded. Read the answer from stdout, because an affected
+# build can crash during shutdown and change the exit status.
 php_args=(-d "extension=$MONGODB_EXTENSION" -d "opcache.enable_cli=1")
-if "$PHP_BINARY" -r 'exit(extension_loaded("mongodb") ? 0 : 1);' 2>/dev/null; then
+default_mongodb=$("$PHP_BINARY" -r 'echo extension_loaded("mongodb") ? "yes" : "no"; fflush(STDOUT);' 2>/dev/null || true)
+if [ "$default_mongodb" = "yes" ]; then
     php_args=(-n -d "extension=$MONGODB_EXTENSION" -d "opcache.enable_cli=1")
 
     # Load opcache explicitly when it is built as a shared extension.
