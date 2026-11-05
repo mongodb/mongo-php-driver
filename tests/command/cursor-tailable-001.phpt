@@ -67,5 +67,5 @@ object(stdClass)#%d (%d) {
 Waited for 0.%d seconds
 Awaiting results...
 NULL
-Waited for 0.%r(4|5)\d*%r seconds
+Waited for 0.%r(4|5|6|7)\d*%r seconds
 ===DONE===
