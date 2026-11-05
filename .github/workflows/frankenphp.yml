@@ -55,3 +55,8 @@ jobs:
         run: "SKIP_BUILD=1 bash tests/frankenphp/restart-test.sh"
         env:
           IMAGE_NAME: "mongodb-frankenphp"
+
+      - name: "Run the restart test with module unload"
+        run: "SKIP_BUILD=1 KEEP_MODULES=0 bash tests/frankenphp/restart-test.sh"
+        env:
+          IMAGE_NAME: "mongodb-frankenphp"

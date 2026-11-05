@@ -1,0 +1,52 @@
+name: "macOS"
+
+on:
+  pull_request:
+    branches:
+      - "v*.*"
+      - "feature/*"
+  push:
+    branches:
+      - "v*.*"
+      - "feature/*"
+
+jobs:
+  test:
+    name: "macOS Tests"
+    runs-on: "macos-15"
+
+    steps:
+      - name: "Checkout"
+        uses: "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1"  # v7.0.1
+        with:
+          submodules: true
+
+      - name: "Set up PHP"
+        uses: "shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962"  # v2.40.0
+        with:
+          php-version: "8.5"
+          coverage: "none"
+
+      - name: "Set up MongoDB"
+        id: "setup-mongodb"
+        uses: "./tests/drivers-evergreen-tools"
+        with:
+          version: "8.0"
+          topology: "replica_set"
+
+      - name: "Build the driver"
+        run: |
+          phpize
+          ./configure --with-php-config="$(command -v php-config)"
+          make -j"$(sysctl -n hw.ncpu)"
+
+      - name: "Run the test suite"
+        env:
+          MONGODB_URI: ${{ steps.setup-mongodb.outputs.cluster-uri }}
+          CRYPT_SHARED_LIB_PATH: ${{ steps.setup-mongodb.outputs.crypt-shared-lib-path }}
+          NO_INTERACTION: "1"
+          TEST_PHP_ARGS: "-q -x --show-diff"
+        run: "make test"
+
+      - name: "Check that PHP exits cleanly"
+        run: "bash tests/shutdown/exit-status-test.sh"
