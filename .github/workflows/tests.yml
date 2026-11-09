@@ -155,7 +155,7 @@ jobs:
           submodules: true
 
       - id: setup-mongodb
-        uses: mongodb-labs/drivers-evergreen-tools@f33b31d5ce6c444c698dba95077c1c088776a870  # v1.3.0
+        uses: mongodb-labs/drivers-evergreen-tools@3653a7d2bffb0b5bdb24415b69f1df60bec9a2ef  # v1.4.1
         with:
           version: "7.0"
           topology: "server"
