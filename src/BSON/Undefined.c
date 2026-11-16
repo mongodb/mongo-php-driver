@@ -118,5 +118,5 @@ void php_phongo_undefined_init_ce(INIT_FUNC_ARGS)
 	/* Re-assign default handler previously removed in php_phongo.c */
 	php_phongo_handler_undefined.clone_obj = zend_objects_clone_obj;
 	php_phongo_handler_undefined.free_obj  = php_phongo_undefined_free_object;
-	php_phongo_handler_undefined.offset    = XtOffsetOf(php_phongo_undefined_t, std);
+	php_phongo_handler_undefined.offset    = offsetof(php_phongo_undefined_t, std);
 }

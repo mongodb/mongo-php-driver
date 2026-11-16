@@ -313,7 +313,7 @@ void php_phongo_dbpointer_init_ce(INIT_FUNC_ARGS)
 	php_phongo_handler_dbpointer.get_debug_info = php_phongo_dbpointer_get_debug_info;
 	php_phongo_handler_dbpointer.get_properties = php_phongo_dbpointer_get_properties;
 	php_phongo_handler_dbpointer.free_obj       = php_phongo_dbpointer_free_object;
-	php_phongo_handler_dbpointer.offset         = XtOffsetOf(php_phongo_dbpointer_t, std);
+	php_phongo_handler_dbpointer.offset         = offsetof(php_phongo_dbpointer_t, std);
 }
 
 bool phongo_dbpointer_new(zval* object, const char* ref, size_t ref_len, const bson_oid_t* oid)

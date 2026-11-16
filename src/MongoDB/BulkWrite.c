@@ -674,5 +674,5 @@ void php_phongo_bulkwrite_init_ce(INIT_FUNC_ARGS)
 	memcpy(&php_phongo_handler_bulkwrite, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	php_phongo_handler_bulkwrite.get_debug_info = php_phongo_bulkwrite_get_debug_info;
 	php_phongo_handler_bulkwrite.free_obj       = php_phongo_bulkwrite_free_object;
-	php_phongo_handler_bulkwrite.offset         = XtOffsetOf(php_phongo_bulkwrite_t, std);
+	php_phongo_handler_bulkwrite.offset         = offsetof(php_phongo_bulkwrite_t, std);
 }

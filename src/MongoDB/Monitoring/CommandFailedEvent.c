@@ -297,5 +297,5 @@ void php_phongo_commandfailedevent_init_ce(INIT_FUNC_ARGS)
 	memcpy(&php_phongo_handler_commandfailedevent, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	php_phongo_handler_commandfailedevent.get_debug_info = php_phongo_commandfailedevent_get_debug_info;
 	php_phongo_handler_commandfailedevent.free_obj       = php_phongo_commandfailedevent_free_object;
-	php_phongo_handler_commandfailedevent.offset         = XtOffsetOf(php_phongo_commandfailedevent_t, std);
+	php_phongo_handler_commandfailedevent.offset         = offsetof(php_phongo_commandfailedevent_t, std);
 }

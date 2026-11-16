@@ -114,5 +114,5 @@ void php_phongo_serveropeningevent_init_ce(INIT_FUNC_ARGS)
 	memcpy(&php_phongo_handler_serveropeningevent, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	php_phongo_handler_serveropeningevent.get_debug_info = php_phongo_serveropeningevent_get_debug_info;
 	php_phongo_handler_serveropeningevent.free_obj       = php_phongo_serveropeningevent_free_object;
-	php_phongo_handler_serveropeningevent.offset         = XtOffsetOf(php_phongo_serveropeningevent_t, std);
+	php_phongo_handler_serveropeningevent.offset         = offsetof(php_phongo_serveropeningevent_t, std);
 }

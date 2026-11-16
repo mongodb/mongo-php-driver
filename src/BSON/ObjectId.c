@@ -329,7 +329,7 @@ void php_phongo_objectid_init_ce(INIT_FUNC_ARGS)
 	php_phongo_handler_objectid.get_debug_info = php_phongo_objectid_get_debug_info;
 	php_phongo_handler_objectid.get_properties = php_phongo_objectid_get_properties;
 	php_phongo_handler_objectid.free_obj       = php_phongo_objectid_free_object;
-	php_phongo_handler_objectid.offset         = XtOffsetOf(php_phongo_objectid_t, std);
+	php_phongo_handler_objectid.offset         = offsetof(php_phongo_objectid_t, std);
 }
 
 bool phongo_objectid_new(zval* return_value, const bson_oid_t* oid)

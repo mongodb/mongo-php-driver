@@ -145,7 +145,7 @@ void php_phongo_serverheartbeatsucceededevent_init_ce(INIT_FUNC_ARGS)
 	memcpy(&php_phongo_handler_serverheartbeatsucceededevent, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	php_phongo_handler_serverheartbeatsucceededevent.get_debug_info = php_phongo_serverheartbeatsucceededevent_get_debug_info;
 	php_phongo_handler_serverheartbeatsucceededevent.free_obj       = php_phongo_serverheartbeatsucceededevent_free_object;
-	php_phongo_handler_serverheartbeatsucceededevent.offset         = XtOffsetOf(php_phongo_serverheartbeatsucceededevent_t, std);
+	php_phongo_handler_serverheartbeatsucceededevent.offset         = offsetof(php_phongo_serverheartbeatsucceededevent_t, std);
 
 	return;
 }

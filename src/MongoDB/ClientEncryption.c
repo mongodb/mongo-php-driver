@@ -530,7 +530,7 @@ void php_phongo_clientencryption_init_ce(INIT_FUNC_ARGS)
 	memcpy(&php_phongo_handler_clientencryption, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	php_phongo_handler_clientencryption.get_debug_info = php_phongo_clientencryption_get_debug_info;
 	php_phongo_handler_clientencryption.free_obj       = php_phongo_clientencryption_free_object;
-	php_phongo_handler_clientencryption.offset         = XtOffsetOf(php_phongo_clientencryption_t, std);
+	php_phongo_handler_clientencryption.offset         = offsetof(php_phongo_clientencryption_t, std);
 }
 
 #ifdef MONGOC_ENABLE_CLIENT_SIDE_ENCRYPTION

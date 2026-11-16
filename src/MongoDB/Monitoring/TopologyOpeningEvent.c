@@ -91,5 +91,5 @@ void php_phongo_topologyopeningevent_init_ce(INIT_FUNC_ARGS)
 	memcpy(&php_phongo_handler_topologyopeningevent, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	php_phongo_handler_topologyopeningevent.get_debug_info = php_phongo_topologyopeningevent_get_debug_info;
 	php_phongo_handler_topologyopeningevent.free_obj       = php_phongo_topologyopeningevent_free_object;
-	php_phongo_handler_topologyopeningevent.offset         = XtOffsetOf(php_phongo_topologyopeningevent_t, std);
+	php_phongo_handler_topologyopeningevent.offset         = offsetof(php_phongo_topologyopeningevent_t, std);
 }

@@ -353,7 +353,7 @@ void php_phongo_binary_init_ce(INIT_FUNC_ARGS)
 	php_phongo_handler_binary.get_debug_info = php_phongo_binary_get_debug_info;
 	php_phongo_handler_binary.get_properties = php_phongo_binary_get_properties;
 	php_phongo_handler_binary.free_obj       = php_phongo_binary_free_object;
-	php_phongo_handler_binary.offset         = XtOffsetOf(php_phongo_binary_t, std);
+	php_phongo_handler_binary.offset         = offsetof(php_phongo_binary_t, std);
 }
 
 bool phongo_binary_new(zval* object, const char* data, size_t data_len, bson_subtype_t type)

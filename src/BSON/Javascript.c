@@ -406,7 +406,7 @@ void php_phongo_javascript_init_ce(INIT_FUNC_ARGS)
 	php_phongo_handler_javascript.get_debug_info = php_phongo_javascript_get_debug_info;
 	php_phongo_handler_javascript.get_properties = php_phongo_javascript_get_properties;
 	php_phongo_handler_javascript.free_obj       = php_phongo_javascript_free_object;
-	php_phongo_handler_javascript.offset         = XtOffsetOf(php_phongo_javascript_t, std);
+	php_phongo_handler_javascript.offset         = offsetof(php_phongo_javascript_t, std);
 }
 
 bool phongo_javascript_new(zval* object, const char* code, size_t code_len, const bson_t* scope, size_t nesting_depth)

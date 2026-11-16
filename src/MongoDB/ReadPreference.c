@@ -679,7 +679,7 @@ void php_phongo_readpreference_init_ce(INIT_FUNC_ARGS)
 	php_phongo_handler_readpreference.get_debug_info = php_phongo_readpreference_get_debug_info;
 	php_phongo_handler_readpreference.get_properties = php_phongo_readpreference_get_properties;
 	php_phongo_handler_readpreference.free_obj       = php_phongo_readpreference_free_object;
-	php_phongo_handler_readpreference.offset         = XtOffsetOf(php_phongo_readpreference_t, std);
+	php_phongo_handler_readpreference.offset         = offsetof(php_phongo_readpreference_t, std);
 }
 
 void phongo_readpreference_init(zval* return_value, const mongoc_read_prefs_t* read_prefs)

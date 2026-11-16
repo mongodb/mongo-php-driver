@@ -700,7 +700,7 @@ void php_phongo_session_init_ce(INIT_FUNC_ARGS)
 	memcpy(&php_phongo_handler_session, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	php_phongo_handler_session.get_debug_info = php_phongo_session_get_debug_info;
 	php_phongo_handler_session.free_obj       = php_phongo_session_free_object;
-	php_phongo_handler_session.offset         = XtOffsetOf(php_phongo_session_t, std);
+	php_phongo_handler_session.offset         = offsetof(php_phongo_session_t, std);
 }
 
 void phongo_session_init(zval* return_value, zval* manager, mongoc_client_session_t* client_session)

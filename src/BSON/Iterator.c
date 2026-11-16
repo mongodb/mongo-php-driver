@@ -389,5 +389,5 @@ void php_phongo_iterator_init_ce(INIT_FUNC_ARGS)
 	php_phongo_handler_iterator.get_debug_info = php_phongo_iterator_get_debug_info;
 	php_phongo_handler_iterator.get_properties = php_phongo_iterator_get_properties;
 	php_phongo_handler_iterator.free_obj       = php_phongo_iterator_free_object;
-	php_phongo_handler_iterator.offset         = XtOffsetOf(php_phongo_iterator_t, std);
+	php_phongo_handler_iterator.offset         = offsetof(php_phongo_iterator_t, std);
 }

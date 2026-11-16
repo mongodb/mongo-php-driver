@@ -599,7 +599,7 @@ void php_phongo_server_init_ce(INIT_FUNC_ARGS)
 	php_phongo_handler_server.compare        = php_phongo_server_compare_objects;
 	php_phongo_handler_server.get_debug_info = php_phongo_server_get_debug_info;
 	php_phongo_handler_server.free_obj       = php_phongo_server_free_object;
-	php_phongo_handler_server.offset         = XtOffsetOf(php_phongo_server_t, std);
+	php_phongo_handler_server.offset         = offsetof(php_phongo_server_t, std);
 }
 
 void phongo_server_init(zval* return_value, zval* manager, uint32_t server_id)

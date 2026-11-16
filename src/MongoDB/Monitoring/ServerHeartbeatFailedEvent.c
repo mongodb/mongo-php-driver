@@ -129,5 +129,5 @@ void php_phongo_serverheartbeatfailedevent_init_ce(INIT_FUNC_ARGS)
 	memcpy(&php_phongo_handler_serverheartbeatfailedevent, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	php_phongo_handler_serverheartbeatfailedevent.get_debug_info = php_phongo_serverheartbeatfailedevent_get_debug_info;
 	php_phongo_handler_serverheartbeatfailedevent.free_obj       = php_phongo_serverheartbeatfailedevent_free_object;
-	php_phongo_handler_serverheartbeatfailedevent.offset         = XtOffsetOf(php_phongo_serverheartbeatfailedevent_t, std);
+	php_phongo_handler_serverheartbeatfailedevent.offset         = offsetof(php_phongo_serverheartbeatfailedevent_t, std);
 }

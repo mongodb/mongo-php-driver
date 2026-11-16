@@ -279,5 +279,5 @@ void php_phongo_commandsucceededevent_init_ce(INIT_FUNC_ARGS)
 	memcpy(&php_phongo_handler_commandsucceededevent, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	php_phongo_handler_commandsucceededevent.get_debug_info = php_phongo_commandsucceededevent_get_debug_info;
 	php_phongo_handler_commandsucceededevent.free_obj       = php_phongo_commandsucceededevent_free_object;
-	php_phongo_handler_commandsucceededevent.offset         = XtOffsetOf(php_phongo_commandsucceededevent_t, std);
+	php_phongo_handler_commandsucceededevent.offset         = offsetof(php_phongo_commandsucceededevent_t, std);
 }

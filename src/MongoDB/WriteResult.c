@@ -444,7 +444,7 @@ void php_phongo_writeresult_init_ce(INIT_FUNC_ARGS)
 	memcpy(&php_phongo_handler_writeresult, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	php_phongo_handler_writeresult.get_debug_info = php_phongo_writeresult_get_debug_info;
 	php_phongo_handler_writeresult.free_obj       = php_phongo_writeresult_free_object;
-	php_phongo_handler_writeresult.offset         = XtOffsetOf(php_phongo_writeresult_t, std);
+	php_phongo_handler_writeresult.offset         = offsetof(php_phongo_writeresult_t, std);
 }
 
 php_phongo_writeresult_t* phongo_writeresult_init(zval* return_value, bson_t* reply, zval* manager, uint32_t server_id)

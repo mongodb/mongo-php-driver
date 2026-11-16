@@ -370,7 +370,7 @@ void php_phongo_regex_init_ce(INIT_FUNC_ARGS)
 	php_phongo_handler_regex.get_debug_info = php_phongo_regex_get_debug_info;
 	php_phongo_handler_regex.get_properties = php_phongo_regex_get_properties;
 	php_phongo_handler_regex.free_obj       = php_phongo_regex_free_object;
-	php_phongo_handler_regex.offset         = XtOffsetOf(php_phongo_regex_t, std);
+	php_phongo_handler_regex.offset         = offsetof(php_phongo_regex_t, std);
 }
 
 bool phongo_regex_new(zval* object, const char* pattern, const char* flags)

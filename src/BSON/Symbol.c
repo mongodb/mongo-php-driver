@@ -279,7 +279,7 @@ void php_phongo_symbol_init_ce(INIT_FUNC_ARGS)
 	php_phongo_handler_symbol.get_debug_info = php_phongo_symbol_get_debug_info;
 	php_phongo_handler_symbol.get_properties = php_phongo_symbol_get_properties;
 	php_phongo_handler_symbol.free_obj       = php_phongo_symbol_free_object;
-	php_phongo_handler_symbol.offset         = XtOffsetOf(php_phongo_symbol_t, std);
+	php_phongo_handler_symbol.offset         = offsetof(php_phongo_symbol_t, std);
 }
 
 bool phongo_symbol_new(zval* object, const char* symbol, size_t symbol_len)

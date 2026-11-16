@@ -108,5 +108,5 @@ void php_phongo_maxkey_init_ce(INIT_FUNC_ARGS)
 	/* Re-assign default handler previously removed in php_phongo.c */
 	php_phongo_handler_maxkey.clone_obj = zend_objects_clone_obj;
 	php_phongo_handler_maxkey.free_obj  = php_phongo_maxkey_free_object;
-	php_phongo_handler_maxkey.offset    = XtOffsetOf(php_phongo_maxkey_t, std);
+	php_phongo_handler_maxkey.offset    = offsetof(php_phongo_maxkey_t, std);
 }

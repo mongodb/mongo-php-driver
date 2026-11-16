@@ -21,7 +21,7 @@ class MySubscriber implements MongoDB\Driver\Monitoring\SDAMSubscriber
         $this->isObserved = true;
 
         printf("getHost() returns a string: %s\n", is_string($event->getHost()) ? 'yes' : 'no');
-        printf("getPort() returns an integer: %s\n", is_integer($event->getPort()) ? 'yes' : 'no');
+        printf("getPort() returns an integer: %s\n", is_int($event->getPort()) ? 'yes' : 'no');
         printf("getTopologyId() returns an ObjectId: %s\n", ($event->getTopologyId() instanceof MongoDB\BSON\ObjectId) ? 'yes' : 'no');
         printf("getNewDescription() returns a ServerDescription: %s\n", ($event->getNewDescription() instanceof MongoDB\Driver\ServerDescription) ? 'yes' : 'no');
         printf("getPreviousDescription() returns a ServerDescription: %s\n", ($event->getPreviousDescription() instanceof MongoDB\Driver\ServerDescription) ? 'yes' : 'no');

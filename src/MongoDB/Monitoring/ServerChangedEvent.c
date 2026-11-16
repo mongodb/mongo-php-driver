@@ -158,5 +158,5 @@ void php_phongo_serverchangedevent_init_ce(INIT_FUNC_ARGS)
 	memcpy(&php_phongo_handler_serverchangedevent, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	php_phongo_handler_serverchangedevent.get_debug_info = php_phongo_serverchangedevent_get_debug_info;
 	php_phongo_handler_serverchangedevent.free_obj       = php_phongo_serverchangedevent_free_object;
-	php_phongo_handler_serverchangedevent.offset         = XtOffsetOf(php_phongo_serverchangedevent_t, std);
+	php_phongo_handler_serverchangedevent.offset         = offsetof(php_phongo_serverchangedevent_t, std);
 }

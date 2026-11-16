@@ -189,7 +189,7 @@ void php_phongo_topologydescription_init_ce(INIT_FUNC_ARGS)
 	php_phongo_handler_topologydescription.get_debug_info = php_phongo_topologydescription_get_debug_info;
 	php_phongo_handler_topologydescription.get_properties = php_phongo_topologydescription_get_properties;
 	php_phongo_handler_topologydescription.free_obj       = php_phongo_topologydescription_free_object;
-	php_phongo_handler_topologydescription.offset         = XtOffsetOf(php_phongo_topologydescription_t, std);
+	php_phongo_handler_topologydescription.offset         = offsetof(php_phongo_topologydescription_t, std);
 }
 
 void phongo_topologydescription_init(zval* return_value, mongoc_topology_description_t* topology_description)

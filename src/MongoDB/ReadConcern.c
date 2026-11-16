@@ -295,7 +295,7 @@ void php_phongo_readconcern_init_ce(INIT_FUNC_ARGS)
 	php_phongo_handler_readconcern.get_debug_info = php_phongo_readconcern_get_debug_info;
 	php_phongo_handler_readconcern.get_properties = php_phongo_readconcern_get_properties;
 	php_phongo_handler_readconcern.free_obj       = php_phongo_readconcern_free_object;
-	php_phongo_handler_readconcern.offset         = XtOffsetOf(php_phongo_readconcern_t, std);
+	php_phongo_handler_readconcern.offset         = offsetof(php_phongo_readconcern_t, std);
 }
 
 void phongo_readconcern_init(zval* return_value, const mongoc_read_concern_t* read_concern)

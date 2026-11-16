@@ -108,5 +108,5 @@ void php_phongo_minkey_init_ce(INIT_FUNC_ARGS)
 	/* Re-assign default handler previously removed in php_phongo.c */
 	php_phongo_handler_minkey.clone_obj = zend_objects_clone_obj;
 	php_phongo_handler_minkey.free_obj  = php_phongo_minkey_free_object;
-	php_phongo_handler_minkey.offset    = XtOffsetOf(php_phongo_minkey_t, std);
+	php_phongo_handler_minkey.offset    = offsetof(php_phongo_minkey_t, std);
 }

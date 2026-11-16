@@ -451,7 +451,7 @@ void php_phongo_utcdatetime_init_ce(INIT_FUNC_ARGS)
 	php_phongo_handler_utcdatetime.get_debug_info = php_phongo_utcdatetime_get_debug_info;
 	php_phongo_handler_utcdatetime.get_properties = php_phongo_utcdatetime_get_properties;
 	php_phongo_handler_utcdatetime.free_obj       = php_phongo_utcdatetime_free_object;
-	php_phongo_handler_utcdatetime.offset         = XtOffsetOf(php_phongo_utcdatetime_t, std);
+	php_phongo_handler_utcdatetime.offset         = offsetof(php_phongo_utcdatetime_t, std);
 }
 
 bool phongo_utcdatetime_new(zval* object, int64_t msec_since_epoch)

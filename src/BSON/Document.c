@@ -669,7 +669,7 @@ void php_phongo_document_init_ce(INIT_FUNC_ARGS)
 	php_phongo_handler_document.write_dimension = php_phongo_document_write_dimension;
 	php_phongo_handler_document.has_dimension   = php_phongo_document_has_dimension;
 	php_phongo_handler_document.unset_dimension = php_phongo_document_unset_dimension;
-	php_phongo_handler_document.offset          = XtOffsetOf(php_phongo_document_t, std);
+	php_phongo_handler_document.offset          = offsetof(php_phongo_document_t, std);
 }
 
 bool phongo_document_new(zval* object, bson_t* bson, bool copy)

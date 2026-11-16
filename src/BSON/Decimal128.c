@@ -283,7 +283,7 @@ void php_phongo_decimal128_init_ce(INIT_FUNC_ARGS)
 	php_phongo_handler_decimal128.get_debug_info = php_phongo_decimal128_get_debug_info;
 	php_phongo_handler_decimal128.get_properties = php_phongo_decimal128_get_properties;
 	php_phongo_handler_decimal128.free_obj       = php_phongo_decimal128_free_object;
-	php_phongo_handler_decimal128.offset         = XtOffsetOf(php_phongo_decimal128_t, std);
+	php_phongo_handler_decimal128.offset         = offsetof(php_phongo_decimal128_t, std);
 }
 
 bool phongo_decimal128_new(zval* object, const bson_decimal128_t* decimal)

@@ -637,7 +637,7 @@ void php_phongo_packedarray_init_ce(INIT_FUNC_ARGS)
 	php_phongo_handler_packedarray.write_dimension = php_phongo_packedarray_write_dimension;
 	php_phongo_handler_packedarray.has_dimension   = php_phongo_packedarray_has_dimension;
 	php_phongo_handler_packedarray.unset_dimension = php_phongo_packedarray_unset_dimension;
-	php_phongo_handler_packedarray.offset          = XtOffsetOf(php_phongo_packedarray_t, std);
+	php_phongo_handler_packedarray.offset          = offsetof(php_phongo_packedarray_t, std);
 }
 
 bool phongo_packedarray_new(zval* object, bson_t* bson, bool copy)

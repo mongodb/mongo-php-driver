@@ -268,5 +268,5 @@ void php_phongo_commandstartedevent_init_ce(INIT_FUNC_ARGS)
 	memcpy(&php_phongo_handler_commandstartedevent, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	php_phongo_handler_commandstartedevent.get_debug_info = php_phongo_commandstartedevent_get_debug_info;
 	php_phongo_handler_commandstartedevent.free_obj       = php_phongo_commandstartedevent_free_object;
-	php_phongo_handler_commandstartedevent.offset         = XtOffsetOf(php_phongo_commandstartedevent_t, std);
+	php_phongo_handler_commandstartedevent.offset         = offsetof(php_phongo_commandstartedevent_t, std);
 }

@@ -140,7 +140,7 @@ void php_phongo_writeerror_init_ce(INIT_FUNC_ARGS)
 	memcpy(&php_phongo_handler_writeerror, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	php_phongo_handler_writeerror.get_debug_info = php_phongo_writeerror_get_debug_info;
 	php_phongo_handler_writeerror.free_obj       = php_phongo_writeerror_free_object;
-	php_phongo_handler_writeerror.offset         = XtOffsetOf(php_phongo_writeerror_t, std);
+	php_phongo_handler_writeerror.offset         = offsetof(php_phongo_writeerror_t, std);
 }
 
 zend_bool phongo_writeerror_init(zval* return_value, bson_t* bson)

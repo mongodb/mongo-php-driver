@@ -499,7 +499,7 @@ void php_phongo_writeconcern_init_ce(INIT_FUNC_ARGS)
 	php_phongo_handler_writeconcern.get_debug_info = php_phongo_writeconcern_get_debug_info;
 	php_phongo_handler_writeconcern.get_properties = php_phongo_writeconcern_get_properties;
 	php_phongo_handler_writeconcern.free_obj       = php_phongo_writeconcern_free_object;
-	php_phongo_handler_writeconcern.offset         = XtOffsetOf(php_phongo_writeconcern_t, std);
+	php_phongo_handler_writeconcern.offset         = offsetof(php_phongo_writeconcern_t, std);
 }
 
 void phongo_writeconcern_init(zval* return_value, const mongoc_write_concern_t* write_concern)

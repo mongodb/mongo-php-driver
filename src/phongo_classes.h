@@ -24,187 +24,187 @@ extern zend_class_entry* php_phongo_json_serializable_ce;
 
 static inline php_phongo_bulkwrite_t* php_bulkwrite_fetch_object(zend_object* obj)
 {
-	return (php_phongo_bulkwrite_t*) ((char*) obj - XtOffsetOf(php_phongo_bulkwrite_t, std));
+	return (php_phongo_bulkwrite_t*) ((char*) obj - offsetof(php_phongo_bulkwrite_t, std));
 }
 static inline php_phongo_clientencryption_t* php_clientencryption_fetch_object(zend_object* obj)
 {
-	return (php_phongo_clientencryption_t*) ((char*) obj - XtOffsetOf(php_phongo_clientencryption_t, std));
+	return (php_phongo_clientencryption_t*) ((char*) obj - offsetof(php_phongo_clientencryption_t, std));
 }
 static inline php_phongo_command_t* php_command_fetch_object(zend_object* obj)
 {
-	return (php_phongo_command_t*) ((char*) obj - XtOffsetOf(php_phongo_command_t, std));
+	return (php_phongo_command_t*) ((char*) obj - offsetof(php_phongo_command_t, std));
 }
 static inline php_phongo_cursor_t* php_cursor_fetch_object(zend_object* obj)
 {
-	return (php_phongo_cursor_t*) ((char*) obj - XtOffsetOf(php_phongo_cursor_t, std));
+	return (php_phongo_cursor_t*) ((char*) obj - offsetof(php_phongo_cursor_t, std));
 }
 static inline php_phongo_cursorid_t* php_cursorid_fetch_object(zend_object* obj)
 {
-	return (php_phongo_cursorid_t*) ((char*) obj - XtOffsetOf(php_phongo_cursorid_t, std));
+	return (php_phongo_cursorid_t*) ((char*) obj - offsetof(php_phongo_cursorid_t, std));
 }
 static inline php_phongo_manager_t* php_manager_fetch_object(zend_object* obj)
 {
-	return (php_phongo_manager_t*) ((char*) obj - XtOffsetOf(php_phongo_manager_t, std));
+	return (php_phongo_manager_t*) ((char*) obj - offsetof(php_phongo_manager_t, std));
 }
 static inline php_phongo_query_t* php_query_fetch_object(zend_object* obj)
 {
-	return (php_phongo_query_t*) ((char*) obj - XtOffsetOf(php_phongo_query_t, std));
+	return (php_phongo_query_t*) ((char*) obj - offsetof(php_phongo_query_t, std));
 }
 static inline php_phongo_readconcern_t* php_readconcern_fetch_object(zend_object* obj)
 {
-	return (php_phongo_readconcern_t*) ((char*) obj - XtOffsetOf(php_phongo_readconcern_t, std));
+	return (php_phongo_readconcern_t*) ((char*) obj - offsetof(php_phongo_readconcern_t, std));
 }
 static inline php_phongo_readpreference_t* php_readpreference_fetch_object(zend_object* obj)
 {
-	return (php_phongo_readpreference_t*) ((char*) obj - XtOffsetOf(php_phongo_readpreference_t, std));
+	return (php_phongo_readpreference_t*) ((char*) obj - offsetof(php_phongo_readpreference_t, std));
 }
 static inline php_phongo_server_t* php_server_fetch_object(zend_object* obj)
 {
-	return (php_phongo_server_t*) ((char*) obj - XtOffsetOf(php_phongo_server_t, std));
+	return (php_phongo_server_t*) ((char*) obj - offsetof(php_phongo_server_t, std));
 }
 static inline php_phongo_serverdescription_t* php_serverdescription_fetch_object(zend_object* obj)
 {
-	return (php_phongo_serverdescription_t*) ((char*) obj - XtOffsetOf(php_phongo_serverdescription_t, std));
+	return (php_phongo_serverdescription_t*) ((char*) obj - offsetof(php_phongo_serverdescription_t, std));
 }
 static inline php_phongo_topologydescription_t* php_topologydescription_fetch_object(zend_object* obj)
 {
-	return (php_phongo_topologydescription_t*) ((char*) obj - XtOffsetOf(php_phongo_topologydescription_t, std));
+	return (php_phongo_topologydescription_t*) ((char*) obj - offsetof(php_phongo_topologydescription_t, std));
 }
 static inline php_phongo_serverapi_t* php_serverapi_fetch_object(zend_object* obj)
 {
-	return (php_phongo_serverapi_t*) ((char*) obj - XtOffsetOf(php_phongo_serverapi_t, std));
+	return (php_phongo_serverapi_t*) ((char*) obj - offsetof(php_phongo_serverapi_t, std));
 }
 static inline php_phongo_session_t* php_session_fetch_object(zend_object* obj)
 {
-	return (php_phongo_session_t*) ((char*) obj - XtOffsetOf(php_phongo_session_t, std));
+	return (php_phongo_session_t*) ((char*) obj - offsetof(php_phongo_session_t, std));
 }
 static inline php_phongo_writeconcern_t* php_writeconcern_fetch_object(zend_object* obj)
 {
-	return (php_phongo_writeconcern_t*) ((char*) obj - XtOffsetOf(php_phongo_writeconcern_t, std));
+	return (php_phongo_writeconcern_t*) ((char*) obj - offsetof(php_phongo_writeconcern_t, std));
 }
 static inline php_phongo_writeconcernerror_t* php_writeconcernerror_fetch_object(zend_object* obj)
 {
-	return (php_phongo_writeconcernerror_t*) ((char*) obj - XtOffsetOf(php_phongo_writeconcernerror_t, std));
+	return (php_phongo_writeconcernerror_t*) ((char*) obj - offsetof(php_phongo_writeconcernerror_t, std));
 }
 static inline php_phongo_writeerror_t* php_writeerror_fetch_object(zend_object* obj)
 {
-	return (php_phongo_writeerror_t*) ((char*) obj - XtOffsetOf(php_phongo_writeerror_t, std));
+	return (php_phongo_writeerror_t*) ((char*) obj - offsetof(php_phongo_writeerror_t, std));
 }
 static inline php_phongo_writeresult_t* php_writeresult_fetch_object(zend_object* obj)
 {
-	return (php_phongo_writeresult_t*) ((char*) obj - XtOffsetOf(php_phongo_writeresult_t, std));
+	return (php_phongo_writeresult_t*) ((char*) obj - offsetof(php_phongo_writeresult_t, std));
 }
 static inline php_phongo_binary_t* php_binary_fetch_object(zend_object* obj)
 {
-	return (php_phongo_binary_t*) ((char*) obj - XtOffsetOf(php_phongo_binary_t, std));
+	return (php_phongo_binary_t*) ((char*) obj - offsetof(php_phongo_binary_t, std));
 }
 static inline php_phongo_document_t* php_document_fetch_object(zend_object* obj)
 {
-	return (php_phongo_document_t*) ((char*) obj - XtOffsetOf(php_phongo_document_t, std));
+	return (php_phongo_document_t*) ((char*) obj - offsetof(php_phongo_document_t, std));
 }
 static inline php_phongo_iterator_t* php_iterator_fetch_object(zend_object* obj)
 {
-	return (php_phongo_iterator_t*) ((char*) obj - XtOffsetOf(php_phongo_iterator_t, std));
+	return (php_phongo_iterator_t*) ((char*) obj - offsetof(php_phongo_iterator_t, std));
 }
 static inline php_phongo_dbpointer_t* php_dbpointer_fetch_object(zend_object* obj)
 {
-	return (php_phongo_dbpointer_t*) ((char*) obj - XtOffsetOf(php_phongo_dbpointer_t, std));
+	return (php_phongo_dbpointer_t*) ((char*) obj - offsetof(php_phongo_dbpointer_t, std));
 }
 static inline php_phongo_decimal128_t* php_decimal128_fetch_object(zend_object* obj)
 {
-	return (php_phongo_decimal128_t*) ((char*) obj - XtOffsetOf(php_phongo_decimal128_t, std));
+	return (php_phongo_decimal128_t*) ((char*) obj - offsetof(php_phongo_decimal128_t, std));
 }
 static inline php_phongo_int64_t* php_int64_fetch_object(zend_object* obj)
 {
-	return (php_phongo_int64_t*) ((char*) obj - XtOffsetOf(php_phongo_int64_t, std));
+	return (php_phongo_int64_t*) ((char*) obj - offsetof(php_phongo_int64_t, std));
 }
 static inline php_phongo_javascript_t* php_javascript_fetch_object(zend_object* obj)
 {
-	return (php_phongo_javascript_t*) ((char*) obj - XtOffsetOf(php_phongo_javascript_t, std));
+	return (php_phongo_javascript_t*) ((char*) obj - offsetof(php_phongo_javascript_t, std));
 }
 static inline php_phongo_maxkey_t* php_maxkey_fetch_object(zend_object* obj)
 {
-	return (php_phongo_maxkey_t*) ((char*) obj - XtOffsetOf(php_phongo_maxkey_t, std));
+	return (php_phongo_maxkey_t*) ((char*) obj - offsetof(php_phongo_maxkey_t, std));
 }
 static inline php_phongo_minkey_t* php_minkey_fetch_object(zend_object* obj)
 {
-	return (php_phongo_minkey_t*) ((char*) obj - XtOffsetOf(php_phongo_minkey_t, std));
+	return (php_phongo_minkey_t*) ((char*) obj - offsetof(php_phongo_minkey_t, std));
 }
 static inline php_phongo_objectid_t* php_objectid_fetch_object(zend_object* obj)
 {
-	return (php_phongo_objectid_t*) ((char*) obj - XtOffsetOf(php_phongo_objectid_t, std));
+	return (php_phongo_objectid_t*) ((char*) obj - offsetof(php_phongo_objectid_t, std));
 }
 static inline php_phongo_packedarray_t* php_packedarray_fetch_object(zend_object* obj)
 {
-	return (php_phongo_packedarray_t*) ((char*) obj - XtOffsetOf(php_phongo_packedarray_t, std));
+	return (php_phongo_packedarray_t*) ((char*) obj - offsetof(php_phongo_packedarray_t, std));
 }
 static inline php_phongo_regex_t* php_regex_fetch_object(zend_object* obj)
 {
-	return (php_phongo_regex_t*) ((char*) obj - XtOffsetOf(php_phongo_regex_t, std));
+	return (php_phongo_regex_t*) ((char*) obj - offsetof(php_phongo_regex_t, std));
 }
 static inline php_phongo_symbol_t* php_symbol_fetch_object(zend_object* obj)
 {
-	return (php_phongo_symbol_t*) ((char*) obj - XtOffsetOf(php_phongo_symbol_t, std));
+	return (php_phongo_symbol_t*) ((char*) obj - offsetof(php_phongo_symbol_t, std));
 }
 static inline php_phongo_timestamp_t* php_timestamp_fetch_object(zend_object* obj)
 {
-	return (php_phongo_timestamp_t*) ((char*) obj - XtOffsetOf(php_phongo_timestamp_t, std));
+	return (php_phongo_timestamp_t*) ((char*) obj - offsetof(php_phongo_timestamp_t, std));
 }
 static inline php_phongo_undefined_t* php_undefined_fetch_object(zend_object* obj)
 {
-	return (php_phongo_undefined_t*) ((char*) obj - XtOffsetOf(php_phongo_undefined_t, std));
+	return (php_phongo_undefined_t*) ((char*) obj - offsetof(php_phongo_undefined_t, std));
 }
 static inline php_phongo_utcdatetime_t* php_utcdatetime_fetch_object(zend_object* obj)
 {
-	return (php_phongo_utcdatetime_t*) ((char*) obj - XtOffsetOf(php_phongo_utcdatetime_t, std));
+	return (php_phongo_utcdatetime_t*) ((char*) obj - offsetof(php_phongo_utcdatetime_t, std));
 }
 static inline php_phongo_commandfailedevent_t* php_commandfailedevent_fetch_object(zend_object* obj)
 {
-	return (php_phongo_commandfailedevent_t*) ((char*) obj - XtOffsetOf(php_phongo_commandfailedevent_t, std));
+	return (php_phongo_commandfailedevent_t*) ((char*) obj - offsetof(php_phongo_commandfailedevent_t, std));
 }
 static inline php_phongo_commandstartedevent_t* php_commandstartedevent_fetch_object(zend_object* obj)
 {
-	return (php_phongo_commandstartedevent_t*) ((char*) obj - XtOffsetOf(php_phongo_commandstartedevent_t, std));
+	return (php_phongo_commandstartedevent_t*) ((char*) obj - offsetof(php_phongo_commandstartedevent_t, std));
 }
 static inline php_phongo_commandsucceededevent_t* php_commandsucceededevent_fetch_object(zend_object* obj)
 {
-	return (php_phongo_commandsucceededevent_t*) ((char*) obj - XtOffsetOf(php_phongo_commandsucceededevent_t, std));
+	return (php_phongo_commandsucceededevent_t*) ((char*) obj - offsetof(php_phongo_commandsucceededevent_t, std));
 }
 static inline php_phongo_serverchangedevent_t* php_serverchangedevent_fetch_object(zend_object* obj)
 {
-	return (php_phongo_serverchangedevent_t*) ((char*) obj - XtOffsetOf(php_phongo_serverchangedevent_t, std));
+	return (php_phongo_serverchangedevent_t*) ((char*) obj - offsetof(php_phongo_serverchangedevent_t, std));
 }
 static inline php_phongo_serverclosedevent_t* php_serverclosedevent_fetch_object(zend_object* obj)
 {
-	return (php_phongo_serverclosedevent_t*) ((char*) obj - XtOffsetOf(php_phongo_serverclosedevent_t, std));
+	return (php_phongo_serverclosedevent_t*) ((char*) obj - offsetof(php_phongo_serverclosedevent_t, std));
 }
 static inline php_phongo_serverheartbeatfailedevent_t* php_serverheartbeatfailedevent_fetch_object(zend_object* obj)
 {
-	return (php_phongo_serverheartbeatfailedevent_t*) ((char*) obj - XtOffsetOf(php_phongo_serverheartbeatfailedevent_t, std));
+	return (php_phongo_serverheartbeatfailedevent_t*) ((char*) obj - offsetof(php_phongo_serverheartbeatfailedevent_t, std));
 }
 static inline php_phongo_serverheartbeatstartedevent_t* php_serverheartbeatstartedevent_fetch_object(zend_object* obj)
 {
-	return (php_phongo_serverheartbeatstartedevent_t*) ((char*) obj - XtOffsetOf(php_phongo_serverheartbeatstartedevent_t, std));
+	return (php_phongo_serverheartbeatstartedevent_t*) ((char*) obj - offsetof(php_phongo_serverheartbeatstartedevent_t, std));
 }
 static inline php_phongo_serverheartbeatsucceededevent_t* php_serverheartbeatsucceededevent_fetch_object(zend_object* obj)
 {
-	return (php_phongo_serverheartbeatsucceededevent_t*) ((char*) obj - XtOffsetOf(php_phongo_serverheartbeatsucceededevent_t, std));
+	return (php_phongo_serverheartbeatsucceededevent_t*) ((char*) obj - offsetof(php_phongo_serverheartbeatsucceededevent_t, std));
 }
 static inline php_phongo_serveropeningevent_t* php_serveropeningevent_fetch_object(zend_object* obj)
 {
-	return (php_phongo_serveropeningevent_t*) ((char*) obj - XtOffsetOf(php_phongo_serveropeningevent_t, std));
+	return (php_phongo_serveropeningevent_t*) ((char*) obj - offsetof(php_phongo_serveropeningevent_t, std));
 }
 static inline php_phongo_topologychangedevent_t* php_topologychangedevent_fetch_object(zend_object* obj)
 {
-	return (php_phongo_topologychangedevent_t*) ((char*) obj - XtOffsetOf(php_phongo_topologychangedevent_t, std));
+	return (php_phongo_topologychangedevent_t*) ((char*) obj - offsetof(php_phongo_topologychangedevent_t, std));
 }
 static inline php_phongo_topologyclosedevent_t* php_topologyclosedevent_fetch_object(zend_object* obj)
 {
-	return (php_phongo_topologyclosedevent_t*) ((char*) obj - XtOffsetOf(php_phongo_topologyclosedevent_t, std));
+	return (php_phongo_topologyclosedevent_t*) ((char*) obj - offsetof(php_phongo_topologyclosedevent_t, std));
 }
 static inline php_phongo_topologyopeningevent_t* php_topologyopeningevent_fetch_object(zend_object* obj)
 {
-	return (php_phongo_topologyopeningevent_t*) ((char*) obj - XtOffsetOf(php_phongo_topologyopeningevent_t, std));
+	return (php_phongo_topologyopeningevent_t*) ((char*) obj - offsetof(php_phongo_topologyopeningevent_t, std));
 }
 
 #define Z_CLIENTENCRYPTION_OBJ_P(zv) (php_clientencryption_fetch_object(Z_OBJ_P(zv)))

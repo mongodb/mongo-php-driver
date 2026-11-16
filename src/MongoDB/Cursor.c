@@ -134,7 +134,7 @@ static PHP_METHOD(MongoDB_Driver_Cursor, toArray)
 	array_init(return_value);
 
 	if (spl_iterator_apply(getThis(), php_phongo_cursor_to_array_apply, (void*) return_value) != SUCCESS) {
-		zval_dtor(return_value);
+		zval_ptr_dtor_nogc(return_value);
 		RETURN_NULL();
 	}
 }
@@ -444,7 +444,7 @@ void php_phongo_cursor_init_ce(INIT_FUNC_ARGS)
 	memcpy(&php_phongo_handler_cursor, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	php_phongo_handler_cursor.get_debug_info = php_phongo_cursor_get_debug_info;
 	php_phongo_handler_cursor.free_obj       = php_phongo_cursor_free_object;
-	php_phongo_handler_cursor.offset         = XtOffsetOf(php_phongo_cursor_t, std);
+	php_phongo_handler_cursor.offset         = offsetof(php_phongo_cursor_t, std);
 }
 
 static void phongo_cursor_init(zval* return_value, zval* manager, mongoc_cursor_t* cursor, zval* readPreference, zval* session)
