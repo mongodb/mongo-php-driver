@@ -26,11 +26,11 @@ echo throws(function() {
 <?php exit(0); ?>
 --EXPECT--
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Failed to parse MongoDB URI: 'mongodb://localhost:27017/?authMechanism=GSSAPI'. 'GSSAPI' authentication mechanism requires a username.
+Failed to parse MongoDB URI: 'GSSAPI' authentication mechanism requires a username.
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Failed to parse URI options: 'GSSAPI' authentication mechanism requires a username
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Failed to parse MongoDB URI: 'mongodb://user@localhost:27017/?authMechanism=GSSAPI&authSource=admin'. 'GSSAPI' authentication mechanism requires "$external" authSource, but "admin" was specified.
+Failed to parse MongoDB URI: 'GSSAPI' authentication mechanism requires "$external" authSource.
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Failed to parse URI options: 'GSSAPI' authentication mechanism requires "$external" authSource, but "admin" was specified
+Failed to parse URI options: 'GSSAPI' authentication mechanism requires "$external" authSource
 ===DONE===
