@@ -38,15 +38,15 @@ echo throws(function() {
 <?php exit(0); ?>
 --EXPECT--
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Failed to parse MongoDB URI: 'mongodb://localhost:27017/?authMechanism=GSSAPI&authSource=admin'. GSSAPI and X509 require "$external" authSource.
+Failed to parse MongoDB URI: GSSAPI and X509 require "$external" authSource.
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Failed to parse URI options: GSSAPI and X509 require "$external" authSource
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Failed to parse MongoDB URI: 'mongodb://localhost:27017/?authMechanism=MONGODB-X509&authSource=admin'. GSSAPI and X509 require "$external" authSource.
+Failed to parse MongoDB URI: GSSAPI and X509 require "$external" authSource.
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Failed to parse URI options: GSSAPI and X509 require "$external" authSource
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Failed to parse MongoDB URI: 'mongodb://@localhost:27017/?authMechanism=SCRAM-SHA-1'. 'SCRAM-SHA-1' authentication mechanism requires username.
+Failed to parse MongoDB URI: 'SCRAM-SHA-1' authentication mechanism requires username.
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Failed to parse URI options: 'SCRAM-SHA-1' authentication mechanism requires username
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
