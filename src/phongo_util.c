@@ -95,14 +95,14 @@ bool phongo_parse_int64(int64_t* retval, const char* data, size_t data_len)
 /* Splits a namespace name into the database and collection names, allocated with estrdup. */
 bool phongo_split_namespace(const char* namespace, char** dbname, char** cname)
 {
-	char* dot = strchr(namespace, '.');
+	const char* dot = strchr(namespace, '.');
 
 	if (!dot) {
 		return false;
 	}
 
 	if (cname) {
-		*cname = estrdup(namespace + (dot - namespace) + 1);
+		*cname = estrdup(dot + 1);
 	}
 	if (dbname) {
 		*dbname = estrndup(namespace, dot - namespace);
