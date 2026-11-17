@@ -18,8 +18,12 @@ on:
         required: true
 
 jobs:
+  # Static analysis findings are surfaced via SARIF upload, which requires Code
+  # Security (GitHub Advanced Security). Limit to the public repo to avoid
+  # failing GitHub Actions on mirrors.
   semgrep:
     name: "Semgrep"
+    if: github.repository == 'mongodb/mongo-php-driver'
     runs-on: "ubuntu-latest"
     container:
       image: semgrep/semgrep
