@@ -59,7 +59,7 @@ ini_set('mongodb.debug', '');
 <?php exit(0); ?>
 --EXPECTF--
 %A
-[%s]     PHONGO: DEBUG   > Created client with hash: %s
+[%s]     PHONGO: DEBUG   > Created non-persistent client
 [%s]     PHONGO: DEBUG   > Stored non-persistent client
 Command failed: unsupportedCommand
 OK: Got MongoDB\Driver\Exception\CommandException

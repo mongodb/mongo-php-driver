@@ -98,10 +98,12 @@ static mongoc_uri_t* php_phongo_make_uri(const char* uri_string)
 	bson_error_t  error = { 0 };
 
 	uri = mongoc_uri_new_with_error(uri_string, &error);
-	MONGOC_DEBUG("Connection string: '%s'", uri_string);
 
 	if (!uri) {
-		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Failed to parse MongoDB URI: '%s'. %s.", uri_string, error.message);
+		/* Do not include the connection string in the error message: it may
+		 * contain credentials and its components cannot be trusted when
+		 * parsing failed. */
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Failed to parse MongoDB URI: %s.", error.message);
 		return NULL;
 	}
 
@@ -941,7 +943,8 @@ ref:
 /* Creates a hash for a client by concatenating the URI string with serialized
  * options arrays. On success, a persistent string is returned (i.e. pefree()
  * should be used to free it) and hash_len will be set to the string's length.
- * On error, an exception will have been thrown and NULL will be returned. */
+ * On error, an exception will have been thrown and NULL will be returned.
+ * The hash contains credentials and must never be included in log messages. */
 static char* php_phongo_manager_make_client_hash(const char* uri_string, zval* options, zval* driverOptions, size_t* hash_len)
 {
 	char*                hash    = NULL;
@@ -1164,7 +1167,7 @@ bool php_phongo_client_register(php_phongo_manager_t* manager)
 	pclient->is_persistent  = is_persistent;
 
 	if (is_persistent) {
-		MONGOC_DEBUG("Stored persistent client with hash: %s", manager->client_hash);
+		MONGOC_DEBUG("Stored persistent client");
 		return zend_hash_str_update_ptr(&MONGODB_G(persistent_clients), manager->client_hash, manager->client_hash_len, pclient) != NULL;
 	} else {
 		MONGOC_DEBUG("Stored non-persistent client");
@@ -1479,7 +1482,7 @@ void phongo_manager_init(php_phongo_manager_t* manager, const char* uri_string, 
 	}
 
 	if (manager->use_persistent_client && (manager->client = php_phongo_find_persistent_client(manager->client_hash, manager->client_hash_len))) {
-		MONGOC_DEBUG("Found client for hash: %s", manager->client_hash);
+		MONGOC_DEBUG("Found persistent client");
 		goto cleanup;
 	}
 
@@ -1549,7 +1552,7 @@ void phongo_manager_init(php_phongo_manager_t* manager, const char* uri_string, 
 		goto cleanup;
 	}
 
-	MONGOC_DEBUG("Created client with hash: %s", manager->client_hash);
+	MONGOC_DEBUG(manager->use_persistent_client ? "Created persistent client" : "Created non-persistent client");
 
 	/* Register the newly created client in the appropriate registry (for either
 	 * persistent or request-scoped clients). */
