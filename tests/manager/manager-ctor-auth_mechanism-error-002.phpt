@@ -23,9 +23,9 @@ echo throws(function() {
 <?php exit(0); ?>
 --EXPECT--
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Failed to parse MongoDB URI: 'mongodb://localhost:27017/?authMechanism=MONGODB-X509&authSource=admin'. 'MONGODB-X509' authentication mechanism requires "$external" authSource, but "admin" was specified.
+Failed to parse MongoDB URI: 'MONGODB-X509' authentication mechanism requires "$external" authSource.
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Failed to parse URI options: 'MONGODB-X509' authentication mechanism requires "$external" authSource, but "admin" was specified
+Failed to parse URI options: 'MONGODB-X509' authentication mechanism requires "$external" authSource
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Failed to parse URI options: 'MONGODB-X509' authentication mechanism does not accept a password
 ===DONE===

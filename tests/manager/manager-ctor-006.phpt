@@ -14,5 +14,5 @@ echo throws(function() {
 <?php exit(0); ?>
 --EXPECT--
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Failed to parse MongoDB URI: 'invalid'. Invalid URI, no scheme part specified.
+Failed to parse MongoDB URI: Invalid URI, no scheme part specified.
 ===DONE===

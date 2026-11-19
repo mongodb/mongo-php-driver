@@ -26,11 +26,11 @@ echo throws(function() {
 <?php exit(0); ?>
 --EXPECT--
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Failed to parse MongoDB URI: 'mongodb://@localhost:27017/?authMechanism=MONGODB-AWS'. 'MONGODB-AWS' authentication mechanism requires a non-empty username.
+Failed to parse MongoDB URI: 'MONGODB-AWS' authentication mechanism requires a non-empty username.
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Failed to parse URI options: 'MONGODB-AWS' authentication mechanism requires a non-empty username
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Failed to parse MongoDB URI: 'mongodb://user@localhost:27017/?authMechanism=MONGODB-AWS'. 'MONGODB-AWS' authentication mechanism does not accept a username or a password without the other.
+Failed to parse MongoDB URI: 'MONGODB-AWS' authentication mechanism does not accept a username or a password without the other.
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Failed to parse URI options: 'MONGODB-AWS' authentication mechanism does not accept a username or a password without the other
 ===DONE===

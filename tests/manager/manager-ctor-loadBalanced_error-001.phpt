@@ -34,15 +34,15 @@ echo throws(function() {
 <?php exit(0); ?>
 --EXPECT--
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Failed to parse MongoDB URI: 'mongodb://localhost:27017,localhost:27018/?loadBalanced=true'. URI with "loadbalanced" enabled must not contain more than one host.
+Failed to parse MongoDB URI: URI with "loadbalanced" enabled must not contain more than one host.
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Failed to parse URI options: URI with "loadbalanced" enabled must not contain more than one host
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Failed to parse MongoDB URI: 'mongodb://localhost:27017/?loadBalanced=true&replicaSet=foo'. URI with "loadbalanced" enabled must not contain option "replicaset".
+Failed to parse MongoDB URI: URI with "loadbalanced" enabled must not contain option "replicaset".
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Failed to parse URI options: URI with "loadbalanced" enabled must not contain option "replicaset"
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Failed to parse MongoDB URI: 'mongodb://localhost:27017/?loadBalanced=true&directConnection=true'. URI with "loadbalanced" enabled must not contain option "directconnection" enabled.
+Failed to parse MongoDB URI: URI with "loadbalanced" enabled must not contain option "directconnection" enabled.
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Failed to parse URI options: URI with "loadbalanced" enabled must not contain option "directconnection" enabled
 ===DONE===

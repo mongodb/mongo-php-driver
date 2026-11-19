@@ -26,11 +26,11 @@ echo throws(function() {
 <?php exit(0); ?>
 --EXPECT--
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Failed to parse MongoDB URI: 'mongodb://@localhost:27017/?authMechanism=SCRAM-SHA-1'. 'SCRAM-SHA-1' authentication mechanism requires a username.
+Failed to parse MongoDB URI: 'SCRAM-SHA-1' authentication mechanism requires a username.
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Failed to parse URI options: 'SCRAM-SHA-1' authentication mechanism requires a username
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Failed to parse MongoDB URI: 'mongodb://user@localhost:27017/?authMechanism=SCRAM-SHA-1'. 'SCRAM-SHA-1' authentication mechanism requires a password.
+Failed to parse MongoDB URI: 'SCRAM-SHA-1' authentication mechanism requires a password.
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Failed to parse URI options: 'SCRAM-SHA-1' authentication mechanism requires a password
 ===DONE===
