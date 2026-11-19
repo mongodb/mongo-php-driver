@@ -22,7 +22,7 @@ requests containing changes from the release branch have been merged. Handling
 the merge conflicts resulting from the version updates will be much more
 difficult if other changes need merging.
 
-## Transition JIRA issues and version
+## Transition Jira issues and version
 
 All issues associated with the release version should be in the "Closed" state
 and have a resolution of "Fixed". Issues with other resolutions (e.g.
