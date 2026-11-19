@@ -18,7 +18,7 @@ echo throws(function() {
 <?php exit(0); ?>
 --EXPECT--
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Failed to parse MongoDB URI: 'mongodb://localhost:27017/?srvServiceName=foo'. srvservicename must not be specified with a non-SRV URI.
+Failed to parse MongoDB URI: srvservicename must not be specified with a non-SRV URI.
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Failed to parse URI options: srvservicename must not be specified with a non-SRV URI
 ===DONE===
