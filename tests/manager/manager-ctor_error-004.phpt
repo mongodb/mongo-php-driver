@@ -21,5 +21,5 @@ echo throws(function () {
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Failed to parse MongoDB URI: Value for URI option "replicaset" cannot be empty string.
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Value for URI option "replicaset" cannot be empty string.
+Value for URI option "replicaSet" cannot be empty string.
 ===DONE===

@@ -14,5 +14,5 @@ ini_set('mongodb.debug', null);
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-%AWARNING > Unsupported compressor: 'zli'%A
+%AWARNING > Unsupported compressor in URI option "compressors"%A
 ===DONE===

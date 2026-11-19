@@ -19,7 +19,7 @@ echo throws(function() {
 <?php exit(0); ?>
 --EXPECT--
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Failed to parse MongoDB URI: Unsupported value for "wtimeoutms": "invalid".
+Failed to parse MongoDB URI: Unsupported value for "wtimeoutms".
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Expected integer for "wTimeoutMS" URI option, string given
 ===DONE===
