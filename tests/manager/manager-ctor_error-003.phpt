@@ -78,7 +78,6 @@ $stringOptions = [
     'appname',
     'authMechanism',
     'authSource',
-    'compressors',
     'password',
     'replicaSet',
     'srvServiceName',
@@ -103,6 +102,23 @@ foreach ($stringOptions as $option) {
             create_test_manager(null, [$option => $value]);
         }, MongoDB\Driver\Exception\InvalidArgumentException::class), "\n";
     }
+}
+
+echo "\nTesting compressors option:\n";
+
+$invalidCompressorsValues = [
+    true,
+    1.0,
+    42,
+    new MongoDB\BSON\ObjectId,
+    [ 1, 2, 3 ],
+    ['zlib', 42],
+];
+
+foreach ($invalidCompressorsValues as $value) {
+    echo throws(function() use ($value) {
+        create_test_manager(null, ['compressors' => $value]);
+    }, MongoDB\Driver\Exception\InvalidArgumentException::class), "\n";
 }
 
 echo "\nTesting document options:\n";
@@ -408,18 +424,6 @@ Expected string for "authSource" URI option, array given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Expected string for "authSource" URI option, document given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected string for "compressors" URI option, boolean given
-OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected string for "compressors" URI option, double given
-OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected string for "compressors" URI option, 32-bit integer given
-OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected string for "compressors" URI option, ObjectId given
-OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected string for "compressors" URI option, array given
-OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected string for "compressors" URI option, document given
-OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Expected string for "password" URI option, boolean given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Expected string for "password" URI option, double given
@@ -503,6 +507,20 @@ OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Expected string for "username" URI option, array given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Expected string for "username" URI option, document given
+
+Testing compressors option:
+OK: Got MongoDB\Driver\Exception\InvalidArgumentException
+Expected string or array of strings for "compressors" URI option, bool given
+OK: Got MongoDB\Driver\Exception\InvalidArgumentException
+Expected string or array of strings for "compressors" URI option, float given
+OK: Got MongoDB\Driver\Exception\InvalidArgumentException
+Expected string or array of strings for "compressors" URI option, int given
+OK: Got MongoDB\Driver\Exception\InvalidArgumentException
+Expected string or array of strings for "compressors" URI option, MongoDB\BSON\ObjectId given
+OK: Got MongoDB\Driver\Exception\InvalidArgumentException
+Expected string for element 0 of "compressors" URI option, int given
+OK: Got MongoDB\Driver\Exception\InvalidArgumentException
+Expected string for element 1 of "compressors" URI option, int given
 
 Testing document options:
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
