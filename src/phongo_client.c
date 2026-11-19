@@ -312,15 +312,53 @@ static bool phongo_apply_options_to_uri(mongoc_uri_t* uri, bson_t* options)
 		}
 
 		if (!strcasecmp(key, MONGOC_URI_COMPRESSORS)) {
-			if (!BSON_ITER_HOLDS_UTF8(&iter)) {
-				PHONGO_URI_INVALID_TYPE(iter, "string");
+			smart_str   joined = { 0 };
+			bson_iter_t array_iter;
+			const char* compressors = NULL;
+
+			if (BSON_ITER_HOLDS_ARRAY(&iter)) {
+				bson_iter_recurse(&iter, &array_iter);
+
+				while (bson_iter_next(&array_iter)) {
+					uint32_t    compressor_len;
+					const char* compressor;
+
+					if (!BSON_ITER_HOLDS_UTF8(&array_iter)) {
+						smart_str_free(&joined);
+						phongo_throw_exception(
+							PHONGO_ERROR_INVALID_ARGUMENT,
+							"Expected string for element %s of \"%s\" URI option, %s given",
+							bson_iter_key(&array_iter),
+							key,
+							phongo_bson_type_to_string(bson_iter_type(&array_iter)));
+
+						return false;
+					}
+
+					if (smart_str_get_len(&joined) > 0) {
+						smart_str_appendc(&joined, ',');
+					}
+
+					compressor = bson_iter_utf8(&array_iter, &compressor_len);
+					smart_str_appendl(&joined, compressor, compressor_len);
+				}
+
+				smart_str_0(&joined);
+				compressors = joined.s ? ZSTR_VAL(joined.s) : "";
+			} else if (BSON_ITER_HOLDS_UTF8(&iter)) {
+				compressors = bson_iter_utf8(&iter, NULL);
+			} else {
+				PHONGO_URI_INVALID_TYPE(iter, "string or array of strings");
 				return false;
 			}
 
-			if (!mongoc_uri_set_compressors(uri, bson_iter_utf8(&iter, NULL))) {
+			if (!mongoc_uri_set_compressors(uri, compressors)) {
+				smart_str_free(&joined);
 				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Failed to parse \"%s\" URI option", key);
 				return false;
 			}
+
+			smart_str_free(&joined);
 
 			continue;
 		}
