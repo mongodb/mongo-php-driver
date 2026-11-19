@@ -34,15 +34,15 @@ echo throws(function() {
 <?php exit(0); ?>
 --EXPECT--
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Failed to parse MongoDB URI: 'mongodb://localhost:27017/?srvMaxHosts=1'. srvmaxhosts must not be specified with a non-SRV URI.
+Failed to parse MongoDB URI: srvmaxhosts must not be specified with a non-SRV URI.
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Failed to parse URI options: srvmaxhosts must not be specified with a non-SRV URI
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Failed to parse MongoDB URI: 'mongodb+srv://a.example.com/?srvMaxHosts=1&replicaSet=foo'. srvmaxhosts must not be specified with replicaset.
+Failed to parse MongoDB URI: srvmaxhosts must not be specified with replicaset.
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Failed to parse URI options: srvmaxhosts must not be specified with replicaset
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Failed to parse MongoDB URI: 'mongodb+srv://a.example.com/?srvMaxHosts=1&loadBalanced=true'. srvmaxhosts must not be specified with loadbalanced=true.
+Failed to parse MongoDB URI: srvmaxhosts must not be specified with loadbalanced=true.
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Failed to parse URI options: srvmaxhosts must not be specified with loadbalanced=true
 ===DONE===

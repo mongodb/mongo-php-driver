@@ -50,7 +50,7 @@ mongoc_log(LogSubscriber::LEVEL_DEBUG, 'domain', 'debug');
 ?>
 ===DONE===
 --EXPECTF--
-5: PHONGO: Connection string: '%s'
+5: PHONGO: Creating Manager, phongo-%s
 %a
 Observed commandStarted for ping
 5: domain: debug

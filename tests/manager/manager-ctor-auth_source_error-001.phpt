@@ -23,7 +23,7 @@ foreach ($tests as $test) {
 <?php exit(0); ?>
 --EXPECT--
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Failed to parse MongoDB URI: 'mongodb://username@127.0.0.1/?authSource='. authSource may not be specified as an empty string.
+Failed to parse MongoDB URI: authSource may not be specified as an empty string.
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Failed to parse URI options: authSource may not be specified as an empty string
 ===DONE===

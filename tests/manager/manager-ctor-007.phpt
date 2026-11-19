@@ -13,8 +13,8 @@ ini_set('mongodb.debug', '');
 <?php exit(0); ?>
 --EXPECTF--
 %A
-[%s]     PHONGO: DEBUG   > Created client with hash: %a
+[%s]     PHONGO: DEBUG   > Created persistent client
 %A
-[%s]     PHONGO: DEBUG   > Found client for hash: %a
+[%s]     PHONGO: DEBUG   > Found persistent client
 %A
 ===DONE===
