@@ -7,7 +7,7 @@ containing changes from the release branch have been merged. The release bumps
 version numbers across branches, so leaving other changes unmerged makes the
 resulting merge conflicts much harder to resolve.
 
-## Transition JIRA issues and version
+## Transition Jira issues and version
 
 Find the release version on the
 [Manage Versions](https://jira.mongodb.org/plugins/servlet/project-config/PHPC/versions)
@@ -31,9 +31,7 @@ workflow page to trigger a new build. Select the correct branch: the default
 development branch (`vX.x`) for a new minor release, or the corresponding
 maintenance branch (e.g. `v1.18`) for a patch release. Trigger a new run using
 the "Run workflow" button. In the following prompt,
-enter the version number and the corresponding JIRA version ID for the release.
-This version ID can be obtained from a link in the "Version" column on the
-[PHPC releases page](https://jira.mongodb.org/projects/PHPC?selectedItem=com.atlassian.jira.jira-projects-plugin%3Arelease-page&status=unreleased).
+enter the version number for the release.
 
 The automation will create and push the necessary commits and tag, create a
 draft release, trigger the packaging builds for the newly created tag, and

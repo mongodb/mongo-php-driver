@@ -123,7 +123,7 @@ gpg --verify php_mongodb-X.Y.Z.zip.sig php_mongodb-X.Y.Z.zip
 
 Issues pertaining to the extension should be reported in the
 [PHPC](https://jira.mongodb.org/secure/CreateIssue!default.jspa?project-field=PHPC)
-project in MongoDB's JIRA. Library-related issues should be reported in the
+project in MongoDB's Jira. Library-related issues should be reported in the
 [PHPLIB](https://jira.mongodb.org/secure/CreateIssue!default.jspa?project-field=PHPLIB)
 project.
 
@@ -140,5 +140,5 @@ project, please report it according to the instructions in
 
 Development is tracked in the
 [PHPC](https://jira.mongodb.org/projects/PHPC/summary) project in MongoDB's
-JIRA. Documentation for contributing to this project may be found in
+Jira. Documentation for contributing to this project may be found in
 [CONTRIBUTING.md](CONTRIBUTING.md).
