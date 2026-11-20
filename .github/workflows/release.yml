@@ -8,10 +8,6 @@ on:
         description: "The version to be released in PECL format (e.g. 1.19.1, 1.20.0beta1)"
         required: true
         type: "string"
-      jira-version-number:
-        description: "JIRA version ID (e.g. 54321)"
-        required: true
-        type: "string"
 
 env:
   default-release-message: |
@@ -27,7 +23,7 @@ env:
     > Do _NOT_ publish release until after artifacts are attached from the [Create Release Artifacts](https://github.com/mongodb/mongo-php-driver/actions/workflows/create-release-artifacts.yml) workflow.
     > After publishing, the release is immutable. Remove this reminder before publishing.
 
-    A complete list of resolved issues in this release may be found in [JIRA](https://jira.mongodb.org/secure/ReleaseNote.jspa?version={1}&projectId=12484).
+    A complete list of resolved issues in this release may be found in [Jira](https://jira.mongodb.org/issues/?jql=project%3DPHPC%20and%20fixVersion%3D{0}).
 
     **Documentation**
 
@@ -147,7 +143,7 @@ jobs:
       - name: "Prepare release message"
         run: |
           cat > release-message <<'EOL'
-          ${{ format(env.default-release-message, inputs.version, inputs.jira-version-number) }}
+          ${{ format(env.default-release-message, inputs.version) }}
           EOL
 
       - name: "Create draft release"

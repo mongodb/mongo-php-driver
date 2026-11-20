@@ -92,7 +92,7 @@ Generally, most tests will be based on the following template:
 
 ```
 --TEST--
-Description of API or JIRA issue being tested
+Description of API or Jira issue being tested
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php /* One or more skip functions */ ?>
