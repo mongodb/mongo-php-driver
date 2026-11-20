@@ -29,44 +29,84 @@ foreach ($tests as $test) {
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-object(MongoDB\Driver\WriteConcern)#%d (%d) {
+object(MongoDB\Driver\WriteConcern)#%d (3) {
   ["w"]=>
   int(1)
-}
-object(MongoDB\Driver\WriteConcern)#%d (%d) {
-  ["w"]=>
+  ["j"]=>
+  NULL
+  ["wtimeout"]=>
   int(0)
 }
-object(MongoDB\Driver\WriteConcern)#%d (%d) {
-  ["w"]=>
-  int(1)
-}
-object(MongoDB\Driver\WriteConcern)#%d (%d) {
+object(MongoDB\Driver\WriteConcern)#%d (3) {
   ["w"]=>
   int(0)
-}
-object(MongoDB\Driver\WriteConcern)#%d (%d) {
-  ["w"]=>
-  int(1)
-}
-object(MongoDB\Driver\WriteConcern)#%d (%d) {
-  ["w"]=>
+  ["j"]=>
+  NULL
+  ["wtimeout"]=>
   int(0)
 }
-object(MongoDB\Driver\WriteConcern)#%d (%d) {
+object(MongoDB\Driver\WriteConcern)#%d (3) {
   ["w"]=>
   int(1)
-}
-object(MongoDB\Driver\WriteConcern)#%d (%d) {
-  ["w"]=>
+  ["j"]=>
+  NULL
+  ["wtimeout"]=>
   int(0)
 }
-object(MongoDB\Driver\WriteConcern)#%d (%d) {
+object(MongoDB\Driver\WriteConcern)#%d (3) {
+  ["w"]=>
+  int(0)
+  ["j"]=>
+  NULL
+  ["wtimeout"]=>
+  int(0)
+}
+object(MongoDB\Driver\WriteConcern)#%d (3) {
   ["w"]=>
   int(1)
+  ["j"]=>
+  NULL
+  ["wtimeout"]=>
+  int(0)
 }
-object(MongoDB\Driver\WriteConcern)#%d (%d) {
+object(MongoDB\Driver\WriteConcern)#%d (3) {
   ["w"]=>
+  int(0)
+  ["j"]=>
+  NULL
+  ["wtimeout"]=>
+  int(0)
+}
+object(MongoDB\Driver\WriteConcern)#%d (3) {
+  ["w"]=>
+  int(1)
+  ["j"]=>
+  NULL
+  ["wtimeout"]=>
+  int(0)
+}
+object(MongoDB\Driver\WriteConcern)#%d (3) {
+  ["w"]=>
+  int(0)
+  ["j"]=>
+  NULL
+  ["wtimeout"]=>
+  int(0)
+}
+object(MongoDB\Driver\WriteConcern)#%d (3) {
+  ["w"]=>
+  int(1)
+  ["j"]=>
+  NULL
+  ["wtimeout"]=>
+  int(0)
+}
+object(MongoDB\Driver\WriteConcern)#%d (3) {
+  ["w"]=>
+  int(0)
+  ["j"]=>
+  NULL
+  ["wtimeout"]=>
   int(0)
 }
 ===DONE===

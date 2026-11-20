@@ -2,7 +2,7 @@
 MongoDB\Driver\Manager::__construct(): Specifying a driver option implicitly enables TLS
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
-<?php skip_if_not_libmongoc_ssl(['OpenSSL', 'LibreSSL']); ?>
+<?php skip_if_not_libmongoc_ssl(['OpenSSL']); ?>
 <?php skip_if_ssl(); ?>
 <?php skip_if_not_live(); ?>
 --FILE--

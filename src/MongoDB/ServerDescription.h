@@ -49,18 +49,18 @@ typedef enum {
 	PHONGO_SERVER_RS_GHOST          = 8,
 	PHONGO_SERVER_LOAD_BALANCER     = 9,
 	PHONGO_SERVER_DESCRIPTION_TYPES = 10,
-} php_phongo_server_description_type_t;
+} phongo_server_description_type_t;
 
 typedef struct {
-	php_phongo_server_description_type_t type;
-	const char*                          name;
-} php_phongo_server_description_type_map_t;
+	phongo_server_description_type_t type;
+	const char*                      name;
+} phongo_server_description_type_map_t;
 
-extern php_phongo_server_description_type_map_t php_phongo_server_description_type_map[];
+extern phongo_server_description_type_map_t phongo_server_description_type_map[];
 
 void phongo_serverdescription_init_ex(zval* return_value, mongoc_server_description_t* sd, bool copy);
 #define phongo_serverdescription_init(r, sd) phongo_serverdescription_init_ex((r), (sd), true)
 
-php_phongo_server_description_type_t php_phongo_server_description_type(mongoc_server_description_t* sd);
+phongo_server_description_type_t phongo_server_description_type(mongoc_server_description_t* sd);
 
 #endif /* PHONGO_SERVERDESCRIPTION_H */

@@ -17,11 +17,11 @@
 #include <php.h>
 #include <Zend/zend_interfaces.h>
 
-#include "php_phongo.h"
+#include "phongo.h"
 #include "phongo_error.h"
 #include "MaxKey_arginfo.h"
 
-zend_class_entry* php_phongo_maxkey_ce;
+zend_class_entry* phongo_maxkey_ce;
 
 static PHP_METHOD(MongoDB_BSON_MaxKey, __set_state)
 {
@@ -31,7 +31,7 @@ static PHP_METHOD(MongoDB_BSON_MaxKey, __set_state)
 	Z_PARAM_ARRAY(array)
 	PHONGO_PARSE_PARAMETERS_END();
 
-	object_init_ex(return_value, php_phongo_maxkey_ce);
+	object_init_ex(return_value, phongo_maxkey_ce);
 }
 
 static PHP_METHOD(MongoDB_BSON_MaxKey, jsonSerialize)
@@ -58,36 +58,7 @@ static PHP_METHOD(MongoDB_BSON_MaxKey, __unserialize)
 	PHONGO_PARSE_PARAMETERS_END();
 }
 
-/* MongoDB\BSON\MaxKey object handlers */
-static zend_object_handlers php_phongo_handler_maxkey;
-
-static void php_phongo_maxkey_free_object(zend_object* object)
+void phongo_maxkey_init_ce(INIT_FUNC_ARGS)
 {
-	php_phongo_maxkey_t* intern = Z_OBJ_MAXKEY(object);
-
-	zend_object_std_dtor(&intern->std);
-}
-
-static zend_object* php_phongo_maxkey_create_object(zend_class_entry* class_type)
-{
-	php_phongo_maxkey_t* intern = zend_object_alloc(sizeof(php_phongo_maxkey_t), class_type);
-
-	zend_object_std_init(&intern->std, class_type);
-	object_properties_init(&intern->std, class_type);
-
-	intern->std.handlers = &php_phongo_handler_maxkey;
-
-	return &intern->std;
-}
-
-void php_phongo_maxkey_init_ce(INIT_FUNC_ARGS)
-{
-	php_phongo_maxkey_ce                = register_class_MongoDB_BSON_MaxKey(php_phongo_maxkey_interface_ce, php_phongo_json_serializable_ce, php_phongo_type_ce);
-	php_phongo_maxkey_ce->create_object = php_phongo_maxkey_create_object;
-
-	memcpy(&php_phongo_handler_maxkey, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
-	/* Re-assign default handler previously removed in php_phongo.c */
-	php_phongo_handler_maxkey.clone_obj = zend_objects_clone_obj;
-	php_phongo_handler_maxkey.free_obj  = php_phongo_maxkey_free_object;
-	php_phongo_handler_maxkey.offset    = XtOffsetOf(php_phongo_maxkey_t, std);
+	phongo_maxkey_ce = register_class_MongoDB_BSON_MaxKey(phongo_maxkey_interface_ce, phongo_json_serializable_ce, phongo_type_ce);
 }

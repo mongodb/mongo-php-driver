@@ -25,8 +25,10 @@ class MySubscriber implements MongoDB\Driver\Monitoring\CommandSubscriber
     public function commandSucceeded( \MongoDB\Driver\Monitoring\CommandSucceededEvent $event ): void
     {
         echo "succeeded: ", $event->getCommandName(), "\n";
-        echo "- requestId matches: ", $this->startRequestId == $event->getRequestId() ? 'yes' : 'no', " \n";
-        echo "- operationId matches: ", $this->startOperationId == $event->getOperationId() ? 'yes' : 'no', " \n";
+        echo "- requestId matches method: ", $this->startRequestId == $event->getRequestId() ? 'yes' : 'no', "\n";
+        echo "- operationId matches method: ", $this->startOperationId == $event->getOperationId() ? 'yes' : 'no', "\n";
+        echo "- requestId matches property: ", $this->startRequestId == $event->requestId ? 'yes' : 'no', "\n";
+        echo "- operationId matches property: ", $this->startOperationId == $event->operationId ? 'yes' : 'no', "\n";
     }
 
     public function commandFailed( \MongoDB\Driver\Monitoring\CommandFailedEvent $event ): void
@@ -41,8 +43,12 @@ MongoDB\Driver\Monitoring\addSubscriber( $subscriber );
 
 $cursor = $m->executeQuery( "demo.test", $query );
 ?>
+===DONE===
 --EXPECT--
 started: find
 succeeded: find
-- requestId matches: yes 
-- operationId matches: yes
+- requestId matches method: yes
+- operationId matches method: yes
+- requestId matches property: yes
+- operationId matches property: yes
+===DONE===

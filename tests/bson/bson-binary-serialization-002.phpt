@@ -9,6 +9,7 @@ $tests = [
     ["\0foo", MongoDB\BSON\Binary::TYPE_GENERIC],
     [hex2bin('123e4567e89b12d3a456426655440000'), MongoDB\BSON\Binary::TYPE_UUID],
     [md5('foobar', true), MongoDB\BSON\Binary::TYPE_MD5],
+    [hex2bin('030001020304'), MongoDB\BSON\Binary::TYPE_VECTOR],
 ];
 
 foreach ($tests as $test) {
@@ -26,14 +27,14 @@ foreach ($tests as $test) {
 --EXPECTF--
 object(MongoDB\BSON\Binary)#%d (%d) {
   ["data"]=>
-  string(6) "foobar"
+  string(8) "Zm9vYmFy"
   ["type"]=>
   int(0)
 }
 string(70) "O:19:"MongoDB\BSON\Binary":2:{s:4:"data";s:6:"foobar";s:4:"type";i:0;}"
 object(MongoDB\BSON\Binary)#%d (%d) {
   ["data"]=>
-  string(6) "foobar"
+  string(8) "Zm9vYmFy"
   ["type"]=>
   int(0)
 }
@@ -54,44 +55,84 @@ object(MongoDB\BSON\Binary)#%d (%d) {
 
 object(MongoDB\BSON\Binary)#%d (%d) {
   ["data"]=>
-  string(4) "%sfoo"
+  string(8) "AGZvbw=="
   ["type"]=>
   int(0)
 }
 string(68) "O:19:"MongoDB\BSON\Binary":2:{s:4:"data";s:4:"%sfoo";s:4:"type";i:0;}"
 object(MongoDB\BSON\Binary)#%d (%d) {
   ["data"]=>
-  string(4) "%sfoo"
+  string(8) "AGZvbw=="
   ["type"]=>
   int(0)
 }
 
 object(MongoDB\BSON\Binary)#%d (%d) {
   ["data"]=>
-  string(16) "%s"
+  string(24) "Ej5FZ+ibEtOkVkJmVUQAAA=="
   ["type"]=>
   int(4)
 }
 string(81) "O:19:"MongoDB\BSON\Binary":2:{s:4:"data";s:16:"%s";s:4:"type";i:4;}"
 object(MongoDB\BSON\Binary)#%d (%d) {
   ["data"]=>
-  string(16) "%s"
+  string(24) "Ej5FZ+ibEtOkVkJmVUQAAA=="
   ["type"]=>
   int(4)
 }
 
 object(MongoDB\BSON\Binary)#%d (%d) {
   ["data"]=>
-  string(16) "%s"
+  string(24) "OFj2IjCsPJFfMAxmQxLGPw=="
   ["type"]=>
   int(5)
 }
 string(81) "O:19:"MongoDB\BSON\Binary":2:{s:4:"data";s:16:"%s";s:4:"type";i:5;}"
 object(MongoDB\BSON\Binary)#%d (%d) {
   ["data"]=>
-  string(16) "%s"
+  string(24) "OFj2IjCsPJFfMAxmQxLGPw=="
   ["type"]=>
   int(5)
+}
+
+object(MongoDB\BSON\Binary)#%d (%d) {
+  ["data"]=>
+  string(8) "AwABAgME"
+  ["type"]=>
+  int(9)
+  ["vector"]=>
+  array(4) {
+    [0]=>
+    int(1)
+    [1]=>
+    int(2)
+    [2]=>
+    int(3)
+    [3]=>
+    int(4)
+  }
+  ["vectorType"]=>
+  enum(MongoDB\BSON\VectorType::Int8)
+}
+string(70) "O:19:"MongoDB\BSON\Binary":2:{s:4:"data";s:6:"%a";s:4:"type";i:9;}"
+object(MongoDB\BSON\Binary)#%d (%d) {
+  ["data"]=>
+  string(8) "AwABAgME"
+  ["type"]=>
+  int(9)
+  ["vector"]=>
+  array(4) {
+    [0]=>
+    int(1)
+    [1]=>
+    int(2)
+    [2]=>
+    int(3)
+    [3]=>
+    int(4)
+  }
+  ["vectorType"]=>
+  enum(MongoDB\BSON\VectorType::Int8)
 }
 
 ===DONE===

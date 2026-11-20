@@ -51,5 +51,9 @@ object(MongoDB\Driver\ReadPreference)#%d (%d) {
     object(stdClass)#%d (%d) {
     }
   }
+  ["maxStalenessSeconds"]=>
+  int(-1)
+  ["hedge"]=>
+  NULL
 }
 ===DONE===

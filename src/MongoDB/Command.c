@@ -21,19 +21,19 @@
 
 #include "php_array_api.h"
 
-#include "php_phongo.h"
+#include "phongo.h"
 #include "phongo_bson_encode.h"
 #include "phongo_error.h"
 #include "Command_arginfo.h"
 
-zend_class_entry* php_phongo_command_ce;
+zend_class_entry* phongo_command_ce;
 
 /* Initialize the "maxAwaitTimeMS" option. Returns true on success; otherwise,
  * false is returned and an exception is thrown.
  *
  * The "maxAwaitTimeMS" option is assigned to the cursor after query execution
  * via mongoc_cursor_set_max_await_time_ms(). */
-static bool php_phongo_command_init_max_await_time_ms(php_phongo_command_t* intern, zval* options)
+static bool phongo_command_init_max_await_time_ms(phongo_command_t* intern, zval* options)
 {
 	int64_t max_await_time_ms;
 
@@ -58,10 +58,10 @@ static bool php_phongo_command_init_max_await_time_ms(php_phongo_command_t* inte
 	return true;
 }
 
-/* Initializes the php_phongo_command_init from options argument. This
+/* Initializes the phongo_command_init from options argument. This
  * function will fall back to a modifier in the absence of a top-level option
  * (where applicable). */
-static bool php_phongo_command_init(php_phongo_command_t* intern, zval* filter, zval* options)
+static bool phongo_command_init(phongo_command_t* intern, zval* filter, zval* options)
 {
 	bson_iter_t iter;
 	bson_iter_t sub_iter;
@@ -70,10 +70,10 @@ static bool php_phongo_command_init(php_phongo_command_t* intern, zval* filter, 
 	intern->batch_size        = 0;
 	intern->max_await_time_ms = 0;
 
-	php_phongo_zval_to_bson(filter, PHONGO_BSON_NONE, intern->bson, NULL);
+	phongo_zval_to_bson(filter, PHONGO_BSON_NONE, intern->bson, NULL);
 
 	/* Note: if any exceptions are thrown, we can simply return as PHP will
-	 * invoke php_phongo_query_free_object to destruct the object. */
+	 * invoke phongo_query_free_object to destruct the object. */
 	if (EG(exception)) {
 		return false;
 	}
@@ -90,7 +90,7 @@ static bool php_phongo_command_init(php_phongo_command_t* intern, zval* filter, 
 		return true;
 	}
 
-	if (!php_phongo_command_init_max_await_time_ms(intern, options)) {
+	if (!phongo_command_init_max_await_time_ms(intern, options)) {
 		return false;
 	}
 
@@ -100,11 +100,10 @@ static bool php_phongo_command_init(php_phongo_command_t* intern, zval* filter, 
 /* Constructs a new Command */
 static PHP_METHOD(MongoDB_Driver_Command, __construct)
 {
-	php_phongo_command_t* intern;
-	zval*                 document;
-	zval*                 options = NULL;
+	PHONGO_INTERN_FROM_THIS(command);
 
-	intern = Z_COMMAND_OBJ_P(getThis());
+	zval* document;
+	zval* options = NULL;
 
 	PHONGO_PARSE_PARAMETERS_START(1, 2)
 	Z_PARAM_ARRAY_OR_OBJECT(document)
@@ -112,15 +111,15 @@ static PHP_METHOD(MongoDB_Driver_Command, __construct)
 	Z_PARAM_ARRAY_OR_NULL(options)
 	PHONGO_PARSE_PARAMETERS_END();
 
-	php_phongo_command_init(intern, document, options);
+	phongo_command_init(intern, document, options);
 }
 
 /* MongoDB\Driver\Command object handlers */
-static zend_object_handlers php_phongo_handler_command;
+static zend_object_handlers phongo_handler_command;
 
-static void php_phongo_command_free_object(zend_object* object)
+static void phongo_command_free_object(zend_object* object)
 {
-	php_phongo_command_t* intern = Z_OBJ_COMMAND(object);
+	PHONGO_INTERN_FROM_Z_OBJ(command, object);
 
 	zend_object_std_dtor(&intern->std);
 
@@ -129,32 +128,29 @@ static void php_phongo_command_free_object(zend_object* object)
 	}
 }
 
-static zend_object* php_phongo_command_create_object(zend_class_entry* class_type)
+static zend_object* phongo_command_create_object(zend_class_entry* class_type)
 {
-	php_phongo_command_t* intern = zend_object_alloc(sizeof(php_phongo_command_t), class_type);
+	PHONGO_INTERN_OBJECT_ALLOC(command, class_type);
 
-	zend_object_std_init(&intern->std, class_type);
-	object_properties_init(&intern->std, class_type);
-
-	intern->std.handlers = &php_phongo_handler_command;
+	intern->std.handlers = &phongo_handler_command;
 
 	return &intern->std;
 }
 
-static HashTable* php_phongo_command_get_debug_info(zend_object* object, int* is_temp)
+static HashTable* phongo_command_get_debug_info(zend_object* object, int* is_temp)
 {
-	php_phongo_command_t* intern;
-	zval                  retval = ZVAL_STATIC_INIT;
+	PHONGO_INTERN_FROM_Z_OBJ(command, object);
+
+	zval retval = ZVAL_STATIC_INIT;
 
 	*is_temp = 1;
-	intern   = Z_OBJ_COMMAND(object);
 
 	array_init_size(&retval, 1);
 
 	if (intern->bson) {
 		zval zv;
 
-		if (!php_phongo_bson_to_zval(intern->bson, &zv)) {
+		if (!phongo_bson_to_zval(intern->bson, &zv)) {
 			zval_ptr_dtor(&zv);
 			goto done;
 		}
@@ -168,13 +164,13 @@ done:
 	return Z_ARRVAL(retval);
 }
 
-void php_phongo_command_init_ce(INIT_FUNC_ARGS)
+void phongo_command_init_ce(INIT_FUNC_ARGS)
 {
-	php_phongo_command_ce                = register_class_MongoDB_Driver_Command();
-	php_phongo_command_ce->create_object = php_phongo_command_create_object;
+	phongo_command_ce                = register_class_MongoDB_Driver_Command();
+	phongo_command_ce->create_object = phongo_command_create_object;
 
-	memcpy(&php_phongo_handler_command, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
-	php_phongo_handler_command.get_debug_info = php_phongo_command_get_debug_info;
-	php_phongo_handler_command.free_obj       = php_phongo_command_free_object;
-	php_phongo_handler_command.offset         = XtOffsetOf(php_phongo_command_t, std);
+	memcpy(&phongo_handler_command, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
+	phongo_handler_command.get_debug_info = phongo_command_get_debug_info;
+	phongo_handler_command.free_obj       = phongo_command_free_object;
+	phongo_handler_command.offset         = offsetof(phongo_command_t, std);
 }

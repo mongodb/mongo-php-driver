@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: ed6e371d10ddbcfd3ffed6aeb48758d0e88d717f */
+ * Stub hash: bb19c587cfdda8bcc988184a2ae6256ffcdfbcd0 */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_Driver_Server___construct, 0, 0, 0)
 ZEND_END_ARG_INFO()
@@ -63,7 +63,6 @@ ZEND_END_ARG_INFO()
 
 #define arginfo_class_MongoDB_Driver_Server_isSecondary arginfo_class_MongoDB_Driver_Server_isArbiter
 
-
 static ZEND_METHOD(MongoDB_Driver_Server, __construct);
 static ZEND_METHOD(MongoDB_Driver_Server, executeBulkWrite);
 static ZEND_METHOD(MongoDB_Driver_Server, executeBulkWriteCommand);
@@ -84,7 +83,6 @@ static ZEND_METHOD(MongoDB_Driver_Server, isHidden);
 static ZEND_METHOD(MongoDB_Driver_Server, isPassive);
 static ZEND_METHOD(MongoDB_Driver_Server, isPrimary);
 static ZEND_METHOD(MongoDB_Driver_Server, isSecondary);
-
 
 static const zend_function_entry class_MongoDB_Driver_Server_methods[] = {
 	ZEND_ME(MongoDB_Driver_Server, __construct, arginfo_class_MongoDB_Driver_Server___construct, ZEND_ACC_PRIVATE|ZEND_ACC_FINAL)
@@ -115,8 +113,12 @@ static zend_class_entry *register_class_MongoDB_Driver_Server(void)
 	zend_class_entry ce, *class_entry;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver", "Server", class_MongoDB_Driver_Server_methods);
+#if (PHP_VERSION_ID >= 80400)
+	class_entry = zend_register_internal_class_with_flags(&ce, NULL, ZEND_ACC_FINAL|ZEND_ACC_NOT_SERIALIZABLE);
+#else
 	class_entry = zend_register_internal_class_ex(&ce, NULL);
 	class_entry->ce_flags |= ZEND_ACC_FINAL|ZEND_ACC_NOT_SERIALIZABLE;
+#endif
 
 	zval const_TYPE_UNKNOWN_value;
 	ZVAL_LONG(&const_TYPE_UNKNOWN_value, PHONGO_SERVER_UNKNOWN);

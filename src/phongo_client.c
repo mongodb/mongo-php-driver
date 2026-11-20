@@ -18,12 +18,14 @@
 #include "mongoc/mongoc.h"
 
 #include <php.h>
+#include <ext/hash/php_hash.h>
+#include <ext/hash/php_hash_sha.h>
 #include <ext/standard/php_var.h>
 #include <Zend/zend_smart_str.h>
 
 #include "php_array_api.h"
 
-#include "php_phongo.h"
+#include "phongo.h"
 #include "phongo_apm.h"
 #include "phongo_bson_encode.h"
 #include "phongo_client.h"
@@ -49,12 +51,12 @@ typedef struct {
 	int              created_by_pid;
 	int              last_reset_by_pid;
 	bool             is_persistent;
-} php_phongo_pclient_t;
+} phongo_pclient_t;
 
 static const mongoc_client_t* get_first_pclient_client(HashTable* ht)
 {
 	if (ht) {
-		php_phongo_pclient_t* pclient = NULL;
+		phongo_pclient_t* pclient = NULL;
 
 		zend_hash_internal_pointer_reset(ht);
 		pclient = zend_hash_get_current_data_ptr(ht);
@@ -75,7 +77,7 @@ static const mongoc_client_t* get_first_pclient_client(HashTable* ht)
  * Note: this may incorrectly return NULL if crypt_shared was loaded through a
  * mongoc_client_t since destroyed (e.g. single requested-scoped client);
  * however, that's the best can do with libmongoc's API. */
-const char* php_phongo_crypt_shared_version(void)
+const char* phongo_crypt_shared_version(void)
 {
 	const mongoc_client_t* client = NULL;
 
@@ -92,7 +94,7 @@ const char* php_phongo_crypt_shared_version(void)
 	return NULL;
 }
 
-static mongoc_uri_t* php_phongo_make_uri(const char* uri_string)
+static mongoc_uri_t* phongo_make_uri(const char* uri_string)
 {
 	mongoc_uri_t* uri;
 	bson_error_t  error = { 0 };
@@ -116,9 +118,9 @@ static mongoc_uri_t* php_phongo_make_uri(const char* uri_string)
 		"Expected %s for \"%s\" URI option, %s given", \
 		(expected),                                    \
 		bson_iter_key(&(iter)),                        \
-		php_phongo_bson_type_to_string(bson_iter_type(&(iter))))
+		phongo_bson_type_to_string(bson_iter_type(&(iter))))
 
-static bool php_phongo_apply_options_to_uri(mongoc_uri_t* uri, bson_t* options)
+static bool phongo_apply_options_to_uri(mongoc_uri_t* uri, bson_t* options)
 {
 	bson_iter_t iter;
 
@@ -161,7 +163,7 @@ static bool php_phongo_apply_options_to_uri(mongoc_uri_t* uri, bson_t* options)
 		/* Note: mongoc_uri_option_is_int32 also accepts int64 options, but
 		 * BSON_ITER_HOLDS_INT32 would reject a 64-bit value. This is not a
 		 * problem as MONGOC_URI_WTIMEOUTMS is the only 64-bit option and it is
-		 * handled explicitly in php_phongo_apply_wc_options_to_uri. */
+		 * handled explicitly in phongo_apply_wc_options_to_uri. */
 		if (mongoc_uri_option_is_int32(key)) {
 			if (!BSON_ITER_HOLDS_INT32(&iter)) {
 				PHONGO_URI_INVALID_TYPE(iter, "32-bit integer");
@@ -296,7 +298,7 @@ static bool php_phongo_apply_options_to_uri(mongoc_uri_t* uri, bson_t* options)
 				return false;
 			}
 
-			bson_append_utf8(&properties, "SERVICE_NAME", -1, bson_iter_utf8(&iter, NULL), -1);
+			bson_append_utf8(&properties, ZEND_STRL("SERVICE_NAME"), bson_iter_utf8(&iter, NULL), -1);
 
 			if (!mongoc_uri_set_mechanism_properties(uri, &properties)) {
 				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Failed to parse \"%s\" URI option", key);
@@ -327,7 +329,7 @@ static bool php_phongo_apply_options_to_uri(mongoc_uri_t* uri, bson_t* options)
 	return true;
 }
 
-static bool php_phongo_apply_rc_options_to_uri(mongoc_uri_t* uri, bson_t* options)
+static bool phongo_apply_rc_options_to_uri(mongoc_uri_t* uri, bson_t* options)
 {
 	bson_iter_t                  iter;
 	mongoc_read_concern_t*       new_rc;
@@ -367,7 +369,7 @@ static bool php_phongo_apply_rc_options_to_uri(mongoc_uri_t* uri, bson_t* option
 	return true;
 }
 
-static bool php_phongo_apply_rp_options_to_uri(mongoc_uri_t* uri, bson_t* options)
+static bool phongo_apply_rp_options_to_uri(mongoc_uri_t* uri, bson_t* options)
 {
 	bson_iter_t                iter;
 	mongoc_read_prefs_t*       new_rp;
@@ -440,7 +442,7 @@ static bool php_phongo_apply_rp_options_to_uri(mongoc_uri_t* uri, bson_t* option
 				return false;
 			}
 
-			if (!php_phongo_read_preference_tags_are_valid(&tags)) {
+			if (!phongo_read_preference_tags_are_valid(&tags)) {
 				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Read preference tags must be an array of zero or more documents");
 				mongoc_read_prefs_destroy(new_rp);
 
@@ -523,7 +525,7 @@ static bool php_phongo_apply_rp_options_to_uri(mongoc_uri_t* uri, bson_t* option
 	return true;
 }
 
-static bool php_phongo_apply_wc_options_to_uri(mongoc_uri_t* uri, bson_t* options)
+static bool phongo_apply_wc_options_to_uri(mongoc_uri_t* uri, bson_t* options)
 {
 	bson_iter_t                   iter;
 	mongoc_write_concern_t*       new_wc;
@@ -597,7 +599,6 @@ static bool php_phongo_apply_wc_options_to_uri(mongoc_uri_t* uri, bson_t* option
 				int32_t value = bson_iter_int32(&iter);
 
 				switch (value) {
-					case MONGOC_WRITE_CONCERN_W_ERRORS_IGNORED:
 					case MONGOC_WRITE_CONCERN_W_UNACKNOWLEDGED:
 						mongoc_write_concern_set_w(new_wc, value);
 						break;
@@ -634,7 +635,7 @@ static bool php_phongo_apply_wc_options_to_uri(mongoc_uri_t* uri, bson_t* option
 	if (mongoc_write_concern_get_journal(new_wc)) {
 		int32_t w = mongoc_write_concern_get_w(new_wc);
 
-		if (w == MONGOC_WRITE_CONCERN_W_UNACKNOWLEDGED || w == MONGOC_WRITE_CONCERN_W_ERRORS_IGNORED) {
+		if (w == MONGOC_WRITE_CONCERN_W_UNACKNOWLEDGED) {
 			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Journal conflicts with w value: %d", w);
 			mongoc_write_concern_destroy(new_wc);
 
@@ -659,7 +660,7 @@ static bool php_phongo_apply_wc_options_to_uri(mongoc_uri_t* uri, bson_t* option
 }
 
 #ifdef MONGOC_ENABLE_SSL
-static void php_phongo_mongoc_ssl_opts_from_uri(mongoc_ssl_opt_t* ssl_opt, mongoc_uri_t* uri, bool* any_ssl_option_set)
+static void phongo_mongoc_ssl_opts_from_uri(mongoc_ssl_opt_t* ssl_opt, mongoc_uri_t* uri, bool* any_ssl_option_set)
 {
 	bool        insecure = mongoc_uri_get_option_as_bool(uri, MONGOC_URI_TLSINSECURE, false);
 	const char* pem_file = mongoc_uri_get_option_as_utf8(uri, MONGOC_URI_TLSCERTIFICATEKEYFILE, NULL);
@@ -684,7 +685,7 @@ static void php_phongo_mongoc_ssl_opts_from_uri(mongoc_ssl_opt_t* ssl_opt, mongo
 
 /* This function abstracts php_array_fetch_string() and always returns a string
  * that must be freed by the caller. */
-static inline char* php_phongo_fetch_string(zval* zarr, const char* key)
+static inline char* phongo_fetch_string(zval* zarr, const char* key)
 {
 	int       plen;
 	zend_bool pfree;
@@ -695,7 +696,7 @@ static inline char* php_phongo_fetch_string(zval* zarr, const char* key)
 	return pfree ? value : estrndup(value, plen);
 }
 
-static mongoc_ssl_opt_t* php_phongo_make_ssl_opt(mongoc_uri_t* uri, zval* driverOptions)
+static mongoc_ssl_opt_t* phongo_make_ssl_opt(mongoc_uri_t* uri, zval* driverOptions)
 {
 	mongoc_ssl_opt_t* ssl_opt;
 	bool              any_ssl_option_set = false;
@@ -711,9 +712,9 @@ static mongoc_ssl_opt_t* php_phongo_make_ssl_opt(mongoc_uri_t* uri, zval* driver
 	}
 #endif
 
-#if defined(MONGOC_ENABLE_SSL_LIBRESSL) || defined(MONGOC_ENABLE_SSL_SECURE_TRANSPORT)
+#if defined(MONGOC_ENABLE_SSL_SECURE_TRANSPORT)
 	if (php_array_existsc(driverOptions, "crl_file")) {
-		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "\"crl_file\" option is not supported by LibreSSL and Secure Transport");
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "\"crl_file\" option is not supported by Secure Transport");
 		return NULL;
 	}
 #endif
@@ -725,18 +726,18 @@ static mongoc_ssl_opt_t* php_phongo_make_ssl_opt(mongoc_uri_t* uri, zval* driver
 
 	/* Apply TLS options to the ssl_opt struct before driver options */
 	if (mongoc_uri_get_tls(uri)) {
-		php_phongo_mongoc_ssl_opts_from_uri(ssl_opt, uri, &any_ssl_option_set);
+		phongo_mongoc_ssl_opts_from_uri(ssl_opt, uri, &any_ssl_option_set);
 	}
 
 	/* Apply driver options that don't have a corresponding URI option. These
 	 * are set directly on the SSL options struct. */
 	if (php_array_existsc(driverOptions, "ca_dir")) {
-		ssl_opt->ca_dir    = php_phongo_fetch_string(driverOptions, "ca_dir");
+		ssl_opt->ca_dir    = phongo_fetch_string(driverOptions, "ca_dir");
 		any_ssl_option_set = true;
 	}
 
 	if (php_array_existsc(driverOptions, "crl_file")) {
-		ssl_opt->crl_file  = php_phongo_fetch_string(driverOptions, "crl_file");
+		ssl_opt->crl_file  = phongo_fetch_string(driverOptions, "crl_file");
 		any_ssl_option_set = true;
 	}
 
@@ -748,7 +749,7 @@ static mongoc_ssl_opt_t* php_phongo_make_ssl_opt(mongoc_uri_t* uri, zval* driver
 	return ssl_opt;
 }
 
-static void php_phongo_free_ssl_opt(mongoc_ssl_opt_t* ssl_opt)
+static void phongo_free_ssl_opt(mongoc_ssl_opt_t* ssl_opt)
 {
 	if (ssl_opt->pem_file) {
 		efree((char*) ssl_opt->pem_file);
@@ -774,14 +775,14 @@ static void php_phongo_free_ssl_opt(mongoc_ssl_opt_t* ssl_opt)
 }
 #endif /* MONGOC_ENABLE_SSL */
 
-static zval* php_phongo_manager_prepare_manager_for_hash(zval* driverOptions, bool* free)
+static zval* phongo_manager_prepare_manager_for_hash(zval* driverOptions, bool* free)
 {
-	php_phongo_manager_t* manager;
-	zval*                 autoEncryptionOpts      = NULL;
-	zval*                 keyVaultClient          = NULL;
-	zval*                 driverOptionsClone      = NULL;
-	zval*                 autoEncryptionOptsClone = NULL;
-	zval                  stackAutoEncryptionOptsClone;
+	phongo_manager_t* manager;
+	zval*             autoEncryptionOpts      = NULL;
+	zval*             keyVaultClient          = NULL;
+	zval*             driverOptionsClone      = NULL;
+	zval*             autoEncryptionOptsClone = NULL;
+	zval              stackAutoEncryptionOptsClone;
 
 	*free = false;
 
@@ -803,7 +804,7 @@ static zval* php_phongo_manager_prepare_manager_for_hash(zval* driverOptions, bo
 	}
 
 	keyVaultClient = php_array_fetchc(autoEncryptionOpts, "keyVaultClient");
-	if (Z_TYPE_P(keyVaultClient) != IS_OBJECT || !instanceof_function(Z_OBJCE_P(keyVaultClient), php_phongo_manager_ce)) {
+	if (Z_TYPE_P(keyVaultClient) != IS_OBJECT || !instanceof_function(Z_OBJCE_P(keyVaultClient), phongo_manager_ce)) {
 		return driverOptions;
 	}
 
@@ -823,24 +824,30 @@ static zval* php_phongo_manager_prepare_manager_for_hash(zval* driverOptions, bo
 	return driverOptionsClone;
 }
 
-/* Creates a hash for a client by concatenating the URI string with serialized
+/* Creates a hash for a client from a digest of the URI string and serialized
  * options arrays. On success, a persistent string is returned (i.e. pefree()
  * should be used to free it) and hash_len will be set to the string's length.
  * On error, an exception will have been thrown and NULL will be returned.
  * The hash contains credentials and must never be included in log messages. */
-static char* php_phongo_manager_make_client_hash(const char* uri_string, zval* options, zval* driverOptions, size_t* hash_len)
+static char* phongo_manager_make_client_hash(const char* uri_string, zval* options, zval* driverOptions, size_t* hash_len)
 {
 	char*                hash    = NULL;
 	smart_str            var_buf = { 0 };
 	php_serialize_data_t var_hash;
 	zval*                serializable_driver_options = NULL;
 	bool                 free_driver_options         = false;
+	PHP_SHA256_CTX       sha_ctx;
+	unsigned char        sha_digest[32];
 
 	zval args;
 
+	PHP_SHA256Init(&sha_ctx);
+	PHP_SHA256Update(&sha_ctx, (const unsigned char*) uri_string, strlen(uri_string));
+	PHP_SHA256Final(sha_digest, &sha_ctx);
+
 	array_init_size(&args, 4);
 	ADD_ASSOC_LONG_EX(&args, "pid", getpid());
-	ADD_ASSOC_STRING(&args, "uri", uri_string);
+	ADD_ASSOC_STRINGL(&args, "uri", (char*) sha_digest, sizeof(sha_digest));
 
 	if (options) {
 		ADD_ASSOC_ZVAL_EX(&args, "options", options);
@@ -850,7 +857,7 @@ static char* php_phongo_manager_make_client_hash(const char* uri_string, zval* o
 	}
 
 	if (driverOptions) {
-		serializable_driver_options = php_phongo_manager_prepare_manager_for_hash(driverOptions, &free_driver_options);
+		serializable_driver_options = phongo_manager_prepare_manager_for_hash(driverOptions, &free_driver_options);
 		ADD_ASSOC_ZVAL_EX(&args, "driverOptions", serializable_driver_options);
 		/* Add a reference to driverOptions unless a new copy was returned */
 		if (!free_driver_options) {
@@ -880,7 +887,7 @@ static char* php_phongo_manager_make_client_hash(const char* uri_string, zval* o
 	return hash;
 }
 
-static bool php_phongo_extract_handshake_data(zval* driver, const char* key, char** value, size_t* value_len)
+static bool phongo_extract_handshake_data(zval* driver, const char* key, char** value, size_t* value_len)
 {
 	zval* zvalue;
 
@@ -904,7 +911,7 @@ static bool php_phongo_extract_handshake_data(zval* driver, const char* key, cha
 	return true;
 }
 
-static char* php_phongo_concat_handshake_data(const char* default_value, const char* custom_value, size_t custom_value_len)
+static char* phongo_concat_handshake_data(const char* default_value, const char* custom_value, size_t custom_value_len)
 {
 	char* ret;
 	/* Length of the returned value needs to include a trailing space and null byte */
@@ -926,7 +933,7 @@ static char* php_phongo_concat_handshake_data(const char* default_value, const c
 	return ret;
 }
 
-static void php_phongo_handshake_data_append(const char* name, size_t name_len, const char* version, size_t version_len, const char* platform, size_t platform_len)
+static void phongo_handshake_data_append(const char* name, size_t name_len, const char* version, size_t version_len, const char* platform, size_t platform_len)
 {
 	char*  php_version_string;
 	size_t php_version_string_len;
@@ -938,9 +945,9 @@ static void php_phongo_handshake_data_append(const char* name, size_t name_len, 
 	php_version_string     = ecalloc(php_version_string_len, sizeof(char));
 	snprintf(php_version_string, php_version_string_len, "%s%s", PHONGO_METADATA_PHP_VERSION_PREFIX, PHP_VERSION);
 
-	driver_name    = php_phongo_concat_handshake_data("ext-mongodb:PHP", name, name_len);
-	driver_version = php_phongo_concat_handshake_data(PHP_MONGODB_VERSION, version, version_len);
-	full_platform  = php_phongo_concat_handshake_data(php_version_string, platform, platform_len);
+	driver_name    = phongo_concat_handshake_data("ext-mongodb:PHP", name, name_len);
+	driver_version = phongo_concat_handshake_data(PHP_MONGODB_VERSION, version, version_len);
+	full_platform  = phongo_concat_handshake_data(php_version_string, platform, platform_len);
 
 	MONGOC_DEBUG(
 		"Setting driver handshake data: { name: '%s', version: '%s', platform: '%s' }",
@@ -956,7 +963,7 @@ static void php_phongo_handshake_data_append(const char* name, size_t name_len, 
 	efree(full_platform);
 }
 
-static void php_phongo_set_handshake_data(zval* driverOptions)
+static void phongo_set_handshake_data(zval* driverOptions)
 {
 	char*  name         = NULL;
 	size_t name_len     = 0;
@@ -973,23 +980,23 @@ static void php_phongo_set_handshake_data(zval* driverOptions)
 			return;
 		}
 
-		if (!php_phongo_extract_handshake_data(driver, "name", &name, &name_len)) {
+		if (!phongo_extract_handshake_data(driver, "name", &name, &name_len)) {
 			/* Exception already thrown */
 			goto cleanup;
 		}
 
-		if (!php_phongo_extract_handshake_data(driver, "version", &version, &version_len)) {
+		if (!phongo_extract_handshake_data(driver, "version", &version, &version_len)) {
 			/* Exception already thrown */
 			goto cleanup;
 		}
 
-		if (!php_phongo_extract_handshake_data(driver, "platform", &platform, &platform_len)) {
+		if (!phongo_extract_handshake_data(driver, "platform", &platform, &platform_len)) {
 			/* Exception already thrown */
 			goto cleanup;
 		}
 	}
 
-	php_phongo_handshake_data_append(name, name_len, version, version_len, platform, platform_len);
+	phongo_handshake_data_append(name, name_len, version, version_len, platform, platform_len);
 
 cleanup:
 	if (name) {
@@ -1003,7 +1010,7 @@ cleanup:
 	}
 }
 
-static mongoc_client_t* php_phongo_make_mongo_client(const mongoc_uri_t* uri, zval* driverOptions)
+static mongoc_client_t* phongo_make_mongo_client(const mongoc_uri_t* uri, zval* driverOptions)
 {
 	const char *     mongoc_version, *bson_version;
 	mongoc_client_t* client;
@@ -1031,7 +1038,7 @@ static mongoc_client_t* php_phongo_make_mongo_client(const mongoc_uri_t* uri, zv
 		bson_version,
 		PHP_VERSION);
 
-	php_phongo_set_handshake_data(driverOptions);
+	phongo_set_handshake_data(driverOptions);
 
 	if (!(client = mongoc_client_new_from_uri_with_error(uri, &error))) {
 		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Failed to parse URI options: %s", error.message);
@@ -1044,10 +1051,10 @@ static mongoc_client_t* php_phongo_make_mongo_client(const mongoc_uri_t* uri, zv
  * clients each have their own registries (i.e. HashTables), which use different
  * forms of memory allocation. Both registries are used for PID tracking.
  * Returns true if the client was successfully added; otherwise, false. */
-bool php_phongo_client_register(php_phongo_manager_t* manager)
+bool phongo_client_register(phongo_manager_t* manager)
 {
-	bool                  is_persistent = manager->use_persistent_client;
-	php_phongo_pclient_t* pclient       = pecalloc(1, sizeof(php_phongo_pclient_t), is_persistent);
+	bool              is_persistent = manager->use_persistent_client;
+	phongo_pclient_t* pclient       = pecalloc(1, sizeof(phongo_pclient_t), is_persistent);
 
 	pclient->client         = manager->client;
 	pclient->created_by_pid = (int) getpid();
@@ -1066,10 +1073,10 @@ bool php_phongo_client_register(php_phongo_manager_t* manager)
  * persistent clients, since they are destroyed along with their registry (i.e.
  * HashTable) in GSHUTDOWN. Returns true if the client was successfully removed;
  * otherwise, false. */
-bool php_phongo_client_unregister(php_phongo_manager_t* manager)
+bool phongo_client_unregister(phongo_manager_t* manager)
 {
-	zend_ulong            index;
-	php_phongo_pclient_t* pclient;
+	zend_ulong        index;
+	phongo_pclient_t* pclient;
 
 	/* Persistent clients do not get unregistered. */
 	if (manager->use_persistent_client) {
@@ -1098,9 +1105,9 @@ bool php_phongo_client_unregister(php_phongo_manager_t* manager)
 	return false;
 }
 
-static mongoc_client_t* php_phongo_find_persistent_client(const char* hash, size_t hash_len)
+static mongoc_client_t* phongo_find_persistent_client(const char* hash, size_t hash_len)
 {
-	php_phongo_pclient_t* pclient = zend_hash_str_find_ptr(&MONGODB_G(persistent_clients), hash, hash_len);
+	phongo_pclient_t* pclient = zend_hash_str_find_ptr(&MONGODB_G(persistent_clients), hash, hash_len);
 
 	if (pclient) {
 		return pclient->client;
@@ -1109,11 +1116,11 @@ static mongoc_client_t* php_phongo_find_persistent_client(const char* hash, size
 	return NULL;
 }
 
-static bool phongo_manager_set_serverapi_opts(php_phongo_manager_t* manager, zval* driverOptions)
+static bool phongo_manager_set_serverapi_opts(phongo_manager_t* manager, zval* driverOptions)
 {
-	zval*                   zServerApi;
-	php_phongo_serverapi_t* server_api;
-	bson_error_t            error = { 0 };
+	zval*               zServerApi;
+	phongo_serverapi_t* server_api;
+	bson_error_t        error = { 0 };
 
 	if (!driverOptions || !php_array_existsc(driverOptions, "serverApi")) {
 		return true;
@@ -1121,8 +1128,8 @@ static bool phongo_manager_set_serverapi_opts(php_phongo_manager_t* manager, zva
 
 	zServerApi = php_array_fetchc_deref(driverOptions, "serverApi");
 
-	if (Z_TYPE_P(zServerApi) != IS_OBJECT || !instanceof_function(Z_OBJCE_P(zServerApi), php_phongo_serverapi_ce)) {
-		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"serverApi\" driver option to be %s, %s given", ZSTR_VAL(php_phongo_serverapi_ce->name), zend_zval_type_name(zServerApi));
+	if (Z_TYPE_P(zServerApi) != IS_OBJECT || !instanceof_function(Z_OBJCE_P(zServerApi), phongo_serverapi_ce)) {
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"serverApi\" driver option to be %s, %s given", ZSTR_VAL(phongo_serverapi_ce->name), zend_zval_type_name(zServerApi));
 		return false;
 	}
 
@@ -1137,7 +1144,7 @@ static bool phongo_manager_set_serverapi_opts(php_phongo_manager_t* manager, zva
 }
 
 #ifdef MONGOC_ENABLE_CLIENT_SIDE_ENCRYPTION
-static bool phongo_manager_set_auto_encryption_opts(php_phongo_manager_t* manager, zval* driverOptions)
+static bool phongo_manager_set_auto_encryption_opts(phongo_manager_t* manager, zval* driverOptions)
 {
 	zval*                          zAutoEncryptionOpts;
 	bson_error_t                   error                = { 0 };
@@ -1174,7 +1181,7 @@ static bool phongo_manager_set_auto_encryption_opts(php_phongo_manager_t* manage
 			goto cleanup;
 		}
 
-		php_phongo_zval_to_bson(enc_fields_map, PHONGO_BSON_NONE, &bson_map, NULL);
+		phongo_zval_to_bson(enc_fields_map, PHONGO_BSON_NONE, &bson_map, NULL);
 		if (EG(exception)) {
 			goto cleanup;
 		}
@@ -1191,8 +1198,8 @@ static bool phongo_manager_set_auto_encryption_opts(php_phongo_manager_t* manage
 	if (php_array_existsc(zAutoEncryptionOpts, "keyVaultClient")) {
 		zval* key_vault_client = php_array_fetchc_deref(zAutoEncryptionOpts, "keyVaultClient");
 
-		if (Z_TYPE_P(key_vault_client) != IS_OBJECT || !instanceof_function(Z_OBJCE_P(key_vault_client), php_phongo_manager_ce)) {
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"keyVaultClient\" autoEncryption option to be %s, %s given", ZSTR_VAL(php_phongo_manager_ce->name), zend_zval_type_name(key_vault_client));
+		if (Z_TYPE_P(key_vault_client) != IS_OBJECT || !instanceof_function(Z_OBJCE_P(key_vault_client), phongo_manager_ce)) {
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"keyVaultClient\" autoEncryption option to be %s, %s given", ZSTR_VAL(phongo_manager_ce->name), zend_zval_type_name(key_vault_client));
 			goto cleanup;
 		}
 
@@ -1258,7 +1265,7 @@ static bool phongo_manager_set_auto_encryption_opts(php_phongo_manager_t* manage
 			goto cleanup;
 		}
 
-		php_phongo_zval_to_bson(kms_providers, PHONGO_BSON_NONE, &bson_providers, NULL);
+		phongo_zval_to_bson(kms_providers, PHONGO_BSON_NONE, &bson_providers, NULL);
 		if (EG(exception)) {
 			goto cleanup;
 		}
@@ -1277,7 +1284,7 @@ static bool phongo_manager_set_auto_encryption_opts(php_phongo_manager_t* manage
 			goto cleanup;
 		}
 
-		php_phongo_zval_to_bson(schema_map, PHONGO_BSON_NONE, &bson_map, NULL);
+		phongo_zval_to_bson(schema_map, PHONGO_BSON_NONE, &bson_map, NULL);
 		if (EG(exception)) {
 			goto cleanup;
 		}
@@ -1296,7 +1303,7 @@ static bool phongo_manager_set_auto_encryption_opts(php_phongo_manager_t* manage
 			goto cleanup;
 		}
 
-		php_phongo_zval_to_bson(tls_options, PHONGO_BSON_NONE, &bson_options, NULL);
+		phongo_zval_to_bson(tls_options, PHONGO_BSON_NONE, &bson_options, NULL);
 		if (EG(exception)) {
 			goto cleanup;
 		}
@@ -1315,7 +1322,7 @@ static bool phongo_manager_set_auto_encryption_opts(php_phongo_manager_t* manage
 			goto cleanup;
 		}
 
-		php_phongo_zval_to_bson(extra_options, PHONGO_BSON_NONE, &bson_options, NULL);
+		phongo_zval_to_bson(extra_options, PHONGO_BSON_NONE, &bson_options, NULL);
 		if (EG(exception)) {
 			goto cleanup;
 		}
@@ -1337,7 +1344,7 @@ cleanup:
 	return retval;
 }
 #else  /* MONGOC_ENABLE_CLIENT_SIDE_ENCRYPTION */
-static bool phongo_manager_set_auto_encryption_opts(php_phongo_manager_t* manager, zval* driverOptions)
+static bool phongo_manager_set_auto_encryption_opts(phongo_manager_t* manager, zval* driverOptions)
 {
 	if (!driverOptions || !php_array_existsc(driverOptions, "autoEncryption")) {
 		return true;
@@ -1349,7 +1356,7 @@ static bool phongo_manager_set_auto_encryption_opts(php_phongo_manager_t* manage
 }
 #endif /* MONGOC_ENABLE_CLIENT_SIDE_ENCRYPTION */
 
-void phongo_manager_init(php_phongo_manager_t* manager, const char* uri_string, zval* options, zval* driverOptions)
+void phongo_manager_init(phongo_manager_t* manager, const char* uri_string, zval* options, zval* driverOptions)
 {
 	bson_t        bson_options = BSON_INITIALIZER;
 	mongoc_uri_t* uri          = NULL;
@@ -1357,7 +1364,7 @@ void phongo_manager_init(php_phongo_manager_t* manager, const char* uri_string, 
 	mongoc_ssl_opt_t* ssl_opt = NULL;
 #endif
 
-	if (!(manager->client_hash = php_phongo_manager_make_client_hash(uri_string, options, driverOptions, &manager->client_hash_len))) {
+	if (!(manager->client_hash = phongo_manager_make_client_hash(uri_string, options, driverOptions, &manager->client_hash_len))) {
 		/* Exception should already have been thrown and there is nothing to free */
 		return;
 	}
@@ -1368,13 +1375,13 @@ void phongo_manager_init(php_phongo_manager_t* manager, const char* uri_string, 
 		manager->use_persistent_client = true;
 	}
 
-	if (manager->use_persistent_client && (manager->client = php_phongo_find_persistent_client(manager->client_hash, manager->client_hash_len))) {
+	if (manager->use_persistent_client && (manager->client = phongo_find_persistent_client(manager->client_hash, manager->client_hash_len))) {
 		MONGOC_DEBUG("Found persistent client");
 		goto cleanup;
 	}
 
 	if (options) {
-		php_phongo_zval_to_bson(options, PHONGO_BSON_NONE, &bson_options, NULL);
+		phongo_zval_to_bson(options, PHONGO_BSON_NONE, &bson_options, NULL);
 	}
 
 	/* An exception may be thrown during BSON conversion */
@@ -1382,21 +1389,21 @@ void phongo_manager_init(php_phongo_manager_t* manager, const char* uri_string, 
 		goto cleanup;
 	}
 
-	if (!(uri = php_phongo_make_uri(uri_string))) {
+	if (!(uri = phongo_make_uri(uri_string))) {
 		/* Exception should already have been thrown */
 		goto cleanup;
 	}
 
-	if (!php_phongo_apply_options_to_uri(uri, &bson_options) ||
-		!php_phongo_apply_rc_options_to_uri(uri, &bson_options) ||
-		!php_phongo_apply_rp_options_to_uri(uri, &bson_options) ||
-		!php_phongo_apply_wc_options_to_uri(uri, &bson_options)) {
+	if (!phongo_apply_options_to_uri(uri, &bson_options) ||
+		!phongo_apply_rc_options_to_uri(uri, &bson_options) ||
+		!phongo_apply_rp_options_to_uri(uri, &bson_options) ||
+		!phongo_apply_wc_options_to_uri(uri, &bson_options)) {
 		/* Exception should already have been thrown */
 		goto cleanup;
 	}
 
 #ifdef MONGOC_ENABLE_SSL
-	ssl_opt = php_phongo_make_ssl_opt(uri, driverOptions);
+	ssl_opt = phongo_make_ssl_opt(uri, driverOptions);
 
 	/* An exception may be thrown during SSL option creation */
 	if (EG(exception)) {
@@ -1404,7 +1411,7 @@ void phongo_manager_init(php_phongo_manager_t* manager, const char* uri_string, 
 	}
 #endif
 
-	manager->client = php_phongo_make_mongo_client(uri, driverOptions);
+	manager->client = phongo_make_mongo_client(uri, driverOptions);
 
 	if (!manager->client) {
 		/* Exception should already have been thrown */
@@ -1438,7 +1445,7 @@ void phongo_manager_init(php_phongo_manager_t* manager, const char* uri_string, 
 
 	/* Register the newly created client in the appropriate registry (for either
 	 * persistent or request-scoped clients). */
-	if (!php_phongo_client_register(manager)) {
+	if (!phongo_client_register(manager)) {
 		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Failed to add Manager client to internal registry");
 		goto cleanup;
 	}
@@ -1452,12 +1459,12 @@ cleanup:
 
 #ifdef MONGOC_ENABLE_SSL
 	if (ssl_opt) {
-		php_phongo_free_ssl_opt(ssl_opt);
+		phongo_free_ssl_opt(ssl_opt);
 	}
 #endif
 }
 
-static void phongo_pclient_reset_once(php_phongo_pclient_t* pclient, int pid)
+static void phongo_pclient_reset_once(phongo_pclient_t* pclient, int pid)
 {
 	if (pclient->last_reset_by_pid != pid) {
 		mongoc_client_reset(pclient->client);
@@ -1469,13 +1476,13 @@ static void phongo_pclient_reset_once(php_phongo_pclient_t* pclient, int pid)
  * PID (based on information in the hash table of persisted libmongoc clients).
  * This ensures that we do not reset a client multiple times from the same child
  * process. */
-void php_phongo_client_reset_once(php_phongo_manager_t* manager, int pid)
+void phongo_client_reset_once(phongo_manager_t* manager, int pid)
 {
-	php_phongo_pclient_t* pclient;
+	phongo_pclient_t* pclient;
 
 	/* Reset associated key vault client */
 	if (!Z_ISUNDEF(manager->key_vault_client_manager)) {
-		php_phongo_client_reset_once(Z_MANAGER_OBJ_P(&manager->key_vault_client_manager), pid);
+		phongo_client_reset_once(Z_MANAGER_OBJ_P(&manager->key_vault_client_manager), pid);
 	}
 
 	if (manager->use_persistent_client) {
@@ -1503,10 +1510,10 @@ void php_phongo_client_reset_once(php_phongo_manager_t* manager, int pid)
 
 /* Returns whether a Manager exists in the request-scoped registry. If found and
  * the output parameter is non-NULL, the Manager's index will be assigned. */
-static bool php_phongo_manager_exists(php_phongo_manager_t* manager, zend_ulong* index_out)
+static bool phongo_manager_exists(phongo_manager_t* manager, zend_ulong* index_out)
 {
-	zend_ulong            index;
-	php_phongo_manager_t* value;
+	zend_ulong        index;
+	phongo_manager_t* value;
 
 	if (!MONGODB_G(managers) || zend_hash_num_elements(MONGODB_G(managers)) == 0) {
 		return false;
@@ -1531,13 +1538,13 @@ static bool php_phongo_manager_exists(php_phongo_manager_t* manager, zend_ulong*
 
 /* Adds a Manager to the request-scoped registry. Returns true if the Manager
  * did not exist and was successfully added; otherwise, returns false. */
-bool php_phongo_manager_register(php_phongo_manager_t* manager)
+bool phongo_manager_register(phongo_manager_t* manager)
 {
 	if (!MONGODB_G(managers)) {
 		return false;
 	}
 
-	if (php_phongo_manager_exists(manager, NULL)) {
+	if (phongo_manager_exists(manager, NULL)) {
 		return false;
 	}
 
@@ -1546,7 +1553,7 @@ bool php_phongo_manager_register(php_phongo_manager_t* manager)
 
 /* Removes a Manager from the request-scoped registry. Returns true if the
  * Manager was found and successfully removed; otherwise, false is returned. */
-bool php_phongo_manager_unregister(php_phongo_manager_t* manager)
+bool phongo_manager_unregister(phongo_manager_t* manager)
 {
 	zend_ulong index;
 
@@ -1556,14 +1563,14 @@ bool php_phongo_manager_unregister(php_phongo_manager_t* manager)
 		return false;
 	}
 
-	if (php_phongo_manager_exists(manager, &index)) {
+	if (phongo_manager_exists(manager, &index)) {
 		return zend_hash_index_del(MONGODB_G(managers), index) == SUCCESS;
 	}
 
 	return false;
 }
 
-static void php_phongo_pclient_destroy(php_phongo_pclient_t* pclient)
+static void phongo_pclient_destroy(phongo_pclient_t* pclient)
 {
 	/* Do not destroy mongoc_client_t objects created by other processes. This
 	 * ensures that we do not shutdown sockets that may still be in use by our
@@ -1587,7 +1594,7 @@ static void php_phongo_pclient_destroy(php_phongo_pclient_t* pclient)
 	pefree(pclient, pclient->is_persistent);
 }
 
-void php_phongo_pclient_destroy_ptr(zval* ptr)
+void phongo_pclient_destroy_ptr(zval* ptr)
 {
-	php_phongo_pclient_destroy(Z_PTR_P(ptr));
+	phongo_pclient_destroy(Z_PTR_P(ptr));
 }

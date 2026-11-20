@@ -13,6 +13,7 @@ echo throws(function() {
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
+Deprecated: MongoDB\Driver\ReadPreference::__construct(): The "hedge" option is deprecated as of MongoDB 8.0 and will be removed in a future release in %s
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 hedge may not be used with primary mode
 ===DONE===

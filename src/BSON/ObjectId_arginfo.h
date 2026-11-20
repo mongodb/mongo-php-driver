@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: beb5fbef79a5e5c826c086ffbf912748dd15f19b */
+ * Stub hash: 6498d9a4685323f610d5673621b43cb5362bd49d */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_BSON_ObjectId___construct, 0, 0, 0)
 	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, id, IS_STRING, 1, "null")
@@ -25,7 +25,6 @@ ZEND_END_ARG_INFO()
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_BSON_ObjectId_jsonSerialize, 0, 0, IS_MIXED, 0)
 ZEND_END_ARG_INFO()
 
-
 static ZEND_METHOD(MongoDB_BSON_ObjectId, __construct);
 static ZEND_METHOD(MongoDB_BSON_ObjectId, getTimestamp);
 static ZEND_METHOD(MongoDB_BSON_ObjectId, __toString);
@@ -33,7 +32,6 @@ static ZEND_METHOD(MongoDB_BSON_ObjectId, __set_state);
 static ZEND_METHOD(MongoDB_BSON_ObjectId, __unserialize);
 static ZEND_METHOD(MongoDB_BSON_ObjectId, __serialize);
 static ZEND_METHOD(MongoDB_BSON_ObjectId, jsonSerialize);
-
 
 static const zend_function_entry class_MongoDB_BSON_ObjectId_methods[] = {
 	ZEND_ME(MongoDB_BSON_ObjectId, __construct, arginfo_class_MongoDB_BSON_ObjectId___construct, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
@@ -51,8 +49,12 @@ static zend_class_entry *register_class_MongoDB_BSON_ObjectId(zend_class_entry *
 	zend_class_entry ce, *class_entry;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\BSON", "ObjectId", class_MongoDB_BSON_ObjectId_methods);
+#if (PHP_VERSION_ID >= 80400)
+	class_entry = zend_register_internal_class_with_flags(&ce, NULL, ZEND_ACC_FINAL);
+#else
 	class_entry = zend_register_internal_class_ex(&ce, NULL);
 	class_entry->ce_flags |= ZEND_ACC_FINAL;
+#endif
 	zend_class_implements(class_entry, 4, class_entry_MongoDB_BSON_ObjectIdInterface, class_entry_JsonSerializable, class_entry_MongoDB_BSON_Type, class_entry_Stringable);
 
 	return class_entry;

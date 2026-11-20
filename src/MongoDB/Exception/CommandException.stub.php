@@ -2,15 +2,14 @@
 
 /**
  * @generate-class-entries static
- * @generate-function-entries static
+ * @generate-legacy-arginfo 80100
  */
 
 namespace MongoDB\Driver\Exception;
 
 class CommandException extends ServerException
 {
-    /** @var object */
-    protected $resultDocument;
+    public readonly object $resultDocument;
 
     final public function getResultDocument(): object {}
 }

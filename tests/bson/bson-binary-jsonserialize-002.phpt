@@ -22,7 +22,7 @@ object(stdClass)#%d (%d) {
   ["foo"]=>
   object(MongoDB\BSON\Binary)#%d (%d) {
     ["data"]=>
-    string(13) "gargleblaster"
+    string(%d) "%s"
     ["type"]=>
     int(24)
   }

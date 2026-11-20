@@ -20,7 +20,7 @@ echo throws(function() {
 <?php exit(0); ?>
 --EXPECT--
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Failed to parse MongoDB URI: Unsupported value for URI option.
+Failed to parse MongoDB URI: Unsupported value for "safe".
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Expected boolean for "safe" URI option, string given
 ===DONE===

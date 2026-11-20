@@ -30,49 +30,87 @@ foreach ($tests as $test) {
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-object(MongoDB\Driver\WriteConcern)#%d (%d) {
+object(MongoDB\Driver\WriteConcern)#%d (3) {
   ["w"]=>
   string(8) "majority"
-}
-object(MongoDB\Driver\WriteConcern)#%d (%d) {
-}
-object(MongoDB\Driver\WriteConcern)#%d (%d) {
-  ["w"]=>
-  int(-1)
-}
-object(MongoDB\Driver\WriteConcern)#%d (%d) {
-  ["w"]=>
+  ["j"]=>
+  NULL
+  ["wtimeout"]=>
   int(0)
 }
-object(MongoDB\Driver\WriteConcern)#%d (%d) {
+object(MongoDB\Driver\WriteConcern)#%d (3) {
+  ["w"]=>
+  NULL
+  ["j"]=>
+  NULL
+  ["wtimeout"]=>
+  int(0)
+}
+object(MongoDB\Driver\WriteConcern)#%d (3) {
+  ["w"]=>
+  int(-1)
+  ["j"]=>
+  NULL
+  ["wtimeout"]=>
+  int(0)
+}
+object(MongoDB\Driver\WriteConcern)#%d (3) {
+  ["w"]=>
+  int(0)
+  ["j"]=>
+  NULL
+  ["wtimeout"]=>
+  int(0)
+}
+object(MongoDB\Driver\WriteConcern)#%d (3) {
   ["w"]=>
   int(1)
+  ["j"]=>
+  NULL
+  ["wtimeout"]=>
+  int(0)
 }
-object(MongoDB\Driver\WriteConcern)#%d (%d) {
+object(MongoDB\Driver\WriteConcern)#%d (3) {
   ["w"]=>
   string(8) "majority"
+  ["j"]=>
+  NULL
+  ["wtimeout"]=>
+  int(0)
 }
-object(MongoDB\Driver\WriteConcern)#%d (%d) {
+object(MongoDB\Driver\WriteConcern)#%d (3) {
   ["w"]=>
   string(3) "tag"
+  ["j"]=>
+  NULL
+  ["wtimeout"]=>
+  int(0)
 }
-object(MongoDB\Driver\WriteConcern)#%d (%d) {
+object(MongoDB\Driver\WriteConcern)#%d (3) {
   ["w"]=>
   int(1)
+  ["j"]=>
+  NULL
+  ["wtimeout"]=>
+  int(0)
 }
-object(MongoDB\Driver\WriteConcern)#%d (%d) {
+object(MongoDB\Driver\WriteConcern)#%d (3) {
   ["w"]=>
   int(1)
   ["j"]=>
   bool(false)
+  ["wtimeout"]=>
+  int(0)
 }
-object(MongoDB\Driver\WriteConcern)#%d (%d) {
+object(MongoDB\Driver\WriteConcern)#%d (3) {
   ["w"]=>
   int(1)
+  ["j"]=>
+  NULL
   ["wtimeout"]=>
   int(1000)
 }
-object(MongoDB\Driver\WriteConcern)#%d (%d) {
+object(MongoDB\Driver\WriteConcern)#%d (3) {
   ["w"]=>
   int(1)
   ["j"]=>
@@ -80,18 +118,28 @@ object(MongoDB\Driver\WriteConcern)#%d (%d) {
   ["wtimeout"]=>
   int(1000)
 }
-object(MongoDB\Driver\WriteConcern)#%d (%d) {
+object(MongoDB\Driver\WriteConcern)#%d (3) {
+  ["w"]=>
+  NULL
   ["j"]=>
   bool(true)
+  ["wtimeout"]=>
+  int(0)
 }
-object(MongoDB\Driver\WriteConcern)#%d (%d) {
+object(MongoDB\Driver\WriteConcern)#%d (3) {
+  ["w"]=>
+  NULL
+  ["j"]=>
+  NULL
   ["wtimeout"]=>
   int(1000)
 }
-object(MongoDB\Driver\WriteConcern)#%d (%d) {
+object(MongoDB\Driver\WriteConcern)#%d (3) {
   ["w"]=>
   int(2)
+  ["j"]=>
+  NULL
   ["wtimeout"]=>
-  %rint\(2147483648\)|string\(10\) "2147483648"%r
+  %rint\(2147483648\)|int\(2147483647\)%r
 }
 ===DONE===

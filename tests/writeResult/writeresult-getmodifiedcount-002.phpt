@@ -23,10 +23,13 @@ echo throws(function() use ($result) {
     $result->getModifiedCount();
 }, MongoDB\Driver\Exception\LogicException::class), "\n";
 
+var_dump($result->modifiedCount);
+
 ?>
 ===DONE===
 <?php exit(0); ?>
 --EXPECT--
 OK: Got MongoDB\Driver\Exception\LogicException
 MongoDB\Driver\WriteResult::getModifiedCount() should not be called for an unacknowledged write result
+NULL
 ===DONE===

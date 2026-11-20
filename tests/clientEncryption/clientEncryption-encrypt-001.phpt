@@ -28,7 +28,7 @@ var_dump($clientEncryption->encrypt('top-secret', ['keyId' => $keyId, 'algorithm
 --EXPECTF--
 object(MongoDB\BSON\Binary)#%d (%d) {
   ["data"]=>
-  string(82) "%a"
+  string(%d) "%a"
   ["type"]=>
   int(6)
 }

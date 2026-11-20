@@ -1,0 +1,17 @@
+{
+	auto_https off
+}
+
+:80 {
+	root * /app/public
+	php_server {
+		worker {
+			file /app/public/worker.php
+			# A single worker, so a different instance identifier can only come
+			# from a restart of that worker.
+			num 1
+			# All requests go to the worker, whatever the requested path is.
+			match *
+		}
+	}
+}

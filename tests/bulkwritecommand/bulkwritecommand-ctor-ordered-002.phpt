@@ -23,6 +23,7 @@ try {
     printf("%s(%d): %s\n", get_class($e), $e->getCode(), $e->getMessage());
     var_dump($e->getPartialResult());
     var_dump($e->getWriteErrors());
+    var_dump($e->getWriteConcernErrors());
 }
 
 ?>
@@ -63,5 +64,7 @@ array(1) {
     object(stdClass)#%d (%d) {
     }
   }
+}
+array(0) {
 }
 ===DONE===

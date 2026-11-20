@@ -16,12 +16,12 @@
 
 #include <php.h>
 
-#include "php_phongo.h"
+#include "phongo.h"
 #include "Subscriber_arginfo.h"
 
-zend_class_entry* php_phongo_subscriber_ce;
+zend_class_entry* phongo_subscriber_ce;
 
-void php_phongo_subscriber_init_ce(INIT_FUNC_ARGS)
+void phongo_subscriber_init_ce(INIT_FUNC_ARGS)
 {
-	php_phongo_subscriber_ce = register_class_MongoDB_Driver_Monitoring_Subscriber();
+	phongo_subscriber_ce = register_class_MongoDB_Driver_Monitoring_Subscriber();
 }

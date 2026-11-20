@@ -24,16 +24,19 @@ try {
 <?php exit(0); ?>
 --EXPECTF--
 object(MongoDB\Driver\WriteResult)#%d (%d) {
-  ["nInserted"]=>
+  ["insertedCount"]=>
   int(1)
-  ["nMatched"]=>
+  ["matchedCount"]=>
   int(0)
-  ["nModified"]=>
+  ["modifiedCount"]=>
   int(0)
-  ["nRemoved"]=>
+  ["deletedCount"]=>
   int(0)
-  ["nUpserted"]=>
+  ["upsertedCount"]=>
   int(0)
+  ["server"]=>
+  object(MongoDB\Driver\Server)#%d (%d) {%A
+  }
   ["upsertedIds"]=>
   array(0) {
   }
@@ -54,7 +57,13 @@ object(MongoDB\Driver\WriteResult)#%d (%d) {
   ["writeConcernError"]=>
   NULL
   ["writeConcern"]=>
-  object(MongoDB\Driver\WriteConcern)#%d (%d) {
+  object(MongoDB\Driver\WriteConcern)#%d (3) {
+    ["w"]=>
+    NULL
+    ["j"]=>
+    NULL
+    ["wtimeout"]=>
+    int(0)
   }
   ["errorReplies"]=>
   array(0) {

@@ -29,18 +29,42 @@ foreach ($tests as $i => $test) {
 object(MongoDB\Driver\ReadPreference)#%d (%d) {
   ["mode"]=>
   string(7) "primary"
+  ["tags"]=>
+  NULL
+  ["maxStalenessSeconds"]=>
+  int(-1)
+  ["hedge"]=>
+  NULL
 }
 object(MongoDB\Driver\ReadPreference)#%d (%d) {
   ["mode"]=>
   string(9) "secondary"
+  ["tags"]=>
+  NULL
+  ["maxStalenessSeconds"]=>
+  int(-1)
+  ["hedge"]=>
+  NULL
 }
 object(MongoDB\Driver\ReadPreference)#%d (%d) {
   ["mode"]=>
   string(16) "primaryPreferred"
+  ["tags"]=>
+  NULL
+  ["maxStalenessSeconds"]=>
+  int(-1)
+  ["hedge"]=>
+  NULL
 }
 object(MongoDB\Driver\ReadPreference)#%d (%d) {
   ["mode"]=>
   string(18) "secondaryPreferred"
+  ["tags"]=>
+  NULL
+  ["maxStalenessSeconds"]=>
+  int(-1)
+  ["hedge"]=>
+  NULL
 }
 object(MongoDB\Driver\ReadPreference)#%d (%d) {
   ["mode"]=>
@@ -58,6 +82,10 @@ object(MongoDB\Driver\ReadPreference)#%d (%d) {
     object(stdClass)#%d (%d) {
     }
   }
+  ["maxStalenessSeconds"]=>
+  int(-1)
+  ["hedge"]=>
+  NULL
 }
 object(MongoDB\Driver\ReadPreference)#%d (%d) {
   ["mode"]=>
@@ -75,6 +103,10 @@ object(MongoDB\Driver\ReadPreference)#%d (%d) {
     object(stdClass)#%d (%d) {
     }
   }
+  ["maxStalenessSeconds"]=>
+  int(-1)
+  ["hedge"]=>
+  NULL
 }
 object(MongoDB\Driver\ReadPreference)#%d (%d) {
   ["mode"]=>
@@ -87,5 +119,9 @@ object(MongoDB\Driver\ReadPreference)#%d (%d) {
       string(2) "ca"
     }
   }
+  ["maxStalenessSeconds"]=>
+  int(-1)
+  ["hedge"]=>
+  NULL
 }
 ===DONE===

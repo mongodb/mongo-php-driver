@@ -94,7 +94,7 @@ object(Book)#%d (%d) {
   ["__pclass"]=>
   object(MongoDB\BSON\Binary)#%d (%d) {
     ["data"]=>
-    string(4) "Book"
+    string(8) "Qm9vaw=="
     ["type"]=>
     int(%d)
   }
@@ -107,7 +107,7 @@ object(Book)#%d (%d) {
       ["__pclass"]=>
       object(MongoDB\BSON\Binary)#%d (%d) {
         ["data"]=>
-        string(4) "Page"
+        string(8) "UGFnZQ=="
         ["type"]=>
         int(%d)
       }
@@ -119,7 +119,7 @@ object(Book)#%d (%d) {
       ["__pclass"]=>
       object(MongoDB\BSON\Binary)#%d (%d) {
         ["data"]=>
-        string(4) "Page"
+        string(8) "UGFnZQ=="
         ["type"]=>
         int(%d)
       }

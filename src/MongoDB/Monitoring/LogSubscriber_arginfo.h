@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 4920ad21bd26ea586d4322d49bf44c9c3530e494 */
+ * Stub hash: 0a17415d9367b2a9db97fdfb381375c07db7523b */
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_Driver_Monitoring_LogSubscriber_log, 0, 3, IS_VOID, 0)
 	ZEND_ARG_TYPE_INFO(0, level, IS_LONG, 0)
@@ -8,10 +8,12 @@ ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_Driver_Monitoring_
 ZEND_END_ARG_INFO()
 
 
-
-
 static const zend_function_entry class_MongoDB_Driver_Monitoring_LogSubscriber_methods[] = {
-	ZEND_ABSTRACT_ME_WITH_FLAGS(MongoDB_Driver_Monitoring_LogSubscriber, log, arginfo_class_MongoDB_Driver_Monitoring_LogSubscriber_log, ZEND_ACC_PUBLIC|ZEND_ACC_ABSTRACT)
+#if (PHP_VERSION_ID >= 80400)
+	ZEND_RAW_FENTRY("log", NULL, arginfo_class_MongoDB_Driver_Monitoring_LogSubscriber_log, ZEND_ACC_PUBLIC|ZEND_ACC_ABSTRACT, NULL, NULL)
+#else
+	ZEND_RAW_FENTRY("log", NULL, arginfo_class_MongoDB_Driver_Monitoring_LogSubscriber_log, ZEND_ACC_PUBLIC|ZEND_ACC_ABSTRACT)
+#endif
 	ZEND_FE_END
 };
 

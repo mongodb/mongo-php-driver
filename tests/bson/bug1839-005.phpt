@@ -6,9 +6,9 @@ require_once __DIR__ . "/../utils/basic.inc";
 
 function createTypemap()
 {
-    // Assemble the string so as to not have an interned string
-    $rootValue = chr(ord('a')) . 'rray';
-    $documentValue = chr(ord('a')) . 'rray';
+    // Use json_decode to produce a non-interned string that opcache cannot optimise
+    $rootValue = json_decode('"array"');
+    $documentValue = json_decode('"array"');
 
     // Use a reference to this non-interned string in the type map
     $typemap = ['root' => &$rootValue, 'document' => &$documentValue];

@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 2cd175f4e81e332cd83adb867d51db77907ee8c7 */
+ * Stub hash: cb65bdadb0f057bdc4e88fd8e1e60c3ef52a2b69 */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_Driver_TopologyDescription___construct, 0, 0, 0)
 ZEND_END_ARG_INFO()
@@ -17,13 +17,11 @@ ZEND_END_ARG_INFO()
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_Driver_TopologyDescription_hasWritableServer, 0, 0, _IS_BOOL, 0)
 ZEND_END_ARG_INFO()
 
-
 static ZEND_METHOD(MongoDB_Driver_TopologyDescription, __construct);
 static ZEND_METHOD(MongoDB_Driver_TopologyDescription, getServers);
 static ZEND_METHOD(MongoDB_Driver_TopologyDescription, getType);
 static ZEND_METHOD(MongoDB_Driver_TopologyDescription, hasReadableServer);
 static ZEND_METHOD(MongoDB_Driver_TopologyDescription, hasWritableServer);
-
 
 static const zend_function_entry class_MongoDB_Driver_TopologyDescription_methods[] = {
 	ZEND_ME(MongoDB_Driver_TopologyDescription, __construct, arginfo_class_MongoDB_Driver_TopologyDescription___construct, ZEND_ACC_PRIVATE|ZEND_ACC_FINAL)
@@ -39,8 +37,12 @@ static zend_class_entry *register_class_MongoDB_Driver_TopologyDescription(void)
 	zend_class_entry ce, *class_entry;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver", "TopologyDescription", class_MongoDB_Driver_TopologyDescription_methods);
+#if (PHP_VERSION_ID >= 80400)
+	class_entry = zend_register_internal_class_with_flags(&ce, NULL, ZEND_ACC_FINAL|ZEND_ACC_NOT_SERIALIZABLE);
+#else
 	class_entry = zend_register_internal_class_ex(&ce, NULL);
 	class_entry->ce_flags |= ZEND_ACC_FINAL|ZEND_ACC_NOT_SERIALIZABLE;
+#endif
 
 	zval const_TYPE_UNKNOWN_value;
 	zend_string *const_TYPE_UNKNOWN_value_str = zend_string_init(PHONGO_TOPOLOGY_UNKNOWN, strlen(PHONGO_TOPOLOGY_UNKNOWN), 1);

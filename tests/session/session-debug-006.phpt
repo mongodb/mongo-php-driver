@@ -32,7 +32,7 @@ object(MongoDB\Driver\Session)#%d (%d) {
     ["id"]=>
     object(MongoDB\BSON\Binary)#%d (%d) {
       ["data"]=>
-      string(16) "%a"
+      string(%d) "%a"
       ["type"]=>
       int(4)
     }
@@ -66,11 +66,21 @@ object(MongoDB\Driver\Session)#%d (%d) {
     object(MongoDB\Driver\ReadPreference)#%d (%d) {
       ["mode"]=>
       string(16) "primaryPreferred"
+      ["tags"]=>
+      NULL
+      ["maxStalenessSeconds"]=>
+      int(-1)
+      ["hedge"]=>
+      NULL
     }
     ["writeConcern"]=>
-    object(MongoDB\Driver\WriteConcern)#%d (%d) {
+    object(MongoDB\Driver\WriteConcern)#%d (3) {
       ["w"]=>
       string(8) "majority"
+      ["j"]=>
+      NULL
+      ["wtimeout"]=>
+      int(0)
     }
   }
 }

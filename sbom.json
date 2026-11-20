@@ -1,48 +1,48 @@
 {
   "components": [
     {
-      "bom-ref": "pkg:github/mongodb/libmongocrypt@1.12.0",
+      "bom-ref": "pkg:github/mongodb/libmongocrypt@1.21.1",
       "externalReferences": [
         {
           "type": "distribution",
-          "url": "https://github.com/mongodb/libmongocrypt/archive/refs/tags/1.12.0.tar.gz"
+          "url": "https://github.com/mongodb/libmongocrypt/archive/1.21.1.tar.gz"
         },
         {
           "type": "website",
-          "url": "https://github.com/mongodb/libmongocrypt/tree/1.12.0"
+          "url": "https://github.com/mongodb/libmongocrypt/tree/1.21.1"
         }
       ],
       "group": "mongodb",
       "name": "libmongocrypt",
-      "purl": "pkg:github/mongodb/libmongocrypt@1.12.0",
+      "purl": "pkg:github/mongodb/libmongocrypt@1.21.1",
       "type": "library",
-      "version": "1.12.0"
+      "version": "1.21.1"
     },
     {
-      "bom-ref": "pkg:github/mongodb/mongo-c-driver@1.30.16",
+      "bom-ref": "pkg:github/mongodb/mongo-c-driver@2.5.9",
       "externalReferences": [
         {
           "type": "distribution",
-          "url": "https://github.com/mongodb/mongo-c-driver/archive/refs/tags/1.30.16.tar.gz"
+          "url": "https://github.com/mongodb/mongo-c-driver/archive/2.5.9.tar.gz"
         },
         {
           "type": "website",
-          "url": "https://github.com/mongodb/mongo-c-driver/tree/1.30.16"
+          "url": "https://github.com/mongodb/mongo-c-driver/tree/2.5.9"
         }
       ],
       "group": "mongodb",
       "name": "mongo-c-driver",
-      "purl": "pkg:github/mongodb/mongo-c-driver@1.30.16",
+      "purl": "pkg:github/mongodb/mongo-c-driver@2.5.9",
       "type": "library",
-      "version": "1.30.16"
+      "version": "2.5.9"
     }
   ],
   "dependencies": [
     {
-      "ref": "pkg:github/mongodb/libmongocrypt@1.12.0"
+      "ref": "pkg:github/mongodb/libmongocrypt@1.21.1"
     },
     {
-      "ref": "pkg:github/mongodb/mongo-c-driver@1.30.16"
+      "ref": "pkg:github/mongodb/mongo-c-driver@2.5.9"
     }
   ],
   "metadata": {
@@ -89,8 +89,8 @@
       }
     ]
   },
-  "serialNumber": "urn:uuid:6d516be8-41dc-4aa1-8b08-5eab17dca46e",
-  "version": 20,
+  "serialNumber": "urn:uuid:383c46ed-0775-4c59-a063-8f33d8bfc820",
+  "version": 33,
   "$schema": "http://cyclonedx.org/schema/bom-1.5.schema.json",
   "bomFormat": "CycloneDX",
   "specVersion": "1.5",

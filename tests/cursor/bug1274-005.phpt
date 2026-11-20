@@ -62,7 +62,7 @@ if ($childPid === 0) {
     /* This test asserts that mongoc_client_reset() does not prevent child
      * processes from actively interacting with a parent's cursor. Resetting the
      * client only prevents a child from inadvertently closing a parent cursor
-     * via its php_phongo_cursor_free_object handler.
+     * via its phongo_cursor_free_object handler.
      *
      * Note: this test excludes SSL environments because we cannot interact with
      * the socket in a child without affecting the parent (and vice versa) due

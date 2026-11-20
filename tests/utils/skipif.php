@@ -375,8 +375,8 @@ function skip_if_not_libmongoc_crypto(array $libs = [])
  * Skips the test if libmongoc does not support SSL.
  *
  * If one or more libaries are provided, additionally check that the reported
- * library is in that array. Possible values are "OpenSSL", "LibreSSL",
- * "Secure Transport", and "Secure Channel".
+ * library is in that array. Possible values are "OpenSSL", "Secure Transport",
+ * and "Secure Channel".
  *
  * @param array $libs Optional list of SSL libraries to require
  */
@@ -459,6 +459,10 @@ function skip_if_crypt_shared()
 
 function skip_if_no_crypt_shared()
 {
+    if (PHP_INT_SIZE !== 8) {
+        exit('skip crypt_shared is only available on 64-bit systems');
+    }
+
     // Intentionally consider empty values for CRYPT_SHARED_LIB_PATH
     if ( ! getenv('CRYPT_SHARED_LIB_PATH')) {
         exit('skip crypt_shared is not available');
@@ -466,21 +470,30 @@ function skip_if_no_crypt_shared()
 }
 
 /**
- * Returns the memory the process can plausibly allocate, in bytes, or null when
- * it cannot be determined. Only Linux is handled: the platforms these tests run
- * on outside CI expose no cheap equivalent, so the tests skip there.
+ * Returns the machine's total physical memory in bytes, or null if it cannot be
+ * determined on this platform.
  */
-function get_available_memory()
+function get_total_physical_memory()
 {
-    if (is_readable('/proc/meminfo') && preg_match('/^MemAvailable:\s+(\d+) kB$/m', file_get_contents('/proc/meminfo'), $matches)) {
-        return (int) $matches[1] * 1024;
+    if (is_readable('/proc/meminfo')) {
+        if (preg_match('/^MemTotal:\s+(\d+) kB$/m', file_get_contents('/proc/meminfo'), $matches)) {
+            return (int) $matches[1] * 1024;
+        }
+
+        return null;
+    }
+
+    if (function_exists('shell_exec') && (PHP_OS_FAMILY === 'Darwin' || PHP_OS_FAMILY === 'BSD')) {
+        $memsize = shell_exec('sysctl -n hw.memsize 2>/dev/null');
+
+        return is_string($memsize) && ctype_digit(trim($memsize)) ? (int) trim($memsize) : null;
     }
 
     return null;
 }
 
 /**
- * Skips the test unless the process can plausibly allocate the given number of
+ * Skips the test unless the machine can plausibly allocate the given number of
  * bytes. Tests exercising the 2 GiB BSON length limit need multi-gigabyte
  * strings, which many CI hosts cannot supply.
  *
@@ -492,15 +505,15 @@ function skip_if_not_enough_memory($requiredBytes)
         exit('skip Allocating more than 2 GiB requires a 64-bit platform');
     }
 
-    $availableBytes = get_available_memory();
+    $totalBytes = get_total_physical_memory();
 
-    if ($availableBytes === null) {
-        exit('skip Cannot determine available memory on this platform');
+    if ($totalBytes === null) {
+        exit('skip Cannot determine total physical memory on this platform');
     }
 
     /* Require headroom beyond the payload itself, since the driver copies the
      * string while encoding and the process needs room for everything else. */
-    if ($availableBytes < $requiredBytes * 2) {
-        exit(sprintf('skip Requires %d bytes of available memory, %d available', $requiredBytes * 2, $availableBytes));
+    if ($totalBytes < $requiredBytes * 2) {
+        exit(sprintf('skip Requires %d bytes of physical memory, %d available', $requiredBytes * 2, $totalBytes));
     }
 }

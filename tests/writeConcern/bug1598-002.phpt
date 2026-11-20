@@ -2,7 +2,7 @@
 PHPC-1598: WriteConcern get_gc should delegate to zend_std_get_properties
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
-<?php skip_if_php_version('>=', '8.1.99'); ?>
+<?php skip_if_php_version('>=', '8.2'); ?>
 --FILE--
 <?php
 
@@ -27,5 +27,5 @@ printf("Collected cycles: %d\n", gc_collect_cycles());
 <?php exit(0); ?>
 --EXPECT--
 Collected cycles: 0
-Collected cycles: 2
+Collected cycles: 3
 ===DONE===

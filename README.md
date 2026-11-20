@@ -24,10 +24,42 @@ languages.
 
 ## Installation
 
-To build and install the driver:
+### With pie
 
-    $ pecl install mongodb
-    $ echo "extension=mongodb.so" >> `php --ini | grep "Loaded Configuration" | sed -e "s|.*:\s*||"`
+To install this extension, you need [pie](https://github.com/php/pie) installed on your system. `pie` is a modern tool for managing PHP extensions.
+
+Install the [`mongodb/mongodb-extension`](https://packagist.org/packages/mongodb/mongodb-extension) package from Packagist using the following command:
+
+```shell
+pie install mongodb/mongodb-extension
+```
+
+This will automatically download, build, and enable the MongoDB extension for your PHP installation.
+
+Add a version constraint after the extension name to restrict can be installed:
+
+```shell
+pie install mongodb/mongodb-extension:^2.1.0
+```
+
+The constraint `^2.1.0` will install the latest version `>= 2.1.0 < 3.0.0-dev`.
+
+
+For more details on using `pie`, see the [pie documentation](https://github.com/php/pie).
+
+### with pecl
+
+> [!NOTE]
+> Using pecl to install extensions is deprecated.
+
+To build and install the extension:
+
+```shell
+pecl install mongodb
+echo "extension=mongodb.so" >> `php --ini | grep "Loaded Configuration" | sed -e "s|.*:\s*||"`
+```
+
+The MongoDB PHP Driver follows [semantic versioning](https://semver.org/) for its releases.
 
 Additional installation instructions may be found in the
 [PHP.net documentation](https://php.net/manual/en/mongodb.installation.php).
@@ -39,6 +71,9 @@ distributed as the
 [Composer](https://getcomposer.org).
 
 ## Release Integrity
+
+> [!NOTE]
+> Integrity validation is not yet supported when installing with `pie`. If you require signature verification, use the manual or PECL installation methods described below.
 
 Releases are created automatically and signed using the 
 [PHP team's GPG key](https://pgp.mongodb.com/php-driver.asc). This applies to
