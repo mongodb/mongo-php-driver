@@ -22,7 +22,7 @@ requests containing changes from the release branch have been merged. Handling
 the merge conflicts resulting from the version updates will be much more
 difficult if other changes need merging.
 
-## Transition JIRA issues and version
+## Transition Jira issues and version
 
 All issues associated with the release version should be in the "Closed" state
 and have a resolution of "Fixed". Issues with other resolutions (e.g.
@@ -42,9 +42,7 @@ Releases are done automatically through a GitHub Action. Visit the corresponding
 [Release New Version](https://github.com/mongodb/mongo-php-driver/actions/workflows/release.yml)
 workflow page to trigger a new build. Select the correct branch (e.g. `v1.18`)
 and trigger a new run using the "Run workflow" button. In the following prompt,
-enter the version number and the corresponding JIRA version ID for the release.
-This version ID can be obtained from a link in the "Version" column on the
-[PHPC releases page](https://jira.mongodb.org/projects/PHPC?selectedItem=com.atlassian.jira.jira-projects-plugin%3Arelease-page&status=unreleased).
+enter the version number for the release.
 
 The automation will create and push the necessary commits and tag, create a
 draft release, trigger the packaging builds for the newly created tag, and
