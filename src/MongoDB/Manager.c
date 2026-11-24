@@ -20,6 +20,7 @@
 #include <php.h>
 #include <ext/standard/file.h>
 #include <Zend/zend_interfaces.h>
+#include <Zend/zend_smart_str.h>
 
 #include "php_array_api.h"
 
@@ -93,6 +94,84 @@ static void phongo_manager_prep_authmechanismproperties(zval* properties)
 	}
 }
 
+/* Prepare the "compressors" URI option for BSON encoding.
+ *
+ * The option may be a string (i.e. a comma-separated list of compressor names)
+ * or a list of strings, which will be joined into a single string. */
+static void phongo_manager_prep_compressors(zval* compressors)
+{
+	HashTable* ht_data;
+	smart_str  joined = { 0 };
+
+	ZVAL_DEREF(compressors);
+
+	if (Z_TYPE_P(compressors) == IS_STRING) {
+		if (memchr(Z_STRVAL_P(compressors), '\0', Z_STRLEN_P(compressors))) {
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "\"compressors\" URI option cannot contain null bytes");
+		}
+
+		return;
+	}
+
+	if (Z_TYPE_P(compressors) != IS_ARRAY) {
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected string or array of strings for \"compressors\" URI option, %s given", zend_zval_type_name(compressors));
+
+		return;
+	}
+
+	ht_data = HASH_OF(compressors);
+
+	if (!zend_array_is_list(ht_data)) {
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"compressors\" URI option to be a list");
+
+		return;
+	}
+
+	{
+		zend_ulong num_key = 0;
+		zval*      compressor;
+
+		ZEND_HASH_FOREACH_NUM_KEY_VAL(ht_data, num_key, compressor)
+		{
+			ZVAL_DEREF(compressor);
+
+			if (Z_TYPE_P(compressor) != IS_STRING) {
+				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected string for element %lu of \"compressors\" URI option, %s given", num_key, zend_zval_type_name(compressor));
+
+				goto cleanup;
+			}
+
+			if (memchr(Z_STRVAL_P(compressor), '\0', Z_STRLEN_P(compressor))) {
+				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "\"compressors\" URI option cannot contain null bytes");
+
+				goto cleanup;
+			}
+
+			if (memchr(Z_STRVAL_P(compressor), ',', Z_STRLEN_P(compressor))) {
+				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Compressor names cannot contain commas");
+
+				goto cleanup;
+			}
+
+			if (smart_str_get_len(&joined) > 0) {
+				smart_str_appendc(&joined, ',');
+			}
+
+			smart_str_append(&joined, Z_STR_P(compressor));
+		}
+		ZEND_HASH_FOREACH_END();
+	}
+
+	smart_str_0(&joined);
+	zval_ptr_dtor(compressors);
+	ZVAL_STR(compressors, joined.s ? joined.s : ZSTR_EMPTY_ALLOC());
+
+	return;
+
+cleanup:
+	smart_str_free(&joined);
+}
+
 /* Prepare URI options for BSON encoding.
  *
  * Read preference tag sets must be an array of documents. In order to ensure
@@ -127,16 +206,20 @@ static void phongo_manager_prep_uri_options(zval* options)
 			}
 
 			if (!strcasecmp(ZSTR_VAL(string_key), MONGOC_URI_READPREFERENCETAGS)) {
-				ZVAL_DEREF(option);
-				SEPARATE_ZVAL_NOREF(option);
+				SEPARATE_ZVAL(option);
 				phongo_read_preference_prep_tagsets(option);
 				continue;
 			}
 
 			if (!strcasecmp(ZSTR_VAL(string_key), MONGOC_URI_AUTHMECHANISMPROPERTIES)) {
-				ZVAL_DEREF(option);
-				SEPARATE_ZVAL_NOREF(option);
+				SEPARATE_ZVAL(option);
 				phongo_manager_prep_authmechanismproperties(option);
+				continue;
+			}
+
+			if (!strcasecmp(ZSTR_VAL(string_key), MONGOC_URI_COMPRESSORS)) {
+				SEPARATE_ZVAL(option);
+				phongo_manager_prep_compressors(option);
 				continue;
 			}
 		}
@@ -217,6 +300,9 @@ static PHP_METHOD(MongoDB_Driver_Manager, __construct)
 
 	if (options) {
 		phongo_manager_prep_uri_options(options);
+		if (EG(exception)) {
+			return;
+		}
 	}
 
 	phongo_manager_init(intern, uri_string ? uri_string : PHONGO_MANAGER_URI_DEFAULT, options, driverOptions);
