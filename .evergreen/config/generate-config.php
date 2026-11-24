@@ -3,6 +3,7 @@
 
 // Supported PHP versions. Add new versions to the beginning of the list
 $phpVersions = [
+    '8.6',
     '8.5',
     '8.4',
     '8.3',
