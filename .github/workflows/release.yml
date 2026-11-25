@@ -60,7 +60,7 @@ jobs:
         run: echo '🎬 Release process for version ${{ inputs.version }} started by @${{ github.triggering_actor }}' >> $GITHUB_STEP_SUMMARY
 
       - name: "Generate token and checkout repository"
-        uses: mongodb-labs/drivers-github-tools/secure-checkout@99b1cbd729bc83bf7fc74e1b2a97fffad3d65d7b  # v3.1.1
+        uses: mongodb-labs/drivers-github-tools/secure-checkout@93fbe45aa64cf4d57ea3198423eb0e46e8cd402d  # v3.1.2
         with:
           app_id: ${{ vars.APP_ID }}
           private_key: ${{ secrets.APP_PRIVATE_KEY }}
@@ -70,7 +70,7 @@ jobs:
           fetch-depth: 0
 
       - name: "Set up drivers-github-tools"
-        uses: mongodb-labs/drivers-github-tools/setup@99b1cbd729bc83bf7fc74e1b2a97fffad3d65d7b  # v3.1.1
+        uses: mongodb-labs/drivers-github-tools/setup@93fbe45aa64cf4d57ea3198423eb0e46e8cd402d  # v3.1.2
         with:
           aws_role_arn: ${{ secrets.AWS_ROLE_ARN }}
           aws_region_name: ${{ vars.AWS_REGION_NAME }}
@@ -82,7 +82,7 @@ jobs:
           php-version: "${{ matrix.php-version }}"
 
       - name: "Create package commit"
-        uses: mongodb-labs/drivers-github-tools/bump-version@99b1cbd729bc83bf7fc74e1b2a97fffad3d65d7b  # v3.1.1
+        uses: mongodb-labs/drivers-github-tools/bump-version@93fbe45aa64cf4d57ea3198423eb0e46e8cd402d  # v3.1.2
         with:
           version: ${{ inputs.version }}
           # Note: this script will fail and abort if the requested version can't be released
@@ -92,7 +92,7 @@ jobs:
           push_commit: false
 
       - name: "Create release tag"
-        uses: mongodb-labs/drivers-github-tools/tag-version@99b1cbd729bc83bf7fc74e1b2a97fffad3d65d7b  # v3.1.1
+        uses: mongodb-labs/drivers-github-tools/tag-version@93fbe45aa64cf4d57ea3198423eb0e46e8cd402d  # v3.1.2
         with:
           version: ${{ inputs.version }}
           tag_message_template: 'Release ${VERSION}'
@@ -100,7 +100,7 @@ jobs:
           push_tag: false
 
       - name: "Bump to next development release and commit"
-        uses: mongodb-labs/drivers-github-tools/bump-version@99b1cbd729bc83bf7fc74e1b2a97fffad3d65d7b  # v3.1.1
+        uses: mongodb-labs/drivers-github-tools/bump-version@93fbe45aa64cf4d57ea3198423eb0e46e8cd402d  # v3.1.2
         with:
           version: ${{ inputs.version }}
           version_bump_script: "./bin/update-release-version.php to-next-dev"
