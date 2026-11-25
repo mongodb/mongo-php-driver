@@ -190,7 +190,7 @@ jobs:
       # Note: omit the patch version so apt prefix-matches any 1.x.y patch release
       LIBMONGOCRYPT_VERSION: "1.21"
       # Note: include the patch version when referring to a libmongoc release tarball
-      LIBMONGOC_VERSION: "2.5.9"
+      LIBMONGOC_VERSION: "2.5.10"
       SERVER_VERSION: "8.0"
 
     steps:
