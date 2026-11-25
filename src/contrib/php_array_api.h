@@ -347,12 +347,17 @@ char *php_array_zval_to_string(zval *z, int *plen, zend_bool *pfree) {
 			return Z_STRVAL_P(z);
 		default:
 		{
-			zval c = *z;
-			zval_copy_ctor(&c);
-			convert_to_string(&c);
-			*pfree = ! IS_INTERNED(Z_STR(c));
-			*plen = Z_STRLEN(c);
-			return Z_STRVAL(c);
+			/* Return a copy rather than ZSTR_VAL() of the converted string,
+			 * which is an interior pointer into the zend_string allocation
+			 * and cannot be efree()'d by the caller. */
+			zend_string *converted = zval_get_string(z);
+			char *value = estrndup(ZSTR_VAL(converted), ZSTR_LEN(converted));
+
+			*pfree = 1;
+			*plen = ZSTR_LEN(converted);
+			zend_string_release(converted);
+
+			return value;
 		}
 	}
 }
