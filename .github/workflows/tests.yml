@@ -137,7 +137,9 @@ jobs:
 
   windows-test:
     name: "Windows Tests"
-    runs-on: "${{ matrix.os }}"
+    # PHP 8.6 is built with the Visual Studio 2026 toolset, which is only
+    # available on the windows-2025-vs2026 runner image.
+    runs-on: "${{ matrix.php-version == '8.6' && 'windows-2025-vs2026' || matrix.os }}"
     defaults:
       run:
         shell: cmd
@@ -153,6 +155,7 @@ jobs:
           - "8.3"
           - "8.4"
           - "8.5"
+          - "8.6"
         ts: [ ts, nts ]
 
     steps:
